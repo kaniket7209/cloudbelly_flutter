@@ -14,6 +14,8 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   List markers = [];
+  List marker2s = [];
+
   @override
   void initState() {
     // TODO: implement initState
