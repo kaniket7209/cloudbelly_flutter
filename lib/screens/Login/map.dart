@@ -2,13 +2,10 @@
 
 import 'dart:convert';
 
-import 'package:aws_client/kafka_2018_11_14.dart';
-import 'package:aws_client/macie2_2020_01_01.dart';
 import 'package:cloudbelly_app/screens/Login/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:aws_client/s3_outposts_2017_07_25.dart';
 
 class MapScreen extends StatefulWidget {
   @override

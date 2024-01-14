@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1016600015524-1u0hou3m1b5dnv624i7ailkuef2d8psq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1016600015524-1u0hou3m1b5dnv624i7ailkuef2d8psq</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1016600015524-k69t8jsvmiunopfs1cp5lp0ieqdd77r4.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA58nxI-QVN6ru7nqp7nj0tFyhdquxi4xU</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1016600015524</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.codebellyApp</string>
+	<key>PROJECT_ID</key>
+	<string>cloudbelly-5b13e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>cloudbelly-5b13e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1016600015524:ios:05a19bd4c080bd65d8ac31</string>
+</dict>
+</plist>

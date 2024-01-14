@@ -43,6 +43,8 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_svg: ^2.0.9
   figma_squircle: ^0.5.3
+  flutter_map: ^6.1.0
+  toastification: ^1.1.0
 
 dev_dependencies:
   flutter_test:

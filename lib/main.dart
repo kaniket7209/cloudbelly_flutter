@@ -38,7 +38,6 @@ class MyApp extends StatelessWidget {
           LoginScreen.routeName: (context) => LoginScreen(),
           '/signup': (context) => SignUpPage(),
           '/map': (context) => MapScreen(),
-          OtpScreen.routeName: (context) => OtpScreen(),
           WelcomeScreen.routeName: (context) => WelcomeScreen(),
           Tabs.routeName: (context) => Tabs(),
         },
