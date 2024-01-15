@@ -1,8 +1,14 @@
+import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
-import 'package:cloudbelly_app/Utils/Authentication.dart';
-import 'package:cloudbelly_app/screens/Login/otp_screen.dart';
-import 'package:cloudbelly_app/widgets/common_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:cloudbelly_app/widgets/appwide_button.dart';
+
+import 'package:cloudbelly_app/widgets/appwide_textfield.dart';
+import 'package:cloudbelly_app/widgets/common_button_login.dart';
+import 'package:cloudbelly_app/widgets/space.dart';
+import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -19,8 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
   String user_email = '';
   String selectedOption = 'Select';
   String user_mobile_number = '';
+
   // ignore: unused_field
-  bool _isSigningIn = false;
+  bool _isLogin = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,240 +36,301 @@ class _LoginScreenState extends State<LoginScreen> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              AppwideBanner(),
-              Container(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Get Started',
-                      style:
-                          TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 3.h,
-                    ),
-                    TextFieldLabel(label: 'Email'),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Card(
-                      elevation: 20,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors
-                              .white, // Set the background color of the TextField
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        height: 6.h,
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            fillColor: Colors.white,
-                            contentPadding: EdgeInsets.only(left: 14),
-                            hintText: 'Enter your Email-id here',
-                            hintStyle: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w400),
-                            border: InputBorder.none,
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              user_email = value;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 3.h,
-                    ),
-                    TextFieldLabel(label: 'Mobile Number'),
-                    SizedBox(
-                      height: 1.h,
-                    ),
-                    Card(
-                      elevation: 20,
-                      child: Container(
-                        decoration: BoxDecoration(
+              Stack(
+                children: [
+                  AppwideBanner(),
+                  Center(
+                    child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 6.w, vertical: 3.h),
+                        margin: !_isLogin
+                            ? EdgeInsets.only(top: 8.h, bottom: 5.h)
+                            : EdgeInsets.only(top: 25.h, bottom: 5.h),
+                        width: 90.w,
+                        decoration: ShapeDecoration(
+                          shadows: [
+                            const BoxShadow(
+                              offset: Offset(0, 4),
+                              color: Color.fromRGBO(137, 136, 135, 0.418),
+                              blurRadius: 20,
+                            )
+                          ],
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        height: 6.h,
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            fillColor: Colors.white,
-                            contentPadding: EdgeInsets.only(left: 14),
-                            hintText: 'Enter your mobile number here',
-                            hintStyle: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w400),
-                            border: InputBorder.none,
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              user_mobile_number = value;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 3.h,
-                    ),
-                    TextFieldLabel(label: 'Tell us more about you'),
-                    SizedBox(
-                      height: 1.h,
-                    ),
-                    Card(
-                      elevation: 20,
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          // border: Border.all(
-                          //   width: 0,
-                          // ),
-                        ),
-                        child: Center(
-                          child: DropdownButton<String>(
-                            value: selectedOption,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedOption = newValue!;
-                              });
-                            },
-                            underline:
-                                Container(), // This line removes the bottom line
-                            items: <String>[
-                              'Select',
-                              'Foodie',
-                              'Restaurant',
-                              'Home kitchen',
-                              'Food Blogger',
-                            ].map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 3.h,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        if (user_email != '' &&
-                            user_mobile_number != '' &&
-                            user_mobile_number.length == 10 &&
-                            user_email.contains("@gmail.com") &&
-                            selectedOption != 'Select') {
-                          Navigator.pushNamed(context, OtpScreen.routeName,
-                              arguments: {
-                                'number': user_mobile_number,
-                              });
-                        }
-                      },
-                      child: Center(
-                        child: Container(
-                          height: 5.7.h,
-                          width: 70.w,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  const Color.fromRGBO(255, 165, 0, 1),
-                                  const Color.fromRGBO(255, 208, 123, 1)
-                                ]),
-                            color: const Color.fromRGBO(255, 165, 0, 1),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Continue',
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.w600),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 35,
+                              cornerSmoothing: 1,
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 3.h,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Container(
-                          height: 1,
-                          width: 150,
-                          decoration: BoxDecoration(color: Colors.black),
-                        ),
-                        Text(
-                          'Or',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w400),
-                        ),
-                        Container(
-                          height: 1,
-                          width: 150,
-                          decoration: BoxDecoration(color: Colors.black),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 3.h,
-                    ),
-                    CommonButton('Continue with Whatsapp'),
-                    SizedBox(
-                      height: 1.5.h,
-                    ),
-                    FutureBuilder(
-                      future:
-                          Authentication.initializeFirebase(context: context),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text('Error initializing Firebase');
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.done) {
-                          return GestureDetector(
-                              child: CommonButton('Continue with Google'),
-                              onTap: () async {
-                                setState(() {
-                                  _isSigningIn = true;
-                                });
+                        child: !_isLogin
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TouchableOpacity(
+                                        onTap: () {
+                                          setState(() {
+                                            _isLogin = true;
+                                          });
+                                          print('login');
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(10.0),
+                                          child: Text(
+                                            'Login',
+                                            style: TextStyle(
+                                              color: Color.fromRGBO(
+                                                  250, 110, 0, 0.7),
+                                              fontSize: 18,
+                                              fontFamily: 'Jost',
+                                              fontWeight: FontWeight.w600,
+                                              height: 0.03,
+                                              letterSpacing: 0.78,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Space(4.h),
+                                  const Center(
+                                    child: Text(
+                                      'Get Started',
+                                      style: TextStyle(
+                                        color: Color(0xFF094B60),
+                                        fontSize: 26,
+                                        fontFamily: 'Jost',
+                                        fontWeight: FontWeight.w600,
+                                        height: 0.03,
+                                        letterSpacing: 0.78,
+                                      ),
+                                    ),
+                                  ),
+                                  Space(4.h),
+                                  AppwideTextField(
+                                    hintText: 'Enter your Email',
+                                    onChanged: (p0) {
+                                      print(p0);
+                                    },
+                                  ),
+                                  Space(3.h),
+                                  AppwideTextField(
+                                    hintText: 'Enter your Phone Number',
+                                    onChanged: (p0) {
+                                      print(p0);
+                                    },
+                                  ),
+                                  Space(3.h),
+                                  AppwideTextField(
+                                    hintText: 'Create a Password',
+                                    onChanged: (p0) {
+                                      print(p0);
+                                    },
+                                  ),
+                                  Space(3.h),
+                                  Container(
+                                    // rgba(165, 200, 199, 1),
+                                    decoration: const ShapeDecoration(
+                                      shadows: [
+                                        BoxShadow(
+                                          offset: Offset(0, 4),
+                                          color: Color.fromRGBO(
+                                              165, 200, 199, 0.6),
+                                          blurRadius: 20,
+                                        )
+                                      ],
+                                      color: Colors.white,
+                                      shape: SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius.all(
+                                            SmoothRadius(
+                                                cornerRadius: 10,
+                                                cornerSmoothing: 1)),
+                                      ),
+                                    ),
+                                    height: 6.h,
+                                    child: Center(
+                                      child: DropdownButton<String>(
+                                        value: selectedOption,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedOption = value.toString();
+                                          });
+                                        },
+                                        underline:
+                                            Container(), // This line removes the bottom line
+                                        items: <String>[
+                                          'Select',
+                                          'Foodie',
+                                          'Restaurant',
+                                          'Home kitchen',
+                                          'Food Blogger',
+                                        ].map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(
+                                              value,
+                                              style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: Color(0xFF0A4C61),
+                                                  fontFamily: 'Product Sans',
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                                  Space(3.h),
+                                  AppWideButton(
+                                    num: -1,
+                                    txt: 'Sign up',
+                                    onTap: () {
+                                      print('sign up');
+                                      Navigator.of(context)
+                                          .pushReplacementNamed(Tabs.routeName);
+                                    },
+                                  ),
+                                  Space(4.h),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Container(
+                                        height: 1,
+                                        width: 30.w,
+                                        decoration: const BoxDecoration(
+                                            color: Colors.black),
+                                      ),
+                                      const Text('Or',
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: Color(0xFF0A4C61),
+                                              fontFamily: 'Product Sans',
+                                              fontWeight: FontWeight.w400)),
+                                      Container(
+                                        height: 1,
+                                        width: 30.w,
+                                        decoration: const BoxDecoration(
+                                            color: Colors.black),
+                                      )
+                                    ],
+                                  ),
+                                  Space(2.h),
+                                  CommonButton('Continue with Whatsapp'),
+                                  Space(1.5.h),
+                                  CommonButton('Continue with Google'),
+                                  // FutureBuilder(
+                                  //   future: Authentication.initializeFirebase(
+                                  //       context: context),
+                                  //   builder: (context, snapshot) {
+                                  //     if (snapshot.hasError) {
+                                  //       return Text('Error initializing Firebase');
+                                  //     } else if (snapshot.connectionState ==
+                                  //         ConnectionState.done) {
+                                  //       return GestureDetector(
+                                  //           child: CommonButton('Continue with Google'),
+                                  //           onTap: () async {
+                                  //             setState(() {
+                                  //               _isSigningIn = true;
+                                  //             });
 
-                                User? user =
-                                    await Authentication.signInWithGoogle(
-                                        context: context);
+                                  //             User? user =
+                                  //                 await Authentication.signInWithGoogle(
+                                  //                     context: context);
 
-                                setState(() {
-                                  _isSigningIn = false;
-                                });
+                                  //             setState(() {
+                                  //               _isSigningIn = false;
+                                  //             });
 
-                                if (user != null) {
-                                  // Navigator.of(context).pushNamed(
-                                  //     SetupBusinessIdentityScreen.routeName);
-                                }
-                              });
-                        }
-                        return CircularProgressIndicator();
-                      },
-                    ),
-                    SizedBox(
-                      height: 1.5.h,
-                    ),
-                    CommonButton('Continue with Facebook'),
-                  ],
-                ),
+                                  //             if (user != null) {
+                                  //               // Navigator.of(context).pushNamed(
+                                  //               //     SetupBusinessIdentityScreen.routeName);
+                                  //             }
+                                  //           });
+                                  //     }
+                                  //     return CircularProgressIndicator();
+                                  //   },
+                                  // ),
+                                  Space(1.5.h),
+                                  CommonButton('Continue with Facebook'),
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TouchableOpacity(
+                                        onTap: () {
+                                          setState(() {
+                                            _isLogin = false;
+                                          });
+                                          print('sign');
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(10.0),
+                                          child: Text(
+                                            'Sign up',
+                                            style: TextStyle(
+                                              color: Color.fromRGBO(
+                                                  250, 110, 0, 0.7),
+                                              fontSize: 18,
+                                              fontFamily: 'Jost',
+                                              fontWeight: FontWeight.w600,
+                                              height: 0.03,
+                                              letterSpacing: 0.78,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Space(4.h),
+                                  const Center(
+                                    child: Text(
+                                      'Welocome back',
+                                      style: TextStyle(
+                                        color: Color(0xFF094B60),
+                                        fontSize: 26,
+                                        fontFamily: 'Jost',
+                                        fontWeight: FontWeight.w600,
+                                        height: 0.03,
+                                        letterSpacing: 0.78,
+                                      ),
+                                    ),
+                                  ),
+                                  Space(4.h),
+                                  AppwideTextField(
+                                    hintText: 'Enter your Email',
+                                    onChanged: (p0) {
+                                      print(p0);
+                                    },
+                                  ),
+                                  Space(3.h),
+                                  AppwideTextField(
+                                    hintText: 'Enter Password',
+                                    onChanged: (p0) {
+                                      print(p0);
+                                    },
+                                  ),
+                                  Space(4.h),
+                                  AppWideButton(
+                                    num: -1,
+                                    txt: 'Login',
+                                    onTap: () {
+                                      print('Login');
+                                      Navigator.of(context)
+                                          .pushReplacementNamed(Tabs.routeName);
+                                    },
+                                  ),
+                                ],
+                              )),
+                  ),
+                ],
               ),
             ],
           ),
@@ -288,7 +356,7 @@ class TextFieldLabel extends StatelessWidget {
         ),
         Text(
           label,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
         ),
       ],
     );
