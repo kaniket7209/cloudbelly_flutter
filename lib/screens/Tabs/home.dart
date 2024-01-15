@@ -71,8 +71,8 @@ class _HomeState extends State<Home> {
                                       'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj'),
                                 ),
                               ),
-                              Space(1.5.h),
-                              Text(
+                              Space(2.h),
+                              const Text(
                                 'Geeta Kitchen',
                                 style: TextStyle(
                                   color: Color(0xFF094B60),
@@ -92,14 +92,14 @@ class _HomeState extends State<Home> {
                         ],
                       ),
                     ),
-                    Space(2.h),
+                    Space(3.h),
                     Center(
                         child: Container(
-                      height: 18.h,
+                      height: 20.h,
                       width: 90.w,
                       decoration: ShapeDecoration(
-                        shadows: [
-                          const BoxShadow(
+                        shadows: const [
+                          BoxShadow(
                             offset: Offset(0, 4),
                             color: Color.fromRGBO(165, 200, 199, 0.6),
                             blurRadius: 25,
@@ -115,7 +115,7 @@ class _HomeState extends State<Home> {
                       ),
                       child: Column(
                         children: [
-                          Space(1.h),
+                          Space(3.h),
                           if (_activeButtonIndex == 1)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -129,7 +129,7 @@ class _HomeState extends State<Home> {
                                   txt: 'Followers',
                                 ),
                                 ColumnWidgetHomeScreen(
-                                  data: '+' + (43).toString(),
+                                  data: '+${43}',
                                   txt: 'New followers',
                                 )
                               ],
@@ -147,7 +147,7 @@ class _HomeState extends State<Home> {
                                   txt: 'Repeat Customers',
                                 ),
                                 ColumnWidgetHomeScreen(
-                                  data: '+' + (43).toString(),
+                                  data: '+${43}',
                                   txt: 'New Customers',
                                 )
                               ],
@@ -229,7 +229,6 @@ class _HomeState extends State<Home> {
                     children: [
                       TouchableOpacity(
                           onTap: () {
-                            print('okoko');
                             return SlidingSheet().showAlertDialog(context, 1);
                           },
                           child:
@@ -318,7 +317,7 @@ class _HomeState extends State<Home> {
                   Space(1.5.h),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: Container(
+                    child: SizedBox(
                       height: 18.h,
                       child: Center(
                         child: Row(
@@ -386,7 +385,7 @@ class _HomeState extends State<Home> {
                   Space(1.h),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: Container(
+                    child: SizedBox(
                       height: 18.h,
                       child: Center(
                         child: Row(
@@ -466,9 +465,9 @@ class InventoryForcastingWidget extends StatelessWidget {
                       ],
                     ),
                     Space(2.5.h),
-                    InventoryFocastRowWidget(),
-                    InventoryFocastRowWidget(),
-                    InventoryFocastRowWidget(),
+                    const InventoryFocastRowWidget(),
+                    const InventoryFocastRowWidget(),
+                    const InventoryFocastRowWidget(),
                     Space(1.h),
                   ],
                 ),
@@ -486,7 +485,7 @@ class InventoryForcastingWidget extends StatelessWidget {
                         spreadRadius: 0,
                       )
                     ],
-                    color: Color.fromRGBO(177, 217, 216, 1),
+                    color: const Color.fromRGBO(177, 217, 216, 1),
                     shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(
                         cornerRadius: 10,
@@ -510,7 +509,7 @@ class InventoryForcastingWidget extends StatelessWidget {
                     spreadRadius: 0,
                   )
                 ],
-                color: Color.fromRGBO(250, 110, 0, 1),
+                color: const Color.fromRGBO(250, 110, 0, 1),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
                     cornerRadius: 10,
@@ -535,7 +534,7 @@ class InventoryForcastingWidget extends StatelessWidget {
                   Space(isHorizontal: true, 5.w),
                   Text(
                     isBuy ? 'Buy' : 'Resell',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
                       fontFamily: 'Product Sans',
@@ -566,7 +565,7 @@ class InventoryFocastRowWidget extends StatelessWidget {
           Container(
             width: 14.w,
             margin: EdgeInsets.only(right: 2.w),
-            child: Text(
+            child: const Text(
               'Wheat',
               style: TextStyle(
                 color: Color(0xFF0A4C61),
@@ -581,7 +580,7 @@ class InventoryFocastRowWidget extends StatelessWidget {
           Container(
             width: 14.w,
             margin: EdgeInsets.only(right: 2.w),
-            child: Text(
+            child: const Text(
               'x 5 kg',
               style: TextStyle(
                 color: Color(0xFF0A4C61),
@@ -597,7 +596,7 @@ class InventoryFocastRowWidget extends StatelessWidget {
             width: 9,
             height: 8.25,
             margin: EdgeInsets.only(left: 4.w),
-            decoration: ShapeDecoration(
+            decoration: const ShapeDecoration(
               color: Color(0xFFF44B4B),
               shape: OvalBorder(),
               shadows: [
@@ -630,7 +629,7 @@ class InventotyForcastingBoldTextWidget extends StatelessWidget {
       margin: EdgeInsets.only(right: 2.w),
       child: Text(
         txt,
-        style: TextStyle(
+        style: const TextStyle(
           color: Color(0xFF094B60),
           fontSize: 14,
           fontFamily: 'Jost',
@@ -697,7 +696,7 @@ class InvetoryBasedReciepeWidget extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Aalu Parantha',
                       style: TextStyle(
                         color: Color(0xFF0A4C61),
@@ -724,7 +723,7 @@ class InvetoryBasedReciepeWidget extends StatelessWidget {
               if (!isResell)
                 Column(
                   children: [
-                    Text(
+                    const Text(
                       'Add to product',
                       style: TextStyle(
                         color: Color(0xFF0A4C61),
@@ -760,10 +759,10 @@ class InvetoryBasedReciepeWidget extends StatelessWidget {
 }
 
 class ReciepeTextWidgetHomeScreen extends StatelessWidget {
-  final txt;
+  final String txt;
   const ReciepeTextWidgetHomeScreen({
     super.key,
-    this.txt,
+    required this.txt,
   });
 
   @override
@@ -791,7 +790,7 @@ class BoldTextWidgetHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       txt,
-      style: TextStyle(
+      style: const TextStyle(
         color: Color(0xFF094B60),
         fontSize: 18,
         fontFamily: 'Jost',
@@ -804,9 +803,9 @@ class BoldTextWidgetHomeScreen extends StatelessWidget {
 }
 
 class ToolsButtonWidgetHomeSCreen extends StatelessWidget {
-  final txt;
+  final String txt;
   ToolsButtonWidgetHomeSCreen({
-    this.txt,
+    required this.txt,
   });
 
   @override
@@ -842,7 +841,7 @@ class ToolsButtonWidgetHomeSCreen extends StatelessWidget {
           Space(1.h),
           Text(
             txt,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF0A4C61),
               fontSize: 10,
               fontFamily: 'Product Sans',
@@ -873,7 +872,7 @@ class ColumnWidgetHomeScreen extends StatelessWidget {
       children: [
         Text(
           data,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color(0xFF0A4C61),
             fontSize: 35,
             fontFamily: 'Product Sans',
@@ -883,8 +882,8 @@ class ColumnWidgetHomeScreen extends StatelessWidget {
           ),
         ),
         Text(
-          'Rating',
-          style: TextStyle(
+          txt,
+          style: const TextStyle(
             color: Color(0xFF0A4C61),
             fontSize: 11,
             fontFamily: 'Product Sans',
@@ -938,7 +937,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
         txt,
         style: TextStyle(
           color: isActive ? Colors.white : Colors.black,
-          fontSize: 10,
+          fontSize: isActive ? 14 : 12,
           fontFamily: 'Product Sans',
           fontWeight: FontWeight.w700,
           height: 0,

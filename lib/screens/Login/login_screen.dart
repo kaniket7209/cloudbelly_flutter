@@ -23,9 +23,9 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   String user_email = '';
-  String selectedOption = 'Select';
+  String selectedOption = 'Customer';
   String user_mobile_number = '';
-
+  bool _isSelected = false;
   // ignore: unused_field
   bool _isLogin = false;
 
@@ -153,20 +153,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                     height: 6.h,
                                     child: Center(
                                       child: DropdownButton<String>(
-                                        value: selectedOption,
+                                        hint: Text(
+                                          !_isSelected
+                                              ? 'Who are You '
+                                              : selectedOption,
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Color(0xFF0A4C61),
+                                              fontFamily: 'Product Sans',
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                        //value: selectedOption,
+
                                         onChanged: (value) {
                                           setState(() {
                                             selectedOption = value.toString();
+                                            _isSelected = true;
                                           });
                                         },
                                         underline:
                                             Container(), // This line removes the bottom line
                                         items: <String>[
-                                          'Select',
-                                          'Foodie',
-                                          'Restaurant',
-                                          'Home kitchen',
-                                          'Food Blogger',
+                                          'Customer',
+                                          'Vendor',
+                                          'Supplier',
                                         ].map<DropdownMenuItem<String>>(
                                             (String value) {
                                           return DropdownMenuItem<String>(
@@ -335,6 +345,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
         ));
+//         curl  -X POST \
+//   'https://app.cloudbelly.in/update-user' \
+//   --header 'Accept: */*' \
+//   --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
+//   --header 'Content-Type: application/json' \
+//   --data-raw '{
+//   "phone":"6206630515",
+//   "user_id":"65a428ce8c90b8cc72944b9e"
+// }'
   }
 }
 
