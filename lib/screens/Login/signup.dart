@@ -6,6 +6,7 @@ class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(177, 217, 216, 1),
       body: Center(
         child: Container(
           padding: EdgeInsets.all(25),
@@ -89,132 +90,134 @@ class _SignUpFormState extends State<SignUpForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Column(
-        children: [
-          SizedBox(height: 20),
+      child: Container(
+        child: Column(
+          children: [
+            SizedBox(height: 20),
 
-          TextFormField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              hintText: 'Enter your email...',
-              enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.black26, width: 1, strokeAlign: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(10))
-                  // borderRadius: BorderRadius.circular(10),
-                  ),
-              filled: true,
-              fillColor: Colors.white,
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your email';
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: 20),
-          TextFormField(
-            controller: _phoneController,
-            keyboardType: TextInputType.phone,
-            decoration: InputDecoration(
-              hintText: 'Enter your phone number...',
-              enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.black26, width: 1, strokeAlign: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(10))
-                  // borderRadius: BorderRadius.circular(10),
-                  ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: Color.fromRGBO(250, 110, 0, 1), width: 2.0),
-                borderRadius: BorderRadius.circular(10.0),
+            TextFormField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                hintText: 'Enter your email...',
+                enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Colors.black26, width: 1, strokeAlign: 1),
+                    borderRadius: BorderRadius.all(Radius.circular(10))
+                    // borderRadius: BorderRadius.circular(10),
+                    ),
+                filled: true,
+                fillColor: Colors.white,
               ),
-              filled: true,
-              fillColor: Colors.white,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your phone number';
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: 20),
-          TextFormField(
-            controller: _passwordController,
-            obscureText: true,
-            decoration: InputDecoration(
-              hintText: 'Create a password...',
-              enabledBorder: const OutlineInputBorder(
+            SizedBox(height: 20),
+            TextFormField(
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              decoration: InputDecoration(
+                hintText: 'Enter your phone number...',
+                enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Colors.black26, width: 1, strokeAlign: 1),
+                    borderRadius: BorderRadius.all(Radius.circular(10))
+                    // borderRadius: BorderRadius.circular(10),
+                    ),
+                focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: Colors.black26, width: 1, strokeAlign: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(10))
-                  // borderRadius: BorderRadius.circular(10),
-                  ),
-              filled: true,
-              fillColor: Colors.white,
+                      color: Color.fromRGBO(250, 110, 0, 1), width: 2.0),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your phone number';
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a password';
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: 20),
-          GestureDetector(
-            onTap: () {
-              _openUserTypeModal(context);
-            },
-            child: Container(
-              padding: EdgeInsets.all(15),
-              // margin: EdgeInsets.all(10),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.black26),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 4,
-                    offset: Offset(0, 3),
-                  ),
-                ],
+            SizedBox(height: 20),
+            TextFormField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                hintText: 'Create a password...',
+                enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Colors.black26, width: 1, strokeAlign: 1),
+                    borderRadius: BorderRadius.all(Radius.circular(10))
+                    // borderRadius: BorderRadius.circular(10),
+                    ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a password';
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 20),
+            GestureDetector(
+              onTap: () {
+                _openUserTypeModal(context);
+              },
+              child: Container(
+                padding: EdgeInsets.all(15),
+                // margin: EdgeInsets.all(10),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.black26),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 4,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  _userType,
+                  style: TextStyle(fontSize: 16, color: Colors.black),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 26,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _submitForm();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(250, 110, 0, 1),
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 100),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               child: Text(
-                _userType,
-                style: TextStyle(fontSize: 16, color: Colors.black),
+                'Sign Up',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 26,
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _submitForm();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromRGBO(250, 110, 0, 1),
-              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 100),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: Text(
-              'Sign Up',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          // Error message placeholder
-        ],
+            // Error message placeholder
+          ],
+        ),
       ),
     );
   }

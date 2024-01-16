@@ -1,4 +1,7 @@
+import 'package:cloudbelly_app/screens/Login/api_service.dart';
+import 'package:cloudbelly_app/screens/Login/signup.dart';
 import 'package:flutter/material.dart';
+import 'package:toastification/toastification.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login-screen';
@@ -9,14 +12,48 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   var _formKey;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
+
+  Future<void> _submitForm() async {
+    // Perform signup logic
+    String email = _emailController.text;
+    String pass = _phoneController.text;
+    // Add your signup logic here
+
+    // For example, print the values:
+    int code = await login(email, pass);
+    if (code == 201) {
+      toastification.show(
+        backgroundColor: Colors.green,
+        context: context,
+        title: 'Signup successfull',
+        foregroundColor: Colors.white,
+        primaryColor: Colors.white,
+        autoCloseDuration: const Duration(seconds: 5),
+      );
+      Navigator.pushNamed(context, "/tabs-screen");
+    } else
+      toastification.show(
+        backgroundColor: Colors.red,
+        context: context,
+        title: 'Signup failed',
+        foregroundColor: Colors.white,
+        primaryColor: Colors.white,
+        autoCloseDuration: const Duration(seconds: 5),
+      );
+    Navigator.pushNamed(context, "/tabs-screen");
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: Color.fromRGBO(177, 217, 216, 1),
         body: Center(
           child: Container(
-            padding: EdgeInsets.all(20),
+            margin: EdgeInsets.all(25),
+            padding: EdgeInsets.all(15),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
@@ -28,7 +65,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ],
             ),
-            width: 300,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -58,11 +94,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.black87,
                   ),
                 ),
+                SizedBox(
+                  height: 30,
+                ),
                 Form(
                   key: _formKey,
                   child: Column(
                     children: [
                       TextFormField(
+                        controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: 'your e-mail here...',
@@ -79,8 +119,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           return null;
                         },
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 30),
                       TextFormField(
+                        controller: _phoneController,
                         obscureText: true,
                         decoration: InputDecoration(
                           hintText: 'your password here...',
@@ -93,17 +134,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         validator: (value) {},
                       ),
                       SizedBox(height: 20),
+
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, "/tabs-screen");
-
-                          // Handle Log In button click
-                          if (_formKey.currentState.validate()) {
-                            // Perform login logic
-                          }
+                          _submitForm();
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 15),
+                          backgroundColor: Color.fromRGBO(250, 110, 0, 1),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 100),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -111,10 +150,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Text(
                           'Log In',
                           style: TextStyle(
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
+                      // Error message placeholder
                     ],
                   ),
                 ),
@@ -137,31 +178,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class SocialButton extends StatelessWidget {
-  final String text;
-
-  const SocialButton({Key? key, required this.text}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 5),
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black12),
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.white,
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
         ),
       ),
     );

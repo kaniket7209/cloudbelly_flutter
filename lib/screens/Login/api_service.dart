@@ -33,6 +33,33 @@ Future<int> signUp(email, pass, phone, type) async {
   }
 }
 
+Future<int> login(email, pass) async {
+  final String url = 'https://app.cloudbelly.in/login';
+
+  final Map<String, dynamic> requestBody = {
+    "email": email,
+    "password": pass,
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Accept': '*/*',
+        'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(requestBody),
+    );
+    print(response.statusCode);
+    return response.statusCode;
+  } catch (error) {
+    // Handle exceptions
+    print('Error: $error');
+    return -1;
+  }
+}
+
 Future sendUserTypeRequest() async {
   final String url = 'https://app.cloudbelly.in/user-type';
 
