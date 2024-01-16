@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
       toastification.show(
         backgroundColor: Colors.green,
         context: context,
-        title: 'Signup successfull',
+        title: Text('Signup successfull'),
         foregroundColor: Colors.white,
         primaryColor: Colors.white,
         autoCloseDuration: const Duration(seconds: 5),
@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
       toastification.show(
         backgroundColor: Colors.red,
         context: context,
-        title: 'Signup failed',
+        title: Text('Signup failed'),
         foregroundColor: Colors.white,
         primaryColor: Colors.white,
         autoCloseDuration: const Duration(seconds: 5),

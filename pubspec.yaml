@@ -45,6 +45,8 @@ dependencies:
   figma_squircle: ^0.5.3
   flutter_map: ^6.1.0
   toastification: ^1.1.0
+  geolocator: ^8.0.5
+  permission_handler: ^11.1.0
 
 dev_dependencies:
   flutter_test:
