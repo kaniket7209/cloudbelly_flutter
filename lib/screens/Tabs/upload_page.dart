@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -30,70 +30,70 @@ class _UploadPageState extends State<UploadPage> {
   }
 
   initData() async {
-  final position = await _getCurrentLocation();
-  if (position != null) {
-    _latitudeController.text = position.latitude.toString();
-    _longitudeController.text = position.longitude.toString();
-  } else {
-    // Handle the scenario when position is null
-    // For example, set default values or show an error message
-  }
-}
-
-
-  Future<Position?> _getCurrentLocation() async {
-  try {
-    // Check if location services are enabled
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      print('Location services are disabled.');
-      return null;
-    }
-
-    // Check for location permissions
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        print('Location permissions are denied');
-        return null;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      print('Location permissions are permanently denied, we cannot request permissions.');
-      return null;
-    }
-
-    // When permissions are granted, get the current position
-    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
-  } catch (e) {
-    // Handle any exceptions that occur during location fetching
-    print('Error getting location: $e');
-    return null;
-  }
-}
-
- Future<void> _selectImage() async {
-  final picker = ImagePicker();
-  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-  if (pickedFile != null) {
-    setState(() {
-      _imagePath = pickedFile.path;
-    });
-    // Fetch and update the location after selecting the image
     final position = await _getCurrentLocation();
     if (position != null) {
-      setState(() {
-        _latitudeController.text = position.latitude.toString();
-        _longitudeController.text = position.longitude.toString();
-      });
+      _latitudeController.text = position.latitude.toString();
+      _longitudeController.text = position.longitude.toString();
+    } else {
+      // Handle the scenario when position is null
+      // For example, set default values or show an error message
     }
   }
-}
 
+  Future<Position?> _getCurrentLocation() async {
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        print('Location services are disabled.');
+        return null;
+      }
+
+      // Check for location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          print('Location permissions are denied');
+          return null;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        // Permissions are denied forever, handle appropriately.
+        print(
+            'Location permissions are permanently denied, we cannot request permissions.');
+        return null;
+      }
+
+      // When permissions are granted, get the current position
+      return await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
+    } catch (e) {
+      // Handle any exceptions that occur during location fetching
+      print('Error getting location: $e');
+      return null;
+    }
+  }
+
+  Future<void> _selectImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imagePath = pickedFile.path;
+      });
+      // Fetch and update the location after selecting the image
+      final position = await _getCurrentLocation();
+      if (position != null) {
+        setState(() {
+          _latitudeController.text = position.latitude.toString();
+          _longitudeController.text = position.longitude.toString();
+        });
+      }
+    }
+  }
 
   Future<String> _uploadImage(String imagePath) async {
     var request = http.MultipartRequest(
