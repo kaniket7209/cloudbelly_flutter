@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:cloudbelly_app/screens/Tabs/home.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
@@ -41,7 +43,7 @@ class _ProfileState extends State<Profile> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CustomIconButton(
-                              ic: Icons.notifications,
+                              ic: Icons.arrow_back_ios_new_outlined,
                               onTap: () {},
                             ),
                             Column(
