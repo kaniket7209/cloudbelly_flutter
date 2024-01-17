@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 // ignore: must_be_immutable
 class CustomIconButton extends StatelessWidget {
   IconData ic;
+  Color color;
 
   final Function? onTap;
-  CustomIconButton({required this.ic, this.onTap});
+  CustomIconButton({required this.ic, this.onTap, this.color = Colors.black});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,10 @@ class CustomIconButton extends StatelessWidget {
             ),
           ),
         ),
-        child: Icon(ic),
+        child: Icon(
+          ic,
+          color: color,
+        ),
       ),
     );
   }

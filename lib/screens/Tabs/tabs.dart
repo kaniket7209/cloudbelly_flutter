@@ -1,9 +1,9 @@
 import 'package:cloudbelly_app/screens/Tabs/upload_page.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
-import 'package:cloudbelly_app/screens/Tabs/feed.dart';
-import 'package:cloudbelly_app/screens/Tabs/home.dart';
-import 'package:cloudbelly_app/screens/Tabs/profile.dart';
+import 'package:cloudbelly_app/screens/Tabs/Feed/feed.dart';
+import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,7 +20,7 @@ class _TabsState extends State<Tabs> {
   final List<Widget> _pages = [
     Home(),
     Feed(),
-    UploadPage(),
+    // UploadPage(),
     Profile(),
   ];
 
@@ -132,33 +132,7 @@ class _TabsState extends State<Tabs> {
                 children: [
                   const Space(8.67),
                   buildColorFilteredIcon(
-                      Icon(Icons.upload), _selectedIndex == 2),
-                  // const Space(4.67),
-                  Text(
-                    "Profile",
-                    style: GoogleFonts.nunito(
-                      color: _selectedIndex == 4
-                          ? Colors.black
-                          : const Color(0xff404654),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            TouchableOpacity(
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 3;
-                });
-                animateToSelectedPage();
-              },
-              child: Column(
-                children: [
-                  const Space(8.67),
-                  buildColorFilteredIcon(
-                      Icon(Icons.person), _selectedIndex == 3),
+                      Icon(Icons.person), _selectedIndex == 2),
                   // const Space(4.67),
                   Text(
                     "Profile",

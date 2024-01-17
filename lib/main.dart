@@ -1,6 +1,7 @@
 import 'package:cloudbelly_app/firebase_options.dart';
 import 'package:cloudbelly_app/screens/Login/map.dart';
 import 'package:cloudbelly_app/screens/Login/signup.dart';
+import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
           '/map': (context) => MapScreen(),
           WelcomeScreen.routeName: (context) => WelcomeScreen(),
           Tabs.routeName: (context) => Tabs(),
+          InventoryHub.routeName: (context) => InventoryHub(),
         },
       );
     });

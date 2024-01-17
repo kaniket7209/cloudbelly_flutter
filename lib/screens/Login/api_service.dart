@@ -40,6 +40,7 @@ Future<int> login(email, pass) async {
     "email": email,
     "password": pass,
   };
+  // Login successful
 
   try {
     final response = await http.post(
@@ -51,6 +52,7 @@ Future<int> login(email, pass) async {
       },
       body: jsonEncode(requestBody),
     );
+    print(response.body);
     print(response.statusCode);
     return response.statusCode;
   } catch (error) {
