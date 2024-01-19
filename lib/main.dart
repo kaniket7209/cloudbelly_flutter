@@ -5,7 +5,6 @@ import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
-import 'package:cloudbelly_app/screens/Login/otp_screen.dart';
 
 import 'package:cloudbelly_app/screens/Login/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,7 +22,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return ResponsiveSizer(builder: (context, orientation, screenType) {

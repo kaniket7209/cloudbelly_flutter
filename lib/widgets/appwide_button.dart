@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:cloudbelly_app/screens/Tabs/Home/store_setup_sheets.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -23,13 +22,15 @@ class AppWideButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TouchableOpacity(
-      onTap: num > 0
-          ? () {
-              if (ispop) Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              if (num < 3) SlidingSheet().showAlertDialog(context, num + 1);
-            }
-          : onTap,
+      onTap:
+          // num > 0
+          //     ? () {
+          //         if (ispop) Navigator.of(context).pop();
+          //         Navigator.of(context).pop();
+          //         if (num < 3) SlidingSheet().showAlertDialog(context, num + 1);
+          //       }
+          //     :
+          onTap,
       child: Center(
         child: Container(
           height: 6.h,

@@ -6,12 +6,18 @@ import 'package:flutter/material.dart';
 class CustomIconButton extends StatelessWidget {
   IconData ic;
   Color color;
+  Color boxColor;
 
   final Function? onTap;
-  CustomIconButton({required this.ic, this.onTap, this.color = Colors.black});
+  CustomIconButton(
+      {required this.ic,
+      this.onTap,
+      this.color = Colors.cyan,
+      this.boxColor = Colors.white});
 
   @override
   Widget build(BuildContext context) {
+    if (color == Colors.cyan) color = Color.fromRGBO(38, 115, 140, 1);
     return TouchableOpacity(
       onTap: onTap as void Function()?,
       child: Container(
@@ -25,7 +31,7 @@ class CustomIconButton extends StatelessWidget {
               blurRadius: 20,
             )
           ],
-          color: Colors.white,
+          color: boxColor,
           shape: SmoothRectangleBorder(
             borderRadius: SmoothBorderRadius(
               cornerRadius: 10,

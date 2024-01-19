@@ -1,14 +1,19 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/screens/Tabs/Home/api_service.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/appwide_textfield.dart';
 
 import 'package:cloudbelly_app/widgets/space.dart';
+import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:geolocator/geolocator.dart';
+
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SlidingSheet {
   void showAlertDialog(BuildContext context, int num) {
@@ -23,7 +28,7 @@ class SlidingSheet {
                 insetPadding: EdgeInsets.zero,
                 contentPadding: EdgeInsets.zero,
                 content: num == 1
-                    ? const Sheet1()
+                    ? Sheet1()
                     : num == 2
                         ? const Sheet2()
                         : const Sheet3(),
@@ -41,10 +46,139 @@ class SlidingSheet {
   }
 }
 
-class Sheet1 extends StatelessWidget {
-  const Sheet1({
-    super.key,
-  });
+class Sheet1 extends StatefulWidget {
+  @override
+  State<Sheet1> createState() => _Sheet1State();
+}
+
+class _Sheet1State extends State<Sheet1> {
+  String user_name = '';
+
+  String store_name = '';
+
+  String pincode = '';
+
+  String profile_photo = '';
+
+  String location_details = '';
+
+  String latitude = '';
+
+  String longitude = '';
+
+  String max_order_capacity = '';
+
+  Future<void> _SubmitForm() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (user_name != '' &&
+        store_name != '' &&
+        pincode != '' &&
+        profile_photo != '' &&
+        location_details != '' &&
+        max_order_capacity != '') {
+      String msg = await HomeApi().storeSetup1(
+          user_name,
+          pincode,
+          profile_photo,
+          location_details,
+          latitude,
+          longitude,
+          store_name,
+          max_order_capacity);
+
+      if (msg == 'User information updated successfully.') {
+        TOastNotification().showSuccesToast(context, 'User Details Updated');
+        Navigator.of(context).pop();
+        SlidingSheet().showAlertDialog(context, 2);
+
+        prefs.setInt('counter', 2);
+      }
+
+      print(msg);
+    } else {
+      TOastNotification().showErrorToast(context, 'Please fill all fields');
+    }
+  }
+
+  bool _isImageUploading = false;
+  Position? _currentPosition;
+  Future<void> _getLocation() async {
+    final position = await _getCurrentLocation();
+    print(position);
+    // try {
+    //   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    //   if (!serviceEnabled) {
+    //     print('Location services are disabled.');
+    //     return;
+    //   }
+
+    //   LocationPermission permission = await Geolocator.checkPermission();
+    //   if (permission == LocationPermission.denied) {
+    //     permission = await Geolocator.requestPermission();
+    //     if (permission == LocationPermission.denied) {
+    //       print('Location permission denied.');
+    //       return;
+    //     }
+    //   }
+
+    //   _getCurrentPosition();
+    // } catch (e) {
+    //   print('Error in _getLocation: $e');
+    // }
+  }
+
+  Future<Position?> _getCurrentLocation() async {
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        print('Location services are disabled.');
+        return null;
+      }
+
+      // Check for location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          print('Location permissions are denied');
+          return null;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        // Permissions are denied forever, handle appropriately.
+        print(
+            'Location permissions are permanently denied, we cannot request permissions.');
+        return null;
+      }
+
+      // When permissions are granted, get the current position
+      return await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
+    } catch (e) {
+      // Handle any exceptions that occur during location fetching
+      print('Error getting location: $e');
+      return null;
+    }
+  }
+
+  Future<void> _getCurrentPosition() async {
+    try {
+      // LocationPermission permission = await Geolocator.checkPermission();
+
+      Position position = await Geolocator.getCurrentPosition(
+          // desiredAccuracy: LocationAccuracy.high,
+          );
+      // p
+      setState(() {
+        _currentPosition = position;
+      });
+    } catch (e) {
+      print('Error in _getCurrentPosition: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,6 +260,7 @@ class Sheet1 extends StatelessWidget {
                     AppwideTextField(
                       hintText: 'Type name here',
                       onChanged: (p0) {
+                        user_name = p0.toString();
                         // user_name = p0.toString();
                         // print(user_name);
                       },
@@ -138,6 +273,7 @@ class Sheet1 extends StatelessWidget {
                     AppwideTextField(
                       hintText: 'Type store name here',
                       onChanged: (p0) {
+                        store_name = p0.toString();
                         // user_name = p0.toString();
                         // print(user_name);
                       },
@@ -145,11 +281,19 @@ class Sheet1 extends StatelessWidget {
                     Space(
                       3.h,
                     ),
-                    TextWidgetStoreSetup(label: 'Where is your store located?'),
+                    TouchableOpacity(
+                        onTap: () {
+                          return _getLocation();
+                        },
+                        child: TextWidgetStoreSetup(
+                            label: 'Where is your store located?')),
                     Space(1.h),
                     AppwideTextField(
                       hintText: 'Choose your location',
-                      onChanged: (p0) {
+                      onChanged: (p0) async {
+                        location_details = p0.toString();
+                        await _getLocation();
+                        print(_currentPosition);
                         // user_name = p0.toString();
                         // print(user_name);
                       },
@@ -162,6 +306,7 @@ class Sheet1 extends StatelessWidget {
                     AppwideTextField(
                       hintText: 'Enter your pin code',
                       onChanged: (p0) {
+                        pincode = p0.toString();
                         // user_name = p0.toString();
                         // print(user_name);
                       },
@@ -169,19 +314,30 @@ class Sheet1 extends StatelessWidget {
                     Space(
                       3.h,
                     ),
-                    TextWidgetStoreSetup(label: 'Upload your business’s logo'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextWidgetStoreSetup(
+                            label: 'Upload your business’s logo'),
+                        if (_isImageUploading)
+                          SizedBox(
+                              height: 10,
+                              width: 10,
+                              child: CircularProgressIndicator(
+                                color: Colors.orange,
+                              ))
+                      ],
+                    ),
                     Space(1.h),
                     GestureDetector(
                         onTap: () async {
-                          final picker = ImagePicker();
-                          final pickedImage = await picker.pickImage(
-                            source: ImageSource.gallery,
-                          );
-                          if (pickedImage != null) {
-                            String imagePath = pickedImage.path;
-                            debugPrint('imaged added');
-                            debugPrint(imagePath);
-                          }
+                          setState(() {
+                            _isImageUploading = true;
+                          });
+                          profile_photo = await HomeApi().pickImageAndUpoad();
+                          setState(() {
+                            _isImageUploading = false;
+                          });
                         },
                         child: Container(
                           // rgba(165, 200, 199, 1),
@@ -201,11 +357,13 @@ class Sheet1 extends StatelessWidget {
                             ),
                           ),
                           height: 6.h,
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Upload from gallery',
+                                profile_photo == ''
+                                    ? 'Upload from gallery'
+                                    : 'Image Uploaded !',
                                 style: TextStyle(
                                   color: Color(0xFF0A4C61),
                                   fontSize: 12,
@@ -222,8 +380,25 @@ class Sheet1 extends StatelessWidget {
                             ],
                           ),
                         )),
+                    Space(
+                      3.h,
+                    ),
+                    TextWidgetStoreSetup(label: 'Max order capacity'),
+                    Space(1.h),
+                    AppwideTextField(
+                      hintText: 'Type here',
+                      onChanged: (p0) {
+                        max_order_capacity = p0.toString();
+                        // user_name = p0.toString();
+                        // print(user_name);
+                      },
+                    ),
                     Space(5.h),
                     AppWideButton(
+                      onTap: () {
+                        // print('999999');
+                        return _SubmitForm();
+                      },
                       num: 1,
                       txt: 'Continue to KYC',
                     )
@@ -261,14 +436,45 @@ class TextWidgetStoreSetup extends StatelessWidget {
   }
 }
 
-class Sheet2 extends StatelessWidget {
+class Sheet2 extends StatefulWidget {
   const Sheet2({
     super.key,
   });
 
   @override
+  State<Sheet2> createState() => _Sheet2State();
+}
+
+class _Sheet2State extends State<Sheet2> {
+  String pan_number = '';
+
+  String aadhar_number = '';
+
+  String fssai_licence_document = '';
+
+  Future<void> _SubmitForm() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (pan_number != '' && aadhar_number != '') {
+      String msg = await HomeApi()
+          .storeSetup2(pan_number, aadhar_number, fssai_licence_document);
+
+      if (msg == 'User information updated successfully.') {
+        TOastNotification().showSuccesToast(context, 'KYC details updated');
+        Navigator.of(context).pop();
+        SlidingSheet().showAlertDialog(context, 3);
+        prefs.setInt('counter', 3);
+      }
+
+      print(msg);
+    } else {
+      TOastNotification().showErrorToast(context, 'Please fill all fields');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
+      height: 80.h,
       width: 90.w,
       decoration: const ShapeDecoration(
         shadows: [
@@ -355,6 +561,7 @@ class Sheet2 extends StatelessWidget {
                     AppwideTextField(
                       hintText: 'Type your pan card number here',
                       onChanged: (p0) {
+                        pan_number = p0.toString();
                         // user_name = p0.toString();
                         // print(user_name);
                       },
@@ -367,30 +574,7 @@ class Sheet2 extends StatelessWidget {
                     AppwideTextField(
                       hintText: 'Type your aadhar card number here',
                       onChanged: (p0) {
-                        // user_name = p0.toString();
-                        // print(user_name);
-                      },
-                    ),
-                    Space(
-                      3.h,
-                    ),
-                    TextWidgetStoreSetup(label: 'Max order capacity'),
-                    Space(1.h),
-                    AppwideTextField(
-                      hintText: 'Type here',
-                      onChanged: (p0) {
-                        // user_name = p0.toString();
-                        // print(user_name);
-                      },
-                    ),
-                    Space(
-                      3.h,
-                    ),
-                    TextWidgetStoreSetup(label: 'Minimum time guarantee '),
-                    Space(1.h),
-                    AppwideTextField(
-                      hintText: 'type in hours/week',
-                      onChanged: (p0) {
+                        aadhar_number = p0.toString();
                         // user_name = p0.toString();
                         // print(user_name);
                       },
@@ -402,15 +586,8 @@ class Sheet2 extends StatelessWidget {
                     Space(1.h),
                     GestureDetector(
                         onTap: () async {
-                          final picker = ImagePicker();
-                          final pickedImage = await picker.pickImage(
-                            source: ImageSource.gallery,
-                          );
-                          if (pickedImage != null) {
-                            String imagePath = pickedImage.path;
-                            debugPrint('imaged added');
-                            debugPrint(imagePath);
-                          }
+                          fssai_licence_document =
+                              await HomeApi().pickImageAndUpoad();
                         },
                         child: Container(
                           // rgba(165, 200, 199, 1),
@@ -536,6 +713,9 @@ class Sheet2 extends StatelessWidget {
                                   ),
                                   Space(4.h),
                                   AppWideButton(
+                                    onTap: () {
+                                      return _SubmitForm();
+                                    },
                                     num: 2,
                                     txt: 'Continue to payment details',
                                     ispop: true,
@@ -571,8 +751,13 @@ class Sheet2 extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Space(2.h),
-                    AppWideButton(num: 2, txt: 'Continue to payment details'),
+                    Space(18.h),
+                    AppWideButton(
+                        onTap: () {
+                          return _SubmitForm();
+                        },
+                        num: 2,
+                        txt: 'Continue to payment details'),
                   ],
                 ),
               ),
@@ -584,10 +769,50 @@ class Sheet2 extends StatelessWidget {
   }
 }
 
-class Sheet3 extends StatelessWidget {
+class Sheet3 extends StatefulWidget {
   const Sheet3({
     super.key,
   });
+
+  @override
+  State<Sheet3> createState() => _Sheet3State();
+}
+
+class _Sheet3State extends State<Sheet3> {
+  // String bankList = [];
+  bool _isSelected = false;
+  String bank_name = '';
+  String account_number = '';
+  String re_account_number = '';
+  String ifsc_code = '';
+  String upi_id = '';
+  Future<void> _SubmitForm() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (bank_name != '' &&
+        account_number != '' &&
+        re_account_number != '' &&
+        ifsc_code != '' &&
+        upi_id != '') {
+      if (account_number == re_account_number) {
+        String msg = await HomeApi()
+            .storeSetup3(bank_name, account_number, ifsc_code, upi_id);
+
+        if (msg == 'User information updated successfully.') {
+          TOastNotification()
+              .showSuccesToast(context, 'Payemnt details updated');
+          Navigator.of(context).pop();
+          prefs.setInt('counter', 4);
+        }
+
+        print(msg);
+      } else {
+        TOastNotification()
+            .showErrorToast(context, 'Fill Account number properly');
+      }
+    } else {
+      TOastNotification().showErrorToast(context, 'Please fill all fields');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -666,12 +891,60 @@ class Sheet3 extends StatelessWidget {
                     ),
                     TextWidgetStoreSetup(label: 'Select your bank'),
                     Space(1.h),
-                    AppwideTextField(
-                      hintText: 'Choose from the list',
-                      onChanged: (p0) {
-                        // user_name = p0.toString();
-                        // print(user_name);
-                      },
+                    Container(
+                      // rgba(165, 200, 199, 1),
+                      decoration: const ShapeDecoration(
+                        shadows: [
+                          BoxShadow(
+                            offset: Offset(0, 4),
+                            color: Color.fromRGBO(165, 200, 199, 0.6),
+                            blurRadius: 20,
+                          )
+                        ],
+                        color: Colors.white,
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius.all(SmoothRadius(
+                              cornerRadius: 10, cornerSmoothing: 1)),
+                        ),
+                      ),
+                      height: 6.h,
+                      child: Center(
+                        child: DropdownButton<String>(
+                          hint: Text(
+                            !_isSelected ? 'Choose from the list' : bank_name,
+                            style: const TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF0A4C61),
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.w400),
+                          ),
+                          //value: selectedOption,
+
+                          onChanged: (value) {
+                            setState(() {
+                              bank_name = value.toString();
+                              _isSelected = true;
+                            });
+                          },
+                          underline:
+                              Container(), // This line removes the bottom line
+                          items: GlobalVariables()
+                              .bankNames
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF0A4C61),
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     ),
                     Space(
                       3.h,
@@ -681,6 +954,7 @@ class Sheet3 extends StatelessWidget {
                     AppwideTextField(
                       hintText: 'Type your account number here',
                       onChanged: (p0) {
+                        account_number = p0.toString();
                         // user_name = p0.toString();
                         // print(user_name);
                       },
@@ -693,6 +967,7 @@ class Sheet3 extends StatelessWidget {
                     AppwideTextField(
                       hintText: 'Type here account number here',
                       onChanged: (p0) {
+                        re_account_number = p0.toString();
                         // user_name = p0.toString();
                         // print(user_name);
                       },
@@ -705,6 +980,7 @@ class Sheet3 extends StatelessWidget {
                     AppwideTextField(
                       hintText: 'Enter your IFSC code here',
                       onChanged: (p0) {
+                        ifsc_code = p0.toString();
                         // user_name = p0.toString();
                         // print(user_name);
                       },
@@ -717,12 +993,18 @@ class Sheet3 extends StatelessWidget {
                     AppwideTextField(
                       hintText: 'Type your UPI ID here',
                       onChanged: (p0) {
+                        upi_id = p0.toString();
                         // user_name = p0.toString();
                         // print(user_name);
                       },
                     ),
                     Space(5.h),
-                    AppWideButton(num: 3, txt: 'Go to main screen'),
+                    AppWideButton(
+                        onTap: () {
+                          return _SubmitForm();
+                        },
+                        num: 3,
+                        txt: 'Go to main screen'),
                   ],
                 ),
               ),

@@ -1,14 +1,17 @@
 // ignore_for_file: must_be_immutable
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/store_setup_sheets.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
+import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -229,8 +232,18 @@ class _HomeState extends State<Home> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TouchableOpacity(
-                          onTap: () {
-                            return SlidingSheet().showAlertDialog(context, 1);
+                          onTap: () async {
+                            final prefs = await SharedPreferences.getInstance();
+
+                            final counter = prefs.getInt('counter') ?? 1;
+
+                            if (counter < 4)
+                              return SlidingSheet()
+                                  .showAlertDialog(context, counter);
+                            else {
+                              TOastNotification()
+                                  .showSuccesToast(context, 'All Set ');
+                            }
                           },
                           child:
                               ToolsButtonWidgetHomeSCreen(txt: 'Setup Store')),

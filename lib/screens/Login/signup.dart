@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:toastification/toastification.dart';
-import 'api_service.dart';
+// import 'package:toastification/toastification.dart';
+// import 'api_service.dart';
 
 class SignUpPage extends StatelessWidget {
   @override
@@ -279,27 +279,27 @@ class _SignUpFormState extends State<SignUpForm> {
       print('Phone: $phone');
       print('Password: $password');
       print('User Type: $selectedUserType');
-      int code = await signUp(email, password, phone, selectedUserType);
-      if (code == 201) {
-        toastification.show(
-          backgroundColor: Colors.green,
-          context: context,
-          title: Text('Signup successfull'),
-          foregroundColor: Colors.white,
-          primaryColor: Colors.white,
-          autoCloseDuration: const Duration(seconds: 5),
-        );
-        Navigator.pushNamed(context, "/tabs-screen");
-      } else
-        toastification.show(
-          backgroundColor: Colors.red,
-          context: context,
-          title: Text('Signup failed'),
-          foregroundColor: Colors.white,
-          primaryColor: Colors.white,
-          autoCloseDuration: const Duration(seconds: 5),
-        );
-      Navigator.pushNamed(context, "/tabs-screen");
+      // int code = await signUp(email, password, phone, selectedUserType);
+      // if (code == 201) {
+      //   toastification.show(
+      //     backgroundColor: Colors.green,
+      //     context: context,
+      //     title: Text('Signup successfull'),
+      //     foregroundColor: Colors.white,
+      //     primaryColor: Colors.white,
+      //     autoCloseDuration: const Duration(seconds: 5),
+      //   );
+      //   Navigator.pushNamed(context, "/tabs-screen");
+      // } else
+      //   toastification.show(
+      //     backgroundColor: Colors.red,
+      //     context: context,
+      //     title: Text('Signup failed'),
+      //     foregroundColor: Colors.white,
+      //     primaryColor: Colors.white,
+      //     autoCloseDuration: const Duration(seconds: 5),
+      //   );
+      // Navigator.pushNamed(context, "/tabs-screen");
     }
   }
 }

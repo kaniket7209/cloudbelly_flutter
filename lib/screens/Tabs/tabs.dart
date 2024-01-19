@@ -1,4 +1,3 @@
-import 'package:cloudbelly_app/screens/Tabs/upload_page.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:cloudbelly_app/screens/Tabs/Feed/feed.dart';

@@ -7,12 +7,12 @@ import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/appwide_textfield.dart';
 import 'package:cloudbelly_app/widgets/common_button_login.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
+import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:toastification/toastification.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login-screen';
@@ -22,9 +22,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  var _formKey;
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
+  // var _formKey;
+  // TextEditingController _emailController = TextEditingController();
+  // TextEditingController _phoneController = TextEditingController();
 
   String user_email = '';
   String user_pass = '';
@@ -40,28 +40,32 @@ class _LoginScreenState extends State<LoginScreen> {
     String pass = user_pass;
 
     // Add your signup logic here
+    // For example, print the values:
+
+    String msg = await AuthApi().login(email, pass);
+    if (msg == 'Login successful') {
+      TOastNotification().showSuccesToast(context, msg);
+      Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+    } else {
+      if (msg == '-1') msg = "Error!";
+      TOastNotification().showErrorToast(context, msg);
+    }
+  }
+
+  Future<void> _submitFormSignUp() async {
+    // Perform signup logic
+
+    // Add your signup logic here
 
     // For example, print the values:
-    int code = await login(email, pass);
-    if (code == 200) {
-      toastification.show(
-        backgroundColor: Colors.green,
-        context: context,
-        title: Text('Signup successfull'),
-        foregroundColor: Colors.white,
-        primaryColor: Colors.white,
-        autoCloseDuration: const Duration(seconds: 5),
-      );
+    String msg = await AuthApi()
+        .signUp(user_email, user_pass, user_mobile_number, selectedOption);
+    if (msg == 'Registration successful') {
+      TOastNotification().showSuccesToast(context, msg);
+
       Navigator.of(context).pushReplacementNamed(Tabs.routeName);
     } else
-      toastification.show(
-        backgroundColor: Colors.red,
-        context: context,
-        title: Text('Signup failed'),
-        foregroundColor: Colors.white,
-        primaryColor: Colors.white,
-        autoCloseDuration: const Duration(seconds: 5),
-      );
+      TOastNotification().showErrorToast(context, msg);
   }
 
   @override
@@ -148,6 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   AppwideTextField(
                                     hintText: 'Enter your Email',
                                     onChanged: (p0) {
+                                      user_email = p0.toString();
                                       print(p0);
                                     },
                                   ),
@@ -155,6 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   AppwideTextField(
                                     hintText: 'Enter your Phone Number',
                                     onChanged: (p0) {
+                                      user_mobile_number = p0.toString();
                                       print(p0);
                                     },
                                   ),
@@ -162,6 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   AppwideTextField(
                                     hintText: 'Create a Password',
                                     onChanged: (p0) {
+                                      user_pass = p0.toString();
                                       print(p0);
                                     },
                                   ),
@@ -234,9 +241,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     num: -1,
                                     txt: 'Sign up',
                                     onTap: () {
-                                      print('sign up');
-                                      Navigator.of(context)
-                                          .pushReplacementNamed(Tabs.routeName);
+                                      return _submitFormSignUp();
+                                      // print('sign up');
+                                      // Navigator.of(context)
+                                      //     .pushReplacementNamed(Tabs.routeName);
                                     },
                                   ),
                                   Space(4.h),

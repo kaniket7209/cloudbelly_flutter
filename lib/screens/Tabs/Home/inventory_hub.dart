@@ -17,7 +17,7 @@ class InventoryHub extends StatefulWidget {
 }
 
 class _InventoryHubState extends State<InventoryHub> {
-  int _activeButtonIndex = 1;
+  // int _activeButtonIndex = 1;
 
   @override
   Widget build(BuildContext context) {
