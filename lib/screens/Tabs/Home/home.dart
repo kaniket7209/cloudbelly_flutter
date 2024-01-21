@@ -234,7 +234,7 @@ class _HomeState extends State<Home> {
                       TouchableOpacity(
                           onTap: () async {
                             final prefs = await SharedPreferences.getInstance();
-
+                            prefs.setInt('counter', 1);
                             final counter = prefs.getInt('counter') ?? 1;
 
                             if (counter < 4)
@@ -448,7 +448,7 @@ class InventoryForcastingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.only(top: 3.h, left: 5.w, right: 5.w, bottom: 2.h),
-        height: 23.h,
+        height: 24.h,
         width: double.infinity,
         decoration: ShapeDecoration(
           shadows: const [

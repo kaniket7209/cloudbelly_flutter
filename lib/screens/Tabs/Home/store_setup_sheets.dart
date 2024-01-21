@@ -103,81 +103,59 @@ class _Sheet1State extends State<Sheet1> {
 
   bool _isImageUploading = false;
   Position? _currentPosition;
-  Future<void> _getLocation() async {
-    final position = await _getCurrentLocation();
-    print(position);
-    // try {
-    //   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    //   if (!serviceEnabled) {
-    //     print('Location services are disabled.');
-    //     return;
-    //   }
-
-    //   LocationPermission permission = await Geolocator.checkPermission();
-    //   if (permission == LocationPermission.denied) {
-    //     permission = await Geolocator.requestPermission();
-    //     if (permission == LocationPermission.denied) {
-    //       print('Location permission denied.');
-    //       return;
-    //     }
-    //   }
-
-    //   _getCurrentPosition();
-    // } catch (e) {
-    //   print('Error in _getLocation: $e');
-    // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    this.initData();
   }
 
-  Future<Position?> _getCurrentLocation() async {
-    try {
-      // Check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        print('Location services are disabled.');
-        return null;
-      }
+  initData() async {
+    final hasPermission = await _handleLocationPermission();
 
-      // Check for location permissions
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          print('Location permissions are denied');
-          return null;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        // Permissions are denied forever, handle appropriately.
-        print(
-            'Location permissions are permanently denied, we cannot request permissions.');
-        return null;
-      }
-
-      // When permissions are granted, get the current position
-      return await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best);
-    } catch (e) {
-      // Handle any exceptions that occur during location fetching
-      print('Error getting location: $e');
-      return null;
-    }
-  }
-
-  Future<void> _getCurrentPosition() async {
-    try {
-      // LocationPermission permission = await Geolocator.checkPermission();
-
-      Position position = await Geolocator.getCurrentPosition(
-          // desiredAccuracy: LocationAccuracy.high,
-          );
-      // p
-      setState(() {
-        _currentPosition = position;
+    if (hasPermission)
+      await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .then((Position position) {
+        print(position);
+        setState(() => _currentPosition = position);
+      }).catchError((e) {
+        debugPrint(e);
       });
-    } catch (e) {
-      print('Error in _getCurrentPosition: $e');
+
+    if (_currentPosition != null) {
+      latitude = _currentPosition!.latitude.toString();
+      longitude = _currentPosition!.longitude.toString();
+    } else {}
+  }
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
+      return false;
     }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -274,28 +252,17 @@ class _Sheet1State extends State<Sheet1> {
                       hintText: 'Type store name here',
                       onChanged: (p0) {
                         store_name = p0.toString();
-                        // user_name = p0.toString();
-                        // print(user_name);
                       },
                     ),
                     Space(
                       3.h,
                     ),
-                    TouchableOpacity(
-                        onTap: () {
-                          return _getLocation();
-                        },
-                        child: TextWidgetStoreSetup(
-                            label: 'Where is your store located?')),
+                    TextWidgetStoreSetup(label: 'Where is your store located?'),
                     Space(1.h),
                     AppwideTextField(
-                      hintText: 'Choose your location',
+                      hintText: 'Enter your location',
                       onChanged: (p0) async {
                         location_details = p0.toString();
-                        await _getLocation();
-                        print(_currentPosition);
-                        // user_name = p0.toString();
-                        // print(user_name);
                       },
                     ),
                     Space(
@@ -452,7 +419,7 @@ class _Sheet2State extends State<Sheet2> {
 
   String fssai_licence_document = '';
 
-  Future<void> _SubmitForm() async {
+  Future<void> _SubmitForm({int num = 1}) async {
     final prefs = await SharedPreferences.getInstance();
     if (pan_number != '' && aadhar_number != '') {
       String msg = await HomeApi()
@@ -460,6 +427,7 @@ class _Sheet2State extends State<Sheet2> {
 
       if (msg == 'User information updated successfully.') {
         TOastNotification().showSuccesToast(context, 'KYC details updated');
+        if (num == 2) Navigator.of(context).pop();
         Navigator.of(context).pop();
         SlidingSheet().showAlertDialog(context, 3);
         prefs.setInt('counter', 3);
@@ -714,7 +682,7 @@ class _Sheet2State extends State<Sheet2> {
                                   Space(4.h),
                                   AppWideButton(
                                     onTap: () {
-                                      return _SubmitForm();
+                                      return _SubmitForm(num: 2);
                                     },
                                     num: 2,
                                     txt: 'Continue to payment details',

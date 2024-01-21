@@ -45,10 +45,14 @@ dependencies:
   figma_squircle: ^0.5.3
   flutter_map: ^6.1.0
   toastification: ^1.1.0
-  geolocator: ^8.0.5
+  geolocator: ^10.1.0
   # insta_assets_picker: ^2.2.1
   shared_preferences: ^2.2.2
-  permission_handler: ^11.1.0
+  # permission_handler: ^11.1.0
+  geocoding: ^2.1.1
+  flutter_carousel_widget: ^2.2.0
+  infinite_carousel: ^1.0.3
+  # multiple_images_picker: ^1.0.1
 
 dev_dependencies:
   flutter_test:
