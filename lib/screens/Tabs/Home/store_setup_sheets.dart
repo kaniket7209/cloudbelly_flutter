@@ -20,18 +20,28 @@ class SlidingSheet {
     showGeneralDialog(
         transitionBuilder: (context, a1, a2, widget) {
           final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.05;
-          return Transform(
-            transform: Matrix4.translationValues(0.0, -curvedValue * 500, 0.0),
-            child: Opacity(
-              opacity: a1.value,
-              child: AlertDialog(
-                insetPadding: EdgeInsets.zero,
-                contentPadding: EdgeInsets.zero,
-                content: num == 1
-                    ? Sheet1()
-                    : num == 2
-                        ? const Sheet2()
-                        : const Sheet3(),
+          return ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 400, // Set the maximum width to 800
+            ),
+            child: Transform(
+              transform:
+                  Matrix4.translationValues(0.0, -curvedValue * 500, 0.0),
+              child: Opacity(
+                opacity: a1.value,
+                child: AlertDialog(
+                    insetPadding: EdgeInsets.zero,
+                    contentPadding: EdgeInsets.zero,
+                    content: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 420, // Set the maximum width to 800
+                      ),
+                      child: num == 1
+                          ? Sheet1()
+                          : num == 2
+                              ? const Sheet2()
+                              : const Sheet3(),
+                    )),
               ),
             ),
           );

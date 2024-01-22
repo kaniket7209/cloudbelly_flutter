@@ -12,7 +12,7 @@ class AppwideTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       // rgba(165, 200, 199, 1),
-      decoration: ShapeDecoration(
+      decoration: const ShapeDecoration(
         shadows: [
           BoxShadow(
             offset: Offset(0, 4),
@@ -30,9 +30,9 @@ class AppwideTextField extends StatelessWidget {
       child: TextField(
         decoration: InputDecoration(
           fillColor: Colors.white,
-          contentPadding: EdgeInsets.only(left: 14),
+          contentPadding: const EdgeInsets.only(left: 14),
           hintText: hintText,
-          hintStyle: TextStyle(
+          hintStyle: const TextStyle(
               fontSize: 12,
               color: Color(0xFF0A4C61),
               fontFamily: 'Product Sans',

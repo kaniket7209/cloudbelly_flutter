@@ -1,5 +1,5 @@
 // ignore_for_file: must_be_immutable
-import 'package:cloudbelly_app/constants/globalVaribales.dart';
+
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
@@ -39,396 +39,466 @@ class _HomeState extends State<Home> {
                 Column(
                   children: [
                     Space(10.h),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 5.w),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CustomIconButton(
-                            ic: Icons.notifications,
-                            onTap: () {},
-                          ),
-                          Column(
-                            // mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const Space(15),
-                              Container(
-                                height: 70,
-                                width: 70,
-                                decoration: const ShapeDecoration(
-                                  shadows: [
-                                    BoxShadow(
-                                      offset: Offset(0, 4),
-                                      color: Color.fromRGBO(31, 111, 109, 0.6),
-                                      blurRadius: 20,
-                                    )
-                                  ],
-                                  shape: SmoothRectangleBorder(),
-                                ),
-                                child: ClipSmoothRect(
-                                  radius: SmoothBorderRadius(
-                                    cornerRadius: 15,
-                                    cornerSmoothing: 1,
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 800, // Set the maximum width to 800
+                      ),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 5.w),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CustomIconButton(
+                              ic: Icons.notifications,
+                              onTap: () {},
+                            ),
+                            Column(
+                              // mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Space(15),
+                                Container(
+                                  height: 70,
+                                  width: 70,
+                                  decoration: const ShapeDecoration(
+                                    shadows: [
+                                      BoxShadow(
+                                        offset: Offset(0, 4),
+                                        color:
+                                            Color.fromRGBO(31, 111, 109, 0.6),
+                                        blurRadius: 20,
+                                      )
+                                    ],
+                                    shape: SmoothRectangleBorder(),
                                   ),
-                                  child: Image.network(
-                                      'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj'),
+                                  child: ClipSmoothRect(
+                                    radius: SmoothBorderRadius(
+                                      cornerRadius: 15,
+                                      cornerSmoothing: 1,
+                                    ),
+                                    child: Image.network(
+                                        'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj'),
+                                  ),
                                 ),
-                              ),
-                              Space(2.h),
-                              const Text(
-                                'Geeta Kitchen',
-                                style: TextStyle(
-                                  color: Color(0xFF094B60),
-                                  fontSize: 14,
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.w700,
-                                  height: 0.10,
-                                  letterSpacing: 0.42,
-                                ),
-                              )
-                            ],
-                          ),
-                          CustomIconButton(
-                            ic: Icons.more_horiz,
-                            onTap: () {},
-                          ),
-                        ],
+                                Space(2.h),
+                                const Text(
+                                  'Geeta Kitchen',
+                                  style: TextStyle(
+                                    color: Color(0xFF094B60),
+                                    fontSize: 14,
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.w700,
+                                    height: 0.10,
+                                    letterSpacing: 0.42,
+                                  ),
+                                )
+                              ],
+                            ),
+                            CustomIconButton(
+                              ic: Icons.more_horiz,
+                              onTap: () {},
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    Space(3.h),
                     Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: 420, // Set the maximum width to 800
+                        ),
                         child: Container(
-                      height: 20.h,
-                      width: 90.w,
-                      decoration: ShapeDecoration(
-                        shadows: const [
-                          BoxShadow(
-                            offset: Offset(0, 4),
-                            color: Color.fromRGBO(165, 200, 199, 0.6),
-                            blurRadius: 25,
-                          )
-                        ],
-                        color: Colors.white,
-                        shape: SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius(
-                            cornerRadius: 10,
-                            cornerSmoothing: 1,
+                          margin: EdgeInsets.symmetric(horizontal: 5.w),
+                          child: Column(
+                            children: [
+                              Space(3.h),
+                              Center(
+                                  child: Container(
+                                height: 20.h,
+                                // width: 90.w,
+                                decoration: ShapeDecoration(
+                                  shadows: const [
+                                    BoxShadow(
+                                      offset: Offset(0, 4),
+                                      color: Color.fromRGBO(165, 200, 199, 0.6),
+                                      blurRadius: 25,
+                                    )
+                                  ],
+                                  color: Colors.white,
+                                  shape: SmoothRectangleBorder(
+                                    borderRadius: SmoothBorderRadius(
+                                      cornerRadius: 10,
+                                      cornerSmoothing: 1,
+                                    ),
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Space(3.h),
+                                    if (_activeButtonIndex == 1)
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          ColumnWidgetHomeScreen(
+                                            data: (4.9).toString(),
+                                            txt: 'Rating',
+                                          ),
+                                          ColumnWidgetHomeScreen(
+                                            data: (789).toString(),
+                                            txt: 'Followers',
+                                          ),
+                                          ColumnWidgetHomeScreen(
+                                            data: '+${43}',
+                                            txt: 'New followers',
+                                          )
+                                        ],
+                                      ),
+                                    if (_activeButtonIndex == 2)
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          ColumnWidgetHomeScreen(
+                                            data: (234).toString(),
+                                            txt: 'Total Customers',
+                                          ),
+                                          ColumnWidgetHomeScreen(
+                                            data: (789).toString(),
+                                            txt: 'Repeat Customers',
+                                          ),
+                                          ColumnWidgetHomeScreen(
+                                            data: '+${43}',
+                                            txt: 'New Customers',
+                                          )
+                                        ],
+                                      ),
+                                    if (_activeButtonIndex == 3)
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          ColumnWidgetHomeScreen(
+                                            data: (4.9).toString(),
+                                            txt: 'Unknown',
+                                          ),
+                                          ColumnWidgetHomeScreen(
+                                            data: (789).toString(),
+                                            txt: 'Unknown',
+                                          ),
+                                          ColumnWidgetHomeScreen(
+                                            data: (43).toString(),
+                                            txt: 'Unknown',
+                                          )
+                                        ],
+                                      ),
+                                    Space(3.h),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        TouchableOpacity(
+                                          onTap: () {
+                                            print('k');
+                                            print(100.w);
+                                            setState(() {
+                                              _activeButtonIndex = 1;
+                                            });
+                                          },
+                                          child: ButtonWidgetHomeScreen(
+                                            width: 100.w > 420 ? 7.w : 20.w,
+                                            txt: 'Social Status',
+                                            isActive: _activeButtonIndex == 1,
+                                          ),
+                                        ),
+                                        TouchableOpacity(
+                                          onTap: () {
+                                            setState(() {
+                                              _activeButtonIndex = 2;
+                                            });
+                                          },
+                                          child: ButtonWidgetHomeScreen(
+                                            width: 100.w > 420 ? 7.w : 20.w,
+                                            txt: 'Performance',
+                                            isActive: _activeButtonIndex == 2,
+                                          ),
+                                        ),
+                                        TouchableOpacity(
+                                          onTap: () {
+                                            setState(() {
+                                              _activeButtonIndex = 3;
+                                            });
+                                          },
+                                          child: ButtonWidgetHomeScreen(
+                                            width: 100.w > 420 ? 7.w : 20.w,
+                                            txt: 'Inventory',
+                                            isActive: _activeButtonIndex == 3,
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              )),
+                              Space(3.h),
+                              Container(
+                                margin: 100.w <= 420
+                                    ? EdgeInsets.only(left: 5.w, right: 5.w)
+                                    : EdgeInsets.only(
+                                        left: 0.5.w, right: 0.5.w),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const BoldTextWidgetHomeScreen(
+                                        txt: 'Tools & essentials'),
+                                    Space(2.h),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        TouchableOpacity(
+                                            onTap: () async {
+                                              final prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              prefs.setInt('counter', 1);
+                                              final counter =
+                                                  prefs.getInt('counter') ?? 1;
+
+                                              if (counter < 4)
+                                                return SlidingSheet()
+                                                    .showAlertDialog(
+                                                        context, counter);
+                                              else {
+                                                TOastNotification()
+                                                    .showSuccesToast(
+                                                        context, 'All Set ');
+                                              }
+                                            },
+                                            child: ToolsButtonWidgetHomeSCreen(
+                                                width:
+                                                    100.w <= 420 ? 16.w : 5.w,
+                                                txt: 'Setup Store')),
+                                        ToolsButtonWidgetHomeSCreen(
+                                          width: 100.w <= 420 ? 16.w : 5.w,
+                                          txt: 'Photos & Videos',
+                                        ),
+                                        TouchableOpacity(
+                                            onTap: () {
+                                              return Navigator.of(context)
+                                                  .pushNamed(
+                                                      InventoryHub.routeName);
+                                            },
+                                            child: ToolsButtonWidgetHomeSCreen(
+                                              width: 100.w <= 420 ? 16.w : 5.w,
+                                              txt: 'Inventory Manage',
+                                            )),
+                                        ToolsButtonWidgetHomeSCreen(
+                                          width: 100.w <= 420 ? 16.w : 5.w,
+                                          txt: 'Upload Menu',
+                                        ),
+                                        ToolsButtonWidgetHomeSCreen(
+                                          width: 100.w <= 420 ? 16.w : 5.w,
+                                          txt: 'Dashboard',
+                                        ),
+                                      ],
+                                    ),
+                                    Space(3.h),
+                                    Center(
+                                      child: Card(
+                                        elevation: 10,
+                                        child: Container(
+                                            height: 6.h,
+                                            width: 75.w,
+                                            padding: EdgeInsets.only(
+                                                left: 1.w, right: 1.w),
+                                            decoration: ShapeDecoration(
+                                              color: Colors.white,
+                                              shape: SmoothRectangleBorder(
+                                                borderRadius:
+                                                    SmoothBorderRadius(
+                                                  cornerRadius: 10,
+                                                  cornerSmoothing: 1,
+                                                ),
+                                              ),
+                                            ),
+                                            child: const Center(
+                                              child: Text.rich(
+                                                TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: 'Gaon',
+                                                      style: TextStyle(
+                                                        color:
+                                                            Color(0xFF0A4C61),
+                                                        fontSize: 24,
+                                                        fontFamily: 'Jost',
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        letterSpacing: 0.24,
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text: 'FRESH',
+                                                      style: TextStyle(
+                                                        color:
+                                                            Color(0xFF63AFC7),
+                                                        fontSize: 24,
+                                                        fontFamily: 'Jost',
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        letterSpacing: 0.24,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )),
+                                      ),
+                                    ),
+                                    Space(3.h),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const BoldTextWidgetHomeScreen(
+                                            txt: 'Inventory forecasting'),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              'Expand',
+                                              style: GoogleFonts.ptSans(
+                                                  color: const Color.fromRGBO(
+                                                      10, 76, 97, 1),
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 12),
+                                            ),
+                                            Container(
+                                              height: 2,
+                                              width: 45,
+                                              color: const Color.fromRGBO(
+                                                  250, 110, 0, 1),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                    Space(2.h),
+                                    InventoryForcastingWidget(isBuy: true),
+                                    Space(3.h),
+                                    const BoldTextWidgetHomeScreen(
+                                        txt: 'Inventory based recipe'),
+                                    Space(1.5.h),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: SizedBox(
+                                        height: 18.h,
+                                        child: Center(
+                                          child: Row(
+                                            children: [
+                                              InvetoryBasedReciepeWidget(),
+                                              InvetoryBasedReciepeWidget(),
+                                              InvetoryBasedReciepeWidget(),
+                                              InvetoryBasedReciepeWidget(),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Space(3.h),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const BoldTextWidgetHomeScreen(
+                                            txt: 'Inventory wastage'),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              'Expand',
+                                              style: GoogleFonts.ptSans(
+                                                  color: const Color.fromRGBO(
+                                                      10, 76, 97, 1),
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 12),
+                                            ),
+                                            Container(
+                                              height: 2,
+                                              width: 45,
+                                              color: const Color.fromRGBO(
+                                                  250, 110, 0, 1),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                    Space(2.h),
+                                    InventoryForcastingWidget(
+                                      isBuy: false,
+                                    ),
+                                    Space(3.h),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const BoldTextWidgetHomeScreen(
+                                            txt: 'Reselling marketplace'),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              'Expand',
+                                              style: GoogleFonts.ptSans(
+                                                  color: const Color.fromRGBO(
+                                                      10, 76, 97, 1),
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 12),
+                                            ),
+                                            Container(
+                                              height: 2,
+                                              width: 45,
+                                              color: const Color.fromRGBO(
+                                                  250, 110, 0, 1),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                    Space(1.h),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: SizedBox(
+                                        height: 18.h,
+                                        child: Center(
+                                          child: Row(
+                                            children: [
+                                              InvetoryBasedReciepeWidget(
+                                                isResell: true,
+                                              ),
+                                              InvetoryBasedReciepeWidget(
+                                                isResell: true,
+                                              ),
+                                              InvetoryBasedReciepeWidget(
+                                                isResell: true,
+                                              ),
+                                              InvetoryBasedReciepeWidget(
+                                                isResell: true,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      child: Column(
-                        children: [
-                          Space(3.h),
-                          if (_activeButtonIndex == 1)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ColumnWidgetHomeScreen(
-                                  data: (4.9).toString(),
-                                  txt: 'Rating',
-                                ),
-                                ColumnWidgetHomeScreen(
-                                  data: (789).toString(),
-                                  txt: 'Followers',
-                                ),
-                                ColumnWidgetHomeScreen(
-                                  data: '+${43}',
-                                  txt: 'New followers',
-                                )
-                              ],
-                            ),
-                          if (_activeButtonIndex == 2)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ColumnWidgetHomeScreen(
-                                  data: (234).toString(),
-                                  txt: 'Total Customers',
-                                ),
-                                ColumnWidgetHomeScreen(
-                                  data: (789).toString(),
-                                  txt: 'Repeat Customers',
-                                ),
-                                ColumnWidgetHomeScreen(
-                                  data: '+${43}',
-                                  txt: 'New Customers',
-                                )
-                              ],
-                            ),
-                          if (_activeButtonIndex == 3)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ColumnWidgetHomeScreen(
-                                  data: (4.9).toString(),
-                                  txt: 'Unknown',
-                                ),
-                                ColumnWidgetHomeScreen(
-                                  data: (789).toString(),
-                                  txt: 'Unknown',
-                                ),
-                                ColumnWidgetHomeScreen(
-                                  data: (43).toString(),
-                                  txt: 'Unknown',
-                                )
-                              ],
-                            ),
-                          Space(3.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              TouchableOpacity(
-                                onTap: () {
-                                  setState(() {
-                                    _activeButtonIndex = 1;
-                                  });
-                                },
-                                child: ButtonWidgetHomeScreen(
-                                  txt: 'Social Status',
-                                  isActive: _activeButtonIndex == 1,
-                                ),
-                              ),
-                              TouchableOpacity(
-                                onTap: () {
-                                  setState(() {
-                                    _activeButtonIndex = 2;
-                                  });
-                                },
-                                child: ButtonWidgetHomeScreen(
-                                  txt: 'Performance',
-                                  isActive: _activeButtonIndex == 2,
-                                ),
-                              ),
-                              TouchableOpacity(
-                                onTap: () {
-                                  setState(() {
-                                    _activeButtonIndex = 3;
-                                  });
-                                },
-                                child: ButtonWidgetHomeScreen(
-                                  txt: 'Inventory',
-                                  isActive: _activeButtonIndex == 3,
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ))
+                    )
                   ],
                 )
               ],
-            ),
-            Space(3.h),
-            Container(
-              margin: EdgeInsets.only(left: 5.w, right: 5.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const BoldTextWidgetHomeScreen(txt: 'Tools & essentials'),
-                  Space(2.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TouchableOpacity(
-                          onTap: () async {
-                            final prefs = await SharedPreferences.getInstance();
-                            prefs.setInt('counter', 1);
-                            final counter = prefs.getInt('counter') ?? 1;
-
-                            if (counter < 4)
-                              return SlidingSheet()
-                                  .showAlertDialog(context, counter);
-                            else {
-                              TOastNotification()
-                                  .showSuccesToast(context, 'All Set ');
-                            }
-                          },
-                          child:
-                              ToolsButtonWidgetHomeSCreen(txt: 'Setup Store')),
-                      ToolsButtonWidgetHomeSCreen(txt: 'Photos & Videos'),
-                      TouchableOpacity(
-                          onTap: () {
-                            return Navigator.of(context)
-                                .pushNamed(InventoryHub.routeName);
-                          },
-                          child: ToolsButtonWidgetHomeSCreen(
-                              txt: 'Inventory Manage')),
-                      ToolsButtonWidgetHomeSCreen(txt: 'Upload Menu'),
-                      ToolsButtonWidgetHomeSCreen(txt: 'Dashboard'),
-                    ],
-                  ),
-                  Space(3.h),
-                  Center(
-                    child: Card(
-                      elevation: 10,
-                      child: Container(
-                          height: 6.h,
-                          width: 75.w,
-                          padding: EdgeInsets.only(left: 1.w, right: 1.w),
-                          decoration: ShapeDecoration(
-                            color: Colors.white,
-                            shape: SmoothRectangleBorder(
-                              borderRadius: SmoothBorderRadius(
-                                cornerRadius: 10,
-                                cornerSmoothing: 1,
-                              ),
-                            ),
-                          ),
-                          child: const Center(
-                            child: Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'Gaon',
-                                    style: TextStyle(
-                                      color: Color(0xFF0A4C61),
-                                      fontSize: 24,
-                                      fontFamily: 'Jost',
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.24,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: 'FRESH',
-                                    style: TextStyle(
-                                      color: Color(0xFF63AFC7),
-                                      fontSize: 24,
-                                      fontFamily: 'Jost',
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.24,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )),
-                    ),
-                  ),
-                  Space(3.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const BoldTextWidgetHomeScreen(
-                          txt: 'Inventory forecasting'),
-                      Column(
-                        children: [
-                          Text(
-                            'Expand',
-                            style: GoogleFonts.ptSans(
-                                color: const Color.fromRGBO(10, 76, 97, 1),
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12),
-                          ),
-                          Container(
-                            height: 2,
-                            width: 45,
-                            color: const Color.fromRGBO(250, 110, 0, 1),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  Space(2.h),
-                  InventoryForcastingWidget(isBuy: true),
-                  Space(3.h),
-                  const BoldTextWidgetHomeScreen(txt: 'Inventory based recipe'),
-                  Space(1.5.h),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      height: 18.h,
-                      child: Center(
-                        child: Row(
-                          children: [
-                            InvetoryBasedReciepeWidget(),
-                            InvetoryBasedReciepeWidget(),
-                            InvetoryBasedReciepeWidget(),
-                            InvetoryBasedReciepeWidget(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Space(3.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const BoldTextWidgetHomeScreen(txt: 'Inventory wastage'),
-                      Column(
-                        children: [
-                          Text(
-                            'Expand',
-                            style: GoogleFonts.ptSans(
-                                color: const Color.fromRGBO(10, 76, 97, 1),
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12),
-                          ),
-                          Container(
-                            height: 2,
-                            width: 45,
-                            color: const Color.fromRGBO(250, 110, 0, 1),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  Space(2.h),
-                  InventoryForcastingWidget(
-                    isBuy: false,
-                  ),
-                  Space(3.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const BoldTextWidgetHomeScreen(
-                          txt: 'Reselling marketplace'),
-                      Column(
-                        children: [
-                          Text(
-                            'Expand',
-                            style: GoogleFonts.ptSans(
-                                color: const Color.fromRGBO(10, 76, 97, 1),
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12),
-                          ),
-                          Container(
-                            height: 2,
-                            width: 45,
-                            color: const Color.fromRGBO(250, 110, 0, 1),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  Space(1.h),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      height: 18.h,
-                      child: Center(
-                        child: Row(
-                          children: [
-                            InvetoryBasedReciepeWidget(
-                              isResell: true,
-                            ),
-                            InvetoryBasedReciepeWidget(
-                              isResell: true,
-                            ),
-                            InvetoryBasedReciepeWidget(
-                              isResell: true,
-                            ),
-                            InvetoryBasedReciepeWidget(
-                              isResell: true,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),
@@ -823,16 +893,18 @@ class BoldTextWidgetHomeScreen extends StatelessWidget {
 }
 
 class ToolsButtonWidgetHomeSCreen extends StatelessWidget {
+  double width;
   final String txt;
   ToolsButtonWidgetHomeSCreen({
     required this.txt,
+    required this.width,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 10.h,
-      width: 15.w,
+      height: 11.h,
+      width: width,
       padding: EdgeInsets.only(
         left: 1.w,
         right: 1.w,

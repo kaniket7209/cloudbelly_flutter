@@ -1,13 +1,7 @@
 # This is a generated file; do not edit or check into version control.
-desktop_webview_auth=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\desktop_webview_auth-0.0.14\\
 file_selector_linux=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\file_selector_linux-0.9.2+1\\
 file_selector_macos=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\file_selector_macos-0.9.3+3\\
 file_selector_windows=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\file_selector_windows-0.9.3+1\\
-firebase_auth=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\firebase_auth-4.16.0\\
-firebase_auth_web=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\firebase_auth_web-5.8.13\\
-firebase_core=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\firebase_core-2.24.2\\
-firebase_core_web=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\firebase_core_web-2.10.0\\
-firebase_dynamic_links=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\firebase_dynamic_links-5.4.8\\
 flutter_plugin_android_lifecycle=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_plugin_android_lifecycle-2.0.17\\
 geocoding=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\geocoding-2.1.1\\
 geocoding_android=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\geocoding_android-2.1.2\\
@@ -17,10 +11,6 @@ geolocator_android=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev
 geolocator_apple=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\geolocator_apple-2.3.5\\
 geolocator_web=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\geolocator_web-2.2.0\\
 geolocator_windows=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\geolocator_windows-0.2.2\\
-google_sign_in=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\google_sign_in-6.2.1\\
-google_sign_in_android=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\google_sign_in_android-6.1.21\\
-google_sign_in_ios=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\google_sign_in_ios-5.7.3\\
-google_sign_in_web=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\google_sign_in_web-0.12.3+2\\
 image_picker=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\image_picker-1.0.7\\
 image_picker_android=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\image_picker_android-0.8.9+3\\
 image_picker_for_web=C:\\Users\\rk621\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\image_picker_for_web-3.0.2\\

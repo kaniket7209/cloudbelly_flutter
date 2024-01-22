@@ -52,35 +52,18 @@ class AppWideButton extends StatelessWidget {
             ),
           ),
           child: Center(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (num > 0)
-                Container(
-                  height: 4.h,
-                  width: 35,
-                  decoration: const ShapeDecoration(
-                    color: Colors.white,
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius.all(
-                          SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
-                    ),
-                  ),
-                ),
-              if (num > 0) Space(isHorizontal: true, num == 2 ? 10.w : 15.w),
-              Text(
-                txt,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontFamily: 'Product Sans',
-                  fontWeight: FontWeight.w700,
-                  height: 0,
-                  letterSpacing: 0.16,
-                ),
+            child: Text(
+              txt,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w700,
+                height: 0,
+                letterSpacing: 0.16,
               ),
-            ],
-          )),
+            ),
+          ),
         ),
       ),
     );

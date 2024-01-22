@@ -10,17 +10,25 @@ class AppwideBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: 100.w,
-        height: height == 300 ? 30.h : height,
-        decoration: ShapeDecoration(
-          color: Color(0xFFB1D9D8),
-          shape: SmoothRectangleBorder(
-            borderRadius: SmoothBorderRadius.only(
-                bottomLeft: SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                bottomRight:
-                    SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
-          ),
-        ));
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 800, // Set the maximum width to 800
+        ),
+        child: Container(
+            width: 100.w,
+            height: height == 300 ? 30.h : height,
+            decoration: ShapeDecoration(
+              color: Color(0xFFB1D9D8),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.only(
+                    bottomLeft:
+                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                    bottomRight:
+                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+              ),
+            )),
+      ),
+    );
   }
 }
