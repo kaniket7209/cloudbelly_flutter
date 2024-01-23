@@ -106,10 +106,10 @@ class _ProfileState extends State<Profile> {
                               //   'https://yt3.googleusercontent.com/Gvn-OAu94UsSQPp5zEMpC2ZMY3Yv1wUNbFaqkfBAYpXRLROA_nz3lS-Y9jQKJ3SGNVKX81xSpRM=s176-c-k-c0x00ffffff-no-rj',
                               //   'https://yt3.googleusercontent.com/zgMN9BuSQByG1SrpmLwcNB3MQhjDhS_pl9H1h7TaRievMfS4UpU7Z36j77z5_hnIW4N8uFX3NA=s176-c-k-c0x00ffffff-no-rj'
                               // ];
-                              if (url.length == 0)
+                              if (url.length == 0) {
                                 TOastNotification().showErrorToast(
                                     context, 'Error While Uploading Image');
-                              else if (url.contains('file size very large'))
+                              } else if (url.contains('file size very large'))
                                 TOastNotification().showErrorToast(
                                     context, 'file size very large');
                               else if (!url.contains('element'))

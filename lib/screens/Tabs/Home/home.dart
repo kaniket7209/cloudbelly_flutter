@@ -108,7 +108,7 @@ class _HomeState extends State<Home> {
                           maxWidth: 420, // Set the maximum width to 800
                         ),
                         child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 5.w),
+                          margin: EdgeInsets.symmetric(horizontal: 3.w),
                           child: Column(
                             children: [
                               Space(3.h),
@@ -206,7 +206,7 @@ class _HomeState extends State<Home> {
                                             });
                                           },
                                           child: ButtonWidgetHomeScreen(
-                                            width: 100.w > 420 ? 7.w : 20.w,
+                                            width: 25.w ,
                                             txt: 'Social Status',
                                             isActive: _activeButtonIndex == 1,
                                           ),
@@ -218,7 +218,7 @@ class _HomeState extends State<Home> {
                                             });
                                           },
                                           child: ButtonWidgetHomeScreen(
-                                            width: 100.w > 420 ? 7.w : 20.w,
+                                            width: 100.w > 420 ? 30.w : 20.w,
                                             txt: 'Performance',
                                             isActive: _activeButtonIndex == 2,
                                           ),
@@ -230,7 +230,7 @@ class _HomeState extends State<Home> {
                                             });
                                           },
                                           child: ButtonWidgetHomeScreen(
-                                            width: 100.w > 420 ? 7.w : 20.w,
+                                            width: 100.w > 420 ? 30.w : 20.w,
                                             txt: 'Inventory',
                                             isActive: _activeButtonIndex == 3,
                                           ),
@@ -265,11 +265,11 @@ class _HomeState extends State<Home> {
                                               final counter =
                                                   prefs.getInt('counter') ?? 1;
 
-                                              if (counter < 4)
+                                              if (counter < 4) {
                                                 return SlidingSheet()
                                                     .showAlertDialog(
                                                         context, counter);
-                                              else {
+                                              } else {
                                                 TOastNotification()
                                                     .showSuccesToast(
                                                         context, 'All Set ');
@@ -277,10 +277,10 @@ class _HomeState extends State<Home> {
                                             },
                                             child: ToolsButtonWidgetHomeSCreen(
                                                 width:
-                                                    100.w <= 420 ? 16.w : 5.w,
+                                                    15.w,
                                                 txt: 'Setup Store')),
                                         ToolsButtonWidgetHomeSCreen(
-                                          width: 100.w <= 420 ? 16.w : 5.w,
+                                          width: 15.w,
                                           txt: 'Photos & Videos',
                                         ),
                                         TouchableOpacity(
@@ -290,15 +290,14 @@ class _HomeState extends State<Home> {
                                                       InventoryHub.routeName);
                                             },
                                             child: ToolsButtonWidgetHomeSCreen(
-                                              width: 100.w <= 420 ? 16.w : 5.w,
-                                              txt: 'Inventory Manage',
+width: 15.w,                                              txt: 'Inventory Manage',
                                             )),
                                         ToolsButtonWidgetHomeSCreen(
-                                          width: 100.w <= 420 ? 16.w : 5.w,
+                                          width: 15.w,
                                           txt: 'Upload Menu',
                                         ),
                                         ToolsButtonWidgetHomeSCreen(
-                                          width: 100.w <= 420 ? 16.w : 5.w,
+                                          width: 15.w,
                                           txt: 'Dashboard',
                                         ),
                                       ],
@@ -826,7 +825,7 @@ class InvetoryBasedReciepeWidget extends StatelessWidget {
                     ),
                     Container(
                       height: 2,
-                      width: 18.w,
+                      width: 15.w,
                       color: const Color.fromRGBO(250, 110, 0, 1),
                     )
                   ],
@@ -1028,8 +1027,8 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
           child: Text(
         txt,
         style: TextStyle(
-          color: isActive ? Colors.white : Colors.black,
-          fontSize: isActive ? 14 : 12,
+          color: isActive ? Colors.white : Color(0xff0A4C61),
+          fontSize: 3.w,
           fontFamily: 'Product Sans',
           fontWeight: FontWeight.w700,
           height: 0,

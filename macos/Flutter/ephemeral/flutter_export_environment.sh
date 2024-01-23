@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=C:\Users\rk621\Documents\Development\sdks\flutter"
-export "FLUTTER_APPLICATION_PATH=C:\Users\rk621\Documents\Development\cloudbelly\cloudbelly_app"
+export "FLUTTER_ROOT=/Users/aniketkumarsingh/flutter"
+export "FLUTTER_APPLICATION_PATH=/Users/aniketkumarsingh/Desktop/cloudbelly/flutter_cloudbelly/cloudbelly_flutter"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"
