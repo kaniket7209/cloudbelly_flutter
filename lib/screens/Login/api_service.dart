@@ -12,6 +12,7 @@ class AuthApi {
   }
 
   String user_id = '';
+  String user_email = '';
 
   String get_user_id() {
     return user_id;
@@ -73,6 +74,7 @@ class AuthApi {
       print(response.statusCode);
 
       user_id = jsonDecode((response.body))['user_id'];
+      user_email = jsonDecode((response.body))['email'];
       print(user_id);
       return jsonDecode((response.body))['message'];
     } catch (error) {

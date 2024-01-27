@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/api_services_profile_page.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
@@ -362,213 +363,214 @@ class FeedWidget extends StatelessWidget {
         data['multiple_files'] != null && data['multiple_files'].length != 0;
     return TouchableOpacity(
       onTap: () {
-        showModalBottomSheet(
-          // useSafeArea: true,
+        Navigator.of(context).pushNamed(PostsScreen.routeName);
+        // showModalBottomSheet(
+        //   // useSafeArea: true,
 
-          context: context,
-          isScrollControlled: true,
+        //   context: context,
+        //   isScrollControlled: true,
 
-          builder: (BuildContext context) {
-            return Container(
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
-                ),
-              ),
-              height: MediaQuery.of(context).size.height * 0.5,
-              width: double.infinity,
-              padding: EdgeInsets.only(
-                  left: 10.w, right: 10.w, top: 2.h, bottom: 2.h),
-              child: SingleChildScrollView(
-                  child: Column(
-                children: [
-                  TouchableOpacity(
-                    onTap: () {
-                      return Navigator.of(context).pop();
-                    },
-                    child: Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 1.h, horizontal: 3.w),
-                        width: 65,
-                        height: 9,
-                        decoration: ShapeDecoration(
-                          color: const Color(0xFFFA6E00),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6)),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Space(4.h),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '<<',
-                          style: TextStyle(
-                            color: Color(0xFFFA6E00),
-                            fontSize: 22,
-                            fontFamily: 'Kavoon',
-                            fontWeight: FontWeight.w400,
-                            height: 0.04,
-                            letterSpacing: 0.66,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        'Your Post',
-                        style: TextStyle(
-                          color: Color(0xFF094B60),
-                          fontSize: 22,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w700,
-                          height: 0.04,
-                          letterSpacing: 0.66,
-                        ),
-                      )
-                    ],
-                  ),
-                  Space(3.h),
-                  !_isMultiple
-                      ? Center(
-                          child: Container(
-                            height: 200,
-                            width: 200,
-                            decoration: const ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                  offset: Offset(0, 4),
-                                  color: Color.fromRGBO(124, 193, 191, 0.3),
-                                  blurRadius: 20,
-                                )
-                              ],
-                              shape: SmoothRectangleBorder(),
-                            ),
-                            child: ClipSmoothRect(
-                              radius: SmoothBorderRadius(
-                                cornerRadius: 15,
-                                cornerSmoothing: 1,
-                              ),
-                              child: Image.network(data['file_path']),
-                            ),
-                          ),
-                        )
-                      : Center(
-                          child: FlutterCarousel(
-                            items: (data['multiple_files'] as List<dynamic>)
-                                .map<Widget>((url) {
-                              return Container(
-                                // height: 15.h,
-                                decoration: const ShapeDecoration(
-                                  shadows: [
-                                    BoxShadow(
-                                      offset: Offset(0, 4),
-                                      color: Color.fromRGBO(124, 193, 191, 0.3),
-                                      blurRadius: 20,
-                                    )
-                                  ],
-                                  shape: SmoothRectangleBorder(),
-                                ),
-                                child: ClipSmoothRect(
-                                  radius: SmoothBorderRadius(
-                                    cornerRadius: 15,
-                                    cornerSmoothing: 1,
-                                  ),
-                                  child: AspectRatio(
-                                    aspectRatio: 1,
-                                    child: Image.network(
-                                      url,
+        //   builder: (BuildContext context) {
+        //     return Container(
+        //       decoration: ShapeDecoration(
+        //         color: Colors.white,
+        //         shape: SmoothRectangleBorder(
+        //           borderRadius: SmoothBorderRadius.only(
+        //               topLeft:
+        //                   SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+        //               topRight:
+        //                   SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+        //         ),
+        //       ),
+        //       height: MediaQuery.of(context).size.height * 0.5,
+        //       width: double.infinity,
+        //       padding: EdgeInsets.only(
+        //           left: 10.w, right: 10.w, top: 2.h, bottom: 2.h),
+        //       child: SingleChildScrollView(
+        //           child: Column(
+        //         children: [
+        //           TouchableOpacity(
+        //             onTap: () {
+        //               return Navigator.of(context).pop();
+        //             },
+        //             child: Center(
+        //               child: Container(
+        //                 padding: EdgeInsets.symmetric(
+        //                     vertical: 1.h, horizontal: 3.w),
+        //                 width: 65,
+        //                 height: 9,
+        //                 decoration: ShapeDecoration(
+        //                   color: const Color(0xFFFA6E00),
+        //                   shape: RoundedRectangleBorder(
+        //                       borderRadius: BorderRadius.circular(6)),
+        //                 ),
+        //               ),
+        //             ),
+        //           ),
+        //           Space(4.h),
+        //           Row(
+        //             children: [
+        //               Padding(
+        //                 padding: const EdgeInsets.all(8.0),
+        //                 child: Text(
+        //                   '<<',
+        //                   style: TextStyle(
+        //                     color: Color(0xFFFA6E00),
+        //                     fontSize: 22,
+        //                     fontFamily: 'Kavoon',
+        //                     fontWeight: FontWeight.w400,
+        //                     height: 0.04,
+        //                     letterSpacing: 0.66,
+        //                   ),
+        //                 ),
+        //               ),
+        //               Text(
+        //                 'Your Post',
+        //                 style: TextStyle(
+        //                   color: Color(0xFF094B60),
+        //                   fontSize: 22,
+        //                   fontFamily: 'Product Sans',
+        //                   fontWeight: FontWeight.w700,
+        //                   height: 0.04,
+        //                   letterSpacing: 0.66,
+        //                 ),
+        //               )
+        //             ],
+        //           ),
+        //           Space(3.h),
+        //           !_isMultiple
+        //               ? Center(
+        //                   child: Container(
+        //                     height: 200,
+        //                     width: 200,
+        //                     decoration: const ShapeDecoration(
+        //                       shadows: [
+        //                         BoxShadow(
+        //                           offset: Offset(0, 4),
+        //                           color: Color.fromRGBO(124, 193, 191, 0.3),
+        //                           blurRadius: 20,
+        //                         )
+        //                       ],
+        //                       shape: SmoothRectangleBorder(),
+        //                     ),
+        //                     child: ClipSmoothRect(
+        //                       radius: SmoothBorderRadius(
+        //                         cornerRadius: 15,
+        //                         cornerSmoothing: 1,
+        //                       ),
+        //                       child: Image.network(data['file_path']),
+        //                     ),
+        //                   ),
+        //                 )
+        //               : Center(
+        //                   child: FlutterCarousel(
+        //                     items: (data['multiple_files'] as List<dynamic>)
+        //                         .map<Widget>((url) {
+        //                       return Container(
+        //                         // height: 15.h,
+        //                         decoration: const ShapeDecoration(
+        //                           shadows: [
+        //                             BoxShadow(
+        //                               offset: Offset(0, 4),
+        //                               color: Color.fromRGBO(124, 193, 191, 0.3),
+        //                               blurRadius: 20,
+        //                             )
+        //                           ],
+        //                           shape: SmoothRectangleBorder(),
+        //                         ),
+        //                         child: ClipSmoothRect(
+        //                           radius: SmoothBorderRadius(
+        //                             cornerRadius: 15,
+        //                             cornerSmoothing: 1,
+        //                           ),
+        //                           child: AspectRatio(
+        //                             aspectRatio: 1,
+        //                             child: Image.network(
+        //                               url,
 
-                                      fit: BoxFit
-                                          .cover, // Adjust the fit as needed
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                            options: CarouselOptions(
-                              autoPlay: false,
-                              controller: buttonCarouselController,
-                              enlargeCenterPage: true,
-                              viewportFraction: 0.9,
-                              aspectRatio: 2.0,
-                              initialPage: 0,
-                            ),
-                          ),
-                        ),
-                  Space(3.h),
-                  Row(
-                    children: [
-                      Text(
-                        'User_name :',
-                        style: TextStyle(
-                          color: Color(0xFF0A4C61),
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w700,
-                          height: 0,
-                          letterSpacing: 0.14,
-                        ),
-                      ),
-                      Space(isHorizontal: true, 4.w),
-                      Text(
-                        data['caption'],
-                        style: TextStyle(
-                          color: Color(0xFF0A4C61),
-                          fontSize: 12,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w400,
-                          height: 0,
-                          letterSpacing: 0.12,
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'Hastags :',
-                        style: TextStyle(
-                          color: Color(0xFF0A4C61),
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w700,
-                          height: 0,
-                          letterSpacing: 0.14,
-                        ),
-                      ),
-                      Space(isHorizontal: true, 4.w),
-                      for (int i = 0;
-                          i < (data['tags'] as List<dynamic>).length;
-                          i++)
-                        Container(
-                          padding: EdgeInsets.only(right: 3.w),
-                          child: Text(
-                            data['tags'][i],
-                            style: TextStyle(
-                              color: Color(0xFF0A4C61),
-                              fontSize: 12,
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w400,
-                              height: 0,
-                              letterSpacing: 0.12,
-                            ),
-                          ),
-                        )
-                    ],
-                  )
-                ],
-              )),
-            );
-          },
-        );
+        //                               fit: BoxFit
+        //                                   .cover, // Adjust the fit as needed
+        //                             ),
+        //                           ),
+        //                         ),
+        //                       );
+        //                     }).toList(),
+        //                     options: CarouselOptions(
+        //                       autoPlay: false,
+        //                       controller: buttonCarouselController,
+        //                       enlargeCenterPage: true,
+        //                       viewportFraction: 0.9,
+        //                       aspectRatio: 2.0,
+        //                       initialPage: 0,
+        //                     ),
+        //                   ),
+        //                 ),
+        //           Space(3.h),
+        //           Row(
+        //             children: [
+        //               Text(
+        //                 'User_name :',
+        //                 style: TextStyle(
+        //                   color: Color(0xFF0A4C61),
+        //                   fontSize: 14,
+        //                   fontFamily: 'Product Sans',
+        //                   fontWeight: FontWeight.w700,
+        //                   height: 0,
+        //                   letterSpacing: 0.14,
+        //                 ),
+        //               ),
+        //               Space(isHorizontal: true, 4.w),
+        //               Text(
+        //                 data['caption'],
+        //                 style: TextStyle(
+        //                   color: Color(0xFF0A4C61),
+        //                   fontSize: 12,
+        //                   fontFamily: 'Product Sans',
+        //                   fontWeight: FontWeight.w400,
+        //                   height: 0,
+        //                   letterSpacing: 0.12,
+        //                 ),
+        //               )
+        //             ],
+        //           ),
+        //           Row(
+        //             children: [
+        //               Text(
+        //                 'Hastags :',
+        //                 style: TextStyle(
+        //                   color: Color(0xFF0A4C61),
+        //                   fontSize: 14,
+        //                   fontFamily: 'Product Sans',
+        //                   fontWeight: FontWeight.w700,
+        //                   height: 0,
+        //                   letterSpacing: 0.14,
+        //                 ),
+        //               ),
+        //               Space(isHorizontal: true, 4.w),
+        //               for (int i = 0;
+        //                   i < (data['tags'] as List<dynamic>).length;
+        //                   i++)
+        //                 Container(
+        //                   padding: EdgeInsets.only(right: 3.w),
+        //                   child: Text(
+        //                     data['tags'][i],
+        //                     style: TextStyle(
+        //                       color: Color(0xFF0A4C61),
+        //                       fontSize: 12,
+        //                       fontFamily: 'Product Sans',
+        //                       fontWeight: FontWeight.w400,
+        //                       height: 0,
+        //                       letterSpacing: 0.12,
+        //                     ),
+        //                   ),
+        //                 )
+        //             ],
+        //           )
+        //         ],
+        //       )),
+        //     );
+        //   },
+        // );
       },
       child: Stack(
         children: [

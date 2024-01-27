@@ -157,4 +157,64 @@ class HomeApi {
       return "";
     }
   }
+
+  Future<dynamic> getSheetUrl() async {
+    final String url = 'https://app.cloudbelly.in/inventory/get-sheet';
+
+    print(AuthApi().user_id);
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': AuthApi().user_id,
+      'user_email': AuthApi().user_email, //email id here
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Accept': '*/*',
+          'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+      print(response.body);
+      print(response.statusCode);
+      return jsonDecode((response.body));
+    } catch (error) {
+      // Handle exceptions
+      print('Error: $error');
+      return '-1';
+    }
+  }
+
+  Future<dynamic> SyncInventory() async {
+    final String url = 'https://app.cloudbelly.in/inventory/sync';
+
+    print(AuthApi().user_id);
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': AuthApi().user_id,
+      'user_email': AuthApi().user_email, //email id here
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Accept': '*/*',
+          'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+      print(response.body);
+      print(response.statusCode);
+      return jsonDecode((response.body));
+    } catch (error) {
+      // Handle exceptions
+      print('Error: $error');
+      return '-1';
+    }
+  }
 }

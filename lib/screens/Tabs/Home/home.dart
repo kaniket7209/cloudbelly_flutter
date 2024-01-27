@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
@@ -161,15 +162,15 @@ class _HomeState extends State<Home> {
                                         children: [
                                           ColumnWidgetHomeScreen(
                                             data: (234).toString(),
-                                            txt: 'Total Customers',
+                                            txt: 'Stock health',
                                           ),
                                           ColumnWidgetHomeScreen(
                                             data: (789).toString(),
-                                            txt: 'Repeat Customers',
+                                            txt: 'Waste %age',
                                           ),
                                           ColumnWidgetHomeScreen(
                                             data: '+${43}',
-                                            txt: 'New Customers',
+                                            txt: 'Avg turnaround',
                                           )
                                         ],
                                       ),
@@ -206,7 +207,7 @@ class _HomeState extends State<Home> {
                                             });
                                           },
                                           child: ButtonWidgetHomeScreen(
-                                            width: 25.w ,
+                                            width: 25.w,
                                             txt: 'Social Status',
                                             isActive: _activeButtonIndex == 1,
                                           ),
@@ -218,8 +219,8 @@ class _HomeState extends State<Home> {
                                             });
                                           },
                                           child: ButtonWidgetHomeScreen(
-                                            width: 100.w > 420 ? 30.w : 20.w,
-                                            txt: 'Performance',
+                                            width: 100.w > 420 ? 30.w : 25.w,
+                                            txt: 'Inventory',
                                             isActive: _activeButtonIndex == 2,
                                           ),
                                         ),
@@ -230,8 +231,8 @@ class _HomeState extends State<Home> {
                                             });
                                           },
                                           child: ButtonWidgetHomeScreen(
-                                            width: 100.w > 420 ? 30.w : 20.w,
-                                            txt: 'Inventory',
+                                            width: 100.w > 420 ? 30.w : 25.w,
+                                            txt: 'Performance',
                                             isActive: _activeButtonIndex == 3,
                                           ),
                                         )
@@ -241,255 +242,9 @@ class _HomeState extends State<Home> {
                                 ),
                               )),
                               Space(3.h),
-                              Container(
-                                margin: 100.w <= 420
-                                    ? EdgeInsets.only(left: 5.w, right: 5.w)
-                                    : EdgeInsets.only(
-                                        left: 0.5.w, right: 0.5.w),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const BoldTextWidgetHomeScreen(
-                                        txt: 'Tools & essentials'),
-                                    Space(2.h),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        TouchableOpacity(
-                                            onTap: () async {
-                                              final prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
-                                              prefs.setInt('counter', 1);
-                                              final counter =
-                                                  prefs.getInt('counter') ?? 1;
-
-                                              if (counter < 4) {
-                                                return SlidingSheet()
-                                                    .showAlertDialog(
-                                                        context, counter);
-                                              } else {
-                                                TOastNotification()
-                                                    .showSuccesToast(
-                                                        context, 'All Set ');
-                                              }
-                                            },
-                                            child: ToolsButtonWidgetHomeSCreen(
-                                                width:
-                                                    15.w,
-                                                txt: 'Setup Store')),
-                                        ToolsButtonWidgetHomeSCreen(
-                                          width: 15.w,
-                                          txt: 'Photos & Videos',
-                                        ),
-                                        TouchableOpacity(
-                                            onTap: () {
-                                              return Navigator.of(context)
-                                                  .pushNamed(
-                                                      InventoryHub.routeName);
-                                            },
-                                            child: ToolsButtonWidgetHomeSCreen(
-width: 15.w,                                              txt: 'Inventory Manage',
-                                            )),
-                                        ToolsButtonWidgetHomeSCreen(
-                                          width: 15.w,
-                                          txt: 'Upload Menu',
-                                        ),
-                                        ToolsButtonWidgetHomeSCreen(
-                                          width: 15.w,
-                                          txt: 'Dashboard',
-                                        ),
-                                      ],
-                                    ),
-                                    Space(3.h),
-                                    Center(
-                                      child: Card(
-                                        elevation: 10,
-                                        child: Container(
-                                            height: 6.h,
-                                            width: 75.w,
-                                            padding: EdgeInsets.only(
-                                                left: 1.w, right: 1.w),
-                                            decoration: ShapeDecoration(
-                                              color: Colors.white,
-                                              shape: SmoothRectangleBorder(
-                                                borderRadius:
-                                                    SmoothBorderRadius(
-                                                  cornerRadius: 10,
-                                                  cornerSmoothing: 1,
-                                                ),
-                                              ),
-                                            ),
-                                            child: const Center(
-                                              child: Text.rich(
-                                                TextSpan(
-                                                  children: [
-                                                    TextSpan(
-                                                      text: 'Gaon',
-                                                      style: TextStyle(
-                                                        color:
-                                                            Color(0xFF0A4C61),
-                                                        fontSize: 24,
-                                                        fontFamily: 'Jost',
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        letterSpacing: 0.24,
-                                                      ),
-                                                    ),
-                                                    TextSpan(
-                                                      text: 'FRESH',
-                                                      style: TextStyle(
-                                                        color:
-                                                            Color(0xFF63AFC7),
-                                                        fontSize: 24,
-                                                        fontFamily: 'Jost',
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        letterSpacing: 0.24,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            )),
-                                      ),
-                                    ),
-                                    Space(3.h),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const BoldTextWidgetHomeScreen(
-                                            txt: 'Inventory forecasting'),
-                                        Column(
-                                          children: [
-                                            Text(
-                                              'Expand',
-                                              style: GoogleFonts.ptSans(
-                                                  color: const Color.fromRGBO(
-                                                      10, 76, 97, 1),
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 12),
-                                            ),
-                                            Container(
-                                              height: 2,
-                                              width: 45,
-                                              color: const Color.fromRGBO(
-                                                  250, 110, 0, 1),
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                    Space(2.h),
-                                    InventoryForcastingWidget(isBuy: true),
-                                    Space(3.h),
-                                    const BoldTextWidgetHomeScreen(
-                                        txt: 'Inventory based recipe'),
-                                    Space(1.5.h),
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: SizedBox(
-                                        height: 18.h,
-                                        child: Center(
-                                          child: Row(
-                                            children: [
-                                              InvetoryBasedReciepeWidget(),
-                                              InvetoryBasedReciepeWidget(),
-                                              InvetoryBasedReciepeWidget(),
-                                              InvetoryBasedReciepeWidget(),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Space(3.h),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const BoldTextWidgetHomeScreen(
-                                            txt: 'Inventory wastage'),
-                                        Column(
-                                          children: [
-                                            Text(
-                                              'Expand',
-                                              style: GoogleFonts.ptSans(
-                                                  color: const Color.fromRGBO(
-                                                      10, 76, 97, 1),
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 12),
-                                            ),
-                                            Container(
-                                              height: 2,
-                                              width: 45,
-                                              color: const Color.fromRGBO(
-                                                  250, 110, 0, 1),
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                    Space(2.h),
-                                    InventoryForcastingWidget(
-                                      isBuy: false,
-                                    ),
-                                    Space(3.h),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const BoldTextWidgetHomeScreen(
-                                            txt: 'Reselling marketplace'),
-                                        Column(
-                                          children: [
-                                            Text(
-                                              'Expand',
-                                              style: GoogleFonts.ptSans(
-                                                  color: const Color.fromRGBO(
-                                                      10, 76, 97, 1),
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 12),
-                                            ),
-                                            Container(
-                                              height: 2,
-                                              width: 45,
-                                              color: const Color.fromRGBO(
-                                                  250, 110, 0, 1),
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                    Space(1.h),
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: SizedBox(
-                                        height: 18.h,
-                                        child: Center(
-                                          child: Row(
-                                            children: [
-                                              InvetoryBasedReciepeWidget(
-                                                isResell: true,
-                                              ),
-                                              InvetoryBasedReciepeWidget(
-                                                isResell: true,
-                                              ),
-                                              InvetoryBasedReciepeWidget(
-                                                isResell: true,
-                                              ),
-                                              InvetoryBasedReciepeWidget(
-                                                isResell: true,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              if (_activeButtonIndex == 1)
+                                SocialStatusContent(),
+                              if (_activeButtonIndex == 2) Inventory()
                             ],
                           ),
                         ),
@@ -501,6 +256,234 @@ width: 15.w,                                              txt: 'Inventory Manage
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class SocialStatusContent extends StatelessWidget {
+  const SocialStatusContent({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: 100.w <= 420
+          ? EdgeInsets.only(left: 5.w, right: 5.w)
+          : EdgeInsets.only(left: 0.5.w, right: 0.5.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const BoldTextWidgetHomeScreen(txt: 'Tools & essentials'),
+          Space(2.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TouchableOpacity(
+                  onTap: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setInt('counter', 1);
+                    final counter = prefs.getInt('counter') ?? 1;
+
+                    if (counter < 4) {
+                      return SlidingSheet().showAlertDialog(context, counter);
+                    } else {
+                      TOastNotification().showSuccesToast(context, 'All Set ');
+                    }
+                  },
+                  child: ToolsButtonWidgetHomeSCreen(
+                      width: 15.w, txt: 'Setup Store')),
+              ToolsButtonWidgetHomeSCreen(
+                width: 15.w,
+                txt: 'Photos & Videos',
+              ),
+              TouchableOpacity(
+                  onTap: () {
+                    return Navigator.of(context)
+                        .pushNamed(InventoryHub.routeName);
+                  },
+                  child: ToolsButtonWidgetHomeSCreen(
+                    width: 15.w,
+                    txt: 'Inventory Manage',
+                  )),
+              ToolsButtonWidgetHomeSCreen(
+                width: 15.w,
+                txt: 'Upload Menu',
+              ),
+              ToolsButtonWidgetHomeSCreen(
+                width: 15.w,
+                txt: 'Dashboard',
+              ),
+            ],
+          ),
+          Space(3.h),
+          Center(
+            child: Card(
+              elevation: 10,
+              child: Container(
+                  height: 6.h,
+                  width: 75.w,
+                  padding: EdgeInsets.only(left: 1.w, right: 1.w),
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 10,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Gaon',
+                            style: TextStyle(
+                              color: Color(0xFF0A4C61),
+                              fontSize: 24,
+                              fontFamily: 'Jost',
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.24,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'FRESH',
+                            style: TextStyle(
+                              color: Color(0xFF63AFC7),
+                              fontSize: 24,
+                              fontFamily: 'Jost',
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.24,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )),
+            ),
+          ),
+          Space(3.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const BoldTextWidgetHomeScreen(txt: 'Inventory forecasting'),
+              Column(
+                children: [
+                  Text(
+                    'Expand',
+                    style: GoogleFonts.ptSans(
+                        color: const Color.fromRGBO(10, 76, 97, 1),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12),
+                  ),
+                  Container(
+                    height: 2,
+                    width: 45,
+                    color: const Color.fromRGBO(250, 110, 0, 1),
+                  )
+                ],
+              )
+            ],
+          ),
+          Space(2.h),
+          InventoryForcastingWidget(isBuy: true),
+          Space(3.h),
+          const BoldTextWidgetHomeScreen(txt: 'Inventory based recipe'),
+          Space(1.5.h),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              height: 18.h,
+              child: Center(
+                child: Row(
+                  children: [
+                    InvetoryBasedReciepeWidget(),
+                    InvetoryBasedReciepeWidget(),
+                    InvetoryBasedReciepeWidget(),
+                    InvetoryBasedReciepeWidget(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Space(3.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const BoldTextWidgetHomeScreen(txt: 'Inventory wastage'),
+              Column(
+                children: [
+                  Text(
+                    'Expand',
+                    style: GoogleFonts.ptSans(
+                        color: const Color.fromRGBO(10, 76, 97, 1),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12),
+                  ),
+                  Container(
+                    height: 2,
+                    width: 45,
+                    color: const Color.fromRGBO(250, 110, 0, 1),
+                  )
+                ],
+              )
+            ],
+          ),
+          Space(2.h),
+          InventoryForcastingWidget(
+            isBuy: false,
+          ),
+          Space(3.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const BoldTextWidgetHomeScreen(txt: 'Reselling marketplace'),
+              Column(
+                children: [
+                  Text(
+                    'Expand',
+                    style: GoogleFonts.ptSans(
+                        color: const Color.fromRGBO(10, 76, 97, 1),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12),
+                  ),
+                  Container(
+                    height: 2,
+                    width: 45,
+                    color: const Color.fromRGBO(250, 110, 0, 1),
+                  )
+                ],
+              )
+            ],
+          ),
+          Space(1.h),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              height: 18.h,
+              child: Center(
+                child: Row(
+                  children: [
+                    InvetoryBasedReciepeWidget(
+                      isResell: true,
+                    ),
+                    InvetoryBasedReciepeWidget(
+                      isResell: true,
+                    ),
+                    InvetoryBasedReciepeWidget(
+                      isResell: true,
+                    ),
+                    InvetoryBasedReciepeWidget(
+                      isResell: true,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -560,7 +543,7 @@ class InventoryForcastingWidget extends StatelessWidget {
                     Space(1.h),
                   ],
                 ),
-                Space(isHorizontal: true, 5.w),
+                // Space(isHorizontal: true, 5.w),
                 Container(
                   height: 11.h,
                   width: 26.w,
@@ -1005,7 +988,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: height == 1 ? 5.h : height,
-      width: width == 1 ? 25.w : width,
+      width: width == 1 ? 30.w : width,
       decoration: ShapeDecoration(
         shadows: isActive == true
             ? [

@@ -112,7 +112,7 @@ class ProfileApi {
         },
         body: jsonEncode(requestBody),
       );
-      // print(response.body);/
+      print(response.body);
       print(response.statusCode);
       return jsonDecode((response.body));
     } catch (error) {
