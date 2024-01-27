@@ -158,6 +158,73 @@ class HomeApi {
     }
   }
 
+  Future<dynamic> ScanMenu(String src) async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(
+      source: src == 'Camera' ? ImageSource.camera : ImageSource.gallery,
+    );
+    String imagePath = '';
+    if (pickedImage != null) {
+      imagePath = pickedImage.path;
+      debugPrint('imaged added');
+      debugPrint(imagePath);
+    }
+    try {
+      final url = Uri.parse('https://app.cloudbelly.in/upload-menu');
+
+      final req = http.MultipartRequest('POST', url)
+        ..files.add(await http.MultipartFile.fromPath('file', imagePath));
+
+      req.headers['Accept'] = '*/*';
+      req.headers['User-Agent'] =
+          'Thunder Client (https://www.thunderclient.com)';
+
+      final stream = await req.send();
+      final response = await http.Response.fromStream(stream);
+      final status = response.statusCode;
+      if (status != 200)
+        throw Exception('http.send error: statusCode= $status');
+
+      // print(response.body);
+
+      return jsonDecode((response.body));
+    } catch (error) {
+      print(error);
+      if (error.toString().contains('413')) return "file size very large";
+      return "";
+    }
+  }
+
+  Future<dynamic> AddProductsForMenu(List<dynamic> data) async {
+    final String url = 'https://app.cloudbelly.in/product/add';
+
+    print(AuthApi().user_id);
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': AuthApi().user_id,
+      'products': data //email id here
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Accept': '*/*',
+          'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+      print(response.body);
+      print(response.statusCode);
+      return jsonDecode((response.body));
+    } catch (error) {
+      // Handle exceptions
+      print('Error: $error');
+      return '-1';
+    }
+  }
+
   Future<dynamic> getSheetUrl() async {
     final String url = 'https://app.cloudbelly.in/inventory/get-sheet';
 

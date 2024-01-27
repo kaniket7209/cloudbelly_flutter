@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // Add your signup logic here
     // For example, print the values:
-    // Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+    // Navigator.of(context).pushReplacemen/tNamed(Tabs.routeName);
     String msg = await AuthApi().login(email, pass);
 
     if (msg == 'Login successful') {

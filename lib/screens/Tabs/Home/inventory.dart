@@ -236,7 +236,7 @@ class _InventoryState extends State<Inventory> {
                         },
                       ),
                     ),
-                    Space(3.h),
+                    Space(2.h),
                     AppWideButton(
                         onTap: () async {
                           final newData = await HomeApi().SyncInventory();
@@ -400,9 +400,8 @@ class LowStocksWidget extends StatelessWidget {
 }
 
 class StocksMayBeNeedWidget extends StatelessWidget {
-  const StocksMayBeNeedWidget({
-    super.key,
-  });
+  String txt;
+  StocksMayBeNeedWidget({super.key, this.txt = 'chicken'});
 
   @override
   Widget build(BuildContext context) {
@@ -431,7 +430,7 @@ class StocksMayBeNeedWidget extends StatelessWidget {
               )),
           Space(1.h),
           Text(
-            'Chicken',
+            txt,
             style: TextStyle(
               color: Color(0xFF0A4C61),
               fontSize: 11,

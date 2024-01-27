@@ -64,6 +64,7 @@ class AuthApi {
           'Accept': '*/*',
           'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
           'Content-Type': 'application/json',
+
           // Add CORS headers
           // 'Access-Control-Allow-Origin': 'http://localhost:53012',
           // 'Access-Control-Allow-Headers': 'application/json',

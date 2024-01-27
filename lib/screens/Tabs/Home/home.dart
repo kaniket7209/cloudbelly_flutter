@@ -1,16 +1,20 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:cloudbelly_app/screens/Tabs/Home/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
+import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/store_setup_sheets.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -261,11 +265,24 @@ class _HomeState extends State<Home> {
   }
 }
 
-class SocialStatusContent extends StatelessWidget {
+class SocialStatusContent extends StatefulWidget {
   const SocialStatusContent({
     super.key,
   });
 
+  @override
+  State<SocialStatusContent> createState() => _SocialStatusContentState();
+}
+
+class _SocialStatusContentState extends State<SocialStatusContent> {
+  @override
+  void dispose() {
+    bool _isLoading = false;
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -307,9 +324,127 @@ class SocialStatusContent extends StatelessWidget {
                     width: 15.w,
                     txt: 'Inventory Manage',
                   )),
-              ToolsButtonWidgetHomeSCreen(
-                width: 15.w,
-                txt: 'Upload Menu',
+              TouchableOpacity(
+                onTap: () {
+                  return showModalBottomSheet(
+                    // useSafeArea: true,
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return Container(
+                            decoration: const ShapeDecoration(
+                              color: Colors.white,
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius.only(
+                                    topLeft: SmoothRadius(
+                                        cornerRadius: 35, cornerSmoothing: 1),
+                                    topRight: SmoothRadius(
+                                        cornerRadius: 35, cornerSmoothing: 1)),
+                              ),
+                            ),
+                            height: MediaQuery.of(context).size.height * 0.3,
+                            width: double.infinity,
+                            padding: EdgeInsets.only(
+                                left: 10.w, right: 10.w, top: 2.h, bottom: 2.h),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TouchableOpacity(
+                                    onTap: () {
+                                      return Navigator.of(context).pop();
+                                    },
+                                    child: Center(
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 1.h, horizontal: 3.w),
+                                        width: 65,
+                                        height: 9,
+                                        decoration: ShapeDecoration(
+                                          color: const Color(0xFFFA6E00),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(6)),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Space(6.h),
+                                  Text(
+                                    'Scan your menu',
+                                    style: TextStyle(
+                                      color: Color(0xFF094B60),
+                                      fontSize: 26,
+                                      fontFamily: 'Jost',
+                                      fontWeight: FontWeight.w600,
+                                      height: 0.03,
+                                      letterSpacing: 0.78,
+                                    ),
+                                  ),
+                                  Space(4.h),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      TouchableOpacity(
+                                        onTap: !_isLoading
+                                            ? () async {
+                                                setState(() {
+                                                  _isLoading = true;
+                                                });
+                                                dynamic data = await HomeApi()
+                                                    .ScanMenu('Gallery');
+                                                // print(data);
+                                                Navigator.of(context).pop();
+                                                ScannedMenuBottomSheet(
+                                                    context, data);
+                                                setState(() {
+                                                  _isLoading = false;
+                                                });
+                                              }
+                                            : null,
+                                        child: StocksMayBeNeedWidget(
+                                            txt: 'Upload from gallery'),
+                                      ),
+                                      TouchableOpacity(
+                                          onTap: !_isLoading
+                                              ? () async {
+                                                  setState(() {
+                                                    _isLoading = true;
+                                                  });
+                                                  final data = await HomeApi()
+                                                      .ScanMenu('Camera');
+                                                  Navigator.of(context).pop();
+                                                  ScannedMenuBottomSheet(
+                                                      context, data);
+                                                  setState(() {
+                                                    _isLoading = false;
+                                                  });
+                                                }
+                                              : null,
+                                          child: StocksMayBeNeedWidget(
+                                              txt: 'Click photo')),
+                                      Space(isHorizontal: true, 5.w),
+                                      if (_isLoading)
+                                        Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+                child: ToolsButtonWidgetHomeSCreen(
+                  width: 15.w,
+                  txt: 'Upload Menu',
+                ),
               ),
               ToolsButtonWidgetHomeSCreen(
                 width: 15.w,
@@ -485,6 +620,315 @@ class SocialStatusContent extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<dynamic> ScannedMenuBottomSheet(BuildContext context, dynamic data) {
+    bool isEditing = false;
+    TextEditingController textEditingController = TextEditingController();
+    String text = 'Click me to edit';
+
+    List<Map<String, dynamic>> list = [];
+
+    for (var item in data['data']) {
+      var newItem = Map<String, dynamic>.from(item);
+      newItem['VEG'] = true; // Adding VEG element with value true
+      list.add(newItem);
+    }
+    return showModalBottomSheet(
+      // useSafeArea: true,
+      context: context,
+      isScrollControlled: true,
+
+      builder: (BuildContext context) {
+        // print(data);
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              decoration: const ShapeDecoration(
+                color: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.only(
+                      topLeft:
+                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                      topRight:
+                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                ),
+              ),
+              height: MediaQuery.of(context).size.height * 0.9,
+              width: double.infinity,
+              padding:
+                  EdgeInsets.only(left: 6.w, right: 6.w, top: 2.h, bottom: 1.h),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TouchableOpacity(
+                      onTap: () {
+                        return Navigator.of(context).pop();
+                      },
+                      child: Center(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 1.h, horizontal: 3.w),
+                          width: 65,
+                          height: 9,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFFFA6E00),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Space(6.h),
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Scan complete',
+                          style: TextStyle(
+                            color: Color(0xFF094B60),
+                            fontSize: 30,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                            height: 0.02,
+                            letterSpacing: 0.90,
+                          ),
+                        ),
+                        Text(
+                          'Powered by BellyAI',
+                          style: TextStyle(
+                            color: Color(0xFFFA6E00),
+                            fontSize: 13,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w400,
+                            height: 0.15,
+                          ),
+                        )
+                      ],
+                    ),
+                    Space(5.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text(
+                          'Categories Scanned',
+                          style: TextStyle(
+                            color: Color(0xFF1E6F6D),
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w400,
+                            height: 0.10,
+                            letterSpacing: 0.42,
+                          ),
+                        ),
+                        Text(
+                          '7',
+                          style: TextStyle(
+                            color: Color(0xFFFA6E00),
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w700,
+                            height: 0.10,
+                            letterSpacing: 0.42,
+                          ),
+                        ),
+                        Text(
+                          'Products Scanned',
+                          style: TextStyle(
+                            color: Color(0xFF1E6F6D),
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w400,
+                            height: 0.10,
+                            letterSpacing: 0.42,
+                          ),
+                        ),
+                        Text(
+                          (data['data'] as List<dynamic>).length.toString(),
+                          style: TextStyle(
+                            color: Color(0xFFFA6E00),
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w700,
+                            height: 0.10,
+                            letterSpacing: 0.42,
+                          ),
+                        )
+                      ],
+                    ),
+                    Space(3.h),
+                    Divider(
+                      color: Color(0xFFFA6E00),
+                    ),
+                    Space(1.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SheetLabelWidget(
+                          txt: 'Product',
+                          width: 25.w,
+                        ),
+                        SheetLabelWidget(
+                          txt: 'Price',
+                          width: 22.w,
+                        ),
+                        SheetLabelWidget(
+                          txt: 'V/N',
+                          width: 15.w,
+                        ),
+                        Space(
+                          5.w,
+                          isHorizontal: true,
+                        ),
+                        SheetLabelWidget(
+                          txt: 'Category',
+                          width: 20.w,
+                        ),
+                      ],
+                    ),
+                    Space(1.h),
+                    Divider(
+                      color: Color(0xFFFA6E00),
+                    ),
+                    Space(2.h),
+                    SizedBox(
+                      height: 56.h,
+                      child: ListView.builder(
+                        itemCount: (list as List<dynamic>).length,
+                        itemBuilder: (context, index) {
+                          TextEditingController nameController =
+                              TextEditingController(text: list[index]['name']);
+                          TextEditingController priceController =
+                              TextEditingController(text: list[index]['price']);
+                          TextEditingController categoryController =
+                              TextEditingController(
+                                  text: list[index]['category']);
+
+                          return Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 25.w,
+                                  child: TextField(
+                                    maxLines: null,
+                                    style: TextStyle(
+                                      color: Color(0xFF094B60),
+                                      fontSize: 13,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    textInputAction: TextInputAction.done,
+                                    controller: nameController,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                    ),
+                                    onSubmitted: (newValue) {
+                                      setState(() {
+                                        list[index]['name'] = newValue;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Rs ',
+                                        style: TextStyle(
+                                          color: Color(0xFF094B60),
+                                          fontSize: 13,
+                                          fontFamily: 'Product Sans',
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15.w,
+                                        child: TextField(
+                                          style: TextStyle(
+                                            color: Color(0xFF094B60),
+                                            fontSize: 13,
+                                            fontFamily: 'Product Sans',
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                          controller: priceController,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                          ),
+                                          textInputAction: TextInputAction.done,
+                                          onSubmitted: (newValue) {
+                                            setState(() {
+                                              list[index]['price'] = newValue;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 15.w,
+                                  child: CupertinoSwitch(
+                                    value: !list[index]['VEG'],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        list[index]['VEG'] = !value;
+                                      });
+                                    },
+                                    activeColor: Color.fromRGBO(232, 89, 89, 1),
+                                    trackColor: Color.fromRGBO(77, 171, 75, 1),
+                                  ),
+                                ),
+                                Spacer(),
+                                SizedBox(
+                                  width: 20.w,
+                                  child: TextField(
+                                    maxLines: null,
+                                    style: TextStyle(
+                                      color: Color(0xFF094B60),
+                                      fontSize: 13,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    controller: categoryController,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                    ),
+                                    textInputAction: TextInputAction.done,
+                                    onSubmitted: (newValue) {
+                                      setState(() {
+                                        list[index]['category'] = newValue;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    Space(1.h),
+                    AppWideButton(
+                      onTap: () async {
+                        print(list);
+                        await HomeApi().AddProductsForMenu(list);
+                        Navigator.of(context).pop();
+                        TOastNotification().showSuccesToast(
+                            context, 'Menu Uploaded successfully');
+                      },
+                      num: 1,
+                      txt: 'Complete menu upload',
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
