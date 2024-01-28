@@ -17,8 +17,6 @@ class HomeApi {
       max_order_capacity) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
-    print(AuthApi().user_id);
-
     final Map<String, dynamic> requestBody = {
       'user_id': AuthApi().user_id,
       'user_name': user_name,
@@ -57,8 +55,6 @@ class HomeApi {
       pan_number, aadhar_number, fssai_licence_document) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
-    print(AuthApi().user_id);
-
     final Map<String, dynamic> requestBody = {
       'user_id': AuthApi().user_id,
       'pan_number': pan_number,
@@ -90,8 +86,6 @@ class HomeApi {
       bank_name, account_number, ifsc_code, upi_id) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
-    print(AuthApi().user_id);
-
     final Map<String, dynamic> requestBody = {
       'user_id': AuthApi().user_id,
       'bank_name': bank_name,
@@ -120,10 +114,10 @@ class HomeApi {
     }
   }
 
-  Future<String> pickImageAndUpoad() async {
+  Future<String> pickImageAndUpoad({String src = 'Gallery'}) async {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(
-      source: ImageSource.gallery,
+      source: src == 'Gallery' ? ImageSource.gallery : ImageSource.camera,
     );
     String imagePath = '';
     if (pickedImage != null) {
@@ -198,8 +192,6 @@ class HomeApi {
   Future<dynamic> AddProductsForMenu(List<dynamic> data) async {
     final String url = 'https://app.cloudbelly.in/product/add';
 
-    print(AuthApi().user_id);
-
     final Map<String, dynamic> requestBody = {
       'user_id': AuthApi().user_id,
       'products': data //email id here
@@ -228,8 +220,6 @@ class HomeApi {
   Future<dynamic> getSheetUrl() async {
     final String url = 'https://app.cloudbelly.in/inventory/get-sheet';
 
-    print(AuthApi().user_id);
-
     final Map<String, dynamic> requestBody = {
       'user_id': AuthApi().user_id,
       'user_email': AuthApi().user_email, //email id here
@@ -257,8 +247,6 @@ class HomeApi {
 
   Future<dynamic> SyncInventory() async {
     final String url = 'https://app.cloudbelly.in/inventory/sync';
-
-    print(AuthApi().user_id);
 
     final Map<String, dynamic> requestBody = {
       'user_id': AuthApi().user_id,

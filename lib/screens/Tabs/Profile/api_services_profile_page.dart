@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:cloudbelly_app/screens/Login/api_service.dart';
+import 'package:cloudbelly_app/screens/Tabs/Home/api_service.dart';
+import 'package:cloudbelly_app/widgets/toast_notification.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -11,8 +14,6 @@ class ProfileApi {
   Future<String> createPost(
       List<String> list, List<String> tags, String caption) async {
     final String url = 'https://app.cloudbelly.in/metadata/feed';
-
-    print(AuthApi().user_id);
 
     final Map<String, dynamic> requestBody = list.length == 1
         ? {
@@ -84,8 +85,9 @@ class ProfileApi {
         // return jsonDecode((response.body))['file_url'];
       } catch (error) {
         print(error);
-        if (error.toString().contains('413'))
+        if (error.toString().contains('413')) {
           UrlList.add("file size very large");
+        }
         UrlList.add("");
       }
     }
@@ -96,11 +98,120 @@ class ProfileApi {
   Future<dynamic> getFeed() async {
     final String url = 'https://app.cloudbelly.in/metadata/get-posts';
 
-    print(AuthApi().user_id);
+    final Map<String, dynamic> requestBody = {
+      'user_id': AuthApi().user_id,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Accept': '*/*',
+          'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+      print(response.body);
+      print(response.statusCode);
+      return jsonDecode((response.body));
+    } catch (error) {
+      // Handle exceptions
+      print('Error: $error');
+      return '-1';
+    }
+  }
+
+  Future<dynamic> getMenu() async {
+    final String url = 'https://app.cloudbelly.in/product/get';
 
     final Map<String, dynamic> requestBody = {
       'user_id': AuthApi().user_id,
     };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Accept': '*/*',
+          'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+      print(response.body);
+      print(response.statusCode);
+      return jsonDecode((response.body));
+    } catch (error) {
+      // Handle exceptions
+      print('Error: $error');
+      return '-1';
+    }
+  }
+
+  Future<dynamic> updateProductImage(
+      String product_id, BuildContext context, String src) async {
+    final String url = 'https://app.cloudbelly.in/product/update';
+
+    List<String> list = [];
+    if (src == 'Gallery') {
+      list = await pickMultipleImagesAndUpoad();
+    } else {
+      String temp = await HomeApi().pickImageAndUpoad(src: 'Camera');
+      if (temp != '') list.add(temp);
+    }
+    print(list);
+    if (list.length != 0) {
+      print(list.length.toString());
+      if (list.contains('file size very large')) {
+        TOastNotification().showErrorToast(context, 'File size very Large');
+      } else {
+        final Map<String, dynamic> requestBody = {
+          'user_id': AuthApi().user_id,
+          'product_id': product_id,
+          'images': list,
+        };
+
+        try {
+          final response = await http.post(
+            Uri.parse(url),
+            headers: {
+              'Accept': '*/*',
+              'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(requestBody),
+          );
+          print(response.body);
+          print(response.statusCode);
+          TOastNotification().showSuccesToast(context, 'Image updated ');
+          return jsonDecode((response.body));
+        } catch (error) {
+          // Handle exceptions
+          print('Error: $error');
+          return '-1';
+        }
+      }
+    }
+  }
+
+  Future<dynamic> updateProductDetails(
+      String product_id, String price, String description) async {
+    final String url = 'https://app.cloudbelly.in/product/update';
+
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {};
+    price != ''
+        ? requestBody = {
+            'user_id': AuthApi().user_id,
+            'product_id': product_id,
+            'price': price,
+          }
+        : requestBody = {
+            'user_id': AuthApi().user_id,
+            'product_id': product_id,
+            'description': description,
+          };
 
     try {
       final response = await http.post(

@@ -1420,12 +1420,14 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
   bool isActive;
   double height;
   double width;
+  double radius;
   ButtonWidgetHomeScreen({
     super.key,
     this.txt,
     required this.isActive,
     this.height = 1,
     this.width = 1,
+    this.radius = 1,
   });
 
   @override
@@ -1445,7 +1447,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
         color: isActive ? const Color.fromRGBO(250, 110, 0, 1) : Colors.white,
         shape: SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius(
-            cornerRadius: 10,
+            cornerRadius: radius == 1 ? 10 : radius,
             cornerSmoothing: 1,
           ),
         ),
