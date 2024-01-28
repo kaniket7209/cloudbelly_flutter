@@ -1,13 +1,11 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
-import 'package:cloudbelly_app/screens/Tabs/Profile/api_services_profile_page.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
-import 'package:cloudbelly_app/widgets/appwide_textfield.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
@@ -103,8 +101,8 @@ class _ProfileState extends State<Profile> {
                             color: Colors.white,
                             ic: Icons.add,
                             onTap: () async {
-                              List<String> url = await ProfileApi()
-                                  .pickMultipleImagesAndUpoad();
+                              List<String> url =
+                                  await pickMultipleImagesAndUpoad();
                               // List<String> url = [
                               //   'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
                               //   'https://yt3.googleusercontent.com/Gvn-OAu94UsSQPp5zEMpC2ZMY3Yv1wUNbFaqkfBAYpXRLROA_nz3lS-Y9jQKJ3SGNVKX81xSpRM=s176-c-k-c0x00ffffff-no-rj',
@@ -296,7 +294,7 @@ class _ProfileState extends State<Profile> {
                         Container(
                           width: 85.w,
                           child: FutureBuilder(
-                            future: ProfileApi().getFeed(),
+                            future: getFeed(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.done) {
@@ -362,8 +360,8 @@ class FeedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool _isMultiple =
-        data['multiple_files'] != null && data['multiple_files'].length != 0;
+    // bool _isMultiple =
+    //     data['multiple_files'] != null && data['multiple_files'].length != 0;
     return TouchableOpacity(
       onTap: () {
         Navigator.of(context).pushNamed(PostsScreen.routeName);

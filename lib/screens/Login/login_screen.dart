@@ -1,4 +1,4 @@
-import 'package:cloudbelly_app/screens/Login/api_service.dart';
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 
@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // Add your signup logic here
     // For example, print the values:
     // Navigator.of(context).pushReplacemen/tNamed(Tabs.routeName);
-    String msg = await AuthApi().login(email, pass);
+    String msg = await login(email, pass);
 
     if (msg == 'Login successful') {
       TOastNotification().showSuccesToast(context, msg);
@@ -59,8 +59,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // Add your signup logic here
 
     // For example, print the values:
-    String msg = await AuthApi()
-        .signUp(user_email, user_pass, user_mobile_number, selectedOption);
+    String msg =
+        await signUp(user_email, user_pass, user_mobile_number, selectedOption);
     if (msg == 'Registration successful') {
       TOastNotification().showSuccesToast(context, msg);
 

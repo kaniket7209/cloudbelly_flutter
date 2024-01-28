@@ -1,4 +1,6 @@
-import 'package:cloudbelly_app/screens/Tabs/Home/api_service.dart';
+// ignore_for_file: must_be_immutable
+
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -6,7 +8,7 @@ import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
+
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -40,14 +42,14 @@ class _InventoryState extends State<Inventory> {
             Make_Update_ListWidget(
               txt: 'Make List',
               onTap: () async {
-                final data = await HomeApi().getSheetUrl();
+                final data = await getSheetUrl();
                 _launchURL(data['sheet_url']);
               },
             ),
             Make_Update_ListWidget(
               txt: 'Update List',
               onTap: () async {
-                final data = await HomeApi().SyncInventory();
+                final data = await SyncInventory();
                 print(data);
                 UpdateListBottomSheet(context, data);
               },
@@ -239,7 +241,7 @@ class _InventoryState extends State<Inventory> {
                     Space(2.h),
                     AppWideButton(
                         onTap: () async {
-                          final newData = await HomeApi().SyncInventory();
+                          final newData = await SyncInventory();
                           setState(() {
                             UiData = newData;
                             print('ui');

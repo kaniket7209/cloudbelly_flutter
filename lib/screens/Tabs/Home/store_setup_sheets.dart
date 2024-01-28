@@ -1,7 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/api_service.dart';
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/appwide_textfield.dart';
 
@@ -87,7 +87,7 @@ class _Sheet1State extends State<Sheet1> {
         profile_photo != '' &&
         location_details != '' &&
         max_order_capacity != '') {
-      String msg = await HomeApi().storeSetup1(
+      String msg = await storeSetup1(
           user_name,
           pincode,
           profile_photo,
@@ -311,7 +311,7 @@ class _Sheet1State extends State<Sheet1> {
                           setState(() {
                             _isImageUploading = true;
                           });
-                          profile_photo = await HomeApi().pickImageAndUpoad();
+                          profile_photo = await pickImageAndUpoad();
                           setState(() {
                             _isImageUploading = false;
                           });
@@ -432,8 +432,8 @@ class _Sheet2State extends State<Sheet2> {
   Future<void> _SubmitForm({int num = 1}) async {
     final prefs = await SharedPreferences.getInstance();
     if (pan_number != '' && aadhar_number != '') {
-      String msg = await HomeApi()
-          .storeSetup2(pan_number, aadhar_number, fssai_licence_document);
+      String msg =
+          await storeSetup2(pan_number, aadhar_number, fssai_licence_document);
 
       if (msg == 'User information updated successfully.') {
         TOastNotification().showSuccesToast(context, 'KYC details updated');
@@ -564,8 +564,7 @@ class _Sheet2State extends State<Sheet2> {
                     Space(1.h),
                     GestureDetector(
                         onTap: () async {
-                          fssai_licence_document =
-                              await HomeApi().pickImageAndUpoad();
+                          fssai_licence_document = await pickImageAndUpoad();
                         },
                         child: Container(
                           // rgba(165, 200, 199, 1),
@@ -772,8 +771,8 @@ class _Sheet3State extends State<Sheet3> {
         ifsc_code != '' &&
         upi_id != '') {
       if (account_number == re_account_number) {
-        String msg = await HomeApi()
-            .storeSetup3(bank_name, account_number, ifsc_code, upi_id);
+        String msg =
+            await storeSetup3(bank_name, account_number, ifsc_code, upi_id);
 
         if (msg == 'User information updated successfully.') {
           TOastNotification()

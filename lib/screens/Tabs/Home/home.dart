@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:cloudbelly_app/screens/Tabs/Home/api_service.dart';
+import 'package:cloudbelly_app/api_service.dart';
+
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
@@ -14,7 +15,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,7 +46,7 @@ class _HomeState extends State<Home> {
                   children: [
                     Space(10.h),
                     ConstrainedBox(
-                      constraints: BoxConstraints(
+                      constraints: const BoxConstraints(
                         maxWidth: 800, // Set the maximum width to 800
                       ),
                       child: Container(
@@ -109,7 +110,7 @@ class _HomeState extends State<Home> {
                     ),
                     Center(
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(
+                        constraints: const BoxConstraints(
                           maxWidth: 420, // Set the maximum width to 800
                         ),
                         child: Container(
@@ -247,8 +248,8 @@ class _HomeState extends State<Home> {
                               )),
                               Space(3.h),
                               if (_activeButtonIndex == 1)
-                                SocialStatusContent(),
-                              if (_activeButtonIndex == 2) Inventory()
+                                const SocialStatusContent(),
+                              if (_activeButtonIndex == 2) const Inventory()
                             ],
                           ),
                         ),
@@ -277,7 +278,7 @@ class SocialStatusContent extends StatefulWidget {
 class _SocialStatusContentState extends State<SocialStatusContent> {
   @override
   void dispose() {
-    bool _isLoading = false;
+    // bool _isLoading = false;
     // TODO: implement dispose
     super.dispose();
   }
@@ -372,7 +373,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                                     ),
                                   ),
                                   Space(6.h),
-                                  Text(
+                                  const Text(
                                     'Scan your menu',
                                     style: TextStyle(
                                       color: Color(0xFF094B60),
@@ -393,8 +394,8 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                                                 setState(() {
                                                   _isLoading = true;
                                                 });
-                                                dynamic data = await HomeApi()
-                                                    .ScanMenu('Gallery');
+                                                dynamic data =
+                                                    await ScanMenu('Gallery');
                                                 // print(data);
                                                 Navigator.of(context).pop();
                                                 ScannedMenuBottomSheet(
@@ -413,8 +414,8 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                                                   setState(() {
                                                     _isLoading = true;
                                                   });
-                                                  final data = await HomeApi()
-                                                      .ScanMenu('Camera');
+                                                  final data =
+                                                      await ScanMenu('Camera');
                                                   Navigator.of(context).pop();
                                                   ScannedMenuBottomSheet(
                                                       context, data);
@@ -427,7 +428,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                                               txt: 'Click photo')),
                                       Space(isHorizontal: true, 5.w),
                                       if (_isLoading)
-                                        Center(
+                                        const Center(
                                           child: CircularProgressIndicator(),
                                         ),
                                     ],
@@ -624,9 +625,9 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
   }
 
   Future<dynamic> ScannedMenuBottomSheet(BuildContext context, dynamic data) {
-    bool isEditing = false;
-    TextEditingController textEditingController = TextEditingController();
-    String text = 'Click me to edit';
+    // bool isEditing = false;/
+    // TextEditingController textEditingController = TextEditingController();
+    // String text = 'Click me to edit';
 
     List<Map<String, dynamic>> list = [];
 
@@ -712,7 +713,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Text(
+                        const Text(
                           'Categories Scanned',
                           style: TextStyle(
                             color: Color(0xFF1E6F6D),
@@ -723,7 +724,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                             letterSpacing: 0.42,
                           ),
                         ),
-                        Text(
+                        const Text(
                           '7',
                           style: TextStyle(
                             color: Color(0xFFFA6E00),
@@ -734,7 +735,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                             letterSpacing: 0.42,
                           ),
                         ),
-                        Text(
+                        const Text(
                           'Products Scanned',
                           style: TextStyle(
                             color: Color(0xFF1E6F6D),
@@ -747,7 +748,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                         ),
                         Text(
                           (data['data'] as List<dynamic>).length.toString(),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Color(0xFFFA6E00),
                             fontSize: 14,
                             fontFamily: 'Product Sans',
@@ -759,7 +760,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                       ],
                     ),
                     Space(3.h),
-                    Divider(
+                    const Divider(
                       color: Color(0xFFFA6E00),
                     ),
                     Space(1.h),
@@ -789,7 +790,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                       ],
                     ),
                     Space(1.h),
-                    Divider(
+                    const Divider(
                       color: Color(0xFFFA6E00),
                     ),
                     Space(2.h),
@@ -814,7 +815,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                                   width: 25.w,
                                   child: TextField(
                                     maxLines: null,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Color(0xFF094B60),
                                       fontSize: 13,
                                       fontFamily: 'Product Sans',
@@ -822,7 +823,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                                     ),
                                     textInputAction: TextInputAction.done,
                                     controller: nameController,
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                       border: InputBorder.none,
                                     ),
                                     onSubmitted: (newValue) {
@@ -835,7 +836,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                                 SizedBox(
                                   child: Row(
                                     children: [
-                                      Text(
+                                      const Text(
                                         'Rs ',
                                         style: TextStyle(
                                           color: Color(0xFF094B60),
@@ -847,14 +848,14 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                                       SizedBox(
                                         width: 15.w,
                                         child: TextField(
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: Color(0xFF094B60),
                                             fontSize: 13,
                                             fontFamily: 'Product Sans',
                                             fontWeight: FontWeight.w400,
                                           ),
                                           controller: priceController,
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                             border: InputBorder.none,
                                           ),
                                           textInputAction: TextInputAction.done,
@@ -877,23 +878,25 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                                         list[index]['VEG'] = !value;
                                       });
                                     },
-                                    activeColor: Color.fromRGBO(232, 89, 89, 1),
-                                    trackColor: Color.fromRGBO(77, 171, 75, 1),
+                                    activeColor:
+                                        const Color.fromRGBO(232, 89, 89, 1),
+                                    trackColor:
+                                        const Color.fromRGBO(77, 171, 75, 1),
                                   ),
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 SizedBox(
                                   width: 20.w,
                                   child: TextField(
                                     maxLines: null,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Color(0xFF094B60),
                                       fontSize: 13,
                                       fontFamily: 'Product Sans',
                                       fontWeight: FontWeight.w400,
                                     ),
                                     controller: categoryController,
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                       border: InputBorder.none,
                                     ),
                                     textInputAction: TextInputAction.done,
@@ -914,7 +917,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                     AppWideButton(
                       onTap: () async {
                         print(list);
-                        await HomeApi().AddProductsForMenu(list);
+                        await AddProductsForMenu(list);
                         Navigator.of(context).pop();
                         TOastNotification().showSuccesToast(
                             context, 'Menu Uploaded successfully');
@@ -1456,7 +1459,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
           child: Text(
         txt,
         style: TextStyle(
-          color: isActive ? Colors.white : Color(0xff0A4C61),
+          color: isActive ? Colors.white : const Color(0xff0A4C61),
           fontSize: 3.w,
           fontFamily: 'Product Sans',
           fontWeight: FontWeight.w700,

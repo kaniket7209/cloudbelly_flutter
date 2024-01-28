@@ -1,6 +1,6 @@
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
-import 'package:cloudbelly_app/screens/Tabs/Profile/api_services_profile_page.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -21,7 +21,7 @@ class _MenuState extends State<Menu> {
     return Container(
       width: 85.w,
       child: FutureBuilder(
-        future: ProfileApi().getMenu(),
+        future: getMenu(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             print(snapshot.data);
@@ -107,7 +107,7 @@ class _MenuState extends State<Menu> {
                                     textInputAction: TextInputAction.done,
                                     onSubmitted: (newValue) async {
                                       print(newValue);
-                                      await ProfileApi().updateProductDetails(
+                                      await updateProductDetails(
                                           data[index]['_id'], '', newValue);
                                       setState(() {});
                                     },
@@ -274,7 +274,7 @@ class _MenuState extends State<Menu> {
                       children: [
                         TouchableOpacity(
                           onTap: () async {
-                            await ProfileApi().updateProductImage(
+                            await updateProductImage(
                                 data[index]['_id'], context, 'Gallery');
                             Navigator.of(context).pop();
                           },
@@ -283,7 +283,7 @@ class _MenuState extends State<Menu> {
                         ),
                         TouchableOpacity(
                             onTap: () async {
-                              await ProfileApi().updateProductImage(
+                              await updateProductImage(
                                   data[index]['_id'], context, 'Camera');
                               Navigator.of(context).pop();
                             },

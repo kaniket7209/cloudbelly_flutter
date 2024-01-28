@@ -1,4 +1,4 @@
-import 'package:cloudbelly_app/screens/Tabs/Profile/api_services_profile_page.dart';
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -61,7 +61,7 @@ class _PostsScreenState extends State<PostsScreen> {
               ],
             ),
             FutureBuilder(
-                future: ProfileApi().getFeed(),
+                future: getFeed(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return SizedBox(

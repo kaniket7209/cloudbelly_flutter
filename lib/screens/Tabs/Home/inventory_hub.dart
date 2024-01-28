@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:cloudbelly_app/screens/Tabs/Home/api_service.dart';
+import 'package:cloudbelly_app/api_service.dart';
+
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
@@ -127,7 +128,7 @@ class _InventoryHubState extends State<InventoryHub> {
                               children: [
                                 TouchableOpacity(
                                   onTap: () async {
-                                    final data = await HomeApi().getSheetUrl();
+                                    final data = await getSheetUrl();
                                     _launchURL(data['sheet_url']);
                                   },
                                   child: ButtonWidgetHomeScreen(
@@ -136,8 +137,7 @@ class _InventoryHubState extends State<InventoryHub> {
                                 TouchableOpacity(
                                   onTap: () async {
                                     // final data =
-                                    final data =
-                                        await HomeApi().SyncInventory();
+                                    await SyncInventory();
                                     // UpdateListBottomSheet(context, data);
                                   },
                                   child: ButtonWidgetHomeScreen(

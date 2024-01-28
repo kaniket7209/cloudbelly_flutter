@@ -1,6 +1,6 @@
 // map.dart
 
-import 'package:cloudbelly_app/screens/Login/api_service.dart';
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -37,7 +37,7 @@ class _MapScreenState extends State<MapScreen> {
   // }
 
   initData() async {
-    var data = await AuthApi().sendUserTypeRequest();
+    var data = await sendUserTypeRequest();
     print(data);
     for (var d in data) {
       // var dat = jsonDecode(d);

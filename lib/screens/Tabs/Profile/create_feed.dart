@@ -1,4 +1,4 @@
-import 'package:cloudbelly_app/screens/Tabs/Profile/api_services_profile_page.dart';
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
@@ -27,7 +27,7 @@ class CreateFeed {
           .split(',')
           .map((String s) => s.trim())
           .toList();
-      String msg = await ProfileApi().createPost(imageUrlList, tags, caption);
+      String msg = await createPost(imageUrlList, tags, caption);
       if (msg == "Post metadata updated successfully") {
         TOastNotification()
             .showSuccesToast(context, 'Post Created successfully!');
