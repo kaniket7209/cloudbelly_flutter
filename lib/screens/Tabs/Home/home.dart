@@ -4,6 +4,7 @@ import 'package:cloudbelly_app/api_service.dart';
 
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
+import 'package:cloudbelly_app/screens/Tabs/Home/social_status.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
@@ -111,7 +112,7 @@ class _HomeState extends State<Home> {
                     Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(
-                          maxWidth: 420, // Set the maximum width to 800
+                          maxWidth: 420, // Set the maximum width to 420
                         ),
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 3.w),
@@ -119,29 +120,29 @@ class _HomeState extends State<Home> {
                             children: [
                               Space(3.h),
                               Center(
-                                  child: Container(
-                                height: 20.h,
-                                // width: 90.w,
-                                decoration: ShapeDecoration(
-                                  shadows: const [
-                                    BoxShadow(
-                                      offset: Offset(0, 4),
-                                      color: Color.fromRGBO(165, 200, 199, 0.6),
-                                      blurRadius: 25,
-                                    )
-                                  ],
-                                  color: Colors.white,
-                                  shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius(
-                                      cornerRadius: 10,
-                                      cornerSmoothing: 1,
+                                child: Container(
+                                  height: 20.h,
+                                  decoration: ShapeDecoration(
+                                    shadows: const [
+                                      BoxShadow(
+                                        offset: Offset(0, 4),
+                                        color:
+                                            Color.fromRGBO(165, 200, 199, 0.6),
+                                        blurRadius: 25,
+                                      )
+                                    ],
+                                    color: Colors.white,
+                                    shape: SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius(
+                                        cornerRadius: 10,
+                                        cornerSmoothing: 1,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Space(3.h),
-                                    if (_activeButtonIndex == 1)
+                                  child: Column(
+                                    children: [
+                                      Space(3.h),
+                                      // Adjusted the width of buttons based on screen width
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
@@ -160,101 +161,64 @@ class _HomeState extends State<Home> {
                                           )
                                         ],
                                       ),
-                                    if (_activeButtonIndex == 2)
+                                      Space(3.h),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          ColumnWidgetHomeScreen(
-                                            data: (234).toString(),
-                                            txt: 'Stock health',
+                                          TouchableOpacity(
+                                            onTap: () {
+                                              print('k');
+                                              print(100.w);
+                                              setState(() {
+                                                _activeButtonIndex = 1;
+                                              });
+                                            },
+                                            child: ButtonWidgetHomeScreen(
+                                              width: 100.w > 420 ? 7.w : 25.w,
+                                              txt: 'Social Status',
+                                              isActive: _activeButtonIndex == 1,
+                                            ),
                                           ),
-                                          ColumnWidgetHomeScreen(
-                                            data: (789).toString(),
-                                            txt: 'Waste %age',
+                                          TouchableOpacity(
+                                            onTap: () {
+                                              setState(() {
+                                                _activeButtonIndex = 2;
+                                              });
+                                            },
+                                            child: ButtonWidgetHomeScreen(
+                                              width: 100.w > 420 ? 7.w : 25.w,
+                                              txt: 'Inventory',
+                                              isActive: _activeButtonIndex == 2,
+                                            ),
                                           ),
-                                          ColumnWidgetHomeScreen(
-                                            data: '+${43}',
-                                            txt: 'Avg turnaround',
+                                          TouchableOpacity(
+                                            onTap: () {
+                                              setState(() {
+                                                _activeButtonIndex = 3;
+                                              });
+                                            },
+                                            child: ButtonWidgetHomeScreen(
+                                              width: 100.w > 420 ? 7.w : 25.w,
+                                              txt: 'Performance',
+                                              isActive: _activeButtonIndex == 3,
+                                            ),
                                           )
                                         ],
-                                      ),
-                                    if (_activeButtonIndex == 3)
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          ColumnWidgetHomeScreen(
-                                            data: (4.9).toString(),
-                                            txt: 'Unknown',
-                                          ),
-                                          ColumnWidgetHomeScreen(
-                                            data: (789).toString(),
-                                            txt: 'Unknown',
-                                          ),
-                                          ColumnWidgetHomeScreen(
-                                            data: (43).toString(),
-                                            txt: 'Unknown',
-                                          )
-                                        ],
-                                      ),
-                                    Space(3.h),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        TouchableOpacity(
-                                          onTap: () {
-                                            print('k');
-                                            print(100.w);
-                                            setState(() {
-                                              _activeButtonIndex = 1;
-                                            });
-                                          },
-                                          child: ButtonWidgetHomeScreen(
-                                            width: 25.w,
-                                            txt: 'Social Status',
-                                            isActive: _activeButtonIndex == 1,
-                                          ),
-                                        ),
-                                        TouchableOpacity(
-                                          onTap: () {
-                                            setState(() {
-                                              _activeButtonIndex = 2;
-                                            });
-                                          },
-                                          child: ButtonWidgetHomeScreen(
-                                            width: 100.w > 420 ? 30.w : 25.w,
-                                            txt: 'Inventory',
-                                            isActive: _activeButtonIndex == 2,
-                                          ),
-                                        ),
-                                        TouchableOpacity(
-                                          onTap: () {
-                                            setState(() {
-                                              _activeButtonIndex = 3;
-                                            });
-                                          },
-                                          child: ButtonWidgetHomeScreen(
-                                            width: 100.w > 420 ? 30.w : 25.w,
-                                            txt: 'Performance',
-                                            isActive: _activeButtonIndex == 3,
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              )),
+                              ),
                               Space(3.h),
                               if (_activeButtonIndex == 1)
-                                const SocialStatusContent(),
+                                SocialStatusContent(),
                               if (_activeButtonIndex == 2) const Inventory()
                             ],
                           ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 )
               ],
@@ -266,674 +230,314 @@ class _HomeState extends State<Home> {
   }
 }
 
-class SocialStatusContent extends StatefulWidget {
-  const SocialStatusContent({
-    super.key,
-  });
+Future<dynamic> ScannedMenuBottomSheet(BuildContext context, dynamic data) {
+  // bool isEditing = false;/
+  // TextEditingController textEditingController = TextEditingController();
+  // String text = 'Click me to edit';
 
-  @override
-  State<SocialStatusContent> createState() => _SocialStatusContentState();
-}
+  List<Map<String, dynamic>> list = [];
 
-class _SocialStatusContentState extends State<SocialStatusContent> {
-  @override
-  void dispose() {
-    // bool _isLoading = false;
-    // TODO: implement dispose
-    super.dispose();
+  for (var item in data['data']) {
+    var newItem = Map<String, dynamic>.from(item);
+    newItem['VEG'] = true; // Adding VEG element with value true
+    list.add(newItem);
   }
+  return showModalBottomSheet(
+    // useSafeArea: true,
+    context: context,
+    isScrollControlled: true,
 
-  bool _isLoading = false;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: 100.w <= 420
-          ? EdgeInsets.only(left: 5.w, right: 5.w)
-          : EdgeInsets.only(left: 0.5.w, right: 0.5.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const BoldTextWidgetHomeScreen(txt: 'Tools & essentials'),
-          Space(2.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TouchableOpacity(
-                  onTap: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setInt('counter', 1);
-                    final counter = prefs.getInt('counter') ?? 1;
-
-                    if (counter < 4) {
-                      return SlidingSheet().showAlertDialog(context, counter);
-                    } else {
-                      TOastNotification().showSuccesToast(context, 'All Set ');
-                    }
-                  },
-                  child: ToolsButtonWidgetHomeSCreen(
-                      width: 15.w, txt: 'Setup Store')),
-              ToolsButtonWidgetHomeSCreen(
-                width: 15.w,
-                txt: 'Photos & Videos',
+    builder: (BuildContext context) {
+      // print(data);
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return Container(
+            decoration: const ShapeDecoration(
+              color: Colors.white,
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.only(
+                    topLeft: SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                    topRight:
+                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
               ),
-              TouchableOpacity(
-                  onTap: () {
-                    return Navigator.of(context)
-                        .pushNamed(InventoryHub.routeName);
-                  },
-                  child: ToolsButtonWidgetHomeSCreen(
-                    width: 15.w,
-                    txt: 'Inventory Manage',
-                  )),
-              TouchableOpacity(
-                onTap: () {
-                  return showModalBottomSheet(
-                    // useSafeArea: true,
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return StatefulBuilder(
-                        builder: (BuildContext context, StateSetter setState) {
-                          return Container(
-                            decoration: const ShapeDecoration(
-                              color: Colors.white,
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius.only(
-                                    topLeft: SmoothRadius(
-                                        cornerRadius: 35, cornerSmoothing: 1),
-                                    topRight: SmoothRadius(
-                                        cornerRadius: 35, cornerSmoothing: 1)),
-                              ),
-                            ),
-                            height: MediaQuery.of(context).size.height * 0.3,
-                            width: double.infinity,
-                            padding: EdgeInsets.only(
-                                left: 10.w, right: 10.w, top: 2.h, bottom: 2.h),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TouchableOpacity(
-                                    onTap: () {
-                                      return Navigator.of(context).pop();
-                                    },
-                                    child: Center(
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 1.h, horizontal: 3.w),
-                                        width: 65,
-                                        height: 9,
-                                        decoration: ShapeDecoration(
-                                          color: const Color(0xFFFA6E00),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(6)),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Space(6.h),
-                                  const Text(
-                                    'Scan your menu',
-                                    style: TextStyle(
-                                      color: Color(0xFF094B60),
-                                      fontSize: 26,
-                                      fontFamily: 'Jost',
-                                      fontWeight: FontWeight.w600,
-                                      height: 0.03,
-                                      letterSpacing: 0.78,
-                                    ),
-                                  ),
-                                  Space(4.h),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      TouchableOpacity(
-                                        onTap: !_isLoading
-                                            ? () async {
-                                                setState(() {
-                                                  _isLoading = true;
-                                                });
-                                                dynamic data =
-                                                    await ScanMenu('Gallery');
-                                                // print(data);
-                                                Navigator.of(context).pop();
-                                                ScannedMenuBottomSheet(
-                                                    context, data);
-                                                setState(() {
-                                                  _isLoading = false;
-                                                });
-                                              }
-                                            : null,
-                                        child: StocksMayBeNeedWidget(
-                                            txt: 'Upload from gallery'),
-                                      ),
-                                      TouchableOpacity(
-                                          onTap: !_isLoading
-                                              ? () async {
-                                                  setState(() {
-                                                    _isLoading = true;
-                                                  });
-                                                  final data =
-                                                      await ScanMenu('Camera');
-                                                  Navigator.of(context).pop();
-                                                  ScannedMenuBottomSheet(
-                                                      context, data);
-                                                  setState(() {
-                                                    _isLoading = false;
-                                                  });
-                                                }
-                                              : null,
-                                          child: StocksMayBeNeedWidget(
-                                              txt: 'Click photo')),
-                                      Space(isHorizontal: true, 5.w),
-                                      if (_isLoading)
-                                        const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
+            ),
+            height: MediaQuery.of(context).size.height * 0.9,
+            width: double.infinity,
+            padding:
+                EdgeInsets.only(left: 6.w, right: 6.w, top: 2.h, bottom: 1.h),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TouchableOpacity(
+                    onTap: () {
+                      return Navigator.of(context).pop();
                     },
-                  );
-                },
-                child: ToolsButtonWidgetHomeSCreen(
-                  width: 15.w,
-                  txt: 'Upload Menu',
-                ),
-              ),
-              ToolsButtonWidgetHomeSCreen(
-                width: 15.w,
-                txt: 'Dashboard',
-              ),
-            ],
-          ),
-          Space(3.h),
-          Center(
-            child: Card(
-              elevation: 10,
-              child: Container(
-                  height: 6.h,
-                  width: 75.w,
-                  padding: EdgeInsets.only(left: 1.w, right: 1.w),
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                        cornerRadius: 10,
-                        cornerSmoothing: 1,
-                      ),
-                    ),
-                  ),
-                  child: const Center(
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Gaon',
-                            style: TextStyle(
-                              color: Color(0xFF0A4C61),
-                              fontSize: 24,
-                              fontFamily: 'Jost',
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.24,
-                            ),
-                          ),
-                          TextSpan(
-                            text: 'FRESH',
-                            style: TextStyle(
-                              color: Color(0xFF63AFC7),
-                              fontSize: 24,
-                              fontFamily: 'Jost',
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.24,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )),
-            ),
-          ),
-          Space(3.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const BoldTextWidgetHomeScreen(txt: 'Inventory forecasting'),
-              Column(
-                children: [
-                  Text(
-                    'Expand',
-                    style: GoogleFonts.ptSans(
-                        color: const Color.fromRGBO(10, 76, 97, 1),
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12),
-                  ),
-                  Container(
-                    height: 2,
-                    width: 45,
-                    color: const Color.fromRGBO(250, 110, 0, 1),
-                  )
-                ],
-              )
-            ],
-          ),
-          Space(2.h),
-          InventoryForcastingWidget(isBuy: true),
-          Space(3.h),
-          const BoldTextWidgetHomeScreen(txt: 'Inventory based recipe'),
-          Space(1.5.h),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SizedBox(
-              height: 18.h,
-              child: Center(
-                child: Row(
-                  children: [
-                    InvetoryBasedReciepeWidget(),
-                    InvetoryBasedReciepeWidget(),
-                    InvetoryBasedReciepeWidget(),
-                    InvetoryBasedReciepeWidget(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Space(3.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const BoldTextWidgetHomeScreen(txt: 'Inventory wastage'),
-              Column(
-                children: [
-                  Text(
-                    'Expand',
-                    style: GoogleFonts.ptSans(
-                        color: const Color.fromRGBO(10, 76, 97, 1),
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12),
-                  ),
-                  Container(
-                    height: 2,
-                    width: 45,
-                    color: const Color.fromRGBO(250, 110, 0, 1),
-                  )
-                ],
-              )
-            ],
-          ),
-          Space(2.h),
-          InventoryForcastingWidget(
-            isBuy: false,
-          ),
-          Space(3.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const BoldTextWidgetHomeScreen(txt: 'Reselling marketplace'),
-              Column(
-                children: [
-                  Text(
-                    'Expand',
-                    style: GoogleFonts.ptSans(
-                        color: const Color.fromRGBO(10, 76, 97, 1),
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12),
-                  ),
-                  Container(
-                    height: 2,
-                    width: 45,
-                    color: const Color.fromRGBO(250, 110, 0, 1),
-                  )
-                ],
-              )
-            ],
-          ),
-          Space(1.h),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SizedBox(
-              height: 18.h,
-              child: Center(
-                child: Row(
-                  children: [
-                    InvetoryBasedReciepeWidget(
-                      isResell: true,
-                    ),
-                    InvetoryBasedReciepeWidget(
-                      isResell: true,
-                    ),
-                    InvetoryBasedReciepeWidget(
-                      isResell: true,
-                    ),
-                    InvetoryBasedReciepeWidget(
-                      isResell: true,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<dynamic> ScannedMenuBottomSheet(BuildContext context, dynamic data) {
-    // bool isEditing = false;/
-    // TextEditingController textEditingController = TextEditingController();
-    // String text = 'Click me to edit';
-
-    List<Map<String, dynamic>> list = [];
-
-    for (var item in data['data']) {
-      var newItem = Map<String, dynamic>.from(item);
-      newItem['VEG'] = true; // Adding VEG element with value true
-      list.add(newItem);
-    }
-    return showModalBottomSheet(
-      // useSafeArea: true,
-      context: context,
-      isScrollControlled: true,
-
-      builder: (BuildContext context) {
-        // print(data);
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              decoration: const ShapeDecoration(
-                color: Colors.white,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
-                ),
-              ),
-              height: MediaQuery.of(context).size.height * 0.9,
-              width: double.infinity,
-              padding:
-                  EdgeInsets.only(left: 6.w, right: 6.w, top: 2.h, bottom: 1.h),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TouchableOpacity(
-                      onTap: () {
-                        return Navigator.of(context).pop();
-                      },
-                      child: Center(
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 1.h, horizontal: 3.w),
-                          width: 65,
-                          height: 9,
-                          decoration: ShapeDecoration(
-                            color: const Color(0xFFFA6E00),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6)),
-                          ),
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 1.h, horizontal: 3.w),
+                        width: 65,
+                        height: 9,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFFA6E00),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6)),
                         ),
                       ),
                     ),
-                    Space(6.h),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Scan complete',
-                          style: TextStyle(
-                            color: Color(0xFF094B60),
-                            fontSize: 30,
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w600,
-                            height: 0.02,
-                            letterSpacing: 0.90,
-                          ),
+                  ),
+                  Space(6.h),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Scan complete',
+                        style: TextStyle(
+                          color: Color(0xFF094B60),
+                          fontSize: 30,
+                          fontFamily: 'Jost',
+                          fontWeight: FontWeight.w600,
+                          height: 0.02,
+                          letterSpacing: 0.90,
                         ),
-                        Text(
-                          'Powered by BellyAI',
-                          style: TextStyle(
-                            color: Color(0xFFFA6E00),
-                            fontSize: 13,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w400,
-                            height: 0.15,
-                          ),
-                        )
-                      ],
-                    ),
-                    Space(5.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        const Text(
-                          'Categories Scanned',
-                          style: TextStyle(
-                            color: Color(0xFF1E6F6D),
-                            fontSize: 14,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w400,
-                            height: 0.10,
-                            letterSpacing: 0.42,
-                          ),
+                      ),
+                      Text(
+                        'Powered by BellyAI',
+                        style: TextStyle(
+                          color: Color(0xFFFA6E00),
+                          fontSize: 13,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400,
+                          height: 0.15,
                         ),
-                        const Text(
-                          '7',
-                          style: TextStyle(
-                            color: Color(0xFFFA6E00),
-                            fontSize: 14,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w700,
-                            height: 0.10,
-                            letterSpacing: 0.42,
-                          ),
+                      )
+                    ],
+                  ),
+                  Space(5.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      const Text(
+                        'Categories Scanned',
+                        style: TextStyle(
+                          color: Color(0xFF1E6F6D),
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400,
+                          height: 0.10,
+                          letterSpacing: 0.42,
                         ),
-                        const Text(
-                          'Products Scanned',
-                          style: TextStyle(
-                            color: Color(0xFF1E6F6D),
-                            fontSize: 14,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w400,
-                            height: 0.10,
-                            letterSpacing: 0.42,
-                          ),
+                      ),
+                      const Text(
+                        '7',
+                        style: TextStyle(
+                          color: Color(0xFFFA6E00),
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w700,
+                          height: 0.10,
+                          letterSpacing: 0.42,
                         ),
-                        Text(
-                          (data['data'] as List<dynamic>).length.toString(),
-                          style: const TextStyle(
-                            color: Color(0xFFFA6E00),
-                            fontSize: 14,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w700,
-                            height: 0.10,
-                            letterSpacing: 0.42,
-                          ),
-                        )
-                      ],
-                    ),
-                    Space(3.h),
-                    const Divider(
-                      color: Color(0xFFFA6E00),
-                    ),
-                    Space(1.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SheetLabelWidget(
-                          txt: 'Product',
-                          width: 25.w,
+                      ),
+                      const Text(
+                        'Products Scanned',
+                        style: TextStyle(
+                          color: Color(0xFF1E6F6D),
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400,
+                          height: 0.10,
+                          letterSpacing: 0.42,
                         ),
-                        SheetLabelWidget(
-                          txt: 'Price',
-                          width: 22.w,
+                      ),
+                      Text(
+                        (data['data'] as List<dynamic>).length.toString(),
+                        style: const TextStyle(
+                          color: Color(0xFFFA6E00),
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w700,
+                          height: 0.10,
+                          letterSpacing: 0.42,
                         ),
-                        SheetLabelWidget(
-                          txt: 'V/N',
-                          width: 15.w,
-                        ),
-                        Space(
-                          5.w,
-                          isHorizontal: true,
-                        ),
-                        SheetLabelWidget(
-                          txt: 'Category',
-                          width: 20.w,
-                        ),
-                      ],
-                    ),
-                    Space(1.h),
-                    const Divider(
-                      color: Color(0xFFFA6E00),
-                    ),
-                    Space(2.h),
-                    SizedBox(
-                      height: 56.h,
-                      child: ListView.builder(
-                        itemCount: (list as List<dynamic>).length,
-                        itemBuilder: (context, index) {
-                          TextEditingController nameController =
-                              TextEditingController(text: list[index]['name']);
-                          TextEditingController priceController =
-                              TextEditingController(text: list[index]['price']);
-                          TextEditingController categoryController =
-                              TextEditingController(
-                                  text: list[index]['category']);
+                      )
+                    ],
+                  ),
+                  Space(3.h),
+                  const Divider(
+                    color: Color(0xFFFA6E00),
+                  ),
+                  Space(1.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SheetLabelWidget(
+                        txt: 'Product',
+                        width: 25.w,
+                      ),
+                      SheetLabelWidget(
+                        txt: 'Price',
+                        width: 22.w,
+                      ),
+                      SheetLabelWidget(
+                        txt: 'V/N',
+                        width: 15.w,
+                      ),
+                      Space(
+                        5.w,
+                        isHorizontal: true,
+                      ),
+                      SheetLabelWidget(
+                        txt: 'Category',
+                        width: 20.w,
+                      ),
+                    ],
+                  ),
+                  Space(1.h),
+                  const Divider(
+                    color: Color(0xFFFA6E00),
+                  ),
+                  Space(2.h),
+                  SizedBox(
+                    height: 56.h,
+                    child: ListView.builder(
+                      itemCount: (list as List<dynamic>).length,
+                      itemBuilder: (context, index) {
+                        TextEditingController nameController =
+                            TextEditingController(text: list[index]['name']);
+                        TextEditingController priceController =
+                            TextEditingController(text: list[index]['price']);
+                        TextEditingController categoryController =
+                            TextEditingController(
+                                text: list[index]['category']);
 
-                          return Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 25.w,
-                                  child: TextField(
-                                    maxLines: null,
-                                    style: const TextStyle(
-                                      color: Color(0xFF094B60),
-                                      fontSize: 13,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    textInputAction: TextInputAction.done,
-                                    controller: nameController,
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                    ),
-                                    onSubmitted: (newValue) {
-                                      setState(() {
-                                        list[index]['name'] = newValue;
-                                      });
-                                    },
+                        return Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 25.w,
+                                child: TextField(
+                                  maxLines: null,
+                                  style: const TextStyle(
+                                    color: Color(0xFF094B60),
+                                    fontSize: 13,
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.w400,
                                   ),
+                                  textInputAction: TextInputAction.done,
+                                  controller: nameController,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  onSubmitted: (newValue) {
+                                    setState(() {
+                                      list[index]['name'] = newValue;
+                                    });
+                                  },
                                 ),
-                                SizedBox(
-                                  child: Row(
-                                    children: [
-                                      const Text(
-                                        'Rs ',
-                                        style: TextStyle(
+                              ),
+                              SizedBox(
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      'Rs ',
+                                      style: TextStyle(
+                                        color: Color(0xFF094B60),
+                                        fontSize: 13,
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 15.w,
+                                      child: TextField(
+                                        style: const TextStyle(
                                           color: Color(0xFF094B60),
                                           fontSize: 13,
                                           fontFamily: 'Product Sans',
                                           fontWeight: FontWeight.w400,
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 15.w,
-                                        child: TextField(
-                                          style: const TextStyle(
-                                            color: Color(0xFF094B60),
-                                            fontSize: 13,
-                                            fontFamily: 'Product Sans',
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          controller: priceController,
-                                          decoration: const InputDecoration(
-                                            border: InputBorder.none,
-                                          ),
-                                          textInputAction: TextInputAction.done,
-                                          onSubmitted: (newValue) {
-                                            setState(() {
-                                              list[index]['price'] = newValue;
-                                            });
-                                          },
+                                        controller: priceController,
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
                                         ),
+                                        textInputAction: TextInputAction.done,
+                                        onSubmitted: (newValue) {
+                                          setState(() {
+                                            list[index]['price'] = newValue;
+                                          });
+                                        },
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15.w,
-                                  child: CupertinoSwitch(
-                                    value: !list[index]['VEG'],
-                                    onChanged: (value) {
-                                      setState(() {
-                                        list[index]['VEG'] = !value;
-                                      });
-                                    },
-                                    activeColor:
-                                        const Color.fromRGBO(232, 89, 89, 1),
-                                    trackColor:
-                                        const Color.fromRGBO(77, 171, 75, 1),
-                                  ),
-                                ),
-                                const Spacer(),
-                                SizedBox(
-                                  width: 20.w,
-                                  child: TextField(
-                                    maxLines: null,
-                                    style: const TextStyle(
-                                      color: Color(0xFF094B60),
-                                      fontSize: 13,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w400,
                                     ),
-                                    controller: categoryController,
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                    ),
-                                    textInputAction: TextInputAction.done,
-                                    onSubmitted: (newValue) {
-                                      setState(() {
-                                        list[index]['category'] = newValue;
-                                      });
-                                    },
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    Space(1.h),
-                    AppWideButton(
-                      onTap: () async {
-                        print(list);
-                        await AddProductsForMenu(list);
-                        Navigator.of(context).pop();
-                        TOastNotification().showSuccesToast(
-                            context, 'Menu Uploaded successfully');
+                              ),
+                              SizedBox(
+                                width: 15.w,
+                                child: CupertinoSwitch(
+                                  value: !list[index]['VEG'],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      list[index]['VEG'] = !value;
+                                    });
+                                  },
+                                  activeColor:
+                                      const Color.fromRGBO(232, 89, 89, 1),
+                                  trackColor:
+                                      const Color.fromRGBO(77, 171, 75, 1),
+                                ),
+                              ),
+                              const Spacer(),
+                              SizedBox(
+                                width: 20.w,
+                                child: TextField(
+                                  maxLines: null,
+                                  style: const TextStyle(
+                                    color: Color(0xFF094B60),
+                                    fontSize: 13,
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  controller: categoryController,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  textInputAction: TextInputAction.done,
+                                  onSubmitted: (newValue) {
+                                    setState(() {
+                                      list[index]['category'] = newValue;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
                       },
-                      num: 1,
-                      txt: 'Complete menu upload',
-                    )
-                  ],
-                ),
+                    ),
+                  ),
+                  Space(1.h),
+                  AppWideButton(
+                    onTap: () async {
+                      print(list);
+                      await AddProductsForMenu(list);
+                      Navigator.of(context).pop();
+                      TOastNotification().showSuccesToast(
+                          context, 'Menu Uploaded successfully');
+                    },
+                    num: 1,
+                    txt: 'Complete menu upload',
+                  )
+                ],
               ),
-            );
-          },
-        );
-      },
-    );
-  }
+            ),
+          );
+        },
+      );
+    },
+  );
 }
 
 class InventoryForcastingWidget extends StatelessWidget {
@@ -946,7 +550,9 @@ class InventoryForcastingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(top: 3.h, left: 5.w, right: 5.w, bottom: 2.h),
+        padding: 100.w > 420
+            ? EdgeInsets.only(top: 3.h, left: 1.w, right: 1.w, bottom: 2.h)
+            : EdgeInsets.only(top: 3.h, left: 5.w, right: 5.w, bottom: 2.h),
         height: 24.h,
         width: double.infinity,
         decoration: ShapeDecoration(
@@ -993,7 +599,7 @@ class InventoryForcastingWidget extends StatelessWidget {
                 // Space(isHorizontal: true, 5.w),
                 Container(
                   height: 11.h,
-                  width: 26.w,
+                  width: 100.w > 420 ? 5.5.w : 26.w,
                   decoration: ShapeDecoration(
                     shadows: const [
                       BoxShadow(
@@ -1017,7 +623,7 @@ class InventoryForcastingWidget extends StatelessWidget {
             ),
             Container(
               height: 5.h,
-              width: 30.w,
+              width: 100.w > 420 ? 6.w : 30.w,
               decoration: ShapeDecoration(
                 shadows: const [
                   BoxShadow(
@@ -1036,33 +642,18 @@ class InventoryForcastingWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              child: Row(
-                children: [
-                  Space(isHorizontal: true, 3.w),
-                  Container(
-                    height: 3.h,
-                    width: 28,
-                    decoration: const ShapeDecoration(
-                      color: Colors.white,
-                      shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius.all(
-                            SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
-                      ),
-                    ),
+              child: Center(
+                child: Text(
+                  isBuy ? 'Buy' : 'Resell',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: 0.12,
                   ),
-                  Space(isHorizontal: true, 5.w),
-                  Text(
-                    isBuy ? 'Buy' : 'Resell',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.w700,
-                      height: 0,
-                      letterSpacing: 0.12,
-                    ),
-                  )
-                ],
+                ),
               ),
             ),
           ],
@@ -1082,8 +673,10 @@ class InventoryFocastRowWidget extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 14.w,
-            margin: EdgeInsets.only(right: 2.w),
+            width: 100.w > 420 ? 4.w : 14.w,
+            margin: 100.w > 420
+                ? EdgeInsets.only(right: 0.8.w)
+                : EdgeInsets.only(right: 2.w),
             child: const Text(
               'Wheat',
               style: TextStyle(
@@ -1097,8 +690,10 @@ class InventoryFocastRowWidget extends StatelessWidget {
             ),
           ),
           Container(
-            width: 14.w,
-            margin: EdgeInsets.only(right: 2.w),
+            width: 100.w > 420 ? 4.w : 14.w,
+            margin: 100.w > 420
+                ? EdgeInsets.only(right: 0.8.w)
+                : EdgeInsets.only(right: 2.w),
             child: const Text(
               'x 5 kg',
               style: TextStyle(
@@ -1114,7 +709,9 @@ class InventoryFocastRowWidget extends StatelessWidget {
           Container(
             width: 9,
             height: 8.25,
-            margin: EdgeInsets.only(left: 4.w),
+            margin: 100.w > 420
+                ? EdgeInsets.only(left: 0.8.w)
+                : EdgeInsets.only(left: 2.w),
             decoration: const ShapeDecoration(
               color: Color(0xFFF44B4B),
               shape: OvalBorder(),
@@ -1144,8 +741,10 @@ class InventotyForcastingBoldTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 14.w,
-      margin: EdgeInsets.only(right: 2.w),
+      width: 100.w > 420 ? 4.w : 14.w,
+      margin: 100.w > 420
+          ? EdgeInsets.only(right: 0.5.w)
+          : EdgeInsets.only(right: 2.w),
       child: Text(
         txt,
         style: const TextStyle(
@@ -1335,8 +934,8 @@ class ToolsButtonWidgetHomeSCreen extends StatelessWidget {
       height: 11.h,
       width: width,
       padding: EdgeInsets.only(
-        left: 1.w,
-        right: 1.w,
+        left: 100.w > 420 ? 0.2.w : 1.w,
+        right: 100.w > 420 ? 0.2.w : 1.w,
       ),
       decoration: ShapeDecoration(
         shadows: const [
@@ -1369,7 +968,7 @@ class ToolsButtonWidgetHomeSCreen extends StatelessWidget {
               fontWeight: FontWeight.w400,
               letterSpacing: 0.10,
             ),
-            maxLines: 2,
+            maxLines: null,
             textAlign: TextAlign.center,
           ),
         ],
@@ -1460,7 +1059,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
         txt,
         style: TextStyle(
           color: isActive ? Colors.white : const Color(0xff0A4C61),
-          fontSize: 3.w,
+          fontSize: 14,
           fontFamily: 'Product Sans',
           fontWeight: FontWeight.w700,
           height: 0,

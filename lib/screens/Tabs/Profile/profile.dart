@@ -42,306 +42,346 @@ class _ProfileState extends State<Profile> {
                 Column(
                   children: [
                     Space(10.h),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 5.w),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CustomIconButton(
-                            ic: Icons.arrow_back_ios_new_outlined,
-                            onTap: () {},
-                          ),
-                          Space(
-                            25.w,
-                            isHorizontal: true,
-                          ),
-                          Column(
-                            // mainAxisAlignment: MainAxisAlignment.start,
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxWidth: 800, // Set the maximum width to 800
+                      ),
+                      child: Center(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 5.w),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Space(15),
+                              CustomIconButton(
+                                ic: Icons.arrow_back_ios_new_outlined,
+                                onTap: () {},
+                              ),
                               Container(
-                                height: 70,
-                                width: 70,
-                                decoration: const ShapeDecoration(
-                                  shadows: [
-                                    BoxShadow(
-                                      offset: Offset(0, 4),
-                                      color: Color.fromRGBO(31, 111, 109, 0.6),
-                                      blurRadius: 20,
+                                padding: EdgeInsets.only(left: 7.w),
+                                child: Column(
+                                  // mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    const Space(15),
+                                    Container(
+                                      height: 70,
+                                      width: 70,
+                                      decoration: const ShapeDecoration(
+                                        shadows: [
+                                          BoxShadow(
+                                            offset: Offset(0, 4),
+                                            color: Color.fromRGBO(
+                                                31, 111, 109, 0.6),
+                                            blurRadius: 20,
+                                          )
+                                        ],
+                                        shape: SmoothRectangleBorder(),
+                                      ),
+                                      child: ClipSmoothRect(
+                                        radius: SmoothBorderRadius(
+                                          cornerRadius: 15,
+                                          cornerSmoothing: 1,
+                                        ),
+                                        child: Image.network(
+                                            'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj'),
+                                      ),
+                                    ),
+                                    Space(2.h),
+                                    const Text(
+                                      'Geeta Kitchen',
+                                      style: TextStyle(
+                                        color: Color(0xFF094B60),
+                                        fontSize: 14,
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.w700,
+                                        height: 0.10,
+                                        letterSpacing: 0.42,
+                                      ),
                                     )
                                   ],
-                                  shape: SmoothRectangleBorder(),
-                                ),
-                                child: ClipSmoothRect(
-                                  radius: SmoothBorderRadius(
-                                    cornerRadius: 15,
-                                    cornerSmoothing: 1,
-                                  ),
-                                  child: Image.network(
-                                      'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj'),
                                 ),
                               ),
-                              Space(2.h),
-                              const Text(
-                                'Geeta Kitchen',
-                                style: TextStyle(
-                                  color: Color(0xFF094B60),
-                                  fontSize: 14,
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.w700,
-                                  height: 0.10,
-                                  letterSpacing: 0.42,
-                                ),
+                              Row(
+                                children: [
+                                  CustomIconButton(
+                                    boxColor:
+                                        const Color.fromRGBO(38, 115, 140, 1),
+                                    color: Colors.white,
+                                    ic: Icons.add,
+                                    onTap: () async {
+                                      List<String> url =
+                                          await pickMultipleImagesAndUpoad();
+
+                                      if (url.length == 0) {
+                                        TOastNotification().showErrorToast(
+                                            context,
+                                            'Error While Uploading Image');
+                                      } else if (url
+                                          .contains('file size very large'))
+                                        TOastNotification().showErrorToast(
+                                            context, 'file size very large');
+                                      else if (!url.contains('element'))
+                                        CreateFeed().showModalSheetForNewPost(
+                                            context, url);
+                                      else {
+                                        TOastNotification().showErrorToast(
+                                            context,
+                                            'Error While Uploading Image');
+                                      }
+                                    },
+                                  ),
+                                  Space(
+                                    3.w,
+                                    isHorizontal: true,
+                                  ),
+                                  CustomIconButton(
+                                    ic: Icons.more_horiz,
+                                    onTap: () {},
+                                  ),
+                                ],
                               )
                             ],
                           ),
-                          const Spacer(),
-                          CustomIconButton(
-                            boxColor: const Color.fromRGBO(38, 115, 140, 1),
-                            color: Colors.white,
-                            ic: Icons.add,
-                            onTap: () async {
-                              List<String> url =
-                                  await pickMultipleImagesAndUpoad();
-                              // List<String> url = [
-                              //   'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
-                              //   'https://yt3.googleusercontent.com/Gvn-OAu94UsSQPp5zEMpC2ZMY3Yv1wUNbFaqkfBAYpXRLROA_nz3lS-Y9jQKJ3SGNVKX81xSpRM=s176-c-k-c0x00ffffff-no-rj',
-                              //   'https://yt3.googleusercontent.com/zgMN9BuSQByG1SrpmLwcNB3MQhjDhS_pl9H1h7TaRievMfS4UpU7Z36j77z5_hnIW4N8uFX3NA=s176-c-k-c0x00ffffff-no-rj'
-                              // ];
-                              if (url.length == 0) {
-                                TOastNotification().showErrorToast(
-                                    context, 'Error While Uploading Image');
-                              } else if (url.contains('file size very large'))
-                                TOastNotification().showErrorToast(
-                                    context, 'file size very large');
-                              else if (!url.contains('element'))
-                                CreateFeed()
-                                    .showModalSheetForNewPost(context, url);
-                              else {
-                                TOastNotification().showErrorToast(
-                                    context, 'Error While Uploading Image');
-                              }
-                            },
-                          ),
-                          Space(
-                            3.w,
-                            isHorizontal: true,
-                          ),
-                          CustomIconButton(
-                            ic: Icons.more_horiz,
-                            onTap: () {},
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                     Space(3.h),
                     Center(
-                        child: Container(
-                      height: 20.h,
-                      width: 90.w,
-                      decoration: ShapeDecoration(
-                        shadows: const [
-                          BoxShadow(
-                            offset: Offset(0, 4),
-                            color: Color.fromRGBO(165, 200, 199, 0.6),
-                            blurRadius: 25,
-                          )
-                        ],
-                        color: Colors.white,
-                        shape: SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius(
-                            cornerRadius: 15,
-                            cornerSmoothing: 1,
-                          ),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: 420, // Set the maximum width to 800
                         ),
-                      ),
-                      child: Column(
-                        children: [
-                          Space(3.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ColumnWidgetHomeScreen(
-                                data: (4.9).toString(),
-                                txt: 'Rating',
-                              ),
-                              ColumnWidgetHomeScreen(
-                                data: (789).toString(),
-                                txt: 'Followers',
-                              ),
-                              ColumnWidgetHomeScreen(
-                                data: '+${43}',
-                                txt: 'New followers',
-                              )
-                            ],
-                          ),
-                          Space(3.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              TouchableOpacity(
-                                onTap: () {},
-                                child: ButtonWidgetHomeScreen(
-                                    txt: 'Edit profile', isActive: true),
-                              ),
-                              TouchableOpacity(
-                                onTap: () {},
-                                child: ButtonWidgetHomeScreen(
-                                  txt: 'Share profile',
-                                  isActive: true,
+                        child: Wrap(
+                          children: [
+                            Center(
+                                child: Container(
+                              height: 20.h,
+                              // width: 90.w,
+                              decoration: ShapeDecoration(
+                                shadows: const [
+                                  BoxShadow(
+                                    offset: Offset(0, 4),
+                                    color: Color.fromRGBO(165, 200, 199, 0.6),
+                                    blurRadius: 25,
+                                  )
+                                ],
+                                color: Colors.white,
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 15,
+                                    cornerSmoothing: 1,
+                                  ),
                                 ),
                               ),
-                            ],
-                          )
-                        ],
+                              child: Column(
+                                children: [
+                                  Space(3.h),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      ColumnWidgetHomeScreen(
+                                        data: (4.9).toString(),
+                                        txt: 'Rating',
+                                      ),
+                                      ColumnWidgetHomeScreen(
+                                        data: (789).toString(),
+                                        txt: 'Followers',
+                                      ),
+                                      ColumnWidgetHomeScreen(
+                                        data: '+${43}',
+                                        txt: 'New followers',
+                                      )
+                                    ],
+                                  ),
+                                  Space(3.h),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      TouchableOpacity(
+                                        onTap: () {},
+                                        child: ButtonWidgetHomeScreen(
+                                            txt: 'Edit profile',
+                                            isActive: true),
+                                      ),
+                                      TouchableOpacity(
+                                        onTap: () {},
+                                        child: ButtonWidgetHomeScreen(
+                                          txt: 'Share profile',
+                                          isActive: true,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )),
+                            Space(3.h),
+                            Center(
+                              child: Container(
+                                // width: 90.w,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 1.5.h, horizontal: 4.w),
+                                decoration: ShapeDecoration(
+                                  shadows: const [
+                                    BoxShadow(
+                                      offset: Offset(0, 4),
+                                      color: Color.fromRGBO(165, 200, 199, 0.6),
+                                      blurRadius: 25,
+                                    )
+                                  ],
+                                  color: Colors.white,
+                                  shape: SmoothRectangleBorder(
+                                    borderRadius: SmoothBorderRadius(
+                                      cornerRadius: 15,
+                                      cornerSmoothing: 1,
+                                    ),
+                                  ),
+                                ),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 1.h, horizontal: 3.w),
+                                        width: 55,
+                                        height: 9,
+                                        decoration: ShapeDecoration(
+                                          color: const Color(0xFFFA6E00),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(6)),
+                                        ),
+                                      ),
+                                      Space(2.h),
+                                      Container(
+                                        height: 7.h,
+                                        width: 90.w,
+                                        decoration: ShapeDecoration(
+                                          shadows: const [
+                                            BoxShadow(
+                                              offset: Offset(0, 4),
+                                              color: Color.fromRGBO(
+                                                  165, 200, 199, 0.6),
+                                              blurRadius: 20,
+                                            )
+                                          ],
+                                          color: Colors.white,
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                              cornerRadius: 15,
+                                              cornerSmoothing: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              TouchableOpacity(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _activeButtonIndex = 1;
+                                                    });
+                                                  },
+                                                  child: CommonButtonProfile(
+                                                      isActive:
+                                                          _activeButtonIndex ==
+                                                              1,
+                                                      txt: 'Content')),
+                                              TouchableOpacity(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _activeButtonIndex = 2;
+                                                  });
+                                                },
+                                                child: CommonButtonProfile(
+                                                    isActive:
+                                                        _activeButtonIndex == 2,
+                                                    txt: 'Menu'),
+                                              ),
+                                              TouchableOpacity(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _activeButtonIndex = 3;
+                                                  });
+                                                },
+                                                child: CommonButtonProfile(
+                                                    isActive:
+                                                        _activeButtonIndex == 3,
+                                                    txt: 'Reviews'),
+                                              ),
+                                            ]),
+                                      ),
+                                      Space(4.h),
+                                      if (_activeButtonIndex == 1)
+                                        Container(
+                                          width: 85.w,
+                                          child: FutureBuilder(
+                                            future: getFeed(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.done) {
+                                                print(snapshot.data);
+                                                final data = snapshot.data
+                                                    as List<dynamic>;
+                                                return GridView.builder(
+                                                  physics:
+                                                      const NeverScrollableScrollPhysics(), // Disable scrolling
+                                                  shrinkWrap:
+                                                      true, // Allow the GridView to shrink-wrap its content
+                                                  addAutomaticKeepAlives: true,
+
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 0.8.h,
+                                                      horizontal: 3.w),
+                                                  gridDelegate:
+                                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                                    childAspectRatio: 1,
+                                                    crossAxisCount:
+                                                        3, // Number of items in a row
+                                                    crossAxisSpacing: 4
+                                                        .w, // Spacing between columns
+                                                    mainAxisSpacing: 1.5
+                                                        .h, // Spacing between rows
+                                                  ),
+                                                  itemCount: data
+                                                      .length, // Total number of items
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    // You can replace this container with your custom item widget
+                                                    return FeedWidget(
+                                                        data: data[index]);
+                                                  },
+                                                );
+                                              } else
+                                                return Center(
+                                                  child: Container(
+                                                    height: 20,
+                                                    width: 20,
+                                                    child:
+                                                        const CircularProgressIndicator(),
+                                                  ),
+                                                );
+                                            },
+                                          ),
+                                        ),
+                                      if (_activeButtonIndex == 2) Menu(),
+                                      if (_activeButtonIndex == 3)
+                                        const Text('Reviews')
+                                    ]),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ))
+                    )
                   ],
                 )
               ],
             ),
-            Space(3.h),
-            Center(
-              child: Container(
-                width: 90.w,
-                padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 4.w),
-                decoration: ShapeDecoration(
-                  shadows: const [
-                    BoxShadow(
-                      offset: Offset(0, 4),
-                      color: Color.fromRGBO(165, 200, 199, 0.6),
-                      blurRadius: 25,
-                    )
-                  ],
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius(
-                      cornerRadius: 15,
-                      cornerSmoothing: 1,
-                    ),
-                  ),
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 1.h, horizontal: 3.w),
-                        width: 55,
-                        height: 9,
-                        decoration: ShapeDecoration(
-                          color: const Color(0xFFFA6E00),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6)),
-                        ),
-                      ),
-                      Space(2.h),
-                      Container(
-                        height: 7.h,
-                        width: 90.w,
-                        decoration: ShapeDecoration(
-                          shadows: const [
-                            BoxShadow(
-                              offset: Offset(0, 4),
-                              color: Color.fromRGBO(165, 200, 199, 0.6),
-                              blurRadius: 20,
-                            )
-                          ],
-                          color: Colors.white,
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                              cornerRadius: 15,
-                              cornerSmoothing: 1,
-                            ),
-                          ),
-                        ),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              TouchableOpacity(
-                                  onTap: () {
-                                    setState(() {
-                                      _activeButtonIndex = 1;
-                                    });
-                                  },
-                                  child: CommonButtonProfile(
-                                      isActive: _activeButtonIndex == 1,
-                                      txt: 'Content')),
-                              TouchableOpacity(
-                                onTap: () {
-                                  setState(() {
-                                    _activeButtonIndex = 2;
-                                  });
-                                },
-                                child: CommonButtonProfile(
-                                    isActive: _activeButtonIndex == 2,
-                                    txt: 'Menu'),
-                              ),
-                              TouchableOpacity(
-                                onTap: () {
-                                  setState(() {
-                                    _activeButtonIndex = 3;
-                                  });
-                                },
-                                child: CommonButtonProfile(
-                                    isActive: _activeButtonIndex == 3,
-                                    txt: 'Reviews'),
-                              ),
-                            ]),
-                      ),
-                      Space(4.h),
-                      if (_activeButtonIndex == 1)
-                        Container(
-                          width: 85.w,
-                          child: FutureBuilder(
-                            future: getFeed(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                print(snapshot.data);
-                                final data = snapshot.data as List<dynamic>;
-                                return GridView.builder(
-                                  physics:
-                                      const NeverScrollableScrollPhysics(), // Disable scrolling
-                                  shrinkWrap:
-                                      true, // Allow the GridView to shrink-wrap its content
-                                  addAutomaticKeepAlives: true,
-
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0.8.h, horizontal: 3.w),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    childAspectRatio: 1,
-                                    crossAxisCount:
-                                        3, // Number of items in a row
-                                    crossAxisSpacing:
-                                        4.w, // Spacing between columns
-                                    mainAxisSpacing:
-                                        1.5.h, // Spacing between rows
-                                  ),
-                                  itemCount:
-                                      data.length, // Total number of items
-                                  itemBuilder: (context, index) {
-                                    // You can replace this container with your custom item widget
-                                    return FeedWidget(data: data[index]);
-                                  },
-                                );
-                              } else
-                                return Center(
-                                  child: Container(
-                                    height: 20,
-                                    width: 20,
-                                    child: const CircularProgressIndicator(),
-                                  ),
-                                );
-                            },
-                          ),
-                        ),
-                      if (_activeButtonIndex == 2) Menu(),
-                      if (_activeButtonIndex == 3) const Text('Reviews')
-                    ]),
-              ),
-            )
           ],
         ),
       ),

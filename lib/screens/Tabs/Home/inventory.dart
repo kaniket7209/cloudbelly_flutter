@@ -8,6 +8,7 @@ import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,13 +23,70 @@ class Inventory extends StatefulWidget {
 }
 
 class _InventoryState extends State<Inventory> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    _getStockData();
+    super.initState();
+  }
+
   void _launchURL(String url) async {
-    // url = 'https://rgbacolorpicker.com/hex-to-rgba';
     Uri googleSheetUrl = Uri.parse(url);
     if (!await launchUrl(googleSheetUrl, mode: LaunchMode.inAppBrowserView)) {
       TOastNotification().showErrorToast(context, 'Error while opening Sheet');
       throw Exception('Could not launch $url');
     }
+  }
+
+  List<dynamic> lowStockItems = [];
+  List<Map<String, dynamic>> nearExpiryItems = [];
+
+  Future<void> _getStockData() async {
+    final data = await SyncInventory();
+    print('low');
+    lowStockItems = findLowStockItems(data['data']['inventory_data']);
+    print('low stocks');
+    print(lowStockItems);
+  }
+
+  List<dynamic> findLowStockItems(List<dynamic> inventoryData) {
+    List<dynamic> lowstocks = [];
+    for (var item in inventoryData) {
+      double volumeLeft = double.parse(item['VOLUME LEFT']);
+
+      if (volumeLeft / double.parse(item['VOLUME PURCHASED']) <= 1) {
+        lowstocks.add(item);
+      }
+    }
+    return lowstocks;
+  }
+
+  int calculateDaysUntilRunOut(double volumeLeft, int shelfLife) {
+    DateTime currentDate = DateTime.now();
+    DateTime expirationDate = currentDate.add(Duration(days: shelfLife));
+    int daysUntilRunOut = expirationDate.difference(currentDate).inDays;
+    return daysUntilRunOut;
+  }
+
+  Future<void> getNearExpiryStocks() async {
+    final data = await SyncInventory();
+    final int thresholdDays = 100;
+
+    final currentDate = DateTime.now();
+
+    final dateFormat = DateFormat('dd-MM-yyyy');
+
+    data.forEach((item) {
+      if (item['EXP DATE'] != '-' && item['EXP DATE'].isNotEmpty) {
+        final expiryDate = dateFormat.parse(item['EXP DATE']);
+
+        final daysUntilExpiry = expiryDate.difference(currentDate).inDays;
+
+        if (daysUntilExpiry <= thresholdDays) {
+          nearExpiryItems.add(item);
+        }
+      }
+    });
   }
 
   @override
@@ -103,10 +161,87 @@ class _InventoryState extends State<Inventory> {
           ],
         ),
         Space(2.h),
-        LowStocksWidget(),
-        LowStocksWidget(),
-        LowStocksWidget(),
-        LowStocksWidget(),
+
+        for (int index = 0; index < lowStockItems.length; index++)
+          LowStocksWidget(
+            // url: lowStockItems[index]['image_url'],
+            amountLeft:
+                '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
+            item: lowStockItems[index]['NAME'],
+            percentage: double.parse(lowStockItems[index]['VOLUME LEFT']) /
+                double.parse(lowStockItems[index]['VOLUME PURCHASED']),
+            text:
+                '${calculateDaysUntilRunOut(double.parse(lowStockItems[index]['VOLUME LEFT']), int.parse(lowStockItems[index]['shelf_life'])).toString()} days runway',
+          ),
+        // SizedBox(
+        //   height: 9.h * lowStockItems.length,
+        //   child:
+        //   FutureBuilder(
+        //     future: _getStockData(),
+        //     builder: (context, snapshot) {
+        //       if (snapshot.connectionState == ConnectionState.waiting) {
+        //         return Center(
+        //           child: CircularProgressIndicator(),
+        //         ); // Show loading indicator while fetching data
+        //       }
+        //       if (snapshot.hasError) {
+        //         return Text('Error: ${snapshot.error}');
+        //       }
+        //       return ListView.builder(
+        //         physics: NeverScrollableScrollPhysics(),
+        //         itemCount: lowStockItems.length,
+        //         itemBuilder: (context, index) {
+        //           int daysLeft = calculateDaysUntilRunOut(
+        //               double.parse(lowStockItems[index]['VOLUME LEFT']),
+        //               int.parse(lowStockItems[index]['shelf_life']));
+        //           double percentage = double.parse(
+        //                   lowStockItems[index]['VOLUME LEFT']) /
+        //               double.parse(lowStockItems[index]['VOLUME PURCHASED']);
+        //           print('item $index : $percentage');
+        //           return LowStocksWidget(
+        //             amountLeft:
+        //                 '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
+        //             item: lowStockItems[index]['NAME'],
+        //             percentage: percentage,
+        //             text: '${daysLeft.toString()} days runway',
+        //           );
+        //         },
+        //       );
+        //     },
+        //   ),
+        // ),
+        Space(3.h),
+        Row(
+          children: [
+            BoldTextWidgetHomeScreen(
+              txt: 'Stocks near expiry',
+            ),
+            Spacer(),
+            SeeAllWidget(),
+          ],
+        ),
+        FutureBuilder(
+            future: null,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                ); // Show loading indicator while fetching data
+              }
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (int index = 0; index < 10; index++)
+                      StocksNearExpiryWidget(),
+                  ],
+                ),
+              );
+            }),
+        Space(2.h),
       ],
     );
   }
@@ -228,10 +363,10 @@ class _InventoryState extends State<Inventory> {
                               name: UiData['data']['inventory_data'][index]
                                   ['NAME'],
                               price: UiData['data']['inventory_data'][index]
-                                      ['TOTAL PRICE( Rs)'] ??
+                                      ['PRICE( Rs)'] ??
                                   '-',
                               volume: UiData['data']['inventory_data'][index]
-                                      ['VOLUME PURCHASED'] ??
+                                      ['VOLUME'] ??
                                   '-',
                               type: UiData['data']['inventory_data'][index]
                                   ['PRODUCT TYPE']);
@@ -261,13 +396,109 @@ class _InventoryState extends State<Inventory> {
   }
 }
 
-class LowStocksWidget extends StatelessWidget {
-  const LowStocksWidget({
+class StocksNearExpiryWidget extends StatelessWidget {
+  const StocksNearExpiryWidget({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      height: 120,
+      width: 90,
+      decoration: ShapeDecoration(
+        shadows: const [
+          BoxShadow(
+            offset: Offset(0, 4),
+            color: Color.fromRGBO(124, 193, 191, 0.3),
+            blurRadius: 15 + 5,
+          )
+        ],
+        color: Colors.white,
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 10,
+            cornerSmoothing: 1,
+          ),
+        ),
+      ),
+      child:
+          Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+        Space(3),
+        Container(
+          height: 75,
+          width: 73,
+          decoration: ShapeDecoration(
+            shadows: const [
+              BoxShadow(
+                offset: Offset(0, 4),
+                color: Color.fromRGBO(124, 193, 191, 0.3),
+                blurRadius: 15 + 5,
+              )
+            ],
+            color: Color.fromRGBO(200, 233, 233, 1),
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 10,
+                cornerSmoothing: 1,
+              ),
+            ),
+          ),
+        ),
+        Space(5),
+        Text(
+          'Chicken',
+          style: TextStyle(
+            color: Color(0xFF0A4C61),
+            fontSize: 12,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.w700,
+            height: 0,
+            letterSpacing: 0.12,
+          ),
+        ),
+        Text(
+          '15.3 kg',
+          style: TextStyle(
+            color: Color(0xFFFA6E00),
+            fontSize: 9,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.w400,
+            height: 0,
+            letterSpacing: 0.09,
+          ),
+        )
+      ]),
+    );
+  }
+}
+
+class LowStocksWidget extends StatelessWidget {
+  double percentage;
+  String text;
+  String amountLeft;
+  String item;
+  // String url;
+  LowStocksWidget({
+    super.key,
+    required this.amountLeft,
+    required this.text,
+    required this.percentage,
+    required this.item,
+    // required this.url,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Color color = percentage < 0.1
+        ? Color(0xFFF54B4B)
+        : percentage < 0.2
+            ? Color(0xFFFA6E00)
+            : percentage < 0.3
+                ? Color.fromARGB(255, 237, 172, 123)
+                : Color(0xFF8EE239);
+
     return Container(
       margin: EdgeInsets.only(bottom: 2.h),
       width: double.infinity,
@@ -292,37 +523,42 @@ class LowStocksWidget extends StatelessWidget {
         children: [
           Space(isHorizontal: true, 3.w),
           Container(
-              height: 35,
-              width: 35,
-              decoration: ShapeDecoration(
-                shadows: const [
-                  BoxShadow(
-                    offset: Offset(0, 4),
-                    color: Color.fromRGBO(124, 193, 191, 0.3),
-                    blurRadius: 20,
-                  )
-                ],
-                color: Color.fromRGBO(200, 233, 233, 1),
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 10,
-                    cornerSmoothing: 1,
-                  ),
+            height: 35,
+            width: 35,
+            decoration: ShapeDecoration(
+              shadows: const [
+                BoxShadow(
+                  offset: Offset(0, 4),
+                  color: Color.fromRGBO(124, 193, 191, 0.3),
+                  blurRadius: 20,
+                )
+              ],
+              color: Color.fromRGBO(200, 233, 233, 1),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 10,
+                  cornerSmoothing: 1,
                 ),
-              )),
+              ),
+            ),
+            // child: Image.network(url),
+          ),
           Space(isHorizontal: true, 3.w),
-          Text(
-            'Wheat',
-            style: TextStyle(
-              color: Color(0xFF0A4C61),
-              fontSize: 14,
-              fontFamily: 'Product Sans',
-              fontWeight: FontWeight.w400,
-              height: 0.05,
-              letterSpacing: 0.14,
+          SizedBox(
+            width: 20.w,
+            child: Text(
+              item,
+              style: TextStyle(
+                color: Color(0xFF0A4C61),
+                fontSize: 14,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w400,
+                height: 0.05,
+                letterSpacing: 0.14,
+              ),
             ),
           ),
-          Space(isHorizontal: true, 12.w),
+          Space(isHorizontal: true, 7.w),
           Stack(
             children: [
               Container(
@@ -343,7 +579,7 @@ class LowStocksWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                width: 60.w * (5 / (5 + 1)),
+                width: 50.w,
               ),
               Container(
                 height: 20,
@@ -355,7 +591,7 @@ class LowStocksWidget extends StatelessWidget {
                       blurRadius: 20,
                     )
                   ],
-                  color: Color.fromRGBO(245, 75, 75, 1),
+                  color: color,
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(
                       cornerRadius: 10,
@@ -363,13 +599,17 @@ class LowStocksWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                width: 60.w * (1 / (5 + 1)),
+                width: percentage < 0.1
+                    ? 50.w * percentage + 7.w
+                    : percentage < 0.2
+                        ? 50.w * percentage + 5.w
+                        : 50.w * percentage,
               ),
               Positioned(
-                  left: 10,
+                  left: 5,
                   top: 5,
                   child: Text(
-                    '5kg left',
+                    amountLeft,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 8,
@@ -383,7 +623,7 @@ class LowStocksWidget extends StatelessWidget {
                   right: 10,
                   top: 5,
                   child: Text(
-                    '1 days runway',
+                    text,
                     style: TextStyle(
                       color: Color(0xFF094B60),
                       fontSize: 8,

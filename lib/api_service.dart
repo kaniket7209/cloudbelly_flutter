@@ -338,7 +338,7 @@ Future<dynamic> SyncInventory() async {
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
+    // print(response.body);
     print(response.statusCode);
     return jsonDecode((response.body));
   } catch (error) {
