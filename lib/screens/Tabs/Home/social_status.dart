@@ -3,6 +3,8 @@ import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/store_setup_sheets.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
+import 'package:cloudbelly_app/widgets/appwide_progress_bar.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
@@ -30,16 +32,236 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
     super.dispose();
   }
 
+  PageController _pageController = PageController(initialPage: 0);
+  int _currentPageIndex = 0;
   bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: 100.w <= 420
-          ? EdgeInsets.only(left: 5.w, right: 5.w)
-          : EdgeInsets.only(left: 0.5.w, right: 0.5.w),
+      // margin: 100.w <= 420
+      //     ? EdgeInsets.only(left: 5.w, right: 5.w)
+      //     : EdgeInsets.only(left: 0.5.w, right: 0.5.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 5.w),
+            height: 28.h,
+            width: double.infinity,
+            decoration: const ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                  offset: Offset(0, 4),
+                  color: Color.fromRGBO(165, 200, 199, 0.6),
+                  blurRadius: 25,
+                )
+              ],
+              color: Colors.white,
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.all(
+                    SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Enhance your store',
+                      style: TextStyle(
+                        color: Color(0xFF094B60),
+                        fontSize: 20,
+                        fontFamily: 'Jost',
+                        fontWeight: FontWeight.w600,
+                        height: 0.05,
+                        letterSpacing: 0.60,
+                      ),
+                    ),
+                    Text(
+                      '30%',
+                      style: TextStyle(
+                        color: Color(0xFFFA6E00),
+                        fontSize: 16,
+                        fontFamily: 'Jost',
+                        fontWeight: FontWeight.w600,
+                        height: 0.08,
+                        letterSpacing: 0.48,
+                      ),
+                    )
+                  ],
+                ),
+                Space(3.h),
+                AppWIdeProgreesBar(
+                  color: Color(0xFFFA6E00),
+                  part: 0.33,
+                ),
+                Space(3.h),
+                SizedBox(
+                  height: 10.h,
+                  width: double.infinity,
+                  child: PageView(
+                    controller: _pageController,
+                    onPageChanged: (int index) {
+                      setState(() {
+                        _currentPageIndex = index;
+                      });
+                    },
+                    children: [
+                      AddSomething_EnhaceWidget(
+                        heading: 'Add brand color',
+                        text: 'Add personalised color to your store',
+                      ),
+                      AddSomething_EnhaceWidget(
+                        heading: 'Add cover image',
+                        text:
+                            'Give a nice visual to your store when a customer visits',
+                      ),
+                      AddSomething_EnhaceWidget(
+                        heading: 'Add Logo',
+                        text:
+                            'Give personalised vibes when customer visits your store',
+                      ),
+                    ],
+                  ),
+                ),
+                Space(1.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    3,
+                    (index) => GestureDetector(
+                      onTap: () {
+                        _pageController.animateToPage(index,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeInOut);
+                      },
+                      child: index == _currentPageIndex
+                          ? Container(
+                              height: 10.0,
+                              width: 30,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: _currentPageIndex == index
+                                    ? const Color.fromRGBO(250, 110, 0, 1)
+                                    : Colors.grey,
+                              ),
+                            )
+                          : Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              width: 10.0,
+                              height: 10.0,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _currentPageIndex == index
+                                    ? const Color.fromRGBO(250, 110, 0, 1)
+                                    : Colors.grey,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+                Space(1.h),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5),
+                      child: Text(
+                        '   More profile action ',
+                        style: TextStyle(
+                          color: Color(0xFF0A4C61),
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w700,
+                          height: 0,
+                          letterSpacing: 0.12,
+                        ),
+                      ),
+                    ),
+                    Space(
+                      15,
+                      isHorizontal: true,
+                    ),
+                    Container(
+                        height: 25,
+                        width: 25,
+                        decoration: ShapeDecoration(
+                            color: Color.fromRGBO(84, 166, 193, 1),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20))),
+                        child: Center(
+                            child: Icon(
+                          Icons.double_arrow_rounded,
+                          color: Colors.white,
+                        )))
+                  ],
+                )
+              ],
+            ),
+          ),
+          Space(3.h),
+          Center(
+            child: Text(
+              'Create post',
+              style: TextStyle(
+                color: Color(0xFF094B60),
+                fontSize: 20,
+                fontFamily: 'Jost',
+                fontWeight: FontWeight.w600,
+                height: 0.05,
+                letterSpacing: 0.60,
+              ),
+            ),
+          ),
+          Space(3.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Make_Update_ListWidget(
+                txt: 'From gallery',
+                onTap: () async {
+                  List<String> url = await pickMultipleImagesAndUpoad();
+
+                  if (url.length == 0) {
+                    TOastNotification()
+                        .showErrorToast(context, 'Error While Uploading Image');
+                  } else if (url.contains('file size very large'))
+                    TOastNotification()
+                        .showErrorToast(context, 'file size very large');
+                  else if (!url.contains('element'))
+                    CreateFeed().showModalSheetForNewPost(context, url);
+                  else {
+                    TOastNotification()
+                        .showErrorToast(context, 'Error While Uploading Image');
+                  }
+                },
+              ),
+              Make_Update_ListWidget(
+                txt: 'Click photo',
+                onTap: () async {
+                  List<String> url = [];
+                  url.add(await pickImageAndUpoad(src: 'Camera', context));
+
+                  if (url.length == 0) {
+                    TOastNotification()
+                        .showErrorToast(context, 'Error While Uploading Image');
+                  } else if (url.contains('file size very large'))
+                    TOastNotification()
+                        .showErrorToast(context, 'file size very large');
+                  else if (!url.contains('element'))
+                    CreateFeed().showModalSheetForNewPost(context, url);
+                  else {
+                    TOastNotification()
+                        .showErrorToast(context, 'Error While Uploading Image');
+                  }
+                },
+              ),
+            ],
+          ),
+          Space(4.h),
           const BoldTextWidgetHomeScreen(txt: 'Tools & essentials'),
           Space(2.h),
           Row(
@@ -48,7 +270,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
               TouchableOpacity(
                   onTap: () async {
                     final prefs = await SharedPreferences.getInstance();
-                    prefs.setInt('counter', 1);
+
                     final counter = prefs.getInt('counter') ?? 1;
 
                     if (counter < 4) {
@@ -368,6 +590,76 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class AddSomething_EnhaceWidget extends StatelessWidget {
+  String heading;
+  String text;
+  AddSomething_EnhaceWidget({
+    super.key,
+    required this.heading,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 12.w),
+      width: double.infinity,
+      decoration: const ShapeDecoration(
+        shadows: [
+          BoxShadow(
+            offset: Offset(0, 4),
+            color: Color.fromRGBO(124, 193, 191, 0.1),
+            blurRadius: 20,
+          )
+        ],
+        color: Color.fromRGBO(207, 245, 245, 1),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.all(
+              SmoothRadius(cornerRadius: 25, cornerSmoothing: 1)),
+        ),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: 149,
+              child: Text(
+                heading,
+                style: TextStyle(
+                  color: Color(0xFF0A4C61),
+                  fontSize: 16,
+                  fontFamily: 'Product Sans',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: 0.16,
+                ),
+              ),
+            ),
+            Icon(Icons.more_vert)
+          ],
+        ),
+        Space(1.h),
+        SizedBox(
+          width: double.infinity,
+          child: Text(
+            text,
+            maxLines: 2,
+            overflow: TextOverflow.fade,
+            style: TextStyle(
+              color: Color(0xFF0A4C61),
+              fontSize: 10,
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0.10,
+            ),
+          ),
+        )
+      ]),
     );
   }
 }

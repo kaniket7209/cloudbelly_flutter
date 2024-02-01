@@ -1,9 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:toastification/toastification.dart';
 
 class Auth {
   static final Auth _instance = Auth._internal();
@@ -45,12 +51,9 @@ Future<String> signUp(email, pass, phone, type) async {
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
-    print(response.statusCode);
     return jsonDecode((response.body))['message'];
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return '-1';
   }
 }
@@ -70,16 +73,12 @@ Future<String> login(email, pass) async {
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
-    print(response.statusCode);
 
     Auth().user_id = jsonDecode((response.body))['user_id'];
     Auth().user_email = jsonDecode((response.body))['email'];
-    print(Auth().user_email);
     return jsonDecode((response.body))['message'];
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return "-1";
   }
 }
@@ -101,16 +100,13 @@ Future sendUserTypeRequest() async {
 
     if (response.statusCode == 200) {
       // Request was successful, handle the response here
-      print('Success: ${response.body}');
       return jsonDecode(response.body);
     } else {
       // Request failed, handle the error
-      print('Error: ${response.statusCode} - ${response.body}');
       return response.body;
     }
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return "";
   }
 }
@@ -139,12 +135,9 @@ Future<String> storeSetup1(user_name, pincode, profile_photo, location_details,
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
-    print(response.statusCode);
     return jsonDecode((response.body))['message'];
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return '-1';
   }
 }
@@ -166,12 +159,9 @@ Future<String> storeSetup2(
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
-    print(response.statusCode);
     return jsonDecode((response.body))['message'];
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return '-1';
   }
 }
@@ -193,17 +183,36 @@ Future<String> storeSetup3(bank_name, account_number, ifsc_code, upi_id) async {
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
-    print(response.statusCode);
     return jsonDecode((response.body))['message'];
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return '-1';
   }
 }
 
-Future<String> pickImageAndUpoad({String src = 'Gallery'}) async {
+Future<File> compressImage(String imagePath) async {
+  // Get the original image file
+  File imageFile = File(imagePath);
+
+  // Compress the image
+  Uint8List? compressedBytes = await FlutterImageCompress.compressWithFile(
+    imagePath,
+    quality: 85, // Adjust the quality as needed
+  );
+
+  // Create a new file for the compressed image
+  File compressedImage = File(imagePath.split('.').first + '_compressed.jpg');
+
+  // Write the compressed bytes to the new file
+  await compressedImage.writeAsBytes(compressedBytes!);
+
+  return compressedImage;
+}
+
+Future<String> pickImageAndUpoad(
+  BuildContext context, {
+  String src = 'Gallery',
+}) async {
   final picker = ImagePicker();
   final pickedImage = await picker.pickImage(
     source: src == 'Gallery' ? ImageSource.gallery : ImageSource.camera,
@@ -229,13 +238,45 @@ Future<String> pickImageAndUpoad({String src = 'Gallery'}) async {
     final status = response.statusCode;
     if (status != 200) throw Exception('http.send error: statusCode= $status');
 
-    print(response.body);
-
-    print(jsonDecode((response.body))['file_url']);
     return jsonDecode((response.body))['file_url'];
   } catch (error) {
-    print(error);
-    if (error.toString().contains('413')) return "file size very large";
+    if (error.toString().contains('413')) {
+      // showDialog(
+      //   context: context,
+      //   builder: (BuildContext context) {
+      //     return AlertDialog(
+      //       title: Text('File Size large'),
+      //       content: Text('If you want we can Compress this file'),
+      //       actions: <Widget>[
+      //         TextButton(
+      //           onPressed: () async {
+      //             var result = await FlutterImageCompress.compressWithFile(
+      //               imagePath,
+      //               minWidth: 2300,
+      //               minHeight: 1500,
+      //               quality: 94,
+      //               rotate: 90,
+      //             );
+      //             File file = File(filePath);
+      //             await file.writeAsBytes(uint8List);
+      //             print(result!.length);
+      //           },
+      //           child: Text('Compress'),
+      //         ),
+      //         Space(isHorizontal: true, 100),
+      //         TextButton(
+      //           onPressed: () {
+      //             // Close the dialog
+      //             Navigator.of(context).pop();
+      //           },
+      //           child: Text('Close'),
+      //         ),
+      //       ],
+      //     );
+      //   },
+      // );
+      return "file size very large";
+    }
     return "";
   }
 }
@@ -270,7 +311,6 @@ Future<dynamic> ScanMenu(String src) async {
 
     return jsonDecode((response.body));
   } catch (error) {
-    print(error);
     if (error.toString().contains('413')) return "file size very large";
     return "";
   }
@@ -290,12 +330,9 @@ Future<dynamic> AddProductsForMenu(List<dynamic> data) async {
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
-    print(response.statusCode);
     return jsonDecode((response.body));
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return '-1';
   }
 }
@@ -314,12 +351,9 @@ Future<dynamic> getSheetUrl() async {
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
-    print(response.statusCode);
     return jsonDecode((response.body));
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return '-1';
   }
 }
@@ -339,11 +373,9 @@ Future<dynamic> SyncInventory() async {
       body: jsonEncode(requestBody),
     );
     // print(response.body);
-    print(response.statusCode);
     return jsonDecode((response.body));
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return '-1';
   }
 }
@@ -374,12 +406,9 @@ Future<String> createPost(
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
-    print(response.statusCode);
     return jsonDecode((response.body))['message'];
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return '-1';
   }
 }
@@ -390,7 +419,6 @@ Future<List<String>> pickMultipleImagesAndUpoad() async {
   // var status = await Permission.photos.request();
   List<XFile>? images = await ImagePicker().pickMultiImage();
   selectedImages = images.map((image) => image.path).toList();
-  print(selectedImages);
   List<String> UrlList = [];
 
   for (int i = 0; i < selectedImages.length; i++) {
@@ -411,20 +439,15 @@ Future<List<String>> pickMultipleImagesAndUpoad() async {
       if (status != 200)
         throw Exception('http.send error: statusCode= $status');
 
-      print(response.body);
-
-      print(jsonDecode((response.body))['file_url']);
       UrlList.add(jsonDecode((response.body))['file_url']);
       // return jsonDecode((response.body))['file_url'];
     } catch (error) {
-      print(error);
       if (error.toString().contains('413')) {
         UrlList.add("file size very large");
       }
       UrlList.add("");
     }
   }
-  print(UrlList);
   return UrlList;
 }
 
@@ -441,12 +464,9 @@ Future<dynamic> getFeed() async {
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
-    print(response.statusCode);
     return jsonDecode((response.body));
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return '-1';
   }
 }
@@ -464,12 +484,9 @@ Future<dynamic> getMenu() async {
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
-    print(response.statusCode);
     return jsonDecode((response.body));
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
     return '-1';
   }
 }
@@ -482,12 +499,10 @@ Future<dynamic> updateProductImage(
   if (src == 'Gallery') {
     list = await pickMultipleImagesAndUpoad();
   } else {
-    String temp = await pickImageAndUpoad(src: 'Camera');
+    String temp = await pickImageAndUpoad(src: 'Camera', context);
     if (temp != '') list.add(temp);
   }
-  print(list);
   if (list.length != 0) {
-    print(list.length.toString());
     if (list.contains('file size very large')) {
       TOastNotification().showErrorToast(context, 'File size very Large');
     } else {
@@ -507,13 +522,10 @@ Future<dynamic> updateProductImage(
           },
           body: jsonEncode(requestBody),
         );
-        print(response.body);
-        print(response.statusCode);
         TOastNotification().showSuccesToast(context, 'Image updated ');
         return jsonDecode((response.body));
       } catch (error) {
         // Handle exceptions
-        print('Error: $error');
         return '-1';
       }
     }
@@ -544,12 +556,30 @@ Future<dynamic> updateProductDetails(
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    print(response.body);
-    print(response.statusCode);
     return jsonDecode((response.body));
   } catch (error) {
     // Handle exceptions
-    print('Error: $error');
+    return '-1';
+  }
+}
+
+Future<dynamic> getInventoryData() async {
+  final String url = 'https://app.cloudbelly.in/inventory/data';
+
+  // bool _isOK = false;
+  Map<String, dynamic> requestBody = {
+    "user_id": Auth().user_id,
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: Auth().headers,
+      body: jsonEncode(requestBody),
+    );
+    return jsonDecode((response.body));
+  } catch (error) {
+    // Handle exceptions
     return '-1';
   }
 }

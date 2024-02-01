@@ -143,24 +143,66 @@ class _HomeState extends State<Home> {
                                     children: [
                                       Space(3.h),
                                       // Adjusted the width of buttons based on screen width
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          ColumnWidgetHomeScreen(
-                                            data: (4.9).toString(),
-                                            txt: 'Rating',
-                                          ),
-                                          ColumnWidgetHomeScreen(
-                                            data: (789).toString(),
-                                            txt: 'Followers',
-                                          ),
-                                          ColumnWidgetHomeScreen(
-                                            data: '+${43}',
-                                            txt: 'New followers',
-                                          )
-                                        ],
-                                      ),
+                                      _activeButtonIndex == 1
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                ColumnWidgetHomeScreen(
+                                                  data: (4.9).toString(),
+                                                  txt: 'Rating',
+                                                ),
+                                                ColumnWidgetHomeScreen(
+                                                  data: (789).toString(),
+                                                  txt: 'Followers',
+                                                ),
+                                                ColumnWidgetHomeScreen(
+                                                  data: '+${43}',
+                                                  txt: 'New followers',
+                                                )
+                                              ],
+                                            )
+                                          : _activeButtonIndex == 2
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    ColumnWidgetHomeScreen(
+                                                      data: (4).toString(),
+                                                      txt: 'Stock health',
+                                                    ),
+                                                    ColumnWidgetHomeScreen(
+                                                      data: (78.9).toString() +
+                                                          '%',
+                                                      txt: 'Waste %age',
+                                                    ),
+                                                    ColumnWidgetHomeScreen(
+                                                      data: '4.3x',
+                                                      txt: 'Avg turnaround',
+                                                    )
+                                                  ],
+                                                )
+                                              : Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    ColumnWidgetHomeScreen(
+                                                      data: (4.9).toString(),
+                                                      txt: 'Rating',
+                                                    ),
+                                                    ColumnWidgetHomeScreen(
+                                                      data: (789).toString(),
+                                                      txt: 'Followers',
+                                                    ),
+                                                    ColumnWidgetHomeScreen(
+                                                      data: '+${43}',
+                                                      txt: 'New followers',
+                                                    )
+                                                  ],
+                                                ),
+
                                       Space(3.h),
                                       Row(
                                         mainAxisAlignment:

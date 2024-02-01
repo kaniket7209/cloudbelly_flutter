@@ -27,6 +27,7 @@ class _InventoryState extends State<Inventory> {
   void initState() {
     // TODO: implement initState
     _getStockData();
+    _getInventoryData();
     super.initState();
   }
 
@@ -44,9 +45,13 @@ class _InventoryState extends State<Inventory> {
   Future<void> _getStockData() async {
     final data = await SyncInventory();
     print('low');
+    print(data);
     lowStockItems = findLowStockItems(data['data']['inventory_data']);
     print('low stocks');
-    print(lowStockItems);
+  }
+
+  Future<void> _getInventoryData() async {
+    final data = await getInventoryData();
   }
 
   List<dynamic> findLowStockItems(List<dynamic> inventoryData) {
@@ -54,9 +59,12 @@ class _InventoryState extends State<Inventory> {
     for (var item in inventoryData) {
       double volumeLeft = double.parse(item['VOLUME LEFT']);
 
-      if (volumeLeft / double.parse(item['VOLUME PURCHASED']) <= 1) {
+      if (volumeLeft /
+              double.parse(item['VOLUME'] ?? item['VOLUME PURCHASED'] ?? 100) <=
+          1) {
         lowstocks.add(item);
       }
+      // print(item);
     }
     return lowstocks;
   }

@@ -311,7 +311,7 @@ class _Sheet1State extends State<Sheet1> {
                           setState(() {
                             _isImageUploading = true;
                           });
-                          profile_photo = await pickImageAndUpoad();
+                          profile_photo = await pickImageAndUpoad(context);
                           setState(() {
                             _isImageUploading = false;
                           });
@@ -564,7 +564,8 @@ class _Sheet2State extends State<Sheet2> {
                     Space(1.h),
                     GestureDetector(
                         onTap: () async {
-                          fssai_licence_document = await pickImageAndUpoad();
+                          fssai_licence_document =
+                              await pickImageAndUpoad(context);
                         },
                         child: Container(
                           // rgba(165, 200, 199, 1),
