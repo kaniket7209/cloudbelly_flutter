@@ -40,9 +40,6 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // margin: 100.w <= 420
-      //     ? EdgeInsets.only(left: 5.w, right: 5.w)
-      //     : EdgeInsets.only(left: 0.5.w, right: 0.5.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -282,9 +279,9 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                     }
                   },
                   child: ToolsButtonWidgetHomeSCreen(
-                      width: 100.w > 420 ? 4.w : 15.w, txt: 'Setup Store')),
+                      width: 15.w, txt: 'Setup Store')),
               ToolsButtonWidgetHomeSCreen(
-                width: 100.w > 420 ? 4.w : 15.w,
+                width: 15.w,
                 txt: 'Photos & Videos',
               ),
               TouchableOpacity(
@@ -293,7 +290,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                         .pushNamed(InventoryHub.routeName);
                   },
                   child: ToolsButtonWidgetHomeSCreen(
-                    width: 100.w > 420 ? 4.w : 15.w,
+                    width: 15.w,
                     txt: 'Inventory Manage',
                   )),
               TouchableOpacity(
@@ -414,12 +411,12 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                   );
                 },
                 child: ToolsButtonWidgetHomeSCreen(
-                  width: 100.w > 420 ? 4.w : 15.w,
+                  width: 15.w,
                   txt: 'Upload Menu',
                 ),
               ),
               ToolsButtonWidgetHomeSCreen(
-                width: 100.w > 420 ? 4.w : 15.w,
+                width: 15.w,
                 txt: 'Dashboard',
               ),
             ],

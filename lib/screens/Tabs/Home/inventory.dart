@@ -2,6 +2,7 @@
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
+import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
@@ -25,11 +26,13 @@ class Inventory extends StatefulWidget {
 class _InventoryState extends State<Inventory> {
   @override
   void initState() {
-    // TODO: implement initState
-    _getStockData();
-    _getInventoryData();
+    // _getStocksYouMayNeed();
+    // _getLowStockData();
+    // _getNearExpiryStocks();
     super.initState();
   }
+
+  dynamic data;
 
   void _launchURL(String url) async {
     Uri googleSheetUrl = Uri.parse(url);
@@ -40,19 +43,81 @@ class _InventoryState extends State<Inventory> {
   }
 
   List<dynamic> lowStockItems = [];
-  List<Map<String, dynamic>> nearExpiryItems = [];
-
-  Future<void> _getStockData() async {
+  List<dynamic> nearExpiryItems = [];
+  List<dynamic> stocksYouMayNeed = [];
+  Future<void> _getLowStockData() async {
+    lowStockItems = [];
     final data = await SyncInventory();
-    print('low');
-    print(data);
     lowStockItems = findLowStockItems(data['data']['inventory_data']);
-    print('low stocks');
+
+    // print(lowStockItems);
+    lowStockItems.sort((a, b) {
+      int runwayComparison = a['runway'].compareTo(b['runway']);
+      if (runwayComparison != 0) {
+        return runwayComparison;
+      } else {
+        return a['VOLUME LEFT'].compareTo(b['VOLUME LEFT']);
+      }
+    });
   }
 
-  Future<void> _getInventoryData() async {
+  Future<void> _getStocksYouMayNeed() async {
+    stocksYouMayNeed = [];
     final data = await getInventoryData();
-    print(data);
+    print('object');
+
+    stocksYouMayNeed = data['data'][0]['inventory_data'];
+
+    stocksYouMayNeed.forEach((element) {
+      element['runway'] = calculateDaysUntilRunOut(
+        double.parse(element['VOLUME LEFT']),
+        int.parse(element['shelf_life']),
+        element['EXP DATE'],
+      );
+    });
+
+    stocksYouMayNeed.sort((a, b) {
+      int runwayComparison = a['runway'].compareTo(b['runway']);
+      if (runwayComparison != 0) {
+        return runwayComparison;
+      } else {
+        return a['VOLUME LEFT'].compareTo(b['VOLUME LEFT']);
+      }
+    });
+  }
+
+  Future<void> _getNearExpiryStocks() async {
+    nearExpiryItems = [];
+    dynamic data = await SyncInventory();
+    final int thresholdDays = 3;
+    final currentDate = DateTime.now();
+    final dateFormat = DateFormat('dd-MM-yyyy');
+
+    data = data['data']['inventory_data'];
+    data.forEach((item) {
+      var daysUntilExpiry;
+      var expiryDate;
+      if (item['EXP DATE'] != '-' && item['EXP DATE'].isNotEmpty) {
+        expiryDate = dateFormat.parse(item['EXP DATE']);
+      } else {
+        expiryDate =
+            currentDate.add(Duration(days: int.parse(item['shelf_life'])));
+      }
+      daysUntilExpiry = expiryDate.difference(currentDate).inDays;
+      if (daysUntilExpiry <= thresholdDays) {
+        item['runway'] = calculateDaysUntilRunOut(
+          double.parse(item['VOLUME LEFT']),
+          int.parse(item['shelf_life']),
+          item['EXP DATE'],
+        );
+        nearExpiryItems.add(item);
+      }
+    });
+
+    nearExpiryItems.sort((a, b) {
+      int runwayComparison = a['runway'].compareTo(b['runway']);
+      return runwayComparison;
+    });
   }
 
   List<dynamic> findLowStockItems(List<dynamic> inventoryData) {
@@ -60,42 +125,31 @@ class _InventoryState extends State<Inventory> {
     for (var item in inventoryData) {
       double volumeLeft = double.parse(item['VOLUME LEFT']);
 
-      if (volumeLeft /
-              double.parse(item['VOLUME'] ?? item['VOLUME PURCHASED'] ?? 100) <=
-          1) {
+      if (volumeLeft / double.parse(item['VOLUME PURCHASED']) <= 1) {
+        item['runway'] = calculateDaysUntilRunOut(
+          double.parse(item['VOLUME LEFT']),
+          int.parse(item['shelf_life']),
+          item['EXP DATE'],
+        );
         lowstocks.add(item);
       }
-      // print(item);
     }
     return lowstocks;
   }
 
-  int calculateDaysUntilRunOut(double volumeLeft, int shelfLife) {
+  int calculateDaysUntilRunOut(
+      double volumeLeft, int shelfLife, String expiry) {
     DateTime currentDate = DateTime.now();
-    DateTime expirationDate = currentDate.add(Duration(days: shelfLife));
-    int daysUntilRunOut = expirationDate.difference(currentDate).inDays;
-    return daysUntilRunOut;
-  }
+    if (expiry == '-') {
+      DateTime expirationDate = currentDate.add(Duration(days: shelfLife));
+      int daysUntilRunOut = expirationDate.difference(currentDate).inDays;
+      return daysUntilRunOut + 1;
+    } else {
+      DateTime expirationDate = DateFormat('dd-MM-yyyy').parse(expiry);
+      int daysUntilRunOut = expirationDate.difference(currentDate).inDays;
 
-  Future<void> getNearExpiryStocks() async {
-    final data = await SyncInventory();
-    final int thresholdDays = 100;
-
-    final currentDate = DateTime.now();
-
-    final dateFormat = DateFormat('dd-MM-yyyy');
-
-    data.forEach((item) {
-      if (item['EXP DATE'] != '-' && item['EXP DATE'].isNotEmpty) {
-        final expiryDate = dateFormat.parse(item['EXP DATE']);
-
-        final daysUntilExpiry = expiryDate.difference(currentDate).inDays;
-
-        if (daysUntilExpiry <= thresholdDays) {
-          nearExpiryItems.add(item);
-        }
-      }
-    });
+      return daysUntilRunOut + 1;
+    }
   }
 
   @override
@@ -126,31 +180,81 @@ class _InventoryState extends State<Inventory> {
         Space(3.h),
         Row(
           children: [
-            BoldTextWidgetHomeScreen(
+            const BoldTextWidgetHomeScreen(
               txt: 'Stocks you may need',
             ),
             Spacer(),
-            SeeAllWidget(),
+            TouchableOpacity(
+                onTap: () {
+                  AppWideBottomSheet().showSheet(
+                      context,
+                      // Container(),
+                      Column(
+                        children: [
+                          const BoldTextWidgetHomeScreen(
+                            txt: 'Stocks you may need',
+                          ),
+                          Space(2.h),
+                          Container(
+                            width: double.infinity,
+                            child: GridView.builder(
+                              physics:
+                                  const NeverScrollableScrollPhysics(), // Disable scrolling
+                              shrinkWrap:
+                                  true, // Allow the GridView to shrink-wrap its content
+                              addAutomaticKeepAlives: true,
+
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 0.8.h, horizontal: 3.w),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                childAspectRatio: 0.8,
+                                crossAxisCount: 4, // Number of items in a row
+                                crossAxisSpacing:
+                                    4.w, // Spacing between columns
+                                mainAxisSpacing: 1.5.h, // Spacing between rows
+                              ),
+                              itemCount: stocksYouMayNeed
+                                  .length, // Total number of items
+                              itemBuilder: (context, index) {
+                                // You can replace this container with your custom item widget
+                                return StocksMayBeNeedWidget(
+                                    txt: stocksYouMayNeed[index]['NAME']);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      60.h);
+                },
+                child: SeeAllWidget()),
           ],
         ),
         Space(2.h),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              StocksMayBeNeedWidget(),
-              StocksMayBeNeedWidget(),
-              StocksMayBeNeedWidget(),
-              StocksMayBeNeedWidget(),
-              StocksMayBeNeedWidget(),
-              StocksMayBeNeedWidget(),
-              StocksMayBeNeedWidget(),
-              StocksMayBeNeedWidget(),
-              StocksMayBeNeedWidget(),
-              StocksMayBeNeedWidget(),
-            ],
-          ),
-        ),
+        FutureBuilder(
+            future: _getStocksYouMayNeed(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                ); // Show loading indicator while fetching data
+              }
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (int index = 0;
+                        index < stocksYouMayNeed.length;
+                        index++)
+                      StocksMayBeNeedWidget(
+                          txt: stocksYouMayNeed[index]['NAME']),
+                  ],
+                ),
+              );
+            }),
         Space(2.h),
         Center(
           child: ButtonWidgetHomeScreen(
@@ -166,74 +270,153 @@ class _InventoryState extends State<Inventory> {
               txt: 'Low stocks',
             ),
             Spacer(),
-            SeeAllWidget(),
+            TouchableOpacity(
+                onTap: () {
+                  AppWideBottomSheet().showSheet(
+                      context,
+                      // Container(),
+                      Column(
+                        children: [
+                          BoldTextWidgetHomeScreen(
+                            txt: 'Low stocks',
+                          ),
+                          Space(2.h),
+                          Container(
+                            width: double.infinity,
+                            child: ListView.builder(
+                              physics:
+                                  const NeverScrollableScrollPhysics(), // Disable scrolling
+                              shrinkWrap:
+                                  true, // Allow the GridView to shrink-wrap its content
+                              addAutomaticKeepAlives: true,
+
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 0.8.h, horizontal: 3.w),
+
+                              itemCount: lowStockItems.length,
+                              itemBuilder: (context, index) {
+                                int runway = lowStockItems[index]['runway'];
+
+                                return LowStocksWidget(
+                                  isSheet: true,
+                                  amountLeft:
+                                      '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
+                                  item: lowStockItems[index]['NAME'],
+                                  percentage: double.parse(
+                                          lowStockItems[index]['VOLUME LEFT']) /
+                                      double.parse(lowStockItems[index]
+                                          ['VOLUME PURCHASED']),
+                                  text: runway < 0
+                                      ? 'Expired'
+                                      : '${runway} days runway',
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      60.h);
+                },
+                child: SeeAllWidget()),
           ],
         ),
         Space(2.h),
-
-        for (int index = 0; index < lowStockItems.length; index++)
-          LowStocksWidget(
-            // url: lowStockItems[index]['image_url'],
-            amountLeft:
-                '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
-            item: lowStockItems[index]['NAME'],
-            percentage: double.parse(lowStockItems[index]['VOLUME LEFT']) /
-                double.parse(lowStockItems[index]['VOLUME PURCHASED']),
-            text:
-                '${calculateDaysUntilRunOut(double.parse(lowStockItems[index]['VOLUME LEFT']), int.parse(lowStockItems[index]['shelf_life'])).toString()} days runway',
+        SizedBox(
+          child: FutureBuilder(
+            future: _getLowStockData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                ); // Show loading indicator while fetching data
+              }
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+              return Container(
+                child: Column(
+                  children: List.generate(lowStockItems.length, (index) {
+                    int runway = lowStockItems[index]['runway'];
+                    return LowStocksWidget(
+                      // url: lowStockItems[index]['image_url'],
+                      amountLeft:
+                          '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
+                      item: lowStockItems[index]['NAME'],
+                      percentage:
+                          double.parse(lowStockItems[index]['VOLUME LEFT']) /
+                              double.parse(
+                                  lowStockItems[index]['VOLUME PURCHASED']),
+                      text: runway < 0 ? 'Expired' : '${runway} days runway',
+                    );
+                  }),
+                ),
+              );
+            },
           ),
-        // SizedBox(
-        //   height: 9.h * lowStockItems.length,
-        //   child:
-        //   FutureBuilder(
-        //     future: _getStockData(),
-        //     builder: (context, snapshot) {
-        //       if (snapshot.connectionState == ConnectionState.waiting) {
-        //         return Center(
-        //           child: CircularProgressIndicator(),
-        //         ); // Show loading indicator while fetching data
-        //       }
-        //       if (snapshot.hasError) {
-        //         return Text('Error: ${snapshot.error}');
-        //       }
-        //       return ListView.builder(
-        //         physics: NeverScrollableScrollPhysics(),
-        //         itemCount: lowStockItems.length,
-        //         itemBuilder: (context, index) {
-        //           int daysLeft = calculateDaysUntilRunOut(
-        //               double.parse(lowStockItems[index]['VOLUME LEFT']),
-        //               int.parse(lowStockItems[index]['shelf_life']));
-        //           double percentage = double.parse(
-        //                   lowStockItems[index]['VOLUME LEFT']) /
-        //               double.parse(lowStockItems[index]['VOLUME PURCHASED']);
-        //           print('item $index : $percentage');
-        //           return LowStocksWidget(
-        //             amountLeft:
-        //                 '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
-        //             item: lowStockItems[index]['NAME'],
-        //             percentage: percentage,
-        //             text: '${daysLeft.toString()} days runway',
-        //           );
-        //         },
-        //       );
-        //     },
-        //   ),
-        // ),
-        Space(3.h),
+        ),
+        Space(2.h),
         Row(
           children: [
             BoldTextWidgetHomeScreen(
               txt: 'Stocks near expiry',
             ),
             Spacer(),
-            SeeAllWidget(),
+            TouchableOpacity(
+                onTap: () {
+                  AppWideBottomSheet().showSheet(
+                      context,
+                      // Container(),
+                      Column(
+                        children: [
+                          BoldTextWidgetHomeScreen(
+                            txt: 'Stocks near expiry',
+                          ),
+                          Space(2.h),
+                          Container(
+                            width: double.infinity,
+                            child: GridView.builder(
+                              physics:
+                                  const NeverScrollableScrollPhysics(), // Disable scrolling
+                              shrinkWrap:
+                                  true, // Allow the GridView to shrink-wrap its content
+                              addAutomaticKeepAlives: true,
+
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 0.8.h, horizontal: 3.w),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                childAspectRatio: 0.7,
+                                crossAxisCount: 3, // Number of items in a row
+                                crossAxisSpacing:
+                                    4.w, // Spacing between columns
+                                mainAxisSpacing: 1.5.h, // Spacing between rows
+                              ),
+                              itemCount: nearExpiryItems
+                                  .length, // Total number of items
+                              itemBuilder: (context, index) {
+                                // You can replace this container with your custom item widget
+                                return StocksNearExpiryWidget(
+                                  name: nearExpiryItems[index]['NAME'],
+                                  volume: nearExpiryItems[index]
+                                          ['VOLUME LEFT'] +
+                                      ' ' +
+                                      nearExpiryItems[index]['PRODUCT TYPE'],
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      60.h);
+                },
+                child: SeeAllWidget()),
           ],
         ),
         FutureBuilder(
-            future: null,
+            future: _getNearExpiryStocks(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
+                return const Center(
                   child: CircularProgressIndicator(),
                 ); // Show loading indicator while fetching data
               }
@@ -244,8 +427,13 @@ class _InventoryState extends State<Inventory> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    for (int index = 0; index < 10; index++)
-                      StocksNearExpiryWidget(),
+                    for (int index = 0; index < nearExpiryItems.length; index++)
+                      StocksNearExpiryWidget(
+                        name: nearExpiryItems[index]['NAME'],
+                        volume: nearExpiryItems[index]['VOLUME LEFT'] +
+                            ' ' +
+                            nearExpiryItems[index]['PRODUCT TYPE'],
+                      ),
                   ],
                 ),
               );
@@ -329,7 +517,7 @@ class _InventoryState extends State<Inventory> {
                       ],
                     ),
                     Space(3.h),
-                    Divider(
+                    const Divider(
                       color: Color(0xFFFA6E00),
                     ),
                     Space(1.h),
@@ -355,7 +543,7 @@ class _InventoryState extends State<Inventory> {
                       ],
                     ),
                     Space(1.h),
-                    Divider(
+                    const Divider(
                       color: Color(0xFFFA6E00),
                     ),
                     Space(2.h),
@@ -406,8 +594,12 @@ class _InventoryState extends State<Inventory> {
 }
 
 class StocksNearExpiryWidget extends StatelessWidget {
-  const StocksNearExpiryWidget({
+  String name;
+  String volume;
+  StocksNearExpiryWidget({
     super.key,
+    required this.name,
+    required this.volume,
   });
 
   @override
@@ -434,7 +626,7 @@ class StocksNearExpiryWidget extends StatelessWidget {
       ),
       child:
           Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        Space(3),
+        const Space(3),
         Container(
           height: 75,
           width: 73,
@@ -446,7 +638,7 @@ class StocksNearExpiryWidget extends StatelessWidget {
                 blurRadius: 15 + 5,
               )
             ],
-            color: Color.fromRGBO(200, 233, 233, 1),
+            color: const Color.fromRGBO(200, 233, 233, 1),
             shape: SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius(
                 cornerRadius: 10,
@@ -455,10 +647,11 @@ class StocksNearExpiryWidget extends StatelessWidget {
             ),
           ),
         ),
-        Space(5),
+        const Space(5),
         Text(
-          'Chicken',
-          style: TextStyle(
+          name,
+          maxLines: 2,
+          style: const TextStyle(
             color: Color(0xFF0A4C61),
             fontSize: 12,
             fontFamily: 'Product Sans',
@@ -468,8 +661,8 @@ class StocksNearExpiryWidget extends StatelessWidget {
           ),
         ),
         Text(
-          '15.3 kg',
-          style: TextStyle(
+          volume,
+          style: const TextStyle(
             color: Color(0xFFFA6E00),
             fontSize: 9,
             fontFamily: 'Product Sans',
@@ -488,6 +681,7 @@ class LowStocksWidget extends StatelessWidget {
   String text;
   String amountLeft;
   String item;
+  bool isSheet;
   // String url;
   LowStocksWidget({
     super.key,
@@ -495,18 +689,20 @@ class LowStocksWidget extends StatelessWidget {
     required this.text,
     required this.percentage,
     required this.item,
+    this.isSheet = false,
     // required this.url,
   });
 
   @override
   Widget build(BuildContext context) {
+    double widhth = !isSheet ? 50.w : 40.w;
     Color color = percentage < 0.1
-        ? Color(0xFFF54B4B)
+        ? const Color(0xFFF54B4B)
         : percentage < 0.2
-            ? Color(0xFFFA6E00)
+            ? const Color(0xFFFA6E00)
             : percentage < 0.3
-                ? Color.fromARGB(255, 237, 172, 123)
-                : Color(0xFF8EE239);
+                ? const Color.fromARGB(255, 237, 172, 123)
+                : const Color(0xFF8EE239);
 
     return Container(
       margin: EdgeInsets.only(bottom: 2.h),
@@ -542,7 +738,7 @@ class LowStocksWidget extends StatelessWidget {
                   blurRadius: 20,
                 )
               ],
-              color: Color.fromRGBO(200, 233, 233, 1),
+              color: const Color.fromRGBO(200, 233, 233, 1),
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius(
                   cornerRadius: 10,
@@ -557,7 +753,7 @@ class LowStocksWidget extends StatelessWidget {
             width: 20.w,
             child: Text(
               item,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF0A4C61),
                 fontSize: 14,
                 fontFamily: 'Product Sans',
@@ -567,7 +763,9 @@ class LowStocksWidget extends StatelessWidget {
               ),
             ),
           ),
-          Space(isHorizontal: true, 7.w),
+          !isSheet
+              ? Space(isHorizontal: true, 7.w)
+              : Space(isHorizontal: true, 2.w),
           Stack(
             children: [
               Container(
@@ -580,7 +778,7 @@ class LowStocksWidget extends StatelessWidget {
                       blurRadius: 20,
                     )
                   ],
-                  color: Color.fromRGBO(223, 244, 248, 1),
+                  color: const Color.fromRGBO(223, 244, 248, 1),
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(
                       cornerRadius: 10,
@@ -588,7 +786,7 @@ class LowStocksWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                width: 50.w,
+                width: widhth,
               ),
               Container(
                 height: 20,
@@ -609,17 +807,17 @@ class LowStocksWidget extends StatelessWidget {
                   ),
                 ),
                 width: percentage < 0.1
-                    ? 50.w * percentage + 7.w
+                    ? widhth * percentage + 7.w
                     : percentage < 0.2
-                        ? 50.w * percentage + 5.w
-                        : 50.w * percentage,
+                        ? widhth * percentage + 5.w
+                        : widhth * percentage,
               ),
               Positioned(
                   left: 5,
                   top: 5,
                   child: Text(
                     amountLeft,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 8,
                       fontFamily: 'Product Sans',
@@ -633,7 +831,7 @@ class LowStocksWidget extends StatelessWidget {
                   top: 5,
                   child: Text(
                     text,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color(0xFF094B60),
                       fontSize: 8,
                       fontFamily: 'Product Sans',
@@ -671,7 +869,7 @@ class StocksMayBeNeedWidget extends StatelessWidget {
                     blurRadius: 20,
                   )
                 ],
-                color: Color.fromRGBO(200, 233, 233, 1),
+                color: const Color.fromRGBO(200, 233, 233, 1),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
                     cornerRadius: 10,
@@ -682,7 +880,7 @@ class StocksMayBeNeedWidget extends StatelessWidget {
           Space(1.h),
           Text(
             txt,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF0A4C61),
               fontSize: 11,
               fontFamily: 'Product Sans',
@@ -706,7 +904,7 @@ class SeeAllWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(
+        const Text(
           'See all',
           style: TextStyle(
             color: Color(0xFF094B60),
@@ -718,10 +916,10 @@ class SeeAllWidget extends StatelessWidget {
           ),
         ),
         Space(isHorizontal: true, 2.w),
-        Icon(
+        const Icon(
           Icons.arrow_forward_ios,
           size: 13,
-          color: const Color(0xFFFA6E00),
+          color: Color(0xFFFA6E00),
         ),
       ],
     );
@@ -755,7 +953,7 @@ class BottomSheetRowWidget extends StatelessWidget {
             width: 7.w,
             child: Text(
               id,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF094B60),
                 fontSize: 14,
                 fontFamily: 'Product Sans',
@@ -768,7 +966,7 @@ class BottomSheetRowWidget extends StatelessWidget {
             width: 23.w,
             child: Text(
               name,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF094B60),
                 fontSize: 14,
                 fontFamily: 'Product Sans',
@@ -781,7 +979,7 @@ class BottomSheetRowWidget extends StatelessWidget {
             width: 15.w,
             child: Text(
               'Rs  ' + price,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF094B60),
                 fontSize: 14,
                 fontFamily: 'Product Sans',
@@ -794,7 +992,7 @@ class BottomSheetRowWidget extends StatelessWidget {
             width: 16.w,
             child: Text(
               volume + ' ' + type,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF094B60),
                 fontSize: 13,
                 fontFamily: 'Product Sans',
@@ -824,7 +1022,7 @@ class SheetLabelWidget extends StatelessWidget {
       width: width,
       child: Text(
         txt,
-        style: TextStyle(
+        style: const TextStyle(
           color: Color(0xFF094B60),
           fontSize: 18,
           fontFamily: 'Jost',
@@ -860,7 +1058,7 @@ class Make_Update_ListWidget extends StatelessWidget {
                 blurRadius: 20,
               )
             ],
-            color: Color.fromRGBO(84, 166, 193, 1),
+            color: const Color.fromRGBO(84, 166, 193, 1),
             shape: SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius(
                 cornerRadius: 10,
@@ -871,7 +1069,7 @@ class Make_Update_ListWidget extends StatelessWidget {
           child: Center(
             child: Text(
               txt,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,
                 fontFamily: 'Product Sans',

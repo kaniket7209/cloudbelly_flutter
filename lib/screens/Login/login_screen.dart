@@ -268,7 +268,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           children: [
                                             Container(
                                               height: 1,
-                                              width: 100.w > 800 ? 5.w : 20.w,
+                                              width: 20.w,
                                               decoration: const BoxDecoration(
                                                   color: Colors.black),
                                             ),
@@ -281,7 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         FontWeight.w400)),
                                             Container(
                                               height: 1,
-                                              width: 100.w > 800 ? 5.w : 20.w,
+                                              width: 20.w,
                                               decoration: const BoxDecoration(
                                                   color: Colors.black),
                                             )
@@ -373,7 +373,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         children: [
                                           Container(
                                             height: 1,
-                                            width: 100.w > 800 ? 5.w : 20.w,
+                                            width: 20.w,
                                             decoration: const BoxDecoration(
                                                 color: Colors.black),
                                           ),
@@ -385,7 +385,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   fontWeight: FontWeight.w400)),
                                           Container(
                                             height: 1,
-                                            width: 100.w > 800 ? 5.w : 20.w,
+                                            width: 20.w,
                                             decoration: const BoxDecoration(
                                                 color: Colors.black),
                                           )

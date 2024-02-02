@@ -244,35 +244,35 @@ Future<String> pickImageAndUpoad(
       // showDialog(
       //   context: context,
       //   builder: (BuildContext context) {
-      //     return AlertDialog(
-      //       title: Text('File Size large'),
-      //       content: Text('If you want we can Compress this file'),
-      //       actions: <Widget>[
-      //         TextButton(
-      //           onPressed: () async {
-      //             var result = await FlutterImageCompress.compressWithFile(
-      //               imagePath,
-      //               minWidth: 2300,
-      //               minHeight: 1500,
-      //               quality: 94,
-      //               rotate: 90,
-      //             );
-      //             File file = File(filePath);
-      //             await file.writeAsBytes(uint8List);
-      //             print(result!.length);
-      //           },
-      //           child: Text('Compress'),
-      //         ),
-      //         Space(isHorizontal: true, 100),
-      //         TextButton(
-      //           onPressed: () {
-      //             // Close the dialog
-      //             Navigator.of(context).pop();
-      //           },
-      //           child: Text('Close'),
-      //         ),
-      //       ],
-      //     );
+      // return AlertDialog(
+      //   title: Text('File Size large'),
+      //   content: Text('If you want we can Compress this file'),
+      //   actions: <Widget>[
+      //     TextButton(
+      //       onPressed: () async {
+      //         // var result = await FlutterImageCompress.compressWithFile(
+      //         //   imagePath,
+      //         //   minWidth: 2300,
+      //         //   minHeight: 1500,
+      //         //   quality: 94,
+      //         //   rotate: 90,
+      //         // );
+      //         // File file = File(filePath);
+      //         // await file.writeAsBytes(uint8List);
+      //         // print(result!.length);
+      //       },
+      //       child: Text('Compress'),
+      //     ),
+      //     Space(isHorizontal: true, 100),
+      //     TextButton(
+      //       onPressed: () {
+      //         // Close the dialog
+      //         Navigator.of(context).pop();
+      //       },
+      //       child: Text('Close'),
+      //     ),
+      //   ],
+      // );
       //   },
       // );
       return "file size very large";
