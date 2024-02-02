@@ -52,6 +52,7 @@ class _InventoryState extends State<Inventory> {
 
   Future<void> _getInventoryData() async {
     final data = await getInventoryData();
+    print(data);
   }
 
   List<dynamic> findLowStockItems(List<dynamic> inventoryData) {
@@ -371,10 +372,10 @@ class _InventoryState extends State<Inventory> {
                               name: UiData['data']['inventory_data'][index]
                                   ['NAME'],
                               price: UiData['data']['inventory_data'][index]
-                                      ['PRICE( Rs)'] ??
+                                      ['TOTAL PRICE( Rs)'] ??
                                   '-',
                               volume: UiData['data']['inventory_data'][index]
-                                      ['VOLUME'] ??
+                                      ['VOLUME PURCHASED'] ??
                                   '-',
                               type: UiData['data']['inventory_data'][index]
                                   ['PRODUCT TYPE']);

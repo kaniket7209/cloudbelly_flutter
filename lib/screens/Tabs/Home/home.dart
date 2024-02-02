@@ -217,7 +217,7 @@ class _HomeState extends State<Home> {
                                               });
                                             },
                                             child: ButtonWidgetHomeScreen(
-                                              width: 100.w > 420 ? 7.w : 25.w,
+                                              width: 25.w,
                                               txt: 'Social Status',
                                               isActive: _activeButtonIndex == 1,
                                             ),
@@ -229,7 +229,7 @@ class _HomeState extends State<Home> {
                                               });
                                             },
                                             child: ButtonWidgetHomeScreen(
-                                              width: 100.w > 420 ? 7.w : 25.w,
+                                              width: 25.w,
                                               txt: 'Inventory',
                                               isActive: _activeButtonIndex == 2,
                                             ),
@@ -241,7 +241,7 @@ class _HomeState extends State<Home> {
                                               });
                                             },
                                             child: ButtonWidgetHomeScreen(
-                                              width: 100.w > 420 ? 7.w : 25.w,
+                                              width: 25.w,
                                               txt: 'Performance',
                                               isActive: _activeButtonIndex == 3,
                                             ),
@@ -592,9 +592,7 @@ class InventoryForcastingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: 100.w > 420
-            ? EdgeInsets.only(top: 3.h, left: 1.w, right: 1.w, bottom: 2.h)
-            : EdgeInsets.only(top: 3.h, left: 5.w, right: 5.w, bottom: 2.h),
+        padding: EdgeInsets.only(top: 3.h, left: 5.w, right: 5.w, bottom: 2.h),
         height: 24.h,
         width: double.infinity,
         decoration: ShapeDecoration(
@@ -641,7 +639,7 @@ class InventoryForcastingWidget extends StatelessWidget {
                 // Space(isHorizontal: true, 5.w),
                 Container(
                   height: 11.h,
-                  width: 100.w > 420 ? 5.5.w : 26.w,
+                  width: 26.w,
                   decoration: ShapeDecoration(
                     shadows: const [
                       BoxShadow(
@@ -665,7 +663,7 @@ class InventoryForcastingWidget extends StatelessWidget {
             ),
             Container(
               height: 5.h,
-              width: 100.w > 420 ? 6.w : 30.w,
+              width: 30.w,
               decoration: ShapeDecoration(
                 shadows: const [
                   BoxShadow(
@@ -715,10 +713,8 @@ class InventoryFocastRowWidget extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 100.w > 420 ? 4.w : 14.w,
-            margin: 100.w > 420
-                ? EdgeInsets.only(right: 0.8.w)
-                : EdgeInsets.only(right: 2.w),
+            width: 14.w,
+            margin: EdgeInsets.only(right: 2.w),
             child: const Text(
               'Wheat',
               style: TextStyle(
@@ -732,10 +728,8 @@ class InventoryFocastRowWidget extends StatelessWidget {
             ),
           ),
           Container(
-            width: 100.w > 420 ? 4.w : 14.w,
-            margin: 100.w > 420
-                ? EdgeInsets.only(right: 0.8.w)
-                : EdgeInsets.only(right: 2.w),
+            width: 14.w,
+            margin: EdgeInsets.only(right: 2.w),
             child: const Text(
               'x 5 kg',
               style: TextStyle(
@@ -751,9 +745,7 @@ class InventoryFocastRowWidget extends StatelessWidget {
           Container(
             width: 9,
             height: 8.25,
-            margin: 100.w > 420
-                ? EdgeInsets.only(left: 0.8.w)
-                : EdgeInsets.only(left: 2.w),
+            margin: EdgeInsets.only(left: 2.w),
             decoration: const ShapeDecoration(
               color: Color(0xFFF44B4B),
               shape: OvalBorder(),
@@ -783,10 +775,8 @@ class InventotyForcastingBoldTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100.w > 420 ? 4.w : 14.w,
-      margin: 100.w > 420
-          ? EdgeInsets.only(right: 0.5.w)
-          : EdgeInsets.only(right: 2.w),
+      width: 14.w,
+      margin: EdgeInsets.only(right: 2.w),
       child: Text(
         txt,
         style: const TextStyle(
@@ -976,8 +966,8 @@ class ToolsButtonWidgetHomeSCreen extends StatelessWidget {
       height: 11.h,
       width: width,
       padding: EdgeInsets.only(
-        left: 100.w > 420 ? 0.2.w : 1.w,
-        right: 100.w > 420 ? 0.2.w : 1.w,
+        left: 1.w,
+        right: 1.w,
       ),
       decoration: ShapeDecoration(
         shadows: const [
