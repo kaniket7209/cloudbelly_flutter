@@ -192,7 +192,7 @@ Future<String> storeSetup3(bank_name, account_number, ifsc_code, upi_id) async {
 
 Future<File> compressImage(String imagePath) async {
   // Get the original image file
-  File imageFile = File(imagePath);
+  // File imageFile = File(imagePath);
 
   // Compress the image
   Uint8List? compressedBytes = await FlutterImageCompress.compressWithFile(

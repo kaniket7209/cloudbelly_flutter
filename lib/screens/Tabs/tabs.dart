@@ -43,6 +43,7 @@ class _TabsState extends State<Tabs> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(247, 247, 247, 1),
+
       body: PageView(
         onPageChanged: (value) {
           setState(() {
@@ -53,101 +54,117 @@ class _TabsState extends State<Tabs> {
         controller: _pageController,
         children: _pages,
       ),
-      bottomNavigationBar: Container(
-        margin: EdgeInsets.symmetric(horizontal: 3, vertical: 2),
-        height: 55,
-        padding: const EdgeInsets.symmetric(horizontal: 50),
-        decoration: ShapeDecoration(
-          color: Color.fromRGBO(38, 115, 140, 1),
-          shape: SmoothRectangleBorder(
-            borderRadius: SmoothBorderRadius(
-              cornerRadius: 15,
-              cornerSmoothing: 1,
-            ),
+      // bottomNavigationBar: Container(
+      //   margin: EdgeInsets.symmetric(horizontal: 3, vertical: 2),
+      //   height: 55,
+      //   padding: const EdgeInsets.symmetric(horizontal: 50),
+      //   decoration: ShapeDecoration(
+      //     color: Color.fromRGBO(38, 115, 140, 1),
+      //     shape: SmoothRectangleBorder(
+      //       borderRadius: SmoothBorderRadius(
+      //         cornerRadius: 15,
+      //         cornerSmoothing: 1,
+      //       ),
+      //     ),
+      //   ),
+      //   child: Row(
+      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //     children: [
+      //       TouchableOpacity(
+      //         onTap: () {
+      //           setState(() {
+      //             _selectedIndex = 0;
+      //           });
+      //           animateToSelectedPage();
+      //         },
+      //         child: Column(
+      //           children: [
+      //             const Space(9),
+      //             buildColorFilteredIcon(Icon(Icons.home), _selectedIndex == 0),
+      //             // const Space(4.33),
+      //             Text(
+      //               "Home",
+      //               style: GoogleFonts.nunito(
+      //                 color: _selectedIndex == 0
+      //                     ? Colors.black
+      //                     : const Color(0xff404654),
+      //                 fontSize: 10,
+      //                 fontWeight: FontWeight.w600,
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //       TouchableOpacity(
+      //         onTap: () {
+      //           setState(() {
+      //             _selectedIndex = 1;
+      //           });
+      //           animateToSelectedPage();
+      //         },
+      //         child: Column(
+      //           children: [
+      //             const Space(9.5),
+      //             buildColorFilteredIcon(
+      //                 Icon(Icons.add_a_photo), _selectedIndex == 1),
+      //             // const Space(5.92),
+      //             Text(
+      //               "Feed",
+      //               style: GoogleFonts.nunito(
+      //                 color: _selectedIndex == 1
+      //                     ? Colors.black
+      //                     : const Color(0xff404654),
+      //                 fontSize: 10,
+      //                 fontWeight: FontWeight.w600,
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //       TouchableOpacity(
+      //         onTap: () {
+      //           setState(() {
+      //             _selectedIndex = 2;
+      //           });
+      //           animateToSelectedPage();
+      //         },
+      //         child: Column(
+      //           children: [
+      //             const Space(8.67),
+      //             buildColorFilteredIcon(
+      //                 Icon(Icons.person), _selectedIndex == 2),
+      //             // const Space(4.67),
+      //             Text(
+      //               "Profile",
+      //               style: GoogleFonts.nunito(
+      //                 color: _selectedIndex == 4
+      //                     ? Colors.black
+      //                     : const Color(0xff404654),
+      //                 fontSize: 10,
+      //                 fontWeight: FontWeight.w600,
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.menu),
+            label: 'Menu',
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TouchableOpacity(
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 0;
-                });
-                animateToSelectedPage();
-              },
-              child: Column(
-                children: [
-                  const Space(9),
-                  buildColorFilteredIcon(Icon(Icons.home), _selectedIndex == 0),
-                  // const Space(4.33),
-                  Text(
-                    "Home",
-                    style: GoogleFonts.nunito(
-                      color: _selectedIndex == 0
-                          ? Colors.black
-                          : const Color(0xff404654),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            TouchableOpacity(
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 1;
-                });
-                animateToSelectedPage();
-              },
-              child: Column(
-                children: [
-                  const Space(9.5),
-                  buildColorFilteredIcon(
-                      Icon(Icons.add_a_photo), _selectedIndex == 1),
-                  // const Space(5.92),
-                  Text(
-                    "Feed",
-                    style: GoogleFonts.nunito(
-                      color: _selectedIndex == 1
-                          ? Colors.black
-                          : const Color(0xff404654),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            TouchableOpacity(
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 2;
-                });
-                animateToSelectedPage();
-              },
-              child: Column(
-                children: [
-                  const Space(8.67),
-                  buildColorFilteredIcon(
-                      Icon(Icons.person), _selectedIndex == 2),
-                  // const Space(4.67),
-                  Text(
-                    "Profile",
-                    style: GoogleFonts.nunito(
-                      color: _selectedIndex == 4
-                          ? Colors.black
-                          : const Color(0xff404654),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          // Add more items for each tab
+        ],
+        currentIndex: _selectedIndex, // Current index
+        onTap: null, // Function to handle item tap
       ),
     );
   }
