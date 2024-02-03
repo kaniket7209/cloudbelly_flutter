@@ -6,6 +6,7 @@ import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
+import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
@@ -39,6 +40,7 @@ class _InventoryState extends State<Inventory> {
   List<dynamic> lowStockItems = [];
   List<dynamic> nearExpiryItems = [];
   List<dynamic> stocksYouMayNeed = [];
+  bool _isUpdateLoading = false;
   Future<void> _getLowStockData() async {
     lowStockItems = [];
 
@@ -58,12 +60,11 @@ class _InventoryState extends State<Inventory> {
 
   Future<void> _getStocksYouMayNeed() async {
     stocksYouMayNeed = [];
-    // print('5');
+
     final data = await getInventoryData();
-    // print('object');
-    // print('6');
+
     stocksYouMayNeed = data['data'][0]['inventory_data'];
-    // print('7');
+
     List<dynamic> temp = [];
     stocksYouMayNeed.forEach((element) {
       if (element['shelf_life'] != null) {
@@ -73,8 +74,7 @@ class _InventoryState extends State<Inventory> {
       }
     });
     stocksYouMayNeed = temp;
-    // temp.clear();
-    // print('8');
+
     stocksYouMayNeed.sort((a, b) {
       int runwayComparison = a['runway'].compareTo(b['runway']);
       if (runwayComparison != 0) {
@@ -88,6 +88,7 @@ class _InventoryState extends State<Inventory> {
   Future<void> _getNearExpiryStocks() async {
     nearExpiryItems = [];
     dynamic data = await getInventoryData();
+    print(data);
     final int thresholdDays = 3;
     final currentDate = DateTime.now();
     final dateFormat = DateFormat('dd-MM-yyyy');
@@ -179,7 +180,15 @@ class _InventoryState extends State<Inventory> {
             Make_Update_ListWidget(
               txt: 'Update List',
               onTap: () async {
+                setState(() {
+                  _isUpdateLoading = true;
+                });
+                // if (_isUpdateLoading)
+                //   AppWideLoadingBanner().loadingBanner(context);
                 final data = await getInventoryData();
+                setState(() {
+                  _isUpdateLoading = false;
+                });
                 // print(data);
                 UpdateListBottomSheet(context, data);
               },
@@ -228,7 +237,9 @@ class _InventoryState extends State<Inventory> {
                               itemBuilder: (context, index) {
                                 // You can replace this container with your custom item widget
                                 return StocksMayBeNeedWidget(
-                                    txt: stocksYouMayNeed[index]['NAME']);
+                                    txt: stocksYouMayNeed[index]['NAME'],
+                                    url: stocksYouMayNeed[index]['image_url'] ??
+                                        '');
                               },
                             ),
                           ),
@@ -260,7 +271,8 @@ class _InventoryState extends State<Inventory> {
                         index < stocksYouMayNeed.length;
                         index++)
                       StocksMayBeNeedWidget(
-                          txt: stocksYouMayNeed[index]['NAME']),
+                          txt: stocksYouMayNeed[index]['NAME'],
+                          url: stocksYouMayNeed[index]['image_url'] ?? ''),
                   ],
                 ),
               );
@@ -308,18 +320,20 @@ class _InventoryState extends State<Inventory> {
                                 int runway = lowStockItems[index]['runway'];
 
                                 return LowStocksWidget(
-                                  isSheet: true,
-                                  amountLeft:
-                                      '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
-                                  item: lowStockItems[index]['NAME'],
-                                  percentage: double.parse(
-                                          lowStockItems[index]['VOLUME LEFT']) /
-                                      double.parse(lowStockItems[index]
-                                          ['VOLUME PURCHASED']),
-                                  text: runway < 0
-                                      ? 'Expired'
-                                      : '${runway} days runway',
-                                );
+                                    isSheet: true,
+                                    amountLeft:
+                                        '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
+                                    item: lowStockItems[index]['NAME'],
+                                    percentage: double.parse(
+                                            lowStockItems[index]
+                                                ['VOLUME LEFT']) /
+                                        double.parse(lowStockItems[index]
+                                            ['VOLUME PURCHASED']),
+                                    text: runway < 0
+                                        ? 'Expired'
+                                        : '${runway} days runway',
+                                    url: lowStockItems[index]['image_url'] ??
+                                        '');
                               },
                             ),
                           ),
@@ -358,6 +372,7 @@ class _InventoryState extends State<Inventory> {
                               double.parse(
                                   lowStockItems[index]['VOLUME PURCHASED']),
                       text: runway < 0 ? 'Expired' : '${runway} days runway',
+                      url: lowStockItems[index]['image_url'] ?? '',
                     );
                   }),
                 ),
@@ -412,6 +427,8 @@ class _InventoryState extends State<Inventory> {
                                           ['VOLUME LEFT'] +
                                       ' ' +
                                       nearExpiryItems[index]['PRODUCT TYPE'],
+                                  url:
+                                      nearExpiryItems[index]['image_url'] ?? '',
                                 );
                               },
                             ),
@@ -445,6 +462,7 @@ class _InventoryState extends State<Inventory> {
                         volume: nearExpiryItems[index]['VOLUME LEFT'] +
                             ' ' +
                             nearExpiryItems[index]['PRODUCT TYPE'],
+                        url: nearExpiryItems[index]['image_url'] ?? '',
                       ),
                   ],
                 ),
@@ -609,14 +627,23 @@ class _InventoryState extends State<Inventory> {
 class StocksNearExpiryWidget extends StatelessWidget {
   String name;
   String volume;
+  String url;
   StocksNearExpiryWidget({
     super.key,
     required this.name,
     required this.volume,
+    required this.url,
   });
 
   @override
   Widget build(BuildContext context) {
+    String newUrl = '';
+    if (url != '') {
+      String originalLink = url;
+      String fileId = originalLink.substring(
+          originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));
+      newUrl = 'https://drive.google.com/uc?export=view&id=$fileId';
+    }
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       height: 120,
@@ -659,6 +686,37 @@ class StocksNearExpiryWidget extends StatelessWidget {
               ),
             ),
           ),
+          child: newUrl != ''
+              ? ClipSmoothRect(
+                  radius: SmoothBorderRadius(
+                    cornerRadius: 10,
+                    cornerSmoothing: 1,
+                  ),
+                  child: Image(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(newUrl),
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                    errorBuilder: (BuildContext context, Object error,
+                        StackTrace? stackTrace) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Error loading image'),
+                      );
+                    },
+                  ),
+                )
+              : null,
         ),
         const Space(5),
         Text(
@@ -695,6 +753,7 @@ class LowStocksWidget extends StatelessWidget {
   String amountLeft;
   String item;
   bool isSheet;
+  String url;
   // String url;
   LowStocksWidget({
     super.key,
@@ -703,11 +762,21 @@ class LowStocksWidget extends StatelessWidget {
     required this.percentage,
     required this.item,
     this.isSheet = false,
+    required this.url,
     // required this.url,
   });
 
   @override
   Widget build(BuildContext context) {
+    String newUrl = '';
+    if (url != '') {
+      String originalLink = url;
+      String fileId = originalLink.substring(
+          originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));
+      newUrl = 'https://drive.google.com/uc?export=view&id=$fileId';
+    }
+    print(newUrl);
+
     double widhth = !isSheet ? 50.w : 40.w;
     Color color = percentage < 0.1
         ? const Color(0xFFF54B4B)
@@ -760,6 +829,37 @@ class LowStocksWidget extends StatelessWidget {
               ),
             ),
             // child: Image.network(url),
+            child: newUrl != ''
+                ? ClipSmoothRect(
+                    radius: SmoothBorderRadius(
+                      cornerRadius: 10,
+                      cornerSmoothing: 1,
+                    ),
+                    child: Image(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(newUrl),
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
+                      errorBuilder: (BuildContext context, Object error,
+                          StackTrace? stackTrace) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('Error loading image'),
+                        );
+                      },
+                    ),
+                  )
+                : null,
           ),
           Space(isHorizontal: true, 3.w),
           SizedBox(
@@ -862,34 +962,72 @@ class LowStocksWidget extends StatelessWidget {
 }
 
 class StocksMayBeNeedWidget extends StatelessWidget {
+  String url;
   String txt;
-  StocksMayBeNeedWidget({super.key, this.txt = 'chicken'});
+  StocksMayBeNeedWidget({super.key, this.txt = 'chicken', this.url = ''});
 
   @override
   Widget build(BuildContext context) {
+    String originalLink = url;
+    String fileId = originalLink.substring(
+        originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));
+    String newUrl = 'https://drive.google.com/uc?export=view&id=$fileId';
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 2.w),
       child: Column(
         children: [
           Container(
-              height: 60,
-              width: 60,
-              decoration: ShapeDecoration(
-                shadows: const [
-                  BoxShadow(
-                    offset: Offset(0, 4),
-                    color: Color.fromRGBO(124, 193, 191, 0.3),
-                    blurRadius: 20,
-                  )
-                ],
-                color: const Color.fromRGBO(200, 233, 233, 1),
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 10,
-                    cornerSmoothing: 1,
-                  ),
+            height: 60,
+            width: 60,
+            decoration: ShapeDecoration(
+              shadows: const [
+                BoxShadow(
+                  offset: Offset(0, 4),
+                  color: Color.fromRGBO(124, 193, 191, 0.3),
+                  blurRadius: 20,
+                )
+              ],
+              color: const Color.fromRGBO(200, 233, 233, 1),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 10,
+                  cornerSmoothing: 1,
                 ),
-              )),
+              ),
+            ),
+            child: url != ''
+                ? ClipSmoothRect(
+                    radius: SmoothBorderRadius(
+                      cornerRadius: 10,
+                      cornerSmoothing: 1,
+                    ),
+                    child: Image(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(newUrl),
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
+                      errorBuilder: (BuildContext context, Object error,
+                          StackTrace? stackTrace) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('Error loading image'),
+                        );
+                      },
+                    ),
+                  )
+                : null,
+          ),
           Space(1.h),
           Text(
             txt,
