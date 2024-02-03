@@ -22,6 +22,8 @@ class Auth {
 
   String user_id = '';
   String user_email = '';
+  String store_name = '';
+  String logo_url = '';
 
   String get_user_id() {
     return user_id;
@@ -51,6 +53,7 @@ Future<String> signUp(email, pass, phone, type) async {
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
+    print(jsonDecode((response.body)));
     return jsonDecode((response.body))['message'];
   } catch (error) {
     // Handle exceptions
@@ -73,9 +76,12 @@ Future<String> login(email, pass) async {
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-
+    print('user data:');
+    print(jsonDecode((response.body)));
     Auth().user_id = jsonDecode((response.body))['user_id'];
     Auth().user_email = jsonDecode((response.body))['email'];
+    Auth().store_name = jsonDecode((response.body))['store_name'] ?? '';
+    Auth().logo_url = jsonDecode((response.body))['profile_photo'] ?? '';
     return jsonDecode((response.body))['message'];
   } catch (error) {
     // Handle exceptions

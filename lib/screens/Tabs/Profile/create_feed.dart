@@ -1,4 +1,5 @@
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
@@ -23,11 +24,13 @@ class CreateFeed {
     ];
 
     Future<void> _shareButton() async {
+      AppWideLoadingBanner().loadingBanner(context);
       List<String> tags = _textFieldController.text
           .split(',')
           .map((String s) => s.trim())
           .toList();
       String msg = await createPost(imageUrlList, tags, caption);
+      Navigator.of(context).pop();
       if (msg == "Post metadata updated successfully") {
         TOastNotification()
             .showSuccesToast(context, 'Post Created successfully!');

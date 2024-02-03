@@ -3,6 +3,7 @@ import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
+import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 
 import 'package:cloudbelly_app/widgets/appwide_textfield.dart';
 import 'package:cloudbelly_app/widgets/common_button_login.dart';
@@ -42,8 +43,9 @@ class _LoginScreenState extends State<LoginScreen> {
     // Add your signup logic here
     // For example, print the values:
     // Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+    AppWideLoadingBanner().loadingBanner(context);
     String msg = await login(email, pass);
-
+    Navigator.of(context).pop();
     if (msg == 'Login successful') {
       TOastNotification().showSuccesToast(context, msg);
       Navigator.of(context).pushReplacementNamed(Tabs.routeName);
@@ -59,14 +61,25 @@ class _LoginScreenState extends State<LoginScreen> {
     // Add your signup logic here
 
     // For example, print the values:
+    AppWideLoadingBanner().loadingBanner(context);
     String msg =
         await signUp(user_email, user_pass, user_mobile_number, selectedOption);
     if (msg == 'Registration successful') {
-      TOastNotification().showSuccesToast(context, msg);
+      String msg = await login(user_email, user_pass);
 
-      Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-    } else
+      if (msg == 'Login successful') {
+        TOastNotification().showSuccesToast(context, 'Registration successful');
+        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+      } else {
+        if (msg == '-1') msg = "Error!";
+        Navigator.of(context).pop();
+        TOastNotification().showErrorToast(context, msg);
+      }
+    } else {
+      Navigator.of(context).pop();
       TOastNotification().showErrorToast(context, msg);
+    }
   }
 
   @override

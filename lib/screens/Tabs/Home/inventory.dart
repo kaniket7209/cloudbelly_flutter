@@ -173,26 +173,35 @@ class _InventoryState extends State<Inventory> {
             Make_Update_ListWidget(
               txt: 'Make List',
               onTap: () async {
+                AppWideLoadingBanner().loadingBanner(context);
                 final data = await getSheetUrl();
+                Navigator.of(context).pop();
                 _launchURL(data['sheet_url']);
               },
             ),
-            Make_Update_ListWidget(
-              txt: 'Update List',
-              onTap: () async {
-                setState(() {
-                  _isUpdateLoading = true;
-                });
-                // if (_isUpdateLoading)
-                //   AppWideLoadingBanner().loadingBanner(context);
-                final data = await getInventoryData();
-                setState(() {
-                  _isUpdateLoading = false;
-                });
-                // print(data);
-                UpdateListBottomSheet(context, data);
-              },
-            ),
+            _isUpdateLoading
+                ? SizedBox(
+                    width: 30.w,
+                    height: 5.h,
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : Make_Update_ListWidget(
+                    txt: 'Update List',
+                    onTap: () async {
+                      AppWideLoadingBanner().loadingBanner(context);
+                      // if (_isUpdateLoading)
+                      //   AppWideLoadingBanner().loadingBanner(context);
+                      final data = await getInventoryData();
+                      Navigator.of(context).pop();
+                      setState(() {
+                        _isUpdateLoading = false;
+                      });
+                      if ((data['data'] as List<dynamic>).length != 0) {
+                        UpdateListBottomSheet(context, data);
+                      }
+                      // print(data);
+                    },
+                  ),
           ],
         ),
         Space(3.h),
@@ -260,8 +269,11 @@ class _InventoryState extends State<Inventory> {
                 ); // Show loading indicator while fetching data
               }
               if (snapshot.hasError) {
-                return Text(
-                    'Error happend while fetching data , try again later !');
+                return Center(
+                  child: Text(stocksYouMayNeed.length == 0
+                      ? 'No Item in Inventory'
+                      : 'Error happend while fetching data , try again later !'),
+                );
               }
               return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -355,8 +367,11 @@ class _InventoryState extends State<Inventory> {
                 ); // Show loading indicator while fetching data
               }
               if (snapshot.hasError) {
-                return Text(
-                    'Error happend while fetching data , try again later !');
+                return Center(
+                  child: Text(lowStockItems.length == 0
+                      ? 'No Item in Inventory'
+                      : 'Error happend while fetching data , try again later !'),
+                );
               }
               return Container(
                 child: Column(
@@ -440,6 +455,7 @@ class _InventoryState extends State<Inventory> {
                 child: SeeAllWidget()),
           ],
         ),
+        Space(2.h),
         FutureBuilder(
             future: _getNearExpiryStocks(),
             builder: (context, snapshot) {
@@ -449,8 +465,11 @@ class _InventoryState extends State<Inventory> {
                 ); // Show loading indicator while fetching data
               }
               if (snapshot.hasError) {
-                return Text(
-                    'Error happend while fetching data , try again later !');
+                return Center(
+                  child: Text(nearExpiryItems.length == 0
+                      ? 'No Item in Inventory'
+                      : 'Error happend while fetching data , try again later !'),
+                );
               }
               return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -911,7 +930,7 @@ class LowStocksWidget extends StatelessWidget {
                       blurRadius: 20,
                     )
                   ],
-                  color: color,
+                  color: text == 'Expired' ? Colors.red : color,
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(
                       cornerRadius: 10,
@@ -968,11 +987,13 @@ class StocksMayBeNeedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String originalLink = url;
-    String fileId = originalLink.substring(
-        originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));
-    String newUrl = 'https://drive.google.com/uc?export=view&id=$fileId';
-
+    String newUrl = '';
+    if (url != '') {
+      String originalLink = url;
+      String fileId = originalLink.substring(
+          originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));
+      newUrl = 'https://drive.google.com/uc?export=view&id=$fileId';
+    }
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 2.w),
       child: Column(

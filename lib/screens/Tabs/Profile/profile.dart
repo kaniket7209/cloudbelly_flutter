@@ -6,6 +6,7 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/menu.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
+import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
@@ -28,6 +29,12 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    String _store_name = Auth().store_name == ''
+        ? Auth().user_email.split('@')[0]
+        : Auth().store_name;
+    String image_url = Auth().logo_url == ''
+        ? 'https://media.istockphoto.com/id/1492460518/photo/empty-clean-white-marble-top-island-table-in-commercial-professional-bakery-kitchen-with.jpg?s=2048x2048&w=is&k=20&c=dLkV6aaISZdGDWpd-UhoFS6n0-9rZ_HW14t3nj6YPkI='
+        : Auth().logo_url;
     return SingleChildScrollView(
       child: Container(
         constraints: const BoxConstraints(
@@ -83,12 +90,14 @@ class _ProfileState extends State<Profile> {
                                           cornerSmoothing: 1,
                                         ),
                                         child: Image.network(
-                                            'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj'),
+                                          image_url,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                     Space(2.h),
-                                    const Text(
-                                      'Geeta Kitchen',
+                                    Text(
+                                      _store_name,
                                       style: TextStyle(
                                         color: Color(0xFF094B60),
                                         fontSize: 14,
@@ -109,9 +118,12 @@ class _ProfileState extends State<Profile> {
                                     color: Colors.white,
                                     ic: Icons.add,
                                     onTap: () async {
+                                      AppWideLoadingBanner()
+                                          .loadingBanner(context);
+
                                       List<String> url =
                                           await pickMultipleImagesAndUpoad();
-
+                                      Navigator.of(context).pop();
                                       if (url.length == 0) {
                                         TOastNotification().showErrorToast(
                                             context,
@@ -151,7 +163,7 @@ class _ProfileState extends State<Profile> {
                         constraints: const BoxConstraints(
                           maxWidth: 420, // Set the maximum width to 800
                         ),
-                        child: Wrap(
+                        child: Column(
                           children: [
                             Center(
                                 child: Container(
@@ -370,7 +382,7 @@ class _ProfileState extends State<Profile> {
                                         ),
                                       if (_activeButtonIndex == 2) Menu(),
                                       if (_activeButtonIndex == 3)
-                                        const Text('Reviews')
+                                        const Text('Feature Pending')
                                     ]),
                               ),
                             )

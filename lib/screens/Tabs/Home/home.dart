@@ -4,6 +4,7 @@ import 'package:cloudbelly_app/api_service.dart';
 
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
+import 'package:cloudbelly_app/screens/Tabs/Home/performance.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/social_status.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
@@ -32,6 +33,13 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    String _store_name = Auth().store_name == ''
+        ? Auth().user_email.split('@')[0]
+        : Auth().store_name;
+    String image_url = Auth().logo_url == ''
+        ? 'https://media.istockphoto.com/id/1492460518/photo/empty-clean-white-marble-top-island-table-in-commercial-professional-bakery-kitchen-with.jpg?s=2048x2048&w=is&k=20&c=dLkV6aaISZdGDWpd-UhoFS6n0-9rZ_HW14t3nj6YPkI='
+        : Auth().logo_url;
+
     return SingleChildScrollView(
       child: Container(
         constraints: const BoxConstraints(
@@ -84,13 +92,15 @@ class _HomeState extends State<Home> {
                                       cornerSmoothing: 1,
                                     ),
                                     child: Image.network(
-                                        'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj'),
+                                      image_url,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                                 Space(2.h),
-                                const Text(
-                                  'Geeta Kitchen',
-                                  style: TextStyle(
+                                Text(
+                                  _store_name,
+                                  style: const TextStyle(
                                     color: Color(0xFF094B60),
                                     fontSize: 14,
                                     fontFamily: 'Product Sans',
@@ -217,7 +227,7 @@ class _HomeState extends State<Home> {
                                               });
                                             },
                                             child: ButtonWidgetHomeScreen(
-                                              width: 25.w,
+                                              width: 27.w,
                                               txt: 'Social Status',
                                               isActive: _activeButtonIndex == 1,
                                             ),
@@ -229,7 +239,7 @@ class _HomeState extends State<Home> {
                                               });
                                             },
                                             child: ButtonWidgetHomeScreen(
-                                              width: 25.w,
+                                              width: 27.w,
                                               txt: 'Inventory',
                                               isActive: _activeButtonIndex == 2,
                                             ),
@@ -241,7 +251,7 @@ class _HomeState extends State<Home> {
                                               });
                                             },
                                             child: ButtonWidgetHomeScreen(
-                                              width: 25.w,
+                                              width: 28.w,
                                               txt: 'Performance',
                                               isActive: _activeButtonIndex == 3,
                                             ),
@@ -255,7 +265,8 @@ class _HomeState extends State<Home> {
                               Space(3.h),
                               if (_activeButtonIndex == 1)
                                 SocialStatusContent(),
-                              if (_activeButtonIndex == 2) const Inventory()
+                              if (_activeButtonIndex == 2) const Inventory(),
+                              if (_activeButtonIndex == 3) const Performance(),
                             ],
                           ),
                         ),

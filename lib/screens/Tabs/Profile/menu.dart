@@ -1,6 +1,7 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
+import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -274,8 +275,11 @@ class _MenuState extends State<Menu> {
                       children: [
                         TouchableOpacity(
                           onTap: () async {
+                            AppWideLoadingBanner().loadingBanner(context);
+
                             await updateProductImage(
                                 data[index]['_id'], context, 'Gallery');
+                            Navigator.of(context).pop();
                             Navigator.of(context).pop();
                           },
                           child:
@@ -283,8 +287,10 @@ class _MenuState extends State<Menu> {
                         ),
                         TouchableOpacity(
                             onTap: () async {
+                              AppWideLoadingBanner().loadingBanner(context);
                               await updateProductImage(
                                   data[index]['_id'], context, 'Camera');
+                              Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             },
                             child: StocksMayBeNeedWidget(txt: 'Click photo')),

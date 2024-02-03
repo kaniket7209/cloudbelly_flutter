@@ -7,6 +7,7 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class Tabs extends StatefulWidget {
   static const routeName = '/tabs-screen';
@@ -40,6 +41,21 @@ class _TabsState extends State<Tabs> {
         duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
+  final iconList = <IconData>[
+    Icons.home,
+    Icons.computer,
+    Icons.person,
+    Icons.brightness_7,
+    // Icons.brightness_1,
+  ];
+  final textList = <String>[
+    'Home',
+    'Dashboard',
+    'Cart',
+    'Orders',
+    // 'Account',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,26 +70,141 @@ class _TabsState extends State<Tabs> {
         controller: _pageController,
         children: _pages,
       ),
+      floatingActionButton: FloatingActionButton(
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.all(
+              SmoothRadius(cornerRadius: 30, cornerSmoothing: 1)),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: [
+                Color.fromRGBO(250, 110, 0, 1),
+                Color.fromRGBO(248, 185, 177, 1),
+              ], // Define your gradient colors
+              begin: Alignment.topCenter, // Define your gradient begin position
+              end: Alignment.bottomCenter, // Define your gradient end position
+            ),
+          ),
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          padding: EdgeInsets.all(16), // Adjust padding as needed
+        ),
+        onPressed: () {
+          print('bich vala');
+        },
+      ),
       //     floatingActionButton: FloatingActionButton(
       //     //params
       //  ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AnimatedBottomNavigationBar(
-          icons: [Icons.abc, Icons.ac_unit, Icons.home, Icons.rocket],
-          activeIndex: _selectedIndex,
-          gapLocation: GapLocation.center,
-          notchSmoothness: NotchSmoothness.verySmoothEdge,
-          leftCornerRadius: 32,
-          rightCornerRadius: 32,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-            animateToSelectedPage();
+      bottomNavigationBar: AnimatedBottomNavigationBar.builder(
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+          animateToSelectedPage();
+        },
+        activeIndex: _selectedIndex,
+        itemCount: 4,
+        tabBuilder: (int index, bool isActive) {
+          if (_selectedIndex == index)
+            return Container(
+              padding: index == 1
+                  ? EdgeInsets.symmetric(horizontal: 0)
+                  : EdgeInsets.symmetric(horizontal: 5),
+              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+              width: 100,
+              height: 30,
+              decoration: const ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    offset: Offset(0, 8),
+                    color: Color.fromRGBO(152, 202, 201, 0.8),
+                    blurRadius: 20,
+                  )
+                ],
+                color: Color.fromRGBO(84, 166, 193, 1),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.all(
+                      SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+                ),
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Icon(
+                      iconList[index],
+                      color: Colors.white,
+                    ),
+                    Space(isHorizontal: true, 2),
+                    Text(
+                      textList[index],
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w700,
+                        height: 0,
+                        letterSpacing: 0.10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          else {
+            return SizedBox(
+                width: 20,
+                height: 20,
+                child: Icon(
+                  iconList[index],
+                  color: Color.fromRGBO(84, 166, 193, 1),
+                ));
           }
+        },
+        backgroundColor: Colors.white,
 
-          //other params
-          ),
+        splashColor: Colors.blue,
+        // notchAndCornersAnimation: borderRadiusAnimation,
+        splashSpeedInMilliseconds: 300,
+        notchSmoothness: NotchSmoothness.sharpEdge,
+        gapLocation: GapLocation.center,
+        leftCornerRadius: 15,
+        rightCornerRadius: 15,
+        // onTap: (index) => setState(() => _bottomNavIndex = index),
+        // hideAnimationController: _hideBottomBarAnimationController,
+        shadow: BoxShadow(
+          offset: Offset(0, -4),
+          blurRadius: 15,
+          // spreadRadius: 0.5,
+          // rgba
+
+          color: Color.fromRGBO(177, 217, 216, 0.69),
+        ),
+      ),
+
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // bottomNavigationBar: AnimatedBottomNavigationBar(
+      //     icons: [Icons.abc, Icons.ac_unit, Icons.home, Icons.rocket],
+      //     activeIndex: _selectedIndex,
+      //     gapLocation: GapLocation.center,
+      //     notchSmoothness: NotchSmoothness.verySmoothEdge,
+      //     leftCornerRadius: 32,
+      //     rightCornerRadius: 32,
+      //     onTap: (index) {
+      //       setState(() {
+      //         _selectedIndex = index;
+      //       });
+      //       animateToSelectedPage();
+      //     }
+
+      //     //other params
+      //     ),
       // bottomNavigationBar: Container(
       //   margin: EdgeInsets.symmetric(horizontal: 3, vertical: 2),
       //   height: 55,
