@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               setState(() {
                                                 _isLogin = true;
                                               });
-                                              print('login');
+                                              // print('login');
                                             },
                                             child: const Padding(
                                               padding: EdgeInsets.all(10.0),
@@ -161,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         hintText: 'Enter your Email',
                                         onChanged: (p0) {
                                           user_email = p0.toString();
-                                          print(p0);
+                                          // print(p0);
                                         },
                                       ),
                                       Space(3.h),
@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         hintText: 'Enter your Phone Number',
                                         onChanged: (p0) {
                                           user_mobile_number = p0.toString();
-                                          print(p0);
+                                          // print(p0);
                                         },
                                       ),
                                       Space(3.h),
@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         hintText: 'Create a Password',
                                         onChanged: (p0) {
                                           user_pass = p0.toString();
-                                          print(p0);
+                                          // print(p0);
                                         },
                                       ),
                                       Space(3.h),
@@ -307,7 +307,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               setState(() {
                                                 _isLogin = false;
                                               });
-                                              print('sign');
+                                              // print('sign');
                                             },
                                             child: const Padding(
                                               padding: EdgeInsets.all(10.0),
@@ -346,7 +346,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         hintText: 'Enter your Email',
                                         onChanged: (p0) {
                                           user_email = p0;
-                                          print(p0);
+                                          // print(p0);
                                         },
                                       ),
                                       Space(3.h),
@@ -354,7 +354,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         hintText: 'Enter Password',
                                         onChanged: (p0) {
                                           user_pass = p0;
-                                          print(p0);
+                                          // print(p0);
                                         },
                                       ),
                                       Space(4.h),
@@ -363,7 +363,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         txt: 'Login',
                                         onTap: () {
                                           _submitForm();
-                                          print('Login');
+                                          // print('Login');
                                         },
                                       ),
                                       Space(4.h),

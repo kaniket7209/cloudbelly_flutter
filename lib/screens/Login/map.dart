@@ -19,7 +19,7 @@ class _MapScreenState extends State<MapScreen> {
     // TODO: implement initState
     super.initState();
     this.initData();
-    print("gaurav");
+    // print("gaurav");
   }
 
   // Future<List<String>> fetchImageUrls() async {
@@ -38,10 +38,10 @@ class _MapScreenState extends State<MapScreen> {
 
   initData() async {
     var data = await sendUserTypeRequest();
-    print(data);
+    // print(data);
     for (var d in data) {
       // var dat = jsonDecode(d);
-      print(d);
+      // print(d);
       markers.add(d);
     }
   }
