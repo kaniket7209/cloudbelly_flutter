@@ -1,9 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/store_setup_sheets.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -14,9 +12,7 @@ import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SocialStatusContent extends StatefulWidget {
   const SocialStatusContent({
@@ -35,17 +31,24 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
     super.dispose();
   }
 
-  int counter = 1;
-
-  Future<void> _getPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    // counter = 3;
-    counter = prefs.getInt('counter') ?? 1;
+  @override
+  void initState() {
+    print('counter: $counter ');
+    // TODO: implement initState
+    super.initState();
   }
 
   PageController _pageController = PageController(initialPage: 0);
   int _currentPageIndex = 0;
-  bool _isLoading = false;
+  // bool _isLoading = false;
+  final counter = Auth().pincode == ''
+      ? 1
+      : Auth().pan_number == ''
+          ? 2
+          : Auth().bank_name == ''
+              ? 3
+              : 4;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -87,37 +90,31 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                         letterSpacing: 0.60,
                       ),
                     ),
-                    FutureBuilder(
-                        future: _getPrefs(),
-                        builder: (context, snapshot) {
-                          return Text(
-                            counter >= 4
-                                ? '100%'
-                                : ((counter / 3) * 100)
-                                        .toString()
-                                        .substring(0, 4) +
-                                    '%',
-                            style: const TextStyle(
-                              color: Color(0xFFFA6E00),
-                              fontSize: 16,
-                              fontFamily: 'Jost',
-                              fontWeight: FontWeight.w600,
-                              height: 0.08,
-                              letterSpacing: 0.48,
-                            ),
-                          );
-                        })
+                    Text(
+                      counter >= 4
+                          ? '100%'
+                          : counter == 1
+                              ? '0%'
+                              : ((((counter - 1) / 3) * 100) * 1.000)
+                                      .toString()
+                                      .substring(0, 4) +
+                                  '%',
+                      style: const TextStyle(
+                        color: Color(0xFFFA6E00),
+                        fontSize: 16,
+                        fontFamily: 'Jost',
+                        fontWeight: FontWeight.w600,
+                        height: 0.08,
+                        letterSpacing: 0.48,
+                      ),
+                    )
                   ],
                 ),
                 Space(3.h),
-                FutureBuilder(
-                    future: _getPrefs(),
-                    builder: (context, snapshot) {
-                      return AppWIdeProgreesBar(
-                        color: const Color(0xFFFA6E00),
-                        part: counter >= 4 ? 1 : counter / 3,
-                      );
-                    }),
+                AppWIdeProgreesBar(
+                  color: const Color(0xFFFA6E00),
+                  part: counter >= 4 ? 1 : (counter - 1) / 3,
+                ),
                 Space(3.h),
                 SizedBox(
                   height: 10.h,
@@ -186,10 +183,6 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                 ),
                 TouchableOpacity(
                   onTap: () async {
-                    final prefs = await SharedPreferences.getInstance();
-
-                    final counter = prefs.getInt('counter') ?? 1;
-
                     if (counter < 4) {
                       return SlidingSheet().showAlertDialog(context, counter);
                     } else {

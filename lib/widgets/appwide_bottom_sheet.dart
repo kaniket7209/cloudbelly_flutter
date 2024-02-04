@@ -32,7 +32,7 @@ class AppWideBottomSheet {
                 height: height,
                 width: double.infinity,
                 padding: EdgeInsets.only(
-                    left: 6.w, right: 6.w, top: 2.h, bottom: 1.h),
+                    left: 5.w, right: 6.w, top: 2.h, bottom: 1.h),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +55,7 @@ class AppWideBottomSheet {
                           ),
                         ),
                       ),
-                      Space(6.h),
+                      Space(3.h),
                       content,
                     ],
                   ),

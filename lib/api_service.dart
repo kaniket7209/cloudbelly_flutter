@@ -1,15 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:toastification/toastification.dart';
 
 class Auth {
   static final Auth _instance = Auth._internal();
@@ -24,6 +20,9 @@ class Auth {
   String user_email = '';
   String store_name = '';
   String logo_url = '';
+  String pan_number = '';
+  String bank_name = '';
+  String pincode = '';
 
   String get_user_id() {
     return user_id;
@@ -82,6 +81,15 @@ Future<String> login(email, pass) async {
     Auth().user_email = jsonDecode((response.body))['email'];
     Auth().store_name = jsonDecode((response.body))['store_name'] ?? '';
     Auth().logo_url = jsonDecode((response.body))['profile_photo'] ?? '';
+    Auth().pan_number = jsonDecode((response.body))['pan_number'] ?? '';
+    Auth().bank_name = jsonDecode((response.body))['bank_name'] ?? '';
+    Auth().pincode = jsonDecode((response.body))['pincode'] ?? '';
+    Auth().store_name = Auth().store_name == ''
+        ? Auth().user_email.split('@')[0]
+        : Auth().store_name;
+    Auth().logo_url = Auth().logo_url == ''
+        ? 'https://media.istockphoto.com/id/1492460518/photo/empty-clean-white-marble-top-island-table-in-commercial-professional-bakery-kitchen-with.jpg?s=2048x2048&w=is&k=20&c=dLkV6aaISZdGDWpd-UhoFS6n0-9rZ_HW14t3nj6YPkI='
+        : Auth().logo_url;
     return jsonDecode((response.body))['message'];
   } catch (error) {
     // Handle exceptions
@@ -141,6 +149,7 @@ Future<String> storeSetup1(user_name, pincode, profile_photo, location_details,
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
+    print(response.body);
     return jsonDecode((response.body))['message'];
   } catch (error) {
     // Handle exceptions
@@ -196,7 +205,8 @@ Future<String> storeSetup3(bank_name, account_number, ifsc_code, upi_id) async {
   }
 }
 
-Future<String> pickImageAndUpoad(BuildContext context, {String src = 'Gallery'}) async {
+Future<String> pickImageAndUpoad(BuildContext context,
+    {String src = 'Gallery'}) async {
   final picker = ImagePicker();
   final pickedImage = await picker.pickImage(
     source: src == 'Gallery' ? ImageSource.gallery : ImageSource.camera,
@@ -215,10 +225,12 @@ Future<String> pickImageAndUpoad(BuildContext context, {String src = 'Gallery'})
   try {
     final url = Uri.parse('https://app.cloudbelly.in/upload');
     final req = http.MultipartRequest('POST', url)
-      ..files.add(await http.MultipartFile.fromBytes('file', compressedImage, filename: 'compressed_image.jpg'));
+      ..files.add(await http.MultipartFile.fromBytes('file', compressedImage,
+          filename: 'compressed_image.jpg'));
 
     req.headers['Accept'] = '*/*';
-    req.headers['User-Agent'] = 'Thunder Client (https://www.thunderclient.com)';
+    req.headers['User-Agent'] =
+        'Thunder Client (https://www.thunderclient.com)';
 
     final stream = await req.send();
     final response = await http.Response.fromStream(stream);
@@ -385,7 +397,6 @@ Future<List<String>> pickMultipleImagesAndUpoad() async {
   // Check and request permission if not granted
   // var status = await Permission.photos.request();
   List<XFile>? images = await ImagePicker().pickMultiImage();
-  if (images == null) return [];
 
   List<String> urlList = [];
 
@@ -403,11 +414,13 @@ Future<List<String>> pickMultipleImagesAndUpoad() async {
         ..files.add(http.MultipartFile.fromBytes(
           'file',
           compressedImageBytes,
-          filename: 'compressed_image.jpg', // You might want to generate a more descriptive name
+          filename:
+              'compressed_image.jpg', // You might want to generate a more descriptive name
         ));
 
       req.headers['Accept'] = '*/*';
-      req.headers['User-Agent'] = 'Thunder Client (https://www.thunderclient.com)';
+      req.headers['User-Agent'] =
+          'Thunder Client (https://www.thunderclient.com)';
 
       final stream = await req.send();
       final response = await http.Response.fromStream(stream);
@@ -488,7 +501,7 @@ Future<dynamic> updateProductImage(
       };
 
       try {
-        final response = await http.post(
+        await http.post(
           Uri.parse(url),
           headers: {
             'Accept': '*/*',
@@ -498,7 +511,7 @@ Future<dynamic> updateProductImage(
           body: jsonEncode(requestBody),
         );
         TOastNotification().showSuccesToast(context, 'Image updated ');
-        return jsonDecode((response.body));
+        return list[0];
       } catch (error) {
         // Handle exceptions
         return '-1';

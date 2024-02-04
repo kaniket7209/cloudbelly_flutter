@@ -3,23 +3,19 @@
 import 'package:cloudbelly_app/api_service.dart';
 
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/performance.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/social_status.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/store_setup_sheets.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -33,13 +29,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    String _store_name = Auth().store_name == ''
-        ? Auth().user_email.split('@')[0]
-        : Auth().store_name;
-    String image_url = Auth().logo_url == ''
-        ? 'https://media.istockphoto.com/id/1492460518/photo/empty-clean-white-marble-top-island-table-in-commercial-professional-bakery-kitchen-with.jpg?s=2048x2048&w=is&k=20&c=dLkV6aaISZdGDWpd-UhoFS6n0-9rZ_HW14t3nj6YPkI='
-        : Auth().logo_url;
-
     return SingleChildScrollView(
       child: Container(
         constraints: const BoxConstraints(
@@ -92,14 +81,14 @@ class _HomeState extends State<Home> {
                                       cornerSmoothing: 1,
                                     ),
                                     child: Image.network(
-                                      image_url,
+                                      Auth().logo_url,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                                 Space(2.h),
                                 Text(
-                                  _store_name,
+                                  Auth().store_name,
                                   style: const TextStyle(
                                     color: Color(0xFF094B60),
                                     fontSize: 14,

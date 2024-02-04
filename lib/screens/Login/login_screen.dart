@@ -37,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _submitForm() async {
     // Perform signup logic
+    user_pass = user_pass.trim();
     String email = user_email;
     String pass = user_pass;
 
@@ -59,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // Perform signup logic
 
     // Add your signup logic here
-
+    user_pass = user_pass.trim();
     // For example, print the values:
     AppWideLoadingBanner().loadingBanner(context);
     String msg =
@@ -82,6 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  bool _isPasswordVisible = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,12 +188,78 @@ class _LoginScreenState extends State<LoginScreen> {
                                         },
                                       ),
                                       Space(3.h),
-                                      AppwideTextField(
-                                        hintText: 'Create a Password',
-                                        onChanged: (p0) {
-                                          user_pass = p0.toString();
-                                          // print(p0);
-                                        },
+                                      Container(
+                                        decoration: const ShapeDecoration(
+                                          shadows: [
+                                            BoxShadow(
+                                              offset: Offset(0, 4),
+                                              color: Color.fromRGBO(
+                                                  165, 200, 199, 0.6),
+                                              blurRadius: 20,
+                                            )
+                                          ],
+                                          color: Colors.white,
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius:
+                                                SmoothBorderRadius.all(
+                                              SmoothRadius(
+                                                cornerRadius: 10,
+                                                cornerSmoothing: 1,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        height: 6.h,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Center(
+                                                child: TextField(
+                                                  obscureText:
+                                                      !_isPasswordVisible,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    fillColor: Colors.white,
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            left: 14),
+                                                    hintText: 'Enter Password',
+                                                    hintStyle: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Color(0xFF0A4C61),
+                                                      fontFamily:
+                                                          'Product Sans',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                    border: InputBorder.none,
+                                                  ),
+                                                  onChanged: (p0) {
+                                                    user_pass = p0;
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _isPasswordVisible =
+                                                      !_isPasswordVisible;
+                                                });
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  _isPasswordVisible
+                                                      ? Icons.visibility
+                                                      : Icons.visibility_off,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                       Space(3.h),
                                       Container(
@@ -363,12 +431,78 @@ class _LoginScreenState extends State<LoginScreen> {
                                         },
                                       ),
                                       Space(3.h),
-                                      AppwideTextField(
-                                        hintText: 'Enter Password',
-                                        onChanged: (p0) {
-                                          user_pass = p0;
-                                          // print(p0);
-                                        },
+                                      Container(
+                                        decoration: const ShapeDecoration(
+                                          shadows: [
+                                            BoxShadow(
+                                              offset: Offset(0, 4),
+                                              color: Color.fromRGBO(
+                                                  165, 200, 199, 0.6),
+                                              blurRadius: 20,
+                                            )
+                                          ],
+                                          color: Colors.white,
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius:
+                                                SmoothBorderRadius.all(
+                                              SmoothRadius(
+                                                cornerRadius: 10,
+                                                cornerSmoothing: 1,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        height: 6.h,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Center(
+                                                child: TextField(
+                                                  obscureText:
+                                                      !_isPasswordVisible,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    fillColor: Colors.white,
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            left: 14),
+                                                    hintText: 'Enter Password',
+                                                    hintStyle: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Color(0xFF0A4C61),
+                                                      fontFamily:
+                                                          'Product Sans',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                    border: InputBorder.none,
+                                                  ),
+                                                  onChanged: (p0) {
+                                                    user_pass = p0;
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _isPasswordVisible =
+                                                      !_isPasswordVisible;
+                                                });
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  _isPasswordVisible
+                                                      ? Icons.visibility
+                                                      : Icons.visibility_off,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                       Space(4.h),
                                       AppWideButton(

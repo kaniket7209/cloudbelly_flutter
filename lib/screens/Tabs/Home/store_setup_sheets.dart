@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SlidingSheet {
   void showAlertDialog(BuildContext context, int num) {
@@ -79,7 +78,7 @@ class _Sheet1State extends State<Sheet1> {
   String max_order_capacity = '';
 
   Future<void> _SubmitForm() async {
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
 
     if (user_name != '' &&
         store_name != '' &&
@@ -103,7 +102,7 @@ class _Sheet1State extends State<Sheet1> {
         Navigator.of(context).pop();
         SlidingSheet().showAlertDialog(context, 2);
 
-        prefs.setInt('counter', 2);
+        // prefs.setInt('counter', 2);
       }
 
       print(msg);
@@ -437,7 +436,7 @@ class _Sheet2State extends State<Sheet2> {
   String fssai_licence_document = '';
 
   Future<void> _SubmitForm({int num = 1}) async {
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
     if (pan_number != '' && aadhar_number != '') {
       String msg =
           await storeSetup2(pan_number, aadhar_number, fssai_licence_document);
@@ -447,7 +446,7 @@ class _Sheet2State extends State<Sheet2> {
         if (num == 2) Navigator.of(context).pop();
         Navigator.of(context).pop();
         SlidingSheet().showAlertDialog(context, 3);
-        prefs.setInt('counter', 3);
+        // prefs.setInt('counter', 3);
       }
 
       print(msg);
@@ -772,7 +771,7 @@ class _Sheet3State extends State<Sheet3> {
   String ifsc_code = '';
   String upi_id = '';
   Future<void> _SubmitForm() async {
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
     if (bank_name != '' &&
         account_number != '' &&
         re_account_number != '' &&
@@ -786,7 +785,7 @@ class _Sheet3State extends State<Sheet3> {
           TOastNotification()
               .showSuccesToast(context, 'Payemnt details updated');
           Navigator.of(context).pop();
-          prefs.setInt('counter', 4);
+          // prefs.setInt('counter', 4);
         }
 
         print(msg);

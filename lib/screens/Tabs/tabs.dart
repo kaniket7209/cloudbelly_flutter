@@ -1,13 +1,14 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
+import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
-import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
+import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/screens/Tabs/Feed/feed.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 
 class Tabs extends StatefulWidget {
   static const routeName = '/tabs-screen';
@@ -93,8 +94,22 @@ class _TabsState extends State<Tabs> {
           ),
           padding: EdgeInsets.all(16), // Adjust padding as needed
         ),
-        onPressed: () {
-          print('bich vala');
+        onPressed: () async {
+          // awa
+          AppWideLoadingBanner().loadingBanner(context);
+          List<String> url = await pickMultipleImagesAndUpoad();
+          Navigator.of(context).pop();
+          if (url.length == 0) {
+            TOastNotification()
+                .showErrorToast(context, 'Error While Uploading Image');
+          } else if (url.contains('file size very large'))
+            TOastNotification().showErrorToast(context, 'file size very large');
+          else if (!url.contains('element'))
+            CreateFeed().showModalSheetForNewPost(context, url);
+          else {
+            TOastNotification()
+                .showErrorToast(context, 'Error While Uploading Image');
+          }
         },
       ),
       //     floatingActionButton: FloatingActionButton(
