@@ -196,94 +196,56 @@ Future<String> storeSetup3(bank_name, account_number, ifsc_code, upi_id) async {
   }
 }
 
-Future<File> compressImage(String imagePath) async {
-  // Get the original image file
-  // File imageFile = File(imagePath);
-
-  // Compress the image
-  Uint8List? compressedBytes = await FlutterImageCompress.compressWithFile(
-    imagePath,
-    quality: 85, // Adjust the quality as needed
-  );
-
-  // Create a new file for the compressed image
-  File compressedImage = File(imagePath.split('.').first + '_compressed.jpg');
-
-  // Write the compressed bytes to the new file
-  await compressedImage.writeAsBytes(compressedBytes!);
-
-  return compressedImage;
-}
-
-Future<String> pickImageAndUpoad(
-  BuildContext context, {
-  String src = 'Gallery',
-}) async {
+Future<String> pickImageAndUpoad(BuildContext context, {String src = 'Gallery'}) async {
   final picker = ImagePicker();
   final pickedImage = await picker.pickImage(
     source: src == 'Gallery' ? ImageSource.gallery : ImageSource.camera,
   );
-  String imagePath = '';
-  if (pickedImage != null) {
-    imagePath = pickedImage.path;
-    debugPrint('imaged added');
-    debugPrint(imagePath);
+  if (pickedImage == null) return "";
+
+  debugPrint('Image path: ${pickedImage.path}');
+
+  // Compress the image first
+  var compressedImage = await compressImage(pickedImage.path);
+  if (compressedImage == null) {
+    debugPrint('Error compressing image');
+    return "";
   }
+
   try {
     final url = Uri.parse('https://app.cloudbelly.in/upload');
-
     final req = http.MultipartRequest('POST', url)
-      ..files.add(await http.MultipartFile.fromPath('file', imagePath));
+      ..files.add(await http.MultipartFile.fromBytes('file', compressedImage, filename: 'compressed_image.jpg'));
 
     req.headers['Accept'] = '*/*';
-    req.headers['User-Agent'] =
-        'Thunder Client (https://www.thunderclient.com)';
+    req.headers['User-Agent'] = 'Thunder Client (https://www.thunderclient.com)';
 
     final stream = await req.send();
     final response = await http.Response.fromStream(stream);
     final status = response.statusCode;
     if (status != 200) throw Exception('http.send error: statusCode= $status');
 
-    return jsonDecode((response.body))['file_url'];
+    return json.decode(response.body)['file_url'];
   } catch (error) {
     if (error.toString().contains('413')) {
-      // showDialog(
-      //   context: context,
-      //   builder: (BuildContext context) {
-      // return AlertDialog(
-      //   title: Text('File Size large'),
-      //   content: Text('If you want we can Compress this file'),
-      //   actions: <Widget>[
-      //     TextButton(
-      //       onPressed: () async {
-      //         // var result = await FlutterImageCompress.compressWithFile(
-      //         //   imagePath,
-      //         //   minWidth: 2300,
-      //         //   minHeight: 1500,
-      //         //   quality: 94,
-      //         //   rotate: 90,
-      //         // );
-      //         // File file = File(filePath);
-      //         // await file.writeAsBytes(uint8List);
-      //         // print(result!.length);
-      //       },
-      //       child: Text('Compress'),
-      //     ),
-      //     Space(isHorizontal: true, 100),
-      //     TextButton(
-      //       onPressed: () {
-      //         // Close the dialog
-      //         Navigator.of(context).pop();
-      //       },
-      //       child: Text('Close'),
-      //     ),
-      //   ],
-      // );
-      //   },
-      // );
       return "file size very large";
     }
-    return "";
+    return "Error uploading image: $error";
+  }
+}
+
+Future<List<int>?> compressImage(String imagePath) async {
+  try {
+    var result = await FlutterImageCompress.compressWithFile(
+      imagePath,
+      minWidth: 1080, // Adjust the size according to your needs
+      minHeight: 1920,
+      quality: 85, // Adjust quality parameter as needed
+    );
+    return result;
+  } catch (e) {
+    debugPrint('Error in compressing file: $e');
+    return null;
   }
 }
 

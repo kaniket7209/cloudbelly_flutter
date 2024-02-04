@@ -281,7 +281,7 @@ class _MenuState extends State<Menu> {
 
                             await updateProductImage(
                                 data[index]['_id'], context, 'Gallery');
-                            Navigator.of(context).pop();
+                            // Navigator.of(context).pop();
                             Navigator.of(context).pop();
                           },
                           child:

@@ -222,7 +222,7 @@ class _InventoryState extends State<Inventory> {
                             txt: 'Stocks you may need',
                           ),
                           Space(2.h),
-                          Container(
+                          SizedBox(
                             width: double.infinity,
                             child: GridView.builder(
                               physics:
@@ -256,7 +256,7 @@ class _InventoryState extends State<Inventory> {
                       ),
                       60.h);
                 },
-                child: SeeAllWidget()),
+                child: const SeeAllWidget()),
           ],
         ),
         Space(2.h),
@@ -270,7 +270,7 @@ class _InventoryState extends State<Inventory> {
               }
               if (snapshot.hasError) {
                 return Center(
-                  child: Text(stocksYouMayNeed.length == 0
+                  child: Text(stocksYouMayNeed.isEmpty
                       ? 'No Item in Inventory'
                       : 'Error happend while fetching data , try again later !'),
                 );
