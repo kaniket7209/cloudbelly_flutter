@@ -382,41 +382,48 @@ Future<String> createPost(
 }
 
 Future<List<String>> pickMultipleImagesAndUpoad() async {
-  List<String> selectedImages = [];
   // Check and request permission if not granted
   // var status = await Permission.photos.request();
   List<XFile>? images = await ImagePicker().pickMultiImage();
-  selectedImages = images.map((image) => image.path).toList();
-  List<String> UrlList = [];
+  if (images == null) return [];
 
-  for (int i = 0; i < selectedImages.length; i++) {
+  List<String> urlList = [];
+
+  for (var image in images) {
+    String imagePath = image.path;
+    List<int>? compressedImageBytes = await compressImage(imagePath);
+    if (compressedImageBytes == null) {
+      urlList.add("Error compressing image");
+      continue;
+    }
+
     try {
       final url = Uri.parse('https://app.cloudbelly.in/upload');
-
       final req = http.MultipartRequest('POST', url)
-        ..files
-            .add(await http.MultipartFile.fromPath('file', selectedImages[i]));
+        ..files.add(http.MultipartFile.fromBytes(
+          'file',
+          compressedImageBytes,
+          filename: 'compressed_image.jpg', // You might want to generate a more descriptive name
+        ));
 
       req.headers['Accept'] = '*/*';
-      req.headers['User-Agent'] =
-          'Thunder Client (https://www.thunderclient.com)';
+      req.headers['User-Agent'] = 'Thunder Client (https://www.thunderclient.com)';
 
       final stream = await req.send();
       final response = await http.Response.fromStream(stream);
       final status = response.statusCode;
-      if (status != 200)
-        throw Exception('http.send error: statusCode= $status');
+      if (status != 200) throw Exception('HTTP error: statusCode= $status');
 
-      UrlList.add(jsonDecode((response.body))['file_url']);
-      // return jsonDecode((response.body))['file_url'];
+      urlList.add(json.decode(response.body)['file_url']);
     } catch (error) {
       if (error.toString().contains('413')) {
-        UrlList.add("file size very large");
+        urlList.add("File size very large");
+      } else {
+        urlList.add("Error uploading image: $error");
       }
-      UrlList.add("");
     }
   }
-  return UrlList;
+  return urlList;
 }
 
 Future<dynamic> getFeed() async {

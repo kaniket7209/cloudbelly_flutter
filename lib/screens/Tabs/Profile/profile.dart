@@ -99,7 +99,7 @@ class _ProfileState extends State<Profile> {
                                     Space(2.h),
                                     Text(
                                       _store_name,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Color(0xFF094B60),
                                         fontSize: 14,
                                         fontFamily: 'Product Sans',
