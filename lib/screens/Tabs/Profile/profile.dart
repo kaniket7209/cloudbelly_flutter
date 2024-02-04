@@ -32,6 +32,7 @@ class _ProfileState extends State<Profile> {
     String _store_name = Auth().store_name == ''
         ? Auth().user_email.split('@')[0]
         : Auth().store_name;
+    print(Auth().logo_url);
     String image_url = Auth().logo_url == ''
         ? 'https://media.istockphoto.com/id/1492460518/photo/empty-clean-white-marble-top-island-table-in-commercial-professional-bakery-kitchen-with.jpg?s=2048x2048&w=is&k=20&c=dLkV6aaISZdGDWpd-UhoFS6n0-9rZ_HW14t3nj6YPkI='
         : Auth().logo_url;

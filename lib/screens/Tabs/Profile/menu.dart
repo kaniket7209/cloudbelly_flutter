@@ -27,6 +27,7 @@ class _MenuState extends State<Menu> {
           if (snapshot.connectionState == ConnectionState.done) {
             print(snapshot.data);
             final data = snapshot.data as List<dynamic>;
+
             return ListView.builder(
                 padding: const EdgeInsets.only(),
                 itemCount: (data as List<dynamic>).length,
@@ -35,6 +36,7 @@ class _MenuState extends State<Menu> {
                     true, // Allow the GridView to shrink-wrap its content
                 addAutomaticKeepAlives: true,
                 itemBuilder: (context, index) {
+                  data[index]['VEG'] == null ? data[index]['VEG'] = true : null;
                   // data[index]['description'] =
                   //     'Indian delicacies served with tasty gravy, all from your very own kitchen...';
                   TextEditingController priceController =

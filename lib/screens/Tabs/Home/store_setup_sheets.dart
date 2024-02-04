@@ -86,7 +86,8 @@ class _Sheet1State extends State<Sheet1> {
         pincode != '' &&
         profile_photo != '' &&
         location_details != '' &&
-        max_order_capacity != '') {
+        max_order_capacity != '' &&
+        profile_photo != 'file size very large') {
       String msg = await storeSetup1(
           user_name,
           pincode,
@@ -312,6 +313,11 @@ class _Sheet1State extends State<Sheet1> {
                             _isImageUploading = true;
                           });
                           profile_photo = await pickImageAndUpoad(context);
+                          if (profile_photo == 'file size very large') {
+                            TOastNotification().showErrorToast(
+                                context, 'file size very large');
+                          }
+                          print(profile_photo);
                           setState(() {
                             _isImageUploading = false;
                           });
@@ -338,7 +344,8 @@ class _Sheet1State extends State<Sheet1> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                profile_photo == ''
+                                profile_photo == '' ||
+                                        profile_photo == 'file size very large'
                                     ? 'Upload from gallery'
                                     : 'Image Uploaded !',
                                 style: TextStyle(
