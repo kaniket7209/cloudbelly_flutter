@@ -286,7 +286,10 @@ Future<dynamic> ScannedMenuBottomSheet(BuildContext context, dynamic data) {
     var newItem = Map<String, dynamic>.from(item);
     newItem['VEG'] = true; // Adding VEG element with value true
     list.add(newItem);
+
+    list.reversed;
   }
+
   return showModalBottomSheet(
     // useSafeArea: true,
     context: context,
@@ -296,21 +299,22 @@ Future<dynamic> ScannedMenuBottomSheet(BuildContext context, dynamic data) {
       // print(data);
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
-          return Container(
-            decoration: const ShapeDecoration(
-              color: Colors.white,
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius.only(
-                    topLeft: SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                    topRight:
-                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+          return SingleChildScrollView(
+            child: Container(
+              decoration: const ShapeDecoration(
+                color: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.only(
+                      topLeft:
+                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                      topRight:
+                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                ),
               ),
-            ),
-            height: MediaQuery.of(context).size.height * 0.9,
-            width: double.infinity,
-            padding:
-                EdgeInsets.only(left: 6.w, right: 6.w, top: 2.h, bottom: 1.h),
-            child: SingleChildScrollView(
+              height: MediaQuery.of(context).size.height * 0.9,
+              width: double.infinity,
+              padding:
+                  EdgeInsets.only(left: 6.w, right: 6.w, top: 2.h, bottom: 1.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -332,7 +336,50 @@ Future<dynamic> ScannedMenuBottomSheet(BuildContext context, dynamic data) {
                       ),
                     ),
                   ),
-                  Space(6.h),
+                  Space(1.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TouchableOpacity(
+                        onTap: () {
+                          setState(() {
+                            list.insert(0, {
+                              'category': 'Category',
+                              'name': 'Item',
+                              'price': '00.00',
+                              'VEG': true
+                            });
+                          });
+                        },
+                        child: Container(
+                            height: 4.h,
+                            width: 30.w,
+                            decoration: const ShapeDecoration(
+                              color: Color.fromRGBO(177, 217, 216, 1),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius.all(
+                                  SmoothRadius(
+                                      cornerRadius: 15, cornerSmoothing: 1),
+                                ),
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Add more  +  ',
+                                style: TextStyle(
+                                  color: Color(0xFF094B60),
+                                  fontSize: 12,
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.w400,
+                                  height: 0.14,
+                                  letterSpacing: 0.36,
+                                ),
+                              ),
+                            )),
+                      )
+                    ],
+                  ),
+                  Space(2.5.h),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -445,8 +492,9 @@ Future<dynamic> ScannedMenuBottomSheet(BuildContext context, dynamic data) {
                   ),
                   Space(2.h),
                   SizedBox(
-                    height: 56.h,
+                    height: 54.h,
                     child: ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
                       itemCount: (list as List<dynamic>).length,
                       itemBuilder: (context, index) {
                         TextEditingController nameController =
@@ -567,14 +615,19 @@ Future<dynamic> ScannedMenuBottomSheet(BuildContext context, dynamic data) {
                   AppWideButton(
                     onTap: () async {
                       print(list);
-                      await AddProductsForMenu(list);
-                      Navigator.of(context).pop();
-                      TOastNotification().showSuccesToast(
-                          context, 'Menu Uploaded successfully');
+                      final code = await AddProductsForMenu(list);
+                      if (code == '200') {
+                        TOastNotification().showSuccesToast(
+                            context, 'Menu Uploaded successfully');
+                        Navigator.of(context).pop();
+                      } else {
+                        TOastNotification().showErrorToast(
+                            context, 'Error happened while uploading menu');
+                      }
                     },
                     num: 1,
                     txt: 'Complete menu upload',
-                  )
+                  ),
                 ],
               ),
             ),

@@ -163,6 +163,51 @@ Future<String> storeSetup1(user_name, pincode, profile_photo, location_details,
   }
 }
 
+Future<String> updateCoverImage(String cover_image) async {
+  final String url = 'https://app.cloudbelly.in/update-user';
+
+  final Map<String, dynamic> requestBody = {
+    'user_id': Auth().user_id,
+    'cover_image': cover_image,
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: Auth().headers,
+      body: jsonEncode(requestBody),
+    );
+    print(response.body);
+    int code = response.statusCode;
+    return code.toString();
+  } catch (error) {
+    // Handle exceptions
+    return '-1';
+  }
+}
+
+Future<String> updateProfilePhoto(String profile_photo) async {
+  final String url = 'https://app.cloudbelly.in/update-user';
+
+  final Map<String, dynamic> requestBody = {
+    'user_id': Auth().user_id,
+    'profile_photo': profile_photo,
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: Auth().headers,
+      body: jsonEncode(requestBody),
+    );
+    print(response.body);
+    return response.statusCode.toString();
+  } catch (error) {
+    // Handle exceptions
+    return '-1';
+  }
+}
+
 Future<String> storeSetup2(
     pan_number, aadhar_number, fssai_licence_document) async {
   final String url = 'https://app.cloudbelly.in/update-user';
@@ -273,6 +318,9 @@ Future<dynamic> ScanMenu(String src) async {
     source: src == 'Camera' ? ImageSource.camera : ImageSource.gallery,
   );
   String imagePath = '';
+  if (pickedImage == null) {
+    return 'No image picked';
+  }
   if (pickedImage != null) {
     imagePath = pickedImage.path;
     debugPrint('imaged added');
@@ -302,7 +350,7 @@ Future<dynamic> ScanMenu(String src) async {
   }
 }
 
-Future<dynamic> AddProductsForMenu(List<dynamic> data) async {
+Future<String> AddProductsForMenu(List<dynamic> data) async {
   final String url = 'https://app.cloudbelly.in/product/add';
 
   final Map<String, dynamic> requestBody = {
@@ -316,7 +364,10 @@ Future<dynamic> AddProductsForMenu(List<dynamic> data) async {
       headers: Auth().headers,
       body: jsonEncode(requestBody),
     );
-    return jsonDecode((response.body));
+    print(response.statusCode);
+    print(response.body);
+
+    return response.statusCode.toString();
   } catch (error) {
     // Handle exceptions
     return '-1';
