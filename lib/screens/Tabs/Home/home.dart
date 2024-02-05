@@ -172,16 +172,15 @@ class _HomeState extends State<Home> {
                                                           .spaceEvenly,
                                                   children: [
                                                     ColumnWidgetHomeScreen(
-                                                      data: (4).toString(),
+                                                      data: '-',
                                                       txt: 'Stock health',
                                                     ),
                                                     ColumnWidgetHomeScreen(
-                                                      data: (78.9).toString() +
-                                                          '%',
+                                                      data: '-',
                                                       txt: 'Waste %age',
                                                     ),
                                                     ColumnWidgetHomeScreen(
-                                                      data: '4.3x',
+                                                      data: '-',
                                                       txt: 'Avg turnaround',
                                                     )
                                                   ],
@@ -192,16 +191,16 @@ class _HomeState extends State<Home> {
                                                           .spaceEvenly,
                                                   children: [
                                                     ColumnWidgetHomeScreen(
-                                                      data: (4.9).toString(),
-                                                      txt: 'Rating',
+                                                      data: '-',
+                                                      txt: 'Total Customers',
                                                     ),
                                                     ColumnWidgetHomeScreen(
-                                                      data: (789).toString(),
-                                                      txt: 'Followers',
+                                                      data: '-',
+                                                      txt: 'Total orders',
                                                     ),
                                                     ColumnWidgetHomeScreen(
-                                                      data: '+${43}',
-                                                      txt: 'New followers',
+                                                      data: '-',
+                                                      txt: 'Repeat Customers',
                                                     )
                                                   ],
                                                 ),
