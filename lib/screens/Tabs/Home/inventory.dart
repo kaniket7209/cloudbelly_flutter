@@ -35,6 +35,7 @@ class _InventoryState extends State<Inventory> {
     }
   }
 
+  bool _isSyncLoading = false;
   List<dynamic> lowStockItems = [];
   List<dynamic> allStocks = [];
   List<dynamic> nearExpiryItems = [];
@@ -186,14 +187,16 @@ class _InventoryState extends State<Inventory> {
                 _launchURL(data['sheet_url']);
               },
             ),
-            IconButton(
-              onPressed: () async {
+            TouchableOpacity(
+              onTap: () async {
+                AppWideLoadingBanner().loadingBanner(context);
                 final newData = await SyncInventory();
+                Navigator.of(context).pop();
                 if (newData['data'] != null) {
                   TOastNotification().showSuccesToast(context, 'List Synced!');
                 }
               },
-              icon: Icon(Icons.refresh),
+              child: Icon(Icons.refresh),
             ),
             _isUpdateLoading
                 ? SizedBox(
@@ -213,7 +216,8 @@ class _InventoryState extends State<Inventory> {
                         _isUpdateLoading = false;
                       });
                       if ((data['data'] as List<dynamic>).length != 0) {
-                        UpdateListBottomSheet(context, data);
+                        UpdateListBottomSheet(
+                            context, data['data'][0]['inventory_data']);
                       }
                       // print(data);
                     },
@@ -640,32 +644,25 @@ class _InventoryState extends State<Inventory> {
                       height: 60.h,
                       // ma: EdgeInsets.symmetric(vertical: 6.h),
                       child: ListView.builder(
-                        itemCount: (UiData['data'][0]['inventory_data']
-                                as List<dynamic>)
-                            .length,
+                        itemCount: (data as List<dynamic>).length,
                         itemBuilder: (context, index) {
                           return BottomSheetRowWidget(
-                              id: UiData['data'][0]['inventory_data'][index]
-                                  ['ID'],
-                              name: UiData['data'][0]['inventory_data'][index]
-                                  ['NAME'],
-                              price: UiData['data'][0]['inventory_data'][index]
-                                      ['TOTAL PRICE( Rs)'] ??
-                                  '-',
-                              volume: UiData['data'][0]['inventory_data'][index]
-                                      ['VOLUME PURCHASED'] ??
-                                  '-',
-                              type: UiData['data'][0]['inventory_data'][index]
-                                  ['PRODUCT TYPE']);
+                              id: data[index]['ID'],
+                              name: data[index]['NAME'],
+                              price: data[index]['TOTAL PRICE( Rs)'] ?? '-',
+                              volume: data[index]['VOLUME PURCHASED'] ?? '-',
+                              type: data[index]['PRODUCT TYPE']);
                         },
                       ),
                     ),
                     Space(2.h),
                     AppWideButton(
                         onTap: () async {
+                          AppWideLoadingBanner().loadingBanner(context);
                           final newData = await SyncInventory();
+                          Navigator.of(context).pop();
                           setState(() {
-                            UiData = newData;
+                            data = newData['data']['inventory_data'];
                             // print('ui');
                             // print(UiData);
                           });

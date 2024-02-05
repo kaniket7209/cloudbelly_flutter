@@ -23,7 +23,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     _hideBottomBarAnimationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 2));
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
     // TODO: implement initState
     super.initState();
   }
@@ -37,11 +37,11 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   final PageController _pageController = PageController(initialPage: 0);
   final List<Widget> _pages = [
-    Home(),
-    Orders(),
+    const Home(),
+    const Orders(),
     // UploadPage(),
-    Cart(),
-    Profile(),
+    const Cart(),
+    const Profile(),
   ];
 
   Widget buildColorFilteredIcon(Icon ic, bool isFiltered) {
@@ -62,7 +62,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   final iconList = <IconData>[
     Icons.home,
-    Icons.computer,
+    Icons.laptop,
     Icons.shopping_cart_outlined,
     Icons.person,
     // Icons.brightness_1,
@@ -90,12 +90,12 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         children: _pages,
       ),
       floatingActionButton: FloatingActionButton(
-        shape: SmoothRectangleBorder(
+        shape: const SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius.all(
               SmoothRadius(cornerRadius: 30, cornerSmoothing: 1)),
         ),
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
               colors: [
@@ -106,11 +106,11 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               end: Alignment.bottomCenter, // Define your gradient end position
             ),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.add,
             color: Colors.white,
           ),
-          padding: EdgeInsets.all(16), // Adjust padding as needed
+          padding: const EdgeInsets.all(16), // Adjust padding as needed
         ),
         onPressed: () async {
           // awa
@@ -143,13 +143,12 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         },
         activeIndex: _selectedIndex,
         itemCount: 4,
+
         tabBuilder: (int index, bool isActive) {
-          if (_selectedIndex == index)
+          if (_selectedIndex == index) {
             return Container(
-              padding: index == 1
-                  ? EdgeInsets.symmetric(horizontal: 0)
-                  : EdgeInsets.symmetric(horizontal: 5),
-              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
               width: 100,
               height: 30,
               decoration: const ShapeDecoration(
@@ -174,10 +173,10 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       iconList[index],
                       color: Colors.white,
                     ),
-                    Space(isHorizontal: true, 2),
+                    const Space(isHorizontal: true, 2),
                     Text(
                       textList[index],
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
                         fontFamily: 'Product Sans',
@@ -190,13 +189,13 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 ),
               ),
             );
-          else {
+          } else {
             return SizedBox(
                 width: 20,
                 height: 20,
                 child: Icon(
                   iconList[index],
-                  color: Color.fromRGBO(84, 166, 193, 1),
+                  color: const Color.fromRGBO(84, 166, 193, 1),
                 ));
           }
         },
@@ -212,7 +211,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
         // onTap: (index) => setState(() => _bottomNavIndex = index),
         hideAnimationController: _hideBottomBarAnimationController,
-        shadow: BoxShadow(
+        shadow: const BoxShadow(
           offset: Offset(0, -4),
           blurRadius: 15,
           // spreadRadius: 0.5,
