@@ -35,7 +35,7 @@ class _InventoryState extends State<Inventory> {
     }
   }
 
-  bool _isSyncLoading = false;
+  // bool _isSyncLoading = false;
   List<dynamic> lowStockItems = [];
   List<dynamic> allStocks = [];
   List<dynamic> nearExpiryItems = [];
@@ -537,7 +537,7 @@ class _InventoryState extends State<Inventory> {
   }
 
   Future<dynamic> UpdateListBottomSheet(BuildContext context, dynamic data) {
-    dynamic UiData = data;
+    // dynamic UiData = data;
     return showModalBottomSheet(
       // useSafeArea: true,
       context: context,
@@ -630,8 +630,8 @@ class _InventoryState extends State<Inventory> {
                           width: 15.w,
                         ),
                         SheetLabelWidget(
-                          txt: 'Volume',
-                          width: 16.w,
+                          txt: 'Vol left',
+                          width: 20.w,
                         ),
                       ],
                     ),
@@ -650,7 +650,7 @@ class _InventoryState extends State<Inventory> {
                               id: data[index]['ID'],
                               name: data[index]['NAME'],
                               price: data[index]['TOTAL PRICE( Rs)'] ?? '-',
-                              volume: data[index]['VOLUME PURCHASED'] ?? '-',
+                              volume: data[index]['VOLUME LEFT'] ?? '-',
                               type: data[index]['PRODUCT TYPE']);
                         },
                       ),
@@ -1198,7 +1198,7 @@ class BottomSheetRowWidget extends StatelessWidget {
             ),
           ),
           Container(
-            width: 16.w,
+            width: 20.w,
             child: Text(
               volume + ' ' + type,
               style: const TextStyle(
