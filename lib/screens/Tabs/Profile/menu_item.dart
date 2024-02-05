@@ -239,7 +239,7 @@ class _MenuItemState extends State<MenuItem> {
                     ),
                     Space(6.h),
                     Text(
-                      'Scan your menu',
+                      'Upload product Photo',
                       style: TextStyle(
                         color: const Color(0xFF094B60),
                         fontSize: 26,

@@ -33,7 +33,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
 
   @override
   void initState() {
-    print('counter: $counter ');
+    // print('counter: $counter ');
     // TODO: implement initState
     super.initState();
   }
@@ -41,16 +41,16 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
   PageController _pageController = PageController(initialPage: 0);
   int _currentPageIndex = 0;
   // bool _isLoading = false;
-  final counter = Auth().pincode == ''
-      ? 1
-      : Auth().pan_number == ''
-          ? 2
-          : Auth().bank_name == ''
-              ? 3
-              : 4;
 
   @override
   Widget build(BuildContext context) {
+    final counter = Auth().pincode == ''
+        ? 1
+        : Auth().pan_number == ''
+            ? 2
+            : Auth().bank_name == ''
+                ? 3
+                : 4;
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

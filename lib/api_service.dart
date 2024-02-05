@@ -23,6 +23,9 @@ class Auth {
   String pan_number = '';
   String bank_name = '';
   String pincode = '';
+  String rating = '-';
+  List<dynamic> followers = [];
+  List<dynamic> followings = [];
 
   String get_user_id() {
     return user_id;
@@ -84,6 +87,9 @@ Future<String> login(email, pass) async {
     Auth().pan_number = jsonDecode((response.body))['pan_number'] ?? '';
     Auth().bank_name = jsonDecode((response.body))['bank_name'] ?? '';
     Auth().pincode = jsonDecode((response.body))['pincode'] ?? '';
+    Auth().rating = jsonDecode((response.body))['rating'] ?? '-';
+    Auth().followers = jsonDecode((response.body))['followers'] ?? [];
+    Auth().followings = jsonDecode((response.body))['followings'] ?? [];
     Auth().store_name = Auth().store_name == ''
         ? Auth().user_email.split('@')[0]
         : Auth().store_name;

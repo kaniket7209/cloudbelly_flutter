@@ -148,16 +148,20 @@ class _HomeState extends State<Home> {
                                                   MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 ColumnWidgetHomeScreen(
-                                                  data: (4.9).toString(),
+                                                  data: Auth().rating,
                                                   txt: 'Rating',
                                                 ),
                                                 ColumnWidgetHomeScreen(
-                                                  data: (789).toString(),
+                                                  data: (Auth().followers)
+                                                      .length
+                                                      .toString(),
                                                   txt: 'Followers',
                                                 ),
                                                 ColumnWidgetHomeScreen(
-                                                  data: '+${43}',
-                                                  txt: 'New followers',
+                                                  data: (Auth().followings)
+                                                      .length
+                                                      .toString(),
+                                                  txt: 'Following',
                                                 )
                                               ],
                                             )

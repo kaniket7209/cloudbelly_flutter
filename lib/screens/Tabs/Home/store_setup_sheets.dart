@@ -98,6 +98,7 @@ class _Sheet1State extends State<Sheet1> {
           max_order_capacity);
 
       if (msg == 'User information updated successfully.') {
+        Auth().pincode = pincode;
         TOastNotification().showSuccesToast(context, 'User Details Updated');
         Navigator.of(context).pop();
         SlidingSheet().showAlertDialog(context, 2);
@@ -442,6 +443,7 @@ class _Sheet2State extends State<Sheet2> {
           await storeSetup2(pan_number, aadhar_number, fssai_licence_document);
 
       if (msg == 'User information updated successfully.') {
+        Auth().pan_number == pan_number;
         TOastNotification().showSuccesToast(context, 'KYC details updated');
         if (num == 2) Navigator.of(context).pop();
         Navigator.of(context).pop();
@@ -782,6 +784,7 @@ class _Sheet3State extends State<Sheet3> {
             await storeSetup3(bank_name, account_number, ifsc_code, upi_id);
 
         if (msg == 'User information updated successfully.') {
+          Auth().bank_name = bank_name;
           TOastNotification()
               .showSuccesToast(context, 'Payemnt details updated');
           Navigator.of(context).pop();
