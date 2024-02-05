@@ -38,6 +38,7 @@ class _InventoryState extends State<Inventory> {
   }
 
   List<dynamic> lowStockItems = [];
+  List<dynamic> allStocks = [];
   List<dynamic> nearExpiryItems = [];
   List<dynamic> stocksYouMayNeed = [];
   bool _isUpdateLoading = false;
@@ -76,6 +77,14 @@ class _InventoryState extends State<Inventory> {
     stocksYouMayNeed = temp;
 
     stocksYouMayNeed.sort((a, b) {
+      int runwayComparison = a['runway'].compareTo(b['runway']);
+      if (runwayComparison != 0) {
+        return runwayComparison;
+      } else {
+        return a['VOLUME LEFT'].compareTo(b['VOLUME LEFT']);
+      }
+    });
+    allStocks.sort((a, b) {
       int runwayComparison = a['runway'].compareTo(b['runway']);
       if (runwayComparison != 0) {
         return runwayComparison;
@@ -124,20 +133,20 @@ class _InventoryState extends State<Inventory> {
 
   List<dynamic> findLowStockItems(List<dynamic> inventoryData) {
     List<dynamic> lowstocks = [];
-
+    allStocks = [];
     for (var item in inventoryData) {
       if (item['shelf_life'] != null) {
         double volumeLeft = double.parse(item['VOLUME LEFT']);
+        item['runway'] = calculateDaysUntilRunOut(
+          item['PURCHASE DATE'],
+          int.parse(item['shelf_life']),
+          item['EXP DATE'] ?? '-',
+        );
 
-        if (volumeLeft / double.parse(item['VOLUME PURCHASED']) <= 1) {
-          item['runway'] = calculateDaysUntilRunOut(
-            item['PURCHASE DATE'],
-            int.parse(item['shelf_life']),
-            item['EXP DATE'] ?? '-',
-          );
-
+        if (volumeLeft / double.parse(item['VOLUME PURCHASED']) <= 0.3) {
           lowstocks.add(item);
         }
+        allStocks.add(item);
       }
     }
 
@@ -241,14 +250,13 @@ class _InventoryState extends State<Inventory> {
                                     4.w, // Spacing between columns
                                 mainAxisSpacing: 1.5.h, // Spacing between rows
                               ),
-                              itemCount: stocksYouMayNeed
-                                  .length, // Total number of items
+                              itemCount:
+                                  allStocks.length, // Total number of items
                               itemBuilder: (context, index) {
                                 // You can replace this container with your custom item widget
                                 return StocksMayBeNeedWidget(
-                                    txt: stocksYouMayNeed[index]['NAME'],
-                                    url: stocksYouMayNeed[index]['image_url'] ??
-                                        '');
+                                    txt: allStocks[index]['NAME'],
+                                    url: allStocks[index]['image_url'] ?? '');
                               },
                             ),
                           ),
@@ -280,23 +288,27 @@ class _InventoryState extends State<Inventory> {
                 child: Row(
                   children: [
                     for (int index = 0;
-                        index < stocksYouMayNeed.length;
+                        index <
+                            (stocksYouMayNeed.length > 5
+                                ? 5
+                                : stocksYouMayNeed.length);
                         index++)
                       StocksMayBeNeedWidget(
-                          txt: stocksYouMayNeed[index]['NAME'],
-                          url: stocksYouMayNeed[index]['image_url'] ?? ''),
+                        txt: stocksYouMayNeed[index]['NAME'],
+                        url: stocksYouMayNeed[index]['image_url'] ?? '',
+                      ),
                   ],
                 ),
               );
             }),
-        Space(2.h),
-        Center(
-          child: ButtonWidgetHomeScreen(
-            width: 33.w,
-            txt: 'Add to cart',
-            isActive: true,
-          ),
-        ),
+        // Space(2.h),
+        // Center(
+        //   child: ButtonWidgetHomeScreen(
+        //     width: 33.w,
+        //     txt: 'Add to cart',
+        //     isActive: true,
+        //   ),
+        // ),
         Space(3.h),
         Row(
           children: [
@@ -327,25 +339,23 @@ class _InventoryState extends State<Inventory> {
                               padding: EdgeInsets.symmetric(
                                   vertical: 0.8.h, horizontal: 3.w),
 
-                              itemCount: lowStockItems.length,
+                              itemCount: allStocks.length,
                               itemBuilder: (context, index) {
-                                int runway = lowStockItems[index]['runway'];
+                                int runway = allStocks[index]['runway'];
 
                                 return LowStocksWidget(
                                     isSheet: true,
                                     amountLeft:
-                                        '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
-                                    item: lowStockItems[index]['NAME'],
+                                        '${allStocks[index]['VOLUME LEFT']}  ${allStocks[index]['PRODUCT TYPE']} left',
+                                    item: allStocks[index]['NAME'],
                                     percentage: double.parse(
-                                            lowStockItems[index]
-                                                ['VOLUME LEFT']) /
-                                        double.parse(lowStockItems[index]
+                                            allStocks[index]['VOLUME LEFT']) /
+                                        double.parse(allStocks[index]
                                             ['VOLUME PURCHASED']),
                                     text: runway < 0
                                         ? 'Expired'
                                         : '${runway} days runway',
-                                    url: lowStockItems[index]['image_url'] ??
-                                        '');
+                                    url: allStocks[index]['image_url'] ?? '');
                               },
                             ),
                           ),
@@ -375,7 +385,9 @@ class _InventoryState extends State<Inventory> {
               }
               return Container(
                 child: Column(
-                  children: List.generate(lowStockItems.length, (index) {
+                  children: List.generate(
+                      lowStockItems.length > 5 ? 5 : lowStockItems.length,
+                      (index) {
                     int runway = lowStockItems[index]['runway'];
                     return LowStocksWidget(
                       // url: lowStockItems[index]['image_url'],
@@ -475,7 +487,12 @@ class _InventoryState extends State<Inventory> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    for (int index = 0; index < nearExpiryItems.length; index++)
+                    for (int index = 0;
+                        index <
+                            (nearExpiryItems.length > 5
+                                ? 5
+                                : nearExpiryItems.length);
+                        index++)
                       StocksNearExpiryWidget(
                         name: nearExpiryItems[index]['NAME'],
                         volume: nearExpiryItems[index]['VOLUME LEFT'] +
