@@ -52,7 +52,7 @@ class _TabsState extends State<Tabs> {
   final textList = <String>[
     'Home',
     'Dashboard',
-    'Cart',
+    'Profile',
     'Orders',
     // 'Account',
   ];
