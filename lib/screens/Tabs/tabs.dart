@@ -1,10 +1,11 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/screens/Tabs/Cart/cart.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
-import 'package:cloudbelly_app/screens/Tabs/Feed/feed.dart';
+import 'package:cloudbelly_app/screens/Tabs/Orders/orders.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -16,13 +17,30 @@ class Tabs extends StatefulWidget {
   State<Tabs> createState() => _TabsState();
 }
 
-class _TabsState extends State<Tabs> {
+class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
+  late AnimationController _hideBottomBarAnimationController;
+
+  @override
+  void initState() {
+    _hideBottomBarAnimationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 2));
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _hideBottomBarAnimationController.dispose();
+    super.dispose();
+  }
+
   int _selectedIndex = 0;
   final PageController _pageController = PageController(initialPage: 0);
   final List<Widget> _pages = [
     Home(),
-    Feed(),
+    Orders(),
     // UploadPage(),
+    Cart(),
     Profile(),
   ];
 
@@ -45,15 +63,15 @@ class _TabsState extends State<Tabs> {
   final iconList = <IconData>[
     Icons.home,
     Icons.computer,
+    Icons.shopping_cart_outlined,
     Icons.person,
-    Icons.brightness_7,
     // Icons.brightness_1,
   ];
   final textList = <String>[
     'Home',
-    'Dashboard',
-    'Profile',
     'Orders',
+    'Cart',
+    'Profile',
     // 'Account',
   ];
 
@@ -191,8 +209,9 @@ class _TabsState extends State<Tabs> {
         gapLocation: GapLocation.center,
         leftCornerRadius: 15,
         rightCornerRadius: 15,
+
         // onTap: (index) => setState(() => _bottomNavIndex = index),
-        // hideAnimationController: _hideBottomBarAnimationController,
+        hideAnimationController: _hideBottomBarAnimationController,
         shadow: BoxShadow(
           offset: Offset(0, -4),
           blurRadius: 15,

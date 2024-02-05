@@ -27,8 +27,6 @@ class Inventory extends StatefulWidget {
 }
 
 class _InventoryState extends State<Inventory> {
-  dynamic data;
-
   void _launchURL(String url) async {
     Uri googleSheetUrl = Uri.parse(url);
     if (!await launchUrl(googleSheetUrl, mode: LaunchMode.inAppBrowserView)) {
@@ -48,7 +46,7 @@ class _InventoryState extends State<Inventory> {
     final data = await getInventoryData();
 
     lowStockItems = findLowStockItems(data['data'][0]['inventory_data']);
-
+    print(lowStockItems);
     lowStockItems.sort((a, b) {
       int runwayComparison = a['runway'].compareTo(b['runway']);
       if (runwayComparison != 0) {
@@ -187,6 +185,15 @@ class _InventoryState extends State<Inventory> {
                 Navigator.of(context).pop();
                 _launchURL(data['sheet_url']);
               },
+            ),
+            IconButton(
+              onPressed: () async {
+                final newData = await SyncInventory();
+                if (newData['data'] != null) {
+                  TOastNotification().showSuccesToast(context, 'List Synced!');
+                }
+              },
+              icon: Icon(Icons.refresh),
             ),
             _isUpdateLoading
                 ? SizedBox(
@@ -371,6 +378,7 @@ class _InventoryState extends State<Inventory> {
           child: FutureBuilder(
             future: _getLowStockData(),
             builder: (context, snapshot) {
+              print(lowStockItems.length == 0);
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(),
@@ -382,28 +390,36 @@ class _InventoryState extends State<Inventory> {
                       ? 'No Item in Inventory'
                       : 'Error happend while fetching data , try again later !'),
                 );
-              }
-              return Container(
-                child: Column(
-                  children: List.generate(
-                      lowStockItems.length > 5 ? 5 : lowStockItems.length,
-                      (index) {
-                    int runway = lowStockItems[index]['runway'];
-                    return LowStocksWidget(
-                      // url: lowStockItems[index]['image_url'],
-                      amountLeft:
-                          '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
-                      item: lowStockItems[index]['NAME'],
-                      percentage:
-                          double.parse(lowStockItems[index]['VOLUME LEFT']) /
+              } else {
+                if (lowStockItems.length == 0)
+                  return Center(
+                    child: Text('No Item in Low Stocks'),
+                  );
+                else {
+                  return Container(
+                    child: Column(
+                      children: List.generate(
+                          lowStockItems.length > 5 ? 5 : lowStockItems.length,
+                          (index) {
+                        int runway = lowStockItems[index]['runway'];
+                        return LowStocksWidget(
+                          // url: lowStockItems[index]['image_url'],
+                          amountLeft:
+                              '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
+                          item: lowStockItems[index]['NAME'],
+                          percentage: double.parse(
+                                  lowStockItems[index]['VOLUME LEFT']) /
                               double.parse(
                                   lowStockItems[index]['VOLUME PURCHASED']),
-                      text: runway < 0 ? 'Expired' : '${runway} days runway',
-                      url: lowStockItems[index]['image_url'] ?? '',
-                    );
-                  }),
-                ),
-              );
+                          text:
+                              runway < 0 ? 'Expired' : '${runway} days runway',
+                          url: lowStockItems[index]['image_url'] ?? '',
+                        );
+                      }),
+                    ),
+                  );
+                }
+              }
             },
           ),
         ),
@@ -482,27 +498,34 @@ class _InventoryState extends State<Inventory> {
                       ? 'No Item in Inventory'
                       : 'Error happend while fetching data , try again later !'),
                 );
+              } else {
+                if (nearExpiryItems.length == 0)
+                  return Center(
+                    child: Text('No Near Expiring Items in Your Inventory'),
+                  );
+                else {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (int index = 0;
+                            index <
+                                (nearExpiryItems.length > 5
+                                    ? 5
+                                    : nearExpiryItems.length);
+                            index++)
+                          StocksNearExpiryWidget(
+                            name: nearExpiryItems[index]['NAME'],
+                            volume: nearExpiryItems[index]['VOLUME LEFT'] +
+                                ' ' +
+                                nearExpiryItems[index]['PRODUCT TYPE'],
+                            url: nearExpiryItems[index]['image_url'] ?? '',
+                          ),
+                      ],
+                    ),
+                  );
+                }
               }
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for (int index = 0;
-                        index <
-                            (nearExpiryItems.length > 5
-                                ? 5
-                                : nearExpiryItems.length);
-                        index++)
-                      StocksNearExpiryWidget(
-                        name: nearExpiryItems[index]['NAME'],
-                        volume: nearExpiryItems[index]['VOLUME LEFT'] +
-                            ' ' +
-                            nearExpiryItems[index]['PRODUCT TYPE'],
-                        url: nearExpiryItems[index]['image_url'] ?? '',
-                      ),
-                  ],
-                ),
-              );
             }),
         Space(2.h),
       ],
