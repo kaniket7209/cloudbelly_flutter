@@ -81,16 +81,17 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(247, 247, 247, 1),
-      body: PageView(
-        onPageChanged: (value) {
-          setState(() {
-            _selectedIndex = value;
-          });
-        },
-        physics: const BouncingScrollPhysics(),
-        controller: _pageController,
-        children: _pages,
-      ),
+      // body: PageView(
+      //   onPageChanged: (value) {
+      //     setState(() {
+      //       _selectedIndex = value;
+      //     });
+      //   },
+      //   physics: const BouncingScrollPhysics(),
+      //   controller: _pageController,
+      //   children: _pages,
+      // ),
+      body: _pages[_selectedIndex],
       floatingActionButton: FloatingActionButton(
         shape: const SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius.all(

@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, prefer_is_empty, use_build_context_synchronously, curly_braces_in_flow_control_structures
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
@@ -162,7 +162,7 @@ class _ProfileState extends State<Profile> {
                             Center(
                                 child: Container(
                               height: 20.h,
-                              // width: 90.w,
+                              width: 90.w,
                               decoration: ShapeDecoration(
                                 shadows: const [
                                   BoxShadow(
@@ -230,7 +230,7 @@ class _ProfileState extends State<Profile> {
                             Space(3.h),
                             Center(
                               child: Container(
-                                // width: 90.w,
+                                width: 90.w,
                                 padding: EdgeInsets.symmetric(
                                     vertical: 1.5.h, horizontal: 4.w),
                                 decoration: ShapeDecoration(
@@ -363,6 +363,8 @@ class _ProfileState extends State<Profile> {
                                                       (context, index) {
                                                     // You can replace this container with your custom item widget
                                                     return FeedWidget(
+                                                        index: index,
+                                                        fulldata: data,
                                                         data: data[index]);
                                                   },
                                                 );
@@ -403,9 +405,13 @@ class FeedWidget extends StatelessWidget {
   FeedWidget({
     super.key,
     required this.data,
+    required this.fulldata,
+    required this.index,
   });
+  final int index;
 
   final dynamic data;
+  final dynamic fulldata;
   CarouselController buttonCarouselController = CarouselController();
 
   @override
@@ -413,32 +419,37 @@ class FeedWidget extends StatelessWidget {
     // bool _isMultiple =
     //     data['multiple_files'] != null && data['multiple_files'].length != 0;
     return TouchableOpacity(
-      onTap: () {
-        Navigator.of(context).pushNamed(PostsScreen.routeName);
+      onTap: () async {
+        final Data = await getFeed();
+        Navigator.of(context).pushNamed(PostsScreen.routeName,
+            arguments: {'data': fulldata, 'index': index});
       },
       child: Stack(
         children: [
-          Container(
-            height: 100,
-            width: 100,
-            decoration: const ShapeDecoration(
-              shadows: [
-                BoxShadow(
-                  offset: Offset(3, 4),
-                  color: Color.fromRGBO(10, 76, 97, 0.31),
-                  blurRadius: 9,
-                )
-              ],
-              shape: SmoothRectangleBorder(),
-            ),
-            child: ClipSmoothRect(
-              radius: SmoothBorderRadius(
-                cornerRadius: 10,
-                cornerSmoothing: 1,
+          Hero(
+            tag: data['id'],
+            child: Container(
+              height: 100,
+              width: 100,
+              decoration: const ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    offset: Offset(3, 4),
+                    color: Color.fromRGBO(10, 76, 97, 0.31),
+                    blurRadius: 9,
+                  )
+                ],
+                shape: SmoothRectangleBorder(),
               ),
-              child: Image.network(
-                data['file_path'],
-                fit: BoxFit.cover,
+              child: ClipSmoothRect(
+                radius: SmoothBorderRadius(
+                  cornerRadius: 10,
+                  cornerSmoothing: 1,
+                ),
+                child: Image.network(
+                  data['file_path'],
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),

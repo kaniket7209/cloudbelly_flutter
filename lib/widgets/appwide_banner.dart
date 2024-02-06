@@ -1,3 +1,4 @@
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -15,19 +16,45 @@ class AppwideBanner extends StatelessWidget {
         constraints: BoxConstraints(
           maxWidth: 800, // Set the maximum width to 800
         ),
-        child: Container(
-            width: 100.w,
-            height: height == 300 ? 30.h : height,
-            decoration: ShapeDecoration(
-              color: Color(0xFFB1D9D8),
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius.only(
-                    bottomLeft:
-                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                    bottomRight:
-                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+        child: Auth().cover_image == ''
+            ? Container(
+                width: 100.w,
+                height: height == 300 ? 30.h : height,
+                decoration: ShapeDecoration(
+                  color: Color(0xFFB1D9D8),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                        bottomLeft:
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                        bottomRight:
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                  ),
+                ))
+            : Container(
+                width: 100.w,
+                height: height == 300 ? 30.h : height,
+                decoration: ShapeDecoration(
+                  color: Color(0xFFB1D9D8),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                        bottomLeft:
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                        bottomRight:
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                  ),
+                ),
+                child: ClipSmoothRect(
+                  radius: SmoothBorderRadius.only(
+                      bottomLeft:
+                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                      bottomRight:
+                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                  child: Image.network(
+                    Auth().cover_image,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            )),
       ),
     );
   }

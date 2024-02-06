@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +24,7 @@ class Auth {
   String pan_number = '';
   String bank_name = '';
   String pincode = '';
+  String cover_image = '';
   String rating = '-';
   List<dynamic> followers = [];
   List<dynamic> followings = [];
@@ -90,12 +92,11 @@ Future<String> login(email, pass) async {
     Auth().rating = jsonDecode((response.body))['rating'] ?? '-';
     Auth().followers = jsonDecode((response.body))['followers'] ?? [];
     Auth().followings = jsonDecode((response.body))['followings'] ?? [];
+    Auth().cover_image = jsonDecode((response.body))['cover_image'] ?? '';
     Auth().store_name = Auth().store_name == ''
         ? Auth().user_email.split('@')[0]
         : Auth().store_name;
-    Auth().logo_url = Auth().logo_url == ''
-        ? 'https://media.istockphoto.com/id/1492460518/photo/empty-clean-white-marble-top-island-table-in-commercial-professional-bakery-kitchen-with.jpg?s=2048x2048&w=is&k=20&c=dLkV6aaISZdGDWpd-UhoFS6n0-9rZ_HW14t3nj6YPkI='
-        : Auth().logo_url;
+    Auth().logo_url = Auth().logo_url == '' ? '' : Auth().logo_url;
     return jsonDecode((response.body))['message'];
   } catch (error) {
     // Handle exceptions
@@ -169,6 +170,34 @@ Future<String> updateCoverImage(String cover_image) async {
   final Map<String, dynamic> requestBody = {
     'user_id': Auth().user_id,
     'cover_image': cover_image,
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: Auth().headers,
+      body: jsonEncode(requestBody),
+    );
+    print(response.body);
+    int code = response.statusCode;
+    return code.toString();
+  } catch (error) {
+    // Handle exceptions
+    return '-1';
+  }
+}
+
+Future<String> updateMenuItem(String product_id, String price, String name,
+    bool VEG, String category) async {
+  final String url = 'https://app.cloudbelly.in/product/update';
+
+  final Map<String, dynamic> requestBody = {
+    'user_id': Auth().user_id,
+    'product_id': product_id,
+    'price': price,
+    'category': category,
+    'name': name,
+    'VEG': VEG,
   };
 
   try {
@@ -315,6 +344,7 @@ Future<List<int>?> compressImage(String imagePath) async {
 Future<dynamic> ScanMenu(String src) async {
   final picker = ImagePicker();
   final pickedImage = await picker.pickImage(
+    imageQuality: 50,
     source: src == 'Camera' ? ImageSource.camera : ImageSource.gallery,
   );
   String imagePath = '';
@@ -323,11 +353,20 @@ Future<dynamic> ScanMenu(String src) async {
   }
   if (pickedImage != null) {
     imagePath = pickedImage.path;
-    debugPrint('imaged added');
+    debugPrint('imaged path:');
     debugPrint(imagePath);
   }
+  var compressedImage = await compressImage(pickedImage.path);
+  if (compressedImage == null) {
+    debugPrint('Error compressing image');
+    return "";
+  }
+
   try {
     final url = Uri.parse('https://app.cloudbelly.in/upload-menu');
+
+//  List<int> imageBytes = File(compressedImage as String).readAsBytesSync();
+    // String base64Image = base64Encode(compressedImage);
 
     final req = http.MultipartRequest('POST', url)
       ..files.add(await http.MultipartFile.fromPath('file', imagePath));
@@ -341,7 +380,7 @@ Future<dynamic> ScanMenu(String src) async {
     final status = response.statusCode;
     if (status != 200) throw Exception('http.send error: statusCode= $status');
 
-    // print(response.body);
+    print(response.body);
 
     return jsonDecode((response.body));
   } catch (error) {
@@ -474,7 +513,7 @@ Future<List<String>> pickMultipleImagesAndUpoad() async {
           filename:
               'compressed_image.jpg', // You might want to generate a more descriptive name
         ));
-
+      // req.heade/rs = Auth().headers;
       req.headers['Accept'] = '*/*';
       req.headers['User-Agent'] =
           'Thunder Client (https://www.thunderclient.com)';
@@ -623,6 +662,58 @@ Future<dynamic> getInventoryData() async {
       body: jsonEncode(requestBody),
     );
     return jsonDecode((response.body));
+  } catch (error) {
+    // Handle exceptions
+    return '-1';
+  }
+}
+
+Future<String> commentPost(String id, String comment) async {
+  final String url = 'https://app.cloudbelly.in/update-posts';
+
+  // bool _isOK = false;
+  Map<String, dynamic> requestBody = {
+    "user_id": Auth().user_id,
+    'post_id': id,
+    'comment': comment,
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: Auth().headers,
+      body: jsonEncode(requestBody),
+    );
+    print(response.body);
+    print(response.statusCode);
+
+    return response.statusCode.toString();
+  } catch (error) {
+    // Handle exceptions
+    return '-1';
+  }
+}
+
+Future<String> likePost(String id) async {
+  final String url = 'https://app.cloudbelly.in/update-posts';
+
+  // bool _isOK = false;
+  Map<String, dynamic> requestBody = {
+    "user_id": Auth().user_id,
+    'post_id': id,
+    'like_user_id': Auth().user_id,
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: Auth().headers,
+      body: jsonEncode(requestBody),
+    );
+    print(response.body);
+    print(response.statusCode);
+
+    return response.statusCode.toString();
   } catch (error) {
     // Handle exceptions
     return '-1';

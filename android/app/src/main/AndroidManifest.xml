@@ -7,7 +7,7 @@
 
 
     <application
-        android:label="cloudbelly_app"
+        android:label="Cloudbelly"
         android:name="${applicationName}"
         android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher">

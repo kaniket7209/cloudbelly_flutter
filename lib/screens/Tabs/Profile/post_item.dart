@@ -1,11 +1,14 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
+import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
+import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PostItem extends StatefulWidget {
@@ -33,10 +36,12 @@ class _PostItemState extends State<PostItem> {
   void didChangeDependencies() {
     if (_didUpdate) {
       discription = widget.data['caption'];
-      _didUpdate = false;
+
       caption1 = getFittedText(discription, context)[0];
       print(caption1);
       caption2 = getFittedText(discription, context)[1];
+      _getLikeData();
+      _didUpdate = false;
     }
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
@@ -44,10 +49,9 @@ class _PostItemState extends State<PostItem> {
 
   // bool _isExpanded = false;
   List<String> getFittedText(String text, BuildContext context) {
-    text =
-        'To get both the portion of the text that fits in one line and the extra portion that doesnt fit, you can modify the function to return a tuple containing both strings';
+    text = widget.data['caption'];
     final screenWidth = MediaQuery.of(context).size.width;
-    final textStyle = TextStyle(
+    final textStyle = const TextStyle(
       color: Color(0xFF0A4C61),
       fontSize: 12,
       fontFamily: 'Product Sans Medium',
@@ -82,18 +86,30 @@ class _PostItemState extends State<PostItem> {
       }
     }
     // print(fittedText);
-    String text1 = text.substring(0, 50);
-    print(text1);
-    text1 = text1 + ' - ';
-    String text2 = text.length > 50 ? text.substring(50) : '';
+    if (text.length < 50) {
+      return [text, ''];
+    } else {
+      String text1 = text.substring(0, 50);
+      print(text1);
+      text1 = text1 + ' - ';
+      String text2 = text.length > 50 ? text.substring(50) : '';
 
-    return [text1, text2];
+      return [text1, text2];
+    }
+  }
+
+  bool _isLiked = false;
+
+  void _getLikeData() {
+    _isLiked =
+        (widget.data['likes'] ?? [] as List<dynamic>).contains(Auth().user_id);
   }
 
   @override
   Widget build(BuildContext context) {
     CarouselController buttonCarouselController = CarouselController();
     return Container(
+      height: 65.h,
       margin: EdgeInsets.only(bottom: 3.h),
       padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
       child: Column(
@@ -128,7 +144,7 @@ class _PostItemState extends State<PostItem> {
               Space(isHorizontal: true, 5.w),
               Text(
                 Auth().store_name,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFF094B60),
                   fontSize: 14,
                   fontFamily: 'Product Sans',
@@ -137,35 +153,38 @@ class _PostItemState extends State<PostItem> {
                   letterSpacing: 0.42,
                 ),
               ),
-              Spacer(),
-              IconButton(onPressed: () {}, icon: Icon(Icons.more_vert)),
+              const Spacer(),
+              IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
             ],
           ),
           Space(1.5.h),
           !widget._isMultiple
-              ? Center(
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      width: double.infinity,
-                      decoration: const ShapeDecoration(
-                        shadows: [
-                          BoxShadow(
-                            offset: Offset(0, 4),
-                            color: Color.fromRGBO(124, 193, 191, 0.3),
-                            blurRadius: 20,
-                          )
-                        ],
-                        shape: SmoothRectangleBorder(),
-                      ),
-                      child: ClipSmoothRect(
-                        radius: SmoothBorderRadius(
-                          cornerRadius: 15,
-                          cornerSmoothing: 1,
+              ? Hero(
+                  tag: widget.data['id'],
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Container(
+                        width: double.infinity,
+                        decoration: const ShapeDecoration(
+                          shadows: [
+                            BoxShadow(
+                              offset: Offset(0, 4),
+                              color: Color.fromRGBO(124, 193, 191, 0.3),
+                              blurRadius: 20,
+                            )
+                          ],
+                          shape: SmoothRectangleBorder(),
                         ),
-                        child: Image.network(
-                          widget.data['file_path'],
-                          fit: BoxFit.cover,
+                        child: ClipSmoothRect(
+                          radius: SmoothBorderRadius(
+                            cornerRadius: 15,
+                            cornerSmoothing: 1,
+                          ),
+                          child: Image.network(
+                            widget.data['file_path'],
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
@@ -212,16 +231,29 @@ class _PostItemState extends State<PostItem> {
           Space(1.5.h),
           Row(
             children: [
-              IconButton(onPressed: () {}, icon: Icon(Icons.favorite_border)),
               IconButton(
-                  onPressed: () {}, icon: Icon(Icons.mode_comment_outlined)),
-              IconButton(onPressed: () {}, icon: Icon(Icons.share))
+                  onPressed: () async {
+                    await likePost(widget.data['id']);
+                    setState(() {
+                      _isLiked = !_isLiked;
+                    });
+                  },
+                  icon: !_isLiked
+                      ? const Icon(Icons.favorite_border)
+                      : const Icon(Icons.favorite)),
+              IconButton(
+                  onPressed: () {
+                    AppWideBottomSheet().showSheet(
+                        context, CommentSheetContent(data: widget.data), 70.h);
+                  },
+                  icon: const Icon(Icons.mode_comment_outlined)),
+              IconButton(onPressed: () {}, icon: const Icon(Icons.share))
             ],
           ),
-          Space(1.h),
+          Space(0.5.h),
           Row(
-            children: const [
-              Text(
+            children: [
+              const Text(
                 'Liked by',
                 style: TextStyle(
                   color: Color(0xFF519896),
@@ -232,6 +264,18 @@ class _PostItemState extends State<PostItem> {
                   letterSpacing: 0.12,
                 ),
               ),
+              Space(isHorizontal: true, 5.w),
+              Text(
+                '${(widget.data['likes'] ?? [] as List<dynamic>).length} peoples',
+                style: const TextStyle(
+                  color: Color(0xFF0A4C61),
+                  fontSize: 12,
+                  fontFamily: 'Product Sans',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: 0.12,
+                ),
+              )
             ],
           ),
           Space(1.h),
@@ -240,7 +284,7 @@ class _PostItemState extends State<PostItem> {
             children: <Widget>[
               Text(
                 Auth().store_name,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFFFA6E00),
                   fontSize: 12,
                   fontFamily: 'Product Sans',
@@ -252,10 +296,10 @@ class _PostItemState extends State<PostItem> {
               Expanded(
                 child: SizedBox(
                   child: Text(
-                    caption1,
+                    caption1.toString(),
                     overflow: TextOverflow.clip,
                     maxLines: 1,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color(0xFF0A4C61),
                       fontSize: 12,
                       fontFamily: 'Product Sans Medium',
@@ -267,157 +311,33 @@ class _PostItemState extends State<PostItem> {
               )
             ],
           ),
-          Text(
-            caption2,
-            style: TextStyle(
-              color: Color(0xFF0A4C61),
-              fontSize: 12,
-              fontFamily: 'Product Sans Medium',
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.12,
+          if (caption2.length > 0)
+            SizedBox(
+              height: 1.4.h,
+              child: Text(
+                caption2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xFF0A4C61),
+                  fontSize: 12,
+                  fontFamily: 'Product Sans Medium',
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.12,
+                ),
+              ),
             ),
-          ),
           TouchableOpacity(
             onTap: () {
               AppWideBottomSheet().showSheet(
-                  context,
-                  SingleChildScrollView(
-                    child: Container(
-                      child: Column(children: [
-                        Center(
-                          child: Text(
-                            'Comments',
-                            style: TextStyle(
-                              color: Color(0xFF0A4C61),
-                              fontSize: 18,
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                              letterSpacing: 0.18,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: 53.h,
-                          child: ListView.builder(
-                            itemCount: 10,
-                            itemBuilder: (context, index) {
-                              return CommentItemWidget();
-                            },
-                          ),
-                        ),
-                        Space(1.h),
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 1.5.w),
-                          // width: 80.w,
-                          // rgba(165, 200, 199, 1),
-                          decoration: const ShapeDecoration(
-                            shadows: [
-                              BoxShadow(
-                                offset: Offset(0, 4),
-                                color: Color.fromRGBO(165, 200, 199, 0.6),
-                                blurRadius: 20,
-                              )
-                            ],
-                            color: Colors.white,
-                            shape: SmoothRectangleBorder(
-                              borderRadius: SmoothBorderRadius.all(SmoothRadius(
-                                  cornerRadius: 10, cornerSmoothing: 1)),
-                            ),
-                          ),
-                          height: 6.h,
-                          child: Row(
-                            children: [
-                              Space(isHorizontal: true, 10),
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: const ShapeDecoration(
-                                  shadows: [
-                                    BoxShadow(
-                                      offset: Offset(0, 4),
-                                      color: Color.fromRGBO(31, 111, 109, 0.3),
-                                      blurRadius: 20,
-                                    )
-                                  ],
-                                  shape: SmoothRectangleBorder(),
-                                ),
-                                child: ClipSmoothRect(
-                                  radius: SmoothBorderRadius(
-                                    cornerRadius: 5,
-                                    cornerSmoothing: 1,
-                                  ),
-                                  child: Image.network(
-                                    Auth().logo_url,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 55.w,
-                                child: Center(
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      fillColor: Colors.white,
-                                      contentPadding:
-                                          const EdgeInsets.only(left: 14),
-                                      hintText:
-                                          ' Type your comment here for ${Auth().store_name}...',
-                                      hintStyle: const TextStyle(
-                                        color: Color(0xFF519796),
-                                        fontSize: 12,
-                                        fontFamily: 'Product Sans Medium',
-                                        fontWeight: FontWeight.w500,
-                                        height: 0,
-                                        letterSpacing: 0.12,
-                                      ),
-                                    ),
-                                    onChanged: (p0) {},
-                                  ),
-                                ),
-                              ),
-                              Spacer(),
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: ShapeDecoration(
-                                  color: Color.fromRGBO(250, 110, 0, 1),
-                                  shadows: const [
-                                    BoxShadow(
-                                      offset: Offset(0, 4),
-                                      color: Color.fromRGBO(31, 111, 109, 0.3),
-                                      blurRadius: 20,
-                                    )
-                                  ],
-                                  shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius(
-                                      cornerRadius: 5,
-                                      cornerSmoothing: 1,
-                                    ),
-                                  ),
-                                ),
-                                child: Icon(
-                                  Icons.done,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Space(isHorizontal: true, 10)
-                            ],
-                          ),
-                        ),
-                      ]),
-                    ),
-                  ),
-                  70.h);
+                  context, CommentSheetContent(data: widget.data), 70.h);
             },
             child: Padding(
               padding: EdgeInsets.symmetric(
                 vertical: 0.6.h,
               ),
               child: Text(
-                'View 5 comments',
-                style: TextStyle(
+                'View ${(widget.data['comments'] ?? [] as List<dynamic>).length} comments',
+                style: const TextStyle(
                   color: Color(0xFF519796),
                   fontSize: 11,
                   fontFamily: 'Product Sans Medium',
@@ -434,10 +354,196 @@ class _PostItemState extends State<PostItem> {
   }
 }
 
+class CommentSheetContent extends StatefulWidget {
+  const CommentSheetContent({super.key, required this.data});
+
+  final data;
+
+  @override
+  State<CommentSheetContent> createState() => _CommentSheetContentState();
+}
+
+class _CommentSheetContentState extends State<CommentSheetContent> {
+  TextEditingController _controller = TextEditingController();
+  String _comment = '';
+
+  @override
+  Widget build(BuildContext context) {
+    dynamic newData = widget.data;
+    return Container(
+      child: SingleChildScrollView(
+        child: Column(children: [
+          const Center(
+            child: Text(
+              'Comments',
+              style: TextStyle(
+                color: Color(0xFF0A4C61),
+                fontSize: 18,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w700,
+                height: 0,
+                letterSpacing: 0.18,
+              ),
+            ),
+          ),
+          Container(
+            height: 53.h,
+            child: (newData['comments'] ?? [] as List<dynamic>).length == 0
+                ? Center(
+                    child: Text('No Comments Yet'),
+                  )
+                : ListView.builder(
+                    itemCount:
+                        (newData['comments'] ?? [] as List<dynamic>).length,
+                    itemBuilder: (context, index) {
+                      return CommentItemWidget(
+                        name: 'user_name',
+                        text: newData['comments'][index]['text'],
+                      );
+                    },
+                  ),
+          ),
+          Space(1.h),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 1.5.w),
+            // width: 80.w,
+            // rgba(165, 200, 199, 1),
+            decoration: const ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                  offset: Offset(0, 4),
+                  color: Color.fromRGBO(165, 200, 199, 0.6),
+                  blurRadius: 20,
+                )
+              ],
+              color: Colors.white,
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.all(
+                    SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+              ),
+            ),
+            height: 6.h,
+            child: Row(
+              children: [
+                const Space(isHorizontal: true, 10),
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: const ShapeDecoration(
+                    shadows: [
+                      BoxShadow(
+                        offset: Offset(0, 4),
+                        color: Color.fromRGBO(31, 111, 109, 0.3),
+                        blurRadius: 20,
+                      )
+                    ],
+                    shape: SmoothRectangleBorder(),
+                  ),
+                  child: ClipSmoothRect(
+                    radius: SmoothBorderRadius(
+                      cornerRadius: 5,
+                      cornerSmoothing: 1,
+                    ),
+                    child: Image.network(
+                      Auth().logo_url,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 55.w,
+                  child: Center(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        fillColor: Colors.white,
+                        contentPadding: const EdgeInsets.only(left: 14),
+                        hintText:
+                            ' Type your comment here for ${Auth().store_name}...',
+                        hintStyle: const TextStyle(
+                          color: Color(0xFF519796),
+                          fontSize: 12,
+                          fontFamily: 'Product Sans Medium',
+                          fontWeight: FontWeight.w500,
+                          height: 0,
+                          letterSpacing: 0.12,
+                        ),
+                      ),
+                      onChanged: (p0) {
+                        _comment = p0.toString();
+                      },
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                TouchableOpacity(
+                  onTap: () async {
+                    AppWideLoadingBanner().loadingBanner(context);
+
+                    final code = await commentPost(newData['id'], _comment);
+                    Navigator.of(context).pop();
+
+                    if (code == '200') {
+                      List<dynamic> _list = newData['comments'] ?? [];
+                      _list.add({
+                        'text': _comment,
+                        'user_id': Auth().user_id,
+                        'created_at': DateTime.now().toString(),
+                      });
+                      setState(() {
+                        newData['comments'] = _list;
+                      });
+                      TOastNotification()
+                          .showSuccesToast(context, 'Comment sent');
+                    } else {
+                      TOastNotification().showErrorToast(context, 'Error!');
+                    }
+                    // _controller.clear();
+                  },
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    decoration: ShapeDecoration(
+                      color: const Color.fromRGBO(250, 110, 0, 1),
+                      shadows: const [
+                        BoxShadow(
+                          offset: Offset(0, 4),
+                          color: Color.fromRGBO(31, 111, 109, 0.3),
+                          blurRadius: 20,
+                        )
+                      ],
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 5,
+                          cornerSmoothing: 1,
+                        ),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.done,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const Space(isHorizontal: true, 10)
+              ],
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
 class CommentItemWidget extends StatelessWidget {
-  const CommentItemWidget({
+  CommentItemWidget({
     super.key,
+    required this.name,
+    required this.text,
   });
+  String name;
+  String text;
 
   @override
   Widget build(BuildContext context) {
@@ -475,8 +581,8 @@ class CommentItemWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Bernadete',
-                style: TextStyle(
+                name,
+                style: const TextStyle(
                   color: Color(0xFF0A4C61),
                   fontSize: 10,
                   fontFamily: 'Product Sans',
@@ -487,9 +593,9 @@ class CommentItemWidget extends StatelessWidget {
               SizedBox(
                 width: 58.w,
                 child: Text(
-                  'What a brilliant dish, my mind is blown, I wish I can eat it forever and ever till the end of the dawn, much love',
+                  text,
                   maxLines: null,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF0A4C61),
                     fontSize: 12,
                     fontFamily: 'Product Sans Medium',
@@ -500,8 +606,8 @@ class CommentItemWidget extends StatelessWidget {
               )
             ],
           ),
-          Spacer(),
-          IconButton(onPressed: () {}, icon: Icon(Icons.favorite_border))
+          const Spacer(),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border))
         ],
       ),
     );

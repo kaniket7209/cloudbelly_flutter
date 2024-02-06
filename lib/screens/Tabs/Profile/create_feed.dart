@@ -50,7 +50,7 @@ class CreateFeed {
 
       builder: (BuildContext context) {
         return Container(
-          decoration: ShapeDecoration(
+          decoration: const ShapeDecoration(
             color: Colors.white,
             shape: SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius.only(
@@ -60,10 +60,14 @@ class CreateFeed {
           ),
           height: MediaQuery.of(context).size.height * 0.9,
           width: double.infinity,
-          padding:
-              EdgeInsets.only(left: 6.w, right: 6.w, top: 2.h, bottom: 2.h),
+          padding: EdgeInsets.only(
+              left: 6.w,
+              right: 6.w,
+              top: 2.h,
+              bottom: MediaQuery.of(context).viewInsets.bottom),
           child: SingleChildScrollView(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TouchableOpacity(
@@ -85,10 +89,10 @@ class CreateFeed {
                   ),
                 ),
                 Space(4.h),
-                Row(
+                const Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(8.0),
                       child: Text(
                         '<<',
                         style: TextStyle(
@@ -185,7 +189,7 @@ class CreateFeed {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 3.w),
                     hintText: 'Write a caption...',
-                    hintStyle: TextStyle(
+                    hintStyle: const TextStyle(
                       color: Color(0xFF094B60),
                       fontSize: 12,
                       fontFamily: 'Product Sans Medium',
@@ -200,11 +204,11 @@ class CreateFeed {
                   child: Container(
                     width: 85.w,
                     height: 2,
-                    decoration: BoxDecoration(color: Color(0xFFFA6E00)),
+                    decoration: const BoxDecoration(color: Color(0xFFFA6E00)),
                   ),
                 ),
                 Space(5.h),
-                Text(
+                const Text(
                   'Give hashtags',
                   style: TextStyle(
                     color: Color(0xFF0A4C61),
@@ -219,7 +223,7 @@ class CreateFeed {
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 2.w),
                   // rgba(165, 200, 199, 1),
-                  decoration: ShapeDecoration(
+                  decoration: const ShapeDecoration(
                     shadows: [
                       BoxShadow(
                         offset: Offset(0, 4),
@@ -236,7 +240,7 @@ class CreateFeed {
                   height: 6.h,
                   child: TextField(
                     controller: _textFieldController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       fillColor: Colors.white,
                       contentPadding: EdgeInsets.only(left: 14),
                       hintText: 'Link your post with your menu by #tags',
@@ -255,7 +259,7 @@ class CreateFeed {
                   height: 10.h,
                   child: GridView.builder(
                     physics:
-                        NeverScrollableScrollPhysics(), // Disable scrolling
+                        const NeverScrollableScrollPhysics(), // Disable scrolling
                     shrinkWrap:
                         true, // Allow the GridView to shrink-wrap its content
                     addAutomaticKeepAlives: true,
@@ -280,7 +284,7 @@ class CreateFeed {
                                         ', ${_hasTagList[index]}';
                           },
                           child: Container(
-                              decoration: ShapeDecoration(
+                              decoration: const ShapeDecoration(
                                 color: Color.fromRGBO(239, 255, 254, 1),
                                 shape: SmoothRectangleBorder(
                                   borderRadius: SmoothBorderRadius.all(
@@ -292,7 +296,7 @@ class CreateFeed {
                               child: Center(
                                 child: Text(
                                   _hasTagList[index],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Color(0xFF0A4C61),
                                     fontSize: 12,
                                     fontFamily: 'Product Sans',
@@ -312,14 +316,14 @@ class CreateFeed {
                   },
                   child: Container(
                       height: 6.h,
-                      decoration: ShapeDecoration(
+                      decoration: const ShapeDecoration(
                         color: Color.fromRGBO(250, 110, 0, 1),
                         shape: SmoothRectangleBorder(
                           borderRadius: SmoothBorderRadius.all(SmoothRadius(
                               cornerRadius: 10, cornerSmoothing: 1)),
                         ),
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Text(
                           'Share',
                           style: TextStyle(

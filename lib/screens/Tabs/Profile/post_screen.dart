@@ -1,24 +1,56 @@
+import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
-import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PostsScreen extends StatefulWidget {
   static const routeName = '/home/your-posts-screen';
-  const PostsScreen({super.key});
+
+  const PostsScreen({Key? key}) : super(key: key);
 
   @override
   State<PostsScreen> createState() => _PostsScreenState();
 }
 
 class _PostsScreenState extends State<PostsScreen> {
-  // bool _isMultiple = false;
+  bool _didChanged = true;
+  List<dynamic> data = [];
+  int index = 1;
+  @override
+  void didChangeDependencies() {
+    if (_didChanged) {
+      final Map<String, dynamic> arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      data = arguments['data'] as List<dynamic>;
+      index = arguments['index'] as int;
+
+      _didChanged = false;
+    }
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        55.h + 65.h * (index - 1),
+        duration: Duration(milliseconds: 500),
+        curve: Curves.ease,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -30,10 +62,13 @@ class _PostsScreenState extends State<PostsScreen> {
                     Navigator.of(context).pop();
                   },
                   child: Container(
-                    // width: 30/,
                     padding: EdgeInsets.only(
-                        top: 1.h, bottom: 1.h, right: 3.w, left: 5.w),
-                    child: Text(
+                      top: 1.h,
+                      bottom: 1.h,
+                      right: 3.w,
+                      left: 5.w,
+                    ),
+                    child: const Text(
                       '<<',
                       style: TextStyle(
                         color: Color(0xFFFA6E00),
@@ -46,7 +81,7 @@ class _PostsScreenState extends State<PostsScreen> {
                     ),
                   ),
                 ),
-                Text(
+                const Text(
                   'Post',
                   style: TextStyle(
                     color: Color(0xFF094B60),
@@ -59,33 +94,18 @@ class _PostsScreenState extends State<PostsScreen> {
                 )
               ],
             ),
-            FutureBuilder(
-                future: getFeed(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return SizedBox(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  } else {
-                    final data = snapshot.data;
-
-                    return SizedBox(
-                      height: 90.7.h,
-                      child: ListView.builder(
-                        itemCount: (data as List<dynamic>).length,
-                        itemBuilder: (context, index) {
-                          bool _isMultiple =
-                              data[index]['multiple_files'] != null &&
-                                  data[index]['multiple_files'].length != 0;
-                          return PostItem(
-                              isMultiple: _isMultiple, data: data[index]);
-                        },
-                      ),
-                    );
-                  }
-                })
+            Space(2.h),
+            // Space(400.h),
+            Column(
+              children: data.map<Widget>((item) {
+                bool _isMultiple = item['multiple_files'] != null &&
+                    item['multiple_files'].length != 0;
+                return PostItem(
+                  isMultiple: _isMultiple,
+                  data: item,
+                );
+              }).toList(),
+            )
           ],
         ),
       ),
