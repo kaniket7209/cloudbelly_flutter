@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
   // static final Auth _instance = Auth._internal();
@@ -71,6 +72,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<String> login(email, pass) async {
+    final prefs = await SharedPreferences.getInstance();
     final String url = 'https://app.cloudbelly.in/login';
 
     final Map<String, dynamic> requestBody = {
@@ -102,13 +104,29 @@ class Auth with ChangeNotifier {
       store_name = store_name == '' ? user_email.split('@')[0] : store_name;
       logo_url = logo_url == '' ? '' : logo_url;
       notifyListeners();
-
+      final userData = json.encode(
+        {'email': email, 'password': pass},
+      );
+      prefs.setString('userData', userData);
       return DataMap['message'];
     } catch (error) {
       notifyListeners();
 
       // Handle exceptions
       return "-1";
+    }
+  }
+
+  Future<bool> tryAutoLogin() async {
+    // print('auto');
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      // print('f');
+      return false;
+    } else {
+      return true;
+
+      // return true;
     }
   }
 

@@ -2,9 +2,9 @@
 
 import 'package:cloudbelly_app/api_service.dart';
 
-import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/performance.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/social_status.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/performance.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
@@ -18,14 +18,15 @@ import 'package:provider/provider.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class DashBoard extends StatefulWidget {
+  const DashBoard({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<DashBoard> createState() => _DashBoardState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _DashBoardState extends State<DashBoard>
+    with SingleTickerProviderStateMixin {
   int _activeButtonIndex = 1;
 
   int delo() {
@@ -96,16 +97,25 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                   ),
                                 ),
                                 Space(2.h),
-                                Text(
-                                  Provider.of<Auth>(context, listen: true)
-                                      .store_name,
-                                  style: const TextStyle(
-                                    color: Color(0xFF094B60),
-                                    fontSize: 14,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.10,
-                                    letterSpacing: 0.42,
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 1.h, horizontal: 3.w),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Center(
+                                    child: Text(
+                                      Provider.of<Auth>(context, listen: true)
+                                          .store_name,
+                                      style: const TextStyle(
+                                        color: Color(0xFF094B60),
+                                        fontSize: 14,
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.w700,
+                                        height: 0.10,
+                                        letterSpacing: 0.42,
+                                      ),
+                                    ),
                                   ),
                                 )
                               ],

@@ -7,8 +7,8 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
-import 'package:cloudbelly_app/screens/Tabs/Orders/orders.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
+import 'package:cloudbelly_app/screens/Tabs/Feed/feed.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
@@ -40,8 +40,9 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   final PageController _pageController = PageController(initialPage: 0);
   final List<Widget> _pages = [
-    const Home(),
-    const Orders(),
+    const Feed(),
+    const DashBoard(),
+
     // UploadPage(),
     const Cart(),
     const Profile(),
@@ -58,10 +59,10 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     );
   }
 
-  void animateToSelectedPage() {
-    _pageController.animateToPage(_selectedIndex,
-        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-  }
+  // void animateToSelectedPage() {
+  //   _pageController.animateToPage(_selectedIndex,
+  //       duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+  // }
 
   final iconList = <IconData>[
     Icons.home,
@@ -71,8 +72,8 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     // Icons.brightness_1,
   ];
   final textList = <String>[
-    'Home',
-    'Orders',
+    'Feed',
+    'Dahboard',
     'Cart',
     'Profile',
     // 'Account',
@@ -135,7 +136,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           setState(() {
             _selectedIndex = index;
           });
-          animateToSelectedPage();
+          // _pages[_selectedIndex]
         },
         activeIndex: _selectedIndex,
         itemCount: 4,
@@ -174,7 +175,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       textList[index],
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 10,
+                        fontSize: 8,
                         fontFamily: 'Product Sans',
                         fontWeight: FontWeight.w700,
                         height: 0,

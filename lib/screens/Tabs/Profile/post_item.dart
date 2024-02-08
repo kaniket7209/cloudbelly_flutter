@@ -299,7 +299,7 @@ class _PostItemState extends State<PostItem> {
               Expanded(
                 child: SizedBox(
                   child: Text(
-                    caption1.toString(),
+                    caption1,
                     overflow: TextOverflow.clip,
                     maxLines: 1,
                     style: const TextStyle(

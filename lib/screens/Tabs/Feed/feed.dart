@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class Orders extends StatefulWidget {
-  const Orders({super.key});
+class Feed extends StatefulWidget {
+  const Feed({super.key});
 
   @override
-  State<Orders> createState() => _OrdersState();
+  State<Feed> createState() => _FeedState();
 }
 
-class _OrdersState extends State<Orders> {
+class _FeedState extends State<Feed> {
   @override
   Widget build(BuildContext context) {
     return Center(

@@ -1,9 +1,9 @@
 // ignore_for_file: must_be_immutable, prefer_is_empty, use_build_context_synchronously, curly_braces_in_flow_control_structures
 
 import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/social_status.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/store_setup_sheets.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
@@ -96,16 +96,27 @@ class _ProfileState extends State<Profile> {
                                       ),
                                     ),
                                     Space(2.h),
-                                    Text(
-                                      Provider.of<Auth>(context, listen: true)
-                                          .store_name,
-                                      style: const TextStyle(
-                                        color: Color(0xFF094B60),
-                                        fontSize: 14,
-                                        fontFamily: 'Product Sans',
-                                        fontWeight: FontWeight.w700,
-                                        height: 0.10,
-                                        letterSpacing: 0.42,
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 1.h, horizontal: 3.w),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: Center(
+                                        child: Text(
+                                          Provider.of<Auth>(context,
+                                                  listen: true)
+                                              .store_name,
+                                          style: const TextStyle(
+                                            color: Color(0xFF094B60),
+                                            fontSize: 14,
+                                            fontFamily: 'Product Sans',
+                                            fontWeight: FontWeight.w700,
+                                            height: 0.10,
+                                            letterSpacing: 0.42,
+                                          ),
+                                        ),
                                       ),
                                     )
                                   ],
@@ -376,7 +387,28 @@ class _ProfileState extends State<Profile> {
                                             isActive: true),
                                       ),
                                       TouchableOpacity(
-                                        onTap: () {},
+                                        onTap: () {
+                                          final DynamicLinkParameters parameters = DynamicLinkParameters(
+              uriPrefix: 'https://kiitdev.page.link',
+              link: Uri.parse(
+                  'https://kiitdev.page.link/post/?id=${widget.id}&type=${widget.postType}'),
+              androidParameters: AndroidParameters(
+                packageName: 'com.kiitdev.Kide',
+              ),
+              socialMetaTagParameters: SocialMetaTagParameters(
+                  description: widget.subtitle,
+                  title: widget.title,
+                  imageUrl: Uri.parse(widget.image)),
+              dynamicLinkParametersOptions: DynamicLinkParametersOptions(
+                  shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short)
+              // NOT ALL ARE REQUIRED ===== HERE AS AN EXAMPLE =====
+              );
+          final ShortDynamicLink shortDynamicLink =
+              await parameters.buildShortLink();
+          final Uri shortUrl = shortDynamicLink.shortUrl;
+          print(shortUrl);
+          Share.share("${shortUrl}");
+                                        },
                                         child: ButtonWidgetHomeScreen(
                                           txt: 'Share profile',
                                           isActive: true,

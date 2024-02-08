@@ -1,8 +1,8 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';

@@ -2,8 +2,8 @@
 
 import 'package:cloudbelly_app/api_service.dart';
 
-import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/store_setup_sheets.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';

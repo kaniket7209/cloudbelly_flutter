@@ -2,7 +2,7 @@
 
 import 'package:cloudbelly_app/api_service.dart';
 
-import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
