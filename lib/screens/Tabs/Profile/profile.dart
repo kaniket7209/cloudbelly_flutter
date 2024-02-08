@@ -2,11 +2,15 @@
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
+import 'package:cloudbelly_app/screens/Tabs/Home/social_status.dart';
+import 'package:cloudbelly_app/screens/Tabs/Home/store_setup_sheets.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
+import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
+import 'package:cloudbelly_app/widgets/appwide_textfield.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
@@ -210,7 +214,139 @@ class _ProfileState extends State<Profile> {
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       TouchableOpacity(
-                                        onTap: () {},
+                                        onTap: () {
+                                          TextEditingController _controller =
+                                              TextEditingController(
+                                                  text: Auth().store_name);
+                                          AppWideBottomSheet().showSheet(
+                                              context,
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 10),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Text(
+                                                          'Edit Profile',
+                                                          style: TextStyle(
+                                                            color: Color(
+                                                                0xFF094B60),
+                                                            fontSize: 26,
+                                                            fontFamily: 'Jost',
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            height: 0.03,
+                                                            letterSpacing: 0.78,
+                                                          ),
+                                                        ),
+                                                        Space(3.h),
+                                                        TextWidgetStoreSetup(
+                                                            label:
+                                                                'Edit Store Name'),
+                                                        Space(1.h),
+                                                        Container(
+                                                          // rgba(165, 200, 199, 1),
+                                                          decoration:
+                                                              const ShapeDecoration(
+                                                            shadows: [
+                                                              BoxShadow(
+                                                                offset: Offset(
+                                                                    0, 4),
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        165,
+                                                                        200,
+                                                                        199,
+                                                                        0.6),
+                                                                blurRadius: 20,
+                                                              )
+                                                            ],
+                                                            color: Colors.white,
+                                                            shape:
+                                                                SmoothRectangleBorder(
+                                                              borderRadius: SmoothBorderRadius
+                                                                  .all(SmoothRadius(
+                                                                      cornerRadius:
+                                                                          10,
+                                                                      cornerSmoothing:
+                                                                          1)),
+                                                            ),
+                                                          ),
+                                                          height: 6.h,
+                                                          child: Center(
+                                                            child: TextField(
+                                                              onSubmitted:
+                                                                  (newvalue) async {
+                                                                AppWideLoadingBanner()
+                                                                    .loadingBanner(
+                                                                        context);
+                                                                final code =
+                                                                    await updateStoreName(
+                                                                        _controller
+                                                                            .text);
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                if (code ==
+                                                                    '200') {
+                                                                  TOastNotification()
+                                                                      .showSuccesToast(
+                                                                          context,
+                                                                          'Store name updated');
+                                                                } else {
+                                                                  TOastNotification()
+                                                                      .showErrorToast(
+                                                                          context,
+                                                                          'Error!');
+                                                                }
+                                                              },
+                                                              controller:
+                                                                  _controller,
+                                                              decoration:
+                                                                  const InputDecoration(
+                                                                fillColor:
+                                                                    Colors
+                                                                        .white,
+                                                                contentPadding:
+                                                                    EdgeInsets.only(
+                                                                        left:
+                                                                            14),
+                                                                // hintText: hintText,
+                                                                hintStyle: TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                    color: Color(
+                                                                        0xFF0A4C61),
+                                                                    fontFamily:
+                                                                        'Product Sans',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400),
+                                                                border:
+                                                                    InputBorder
+                                                                        .none,
+                                                              ),
+                                                              // onChanged: onChanged,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Space(3.h),
+                                                  AddCoverImageOrLogoSheetContent(
+                                                      isProfile: true,
+                                                      isLogo: true),
+                                                ],
+                                              ),
+                                              75.h);
+                                        },
                                         child: ButtonWidgetHomeScreen(
                                             txt: 'Edit profile',
                                             isActive: true),
@@ -380,7 +516,7 @@ class _ProfileState extends State<Profile> {
                                             },
                                           ),
                                         ),
-                                      if (_activeButtonIndex == 2) Menu(),
+                                      if (_activeButtonIndex == 2) const Menu(),
                                       if (_activeButtonIndex == 3)
                                         const Text('Feature Pending')
                                     ]),

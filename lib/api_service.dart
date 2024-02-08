@@ -187,6 +187,29 @@ Future<String> updateCoverImage(String cover_image) async {
   }
 }
 
+Future<String> updateStoreName(String name) async {
+  final String url = 'https://app.cloudbelly.in/update-user';
+
+  final Map<String, dynamic> requestBody = {
+    'user_id': Auth().user_id,
+    'store_name': name,
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: Auth().headers,
+      body: jsonEncode(requestBody),
+    );
+    print(response.body);
+    int code = response.statusCode;
+    return code.toString();
+  } catch (error) {
+    // Handle exceptions
+    return '-1';
+  }
+}
+
 Future<String> updateMenuItem(String product_id, String price, String name,
     bool VEG, String category) async {
   final String url = 'https://app.cloudbelly.in/product/update';

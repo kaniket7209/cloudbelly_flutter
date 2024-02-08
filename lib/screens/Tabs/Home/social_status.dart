@@ -136,128 +136,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                         onTap: () {
                           AppWideBottomSheet().showSheet(
                               context,
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Space(1.h),
-                                  const Text(
-                                    '  Add cover photo',
-                                    style: TextStyle(
-                                      color: Color(0xFF094B60),
-                                      fontSize: 26,
-                                      fontFamily: 'Jost',
-                                      fontWeight: FontWeight.w600,
-                                      height: 0.03,
-                                      letterSpacing: 0.78,
-                                    ),
-                                  ),
-                                  Space(3.h),
-                                  TouchableOpacity(
-                                    onTap: () async {
-                                      AppWideLoadingBanner()
-                                          .loadingBanner(context);
-                                      final cover_image =
-                                          await pickImageAndUpoad(context);
-                                      print(cover_image);
-                                      if (cover_image ==
-                                          'file size very large') {
-                                        TOastNotification().showErrorToast(
-                                            context, 'file size very large');
-                                      } else if (cover_image != '') {
-                                        final code =
-                                            await updateCoverImage(cover_image);
-                                        if (code == '200') {
-                                          TOastNotification().showSuccesToast(
-                                              context, 'Cover Image updated');
-                                          setState(() {
-                                            Auth().cover_image = cover_image;
-                                          });
-                                        } else {
-                                          TOastNotification().showErrorToast(
-                                              context,
-                                              'Error happend while updating cover image');
-                                        }
-                                        // Auth().logo_url=
-                                      }
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.photo_album_outlined),
-                                          Space(isHorizontal: true, 15),
-                                          Text(
-                                            'Upload from gallery',
-                                            style: TextStyle(
-                                              color: Color(0xFF094B60),
-                                              fontSize: 12,
-                                              fontFamily: 'Product Sans',
-                                              fontWeight: FontWeight.w700,
-                                              height: 0.10,
-                                              letterSpacing: 0.36,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  TouchableOpacity(
-                                    onTap: () async {
-                                      AppWideLoadingBanner()
-                                          .loadingBanner(context);
-                                      final cover_image =
-                                          await pickImageAndUpoad(context,
-                                              src: 'Camera');
-                                      if (cover_image ==
-                                          'file size very large') {
-                                        TOastNotification().showErrorToast(
-                                            context, 'file size very large');
-                                      } else if (cover_image != '') {
-                                        final code =
-                                            await updateCoverImage(cover_image);
-                                        if (code == '200') {
-                                          TOastNotification().showSuccesToast(
-                                              context, 'Cover Image updated');
-                                          setState(() {
-                                            Auth().cover_image = cover_image;
-                                          });
-                                        } else {
-                                          TOastNotification().showErrorToast(
-                                              context,
-                                              'Error happend while updating cover image');
-                                        }
-                                        // Auth().logo_url=
-                                      }
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).pop();
-
-                                      print(cover_image);
-                                    },
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.camera),
-                                          Space(isHorizontal: true, 15),
-                                          Text(
-                                            'Click photo',
-                                            style: TextStyle(
-                                              color: Color(0xFF094B60),
-                                              fontSize: 12,
-                                              fontFamily: 'Product Sans',
-                                              fontWeight: FontWeight.w700,
-                                              height: 0.10,
-                                              letterSpacing: 0.36,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
+                              AddCoverImageOrLogoSheetContent(isLogo: false),
                               25.h);
                         },
                         child: AddSomething_EnhaceWidget(
@@ -275,140 +154,7 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                           onTap: () {
                             AppWideBottomSheet().showSheet(
                                 context,
-                                Container(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Space(1.h),
-                                      const Text(
-                                        '  Add logo',
-                                        style: TextStyle(
-                                          color: Color(0xFF094B60),
-                                          fontSize: 26,
-                                          fontFamily: 'Jost',
-                                          fontWeight: FontWeight.w600,
-                                          height: 0.03,
-                                          letterSpacing: 0.78,
-                                        ),
-                                      ),
-                                      Space(3.h),
-                                      TouchableOpacity(
-                                        onTap: () async {
-                                          AppWideLoadingBanner()
-                                              .loadingBanner(context);
-                                          final _logo_url =
-                                              await pickImageAndUpoad(context);
-                                          if (_logo_url ==
-                                              'file size very large') {
-                                            TOastNotification().showErrorToast(
-                                                context,
-                                                'file size very large');
-                                          } else if (_logo_url != '') {
-                                            final code =
-                                                await updateProfilePhoto(
-                                                    _logo_url);
-                                            if (code == '200') {
-                                              Auth().logo_url = _logo_url;
-                                              TOastNotification()
-                                                  .showSuccesToast(context,
-                                                      'Store logo  updated');
-                                              // Navigator.of(context)
-                                              // .pushNamed(Tabs.routeName);
-                                            } else {
-                                              TOastNotification().showErrorToast(
-                                                  context,
-                                                  'Error happend while updating store logo');
-                                            }
-                                            // Auth().logo_url=
-                                          }
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-
-                                          print(_logo_url);
-                                        },
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.photo_album_outlined),
-                                              Space(isHorizontal: true, 15),
-                                              Text(
-                                                'Upload from gallery',
-                                                style: TextStyle(
-                                                  color: Color(0xFF094B60),
-                                                  fontSize: 12,
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w700,
-                                                  height: 0.10,
-                                                  letterSpacing: 0.36,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      TouchableOpacity(
-                                        onTap: () async {
-                                          AppWideLoadingBanner()
-                                              .loadingBanner(context);
-                                          final _logo_url =
-                                              await pickImageAndUpoad(context,
-                                                  src: 'Camera');
-                                          if (_logo_url ==
-                                              'file size very large') {
-                                            TOastNotification().showErrorToast(
-                                                context,
-                                                'file size very large');
-                                          } else if (_logo_url != '') {
-                                            final code =
-                                                await updateProfilePhoto(
-                                                    _logo_url);
-                                            if (code == '200') {
-                                              TOastNotification()
-                                                  .showSuccesToast(context,
-                                                      'Store Logo updated');
-                                              setState(() {
-                                                Auth().logo_url = _logo_url;
-                                              });
-                                              // Navigator.of(context)
-                                              //     .pushNamed(Tabs.routeName);
-                                            } else {
-                                              TOastNotification().showErrorToast(
-                                                  context,
-                                                  'Error happend while updating store logo');
-                                            }
-                                            // Auth().logo_url=
-                                          }
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-
-                                          print(_logo_url);
-                                        },
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.camera),
-                                              Space(isHorizontal: true, 15),
-                                              Text(
-                                                'Click photo',
-                                                style: TextStyle(
-                                                  color: Color(0xFF094B60),
-                                                  fontSize: 12,
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w700,
-                                                  height: 0.10,
-                                                  letterSpacing: 0.36,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
+                                AddCoverImageOrLogoSheetContent(isLogo: true),
                                 25.h);
                           },
                           child: AddSomething_EnhaceWidget(
@@ -902,6 +648,134 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
           // ),
         ],
       ),
+    );
+  }
+}
+
+class AddCoverImageOrLogoSheetContent extends StatelessWidget {
+  bool isProfile;
+  bool isLogo;
+  AddCoverImageOrLogoSheetContent({
+    super.key,
+    required this.isLogo,
+    this.isProfile = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Space(1.h),
+        Text(
+          isLogo ? '  Add logo' : 'Add Cover Image',
+          style: TextStyle(
+            color: Color(0xFF094B60),
+            fontSize: isProfile ? 17 : 26,
+            fontFamily: 'Jost',
+            fontWeight: FontWeight.w600,
+            height: 0.03,
+            letterSpacing: 0.78,
+          ),
+        ),
+        Space(3.h),
+        TouchableOpacity(
+          onTap: () async {
+            AppWideLoadingBanner().loadingBanner(context);
+            final _url = await pickImageAndUpoad(context);
+            if (_url == 'file size very large') {
+              TOastNotification()
+                  .showErrorToast(context, 'file size very large');
+            } else if (_url != '') {
+              String code = isLogo
+                  ? await updateProfilePhoto(_url)
+                  : await updateCoverImage(_url);
+              if (code == '200') {
+                Auth().logo_url = _url;
+                TOastNotification().showSuccesToast(context,
+                    '${isLogo ? 'Store logo' : 'Cover Image'}  updated');
+                // Navigator.of(context)
+                // .pushNamed(Tabs.routeName);
+              } else {
+                TOastNotification().showErrorToast(
+                    context, 'Error happend while updating image');
+              }
+              // Auth().logo_url=
+            }
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+
+            print(_url);
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Icon(Icons.photo_album_outlined),
+                Space(isHorizontal: true, 15),
+                Text(
+                  'Upload from gallery',
+                  style: TextStyle(
+                    color: Color(0xFF094B60),
+                    fontSize: 12,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w700,
+                    height: 0.10,
+                    letterSpacing: 0.36,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+        TouchableOpacity(
+          onTap: () async {
+            AppWideLoadingBanner().loadingBanner(context);
+            final _url = await pickImageAndUpoad(context, src: 'Camera');
+            if (_url == 'file size very large') {
+              TOastNotification()
+                  .showErrorToast(context, 'file size very large');
+            } else if (_url != '') {
+              String code = isLogo
+                  ? await updateProfilePhoto(_url)
+                  : await updateCoverImage(_url);
+              if (code == '200') {
+                Auth().logo_url = _url;
+                TOastNotification().showSuccesToast(context,
+                    '${isLogo ? 'Store logo' : 'Cover Image'}  updated');
+                // Navigator.of(context)
+                // .pushNamed(Tabs.routeName);
+              } else {
+                TOastNotification().showErrorToast(
+                    context, 'Error happend while updating image');
+              }
+              // Auth().logo_url=
+            }
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+          },
+          child: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Icon(Icons.camera),
+                Space(isHorizontal: true, 15),
+                Text(
+                  'Click photo',
+                  style: TextStyle(
+                    color: Color(0xFF094B60),
+                    fontSize: 12,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w700,
+                    height: 0.10,
+                    letterSpacing: 0.36,
+                  ),
+                )
+              ],
+            ),
+          ),
+        )
+      ],
     );
   }
 }
