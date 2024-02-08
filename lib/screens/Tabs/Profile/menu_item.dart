@@ -9,6 +9,7 @@ import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MenuItem extends StatefulWidget {
@@ -93,8 +94,9 @@ class _MenuItemState extends State<MenuItem> {
                       textInputAction: TextInputAction.done,
                       onSubmitted: (newValue) async {
                         print(newValue);
-                        await updateProductDetails(
-                            widget.data['_id'], '', newValue);
+                        await Provider.of<Auth>(context, listen: false)
+                            .updateProductDetails(
+                                widget.data['_id'], '', newValue);
                         setState(() {
                           widget.data['description'] = newValue;
                         });
@@ -257,8 +259,10 @@ class _MenuItemState extends State<MenuItem> {
                           onTap: () async {
                             AppWideLoadingBanner().loadingBanner(context);
 
-                            final temp = await updateProductImage(
-                                data['_id'], context, 'Gallery');
+                            final temp =
+                                await Provider.of<Auth>(context, listen: false)
+                                    .updateProductImage(
+                                        data['_id'], context, 'Gallery');
                             // Navigator.of(context).pop();
 
                             Navigator.of(context).pop();
@@ -274,8 +278,10 @@ class _MenuItemState extends State<MenuItem> {
                         TouchableOpacity(
                             onTap: () async {
                               AppWideLoadingBanner().loadingBanner(context);
-                              final temp = await updateProductImage(
-                                  data['_id'], context, 'Camera');
+                              final temp = await Provider.of<Auth>(context,
+                                      listen: false)
+                                  .updateProductImage(
+                                      data['_id'], context, 'Camera');
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                               if (temp != null && temp != '') {

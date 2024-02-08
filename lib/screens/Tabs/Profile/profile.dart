@@ -10,7 +10,6 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
-import 'package:cloudbelly_app/widgets/appwide_textfield.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
@@ -19,6 +18,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class Profile extends StatefulWidget {
@@ -88,14 +88,17 @@ class _ProfileState extends State<Profile> {
                                           cornerSmoothing: 1,
                                         ),
                                         child: Image.network(
-                                          Auth().logo_url,
+                                          Provider.of<Auth>(context,
+                                                  listen: false)
+                                              .logo_url,
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
                                     Space(2.h),
                                     Text(
-                                      Auth().store_name,
+                                      Provider.of<Auth>(context, listen: true)
+                                          .store_name,
                                       style: const TextStyle(
                                         color: Color(0xFF094B60),
                                         fontSize: 14,
@@ -120,7 +123,9 @@ class _ProfileState extends State<Profile> {
                                           .loadingBanner(context);
 
                                       List<String> url =
-                                          await pickMultipleImagesAndUpoad();
+                                          await Provider.of<Auth>(context,
+                                                  listen: false)
+                                              .pickMultipleImagesAndUpoad();
                                       Navigator.of(context).pop();
                                       if (url.length == 0) {
                                         TOastNotification().showErrorToast(
@@ -191,17 +196,23 @@ class _ProfileState extends State<Profile> {
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       ColumnWidgetHomeScreen(
-                                        data: Auth().rating,
+                                        data: Provider.of<Auth>(context,
+                                                listen: false)
+                                            .rating,
                                         txt: 'Rating',
                                       ),
                                       ColumnWidgetHomeScreen(
-                                        data: (Auth().followers)
+                                        data: (Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .followers)
                                             .length
                                             .toString(),
                                         txt: 'Followers',
                                       ),
                                       ColumnWidgetHomeScreen(
-                                        data: (Auth().followings)
+                                        data: (Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .followings)
                                             .length
                                             .toString(),
                                         txt: 'Following',
@@ -217,7 +228,10 @@ class _ProfileState extends State<Profile> {
                                         onTap: () {
                                           TextEditingController _controller =
                                               TextEditingController(
-                                                  text: Auth().store_name);
+                                                  text: Provider.of<Auth>(
+                                                          context,
+                                                          listen: false)
+                                                      .store_name);
                                           AppWideBottomSheet().showSheet(
                                               context,
                                               Column(
@@ -286,8 +300,12 @@ class _ProfileState extends State<Profile> {
                                                                 AppWideLoadingBanner()
                                                                     .loadingBanner(
                                                                         context);
-                                                                final code =
-                                                                    await updateStoreName(
+                                                                final code = await Provider.of<
+                                                                            Auth>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .updateStoreName(
                                                                         _controller
                                                                             .text);
                                                                 Navigator.of(
@@ -299,6 +317,13 @@ class _ProfileState extends State<Profile> {
                                                                       .showSuccesToast(
                                                                           context,
                                                                           'Store name updated');
+                                                                  Provider.of<Auth>(
+                                                                              context,
+                                                                              listen:
+                                                                                  false)
+                                                                          .store_name =
+                                                                      _controller
+                                                                          .text;
                                                                 } else {
                                                                   TOastNotification()
                                                                       .showErrorToast(
@@ -317,7 +342,6 @@ class _ProfileState extends State<Profile> {
                                                                     EdgeInsets.only(
                                                                         left:
                                                                             14),
-                                                                // hintText: hintText,
                                                                 hintStyle: TextStyle(
                                                                     fontSize:
                                                                         12,
@@ -466,13 +490,16 @@ class _ProfileState extends State<Profile> {
                                         Container(
                                           width: 85.w,
                                           child: FutureBuilder(
-                                            future: getFeed(),
+                                            future: Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .getFeed(),
                                             builder: (context, snapshot) {
                                               if (snapshot.connectionState ==
                                                   ConnectionState.done) {
                                                 print(snapshot.data);
-                                                final data = snapshot.data
-                                                    as List<dynamic>;
+                                                List<dynamic> data = snapshot
+                                                    .data as List<dynamic>;
+                                                data = data.reversed.toList();
                                                 return GridView.builder(
                                                   physics:
                                                       const NeverScrollableScrollPhysics(), // Disable scrolling
@@ -556,9 +583,10 @@ class FeedWidget extends StatelessWidget {
     //     data['multiple_files'] != null && data['multiple_files'].length != 0;
     return TouchableOpacity(
       onTap: () async {
-        final Data = await getFeed();
+        final Data = await Provider.of<Auth>(context, listen: false).getFeed()
+            as List<dynamic>;
         Navigator.of(context).pushNamed(PostsScreen.routeName,
-            arguments: {'data': fulldata, 'index': index});
+            arguments: {'data': Data, 'index': index});
       },
       child: Stack(
         children: [

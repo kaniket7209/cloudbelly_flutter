@@ -12,6 +12,7 @@ import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Tabs extends StatefulWidget {
   static const routeName = '/tabs-screen';
@@ -81,16 +82,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(247, 247, 247, 1),
-      // body: PageView(
-      //   onPageChanged: (value) {
-      //     setState(() {
-      //       _selectedIndex = value;
-      //     });
-      //   },
-      //   physics: const BouncingScrollPhysics(),
-      //   controller: _pageController,
-      //   children: _pages,
-      // ),
+
       body: _pages[_selectedIndex],
       floatingActionButton: FloatingActionButton(
         shape: const SmoothRectangleBorder(
@@ -104,9 +96,9 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               colors: [
                 Color.fromRGBO(250, 110, 0, 1),
                 Color.fromRGBO(248, 185, 177, 1),
-              ], // Define your gradient colors
-              begin: Alignment.topCenter, // Define your gradient begin position
-              end: Alignment.bottomCenter, // Define your gradient end position
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
           ),
           child: const Icon(
@@ -118,7 +110,8 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         onPressed: () async {
           // awa
           AppWideLoadingBanner().loadingBanner(context);
-          List<String> url = await pickMultipleImagesAndUpoad();
+          List<String> url = await Provider.of<Auth>(context, listen: false)
+              .pickMultipleImagesAndUpoad();
           Navigator.of(context).pop();
           if (url.length == 0) {
             TOastNotification()
@@ -223,120 +216,6 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           color: Color.fromRGBO(177, 217, 216, 0.69),
         ),
       ),
-
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // bottomNavigationBar: AnimatedBottomNavigationBar(
-      //     icons: [Icons.abc, Icons.ac_unit, Icons.home, Icons.rocket],
-      //     activeIndex: _selectedIndex,
-      //     gapLocation: GapLocation.center,
-      //     notchSmoothness: NotchSmoothness.verySmoothEdge,
-      //     leftCornerRadius: 32,
-      //     rightCornerRadius: 32,
-      //     onTap: (index) {
-      //       setState(() {
-      //         _selectedIndex = index;
-      //       });
-      //       animateToSelectedPage();
-      //     }
-
-      //     //other params
-      //     ),
-      // bottomNavigationBar: Container(
-      //   margin: EdgeInsets.symmetric(horizontal: 3, vertical: 2),
-      //   height: 55,
-      //   padding: const EdgeInsets.symmetric(horizontal: 50),
-      //   decoration: ShapeDecoration(
-      //     color: Color.fromRGBO(38, 115, 140, 1),
-      //     shape: SmoothRectangleBorder(
-      //       borderRadius: SmoothBorderRadius(
-      //         cornerRadius: 15,
-      //         cornerSmoothing: 1,
-      //       ),
-      //     ),
-      //   ),
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //     children: [
-      //       TouchableOpacity(
-      //         onTap: () {
-      //           setState(() {
-      //             _selectedIndex = 0;
-      //           });
-      //           animateToSelectedPage();
-      //         },
-      //         child: Column(
-      //           children: [
-      //             const Space(9),
-      //             buildColorFilteredIcon(Icon(Icons.home), _selectedIndex == 0),
-      //             // const Space(4.33),
-      //             Text(
-      //               "Home",
-      //               style: GoogleFonts.nunito(
-      //                 color: _selectedIndex == 0
-      //                     ? Colors.black
-      //                     : const Color(0xff404654),
-      //                 fontSize: 10,
-      //                 fontWeight: FontWeight.w600,
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-      //       TouchableOpacity(
-      //         onTap: () {
-      //           setState(() {
-      //             _selectedIndex = 1;
-      //           });
-      //           animateToSelectedPage();
-      //         },
-      //         child: Column(
-      //           children: [
-      //             const Space(9.5),
-      //             buildColorFilteredIcon(
-      //                 Icon(Icons.add_a_photo), _selectedIndex == 1),
-      //             // const Space(5.92),
-      //             Text(
-      //               "Feed",
-      //               style: GoogleFonts.nunito(
-      //                 color: _selectedIndex == 1
-      //                     ? Colors.black
-      //                     : const Color(0xff404654),
-      //                 fontSize: 10,
-      //                 fontWeight: FontWeight.w600,
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-      //       TouchableOpacity(
-      //         onTap: () {
-      //           setState(() {
-      //             _selectedIndex = 2;
-      //           });
-      //           animateToSelectedPage();
-      //         },
-      //         child: Column(
-      //           children: [
-      //             const Space(8.67),
-      //             buildColorFilteredIcon(
-      //                 Icon(Icons.person), _selectedIndex == 2),
-      //             // const Space(4.67),
-      //             Text(
-      //               "Profile",
-      //               style: GoogleFonts.nunito(
-      //                 color: _selectedIndex == 4
-      //                     ? Colors.black
-      //                     : const Color(0xff404654),
-      //                 fontSize: 10,
-      //                 fontWeight: FontWeight.w600,
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // ),
     );
   }
 }

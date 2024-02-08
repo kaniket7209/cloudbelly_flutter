@@ -1,5 +1,4 @@
 import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
@@ -10,6 +9,7 @@ import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class Performance extends StatefulWidget {
@@ -64,7 +64,9 @@ class _PerformanceState extends State<Performance> {
                           TouchableOpacity(
                             onTap: () async {
                               AppWideLoadingBanner().loadingBanner(context);
-                              dynamic data = await ScanMenu('Gallery');
+                              dynamic data = await Provider.of<Auth>(context,
+                                      listen: false)
+                                  .ScanMenu('Gallery');
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                               if (data == 'file size very large') {
@@ -100,7 +102,9 @@ class _PerformanceState extends State<Performance> {
                           TouchableOpacity(
                             onTap: () async {
                               AppWideLoadingBanner().loadingBanner(context);
-                              dynamic data = await ScanMenu('Camera');
+                              dynamic data = await Provider.of<Auth>(context,
+                                      listen: false)
+                                  .ScanMenu('Camera');
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                               print(data);
@@ -143,7 +147,8 @@ class _PerformanceState extends State<Performance> {
             ),
             Make_Update_ListWidget(
               onTap: () async {
-                final data = await getMenu();
+                final data =
+                    await Provider.of<Auth>(context, listen: false).getMenu();
                 print(data);
                 // Sc
                 ScannedMenuBottomSheet(context, data, false);
@@ -418,7 +423,9 @@ class _PerformanceState extends State<Performance> {
                                     ),
                                     onSubmitted: (newValue) async {
                                       if (!isUpload) {
-                                        await updateMenuItem(
+                                        await Provider.of<Auth>(context,
+                                                listen: false)
+                                            .updateMenuItem(
                                           list[index]['_id'],
                                           list[index]['price'],
                                           newValue,
@@ -460,7 +467,9 @@ class _PerformanceState extends State<Performance> {
                                           textInputAction: TextInputAction.done,
                                           onSubmitted: (newValue) async {
                                             if (!isUpload) {
-                                              await updateMenuItem(
+                                              await Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .updateMenuItem(
                                                 list[index]['_id'],
                                                 newValue,
                                                 list[index]['name'],
@@ -483,7 +492,9 @@ class _PerformanceState extends State<Performance> {
                                     value: !list[index]['VEG'],
                                     onChanged: (value) async {
                                       if (!isUpload) {
-                                        await updateMenuItem(
+                                        await Provider.of<Auth>(context,
+                                                listen: false)
+                                            .updateMenuItem(
                                           list[index]['_id'],
                                           list[index]['price'],
                                           list[index]['name'],
@@ -519,12 +530,14 @@ class _PerformanceState extends State<Performance> {
                                     textInputAction: TextInputAction.done,
                                     onSubmitted: (newValue) async {
                                       if (!isUpload) {
-                                        await updateMenuItem(
-                                            list[index]['_id'],
-                                            list[index]['price'],
-                                            list[index]['name'],
-                                            list[index]['VEG'],
-                                            newValue);
+                                        await Provider.of<Auth>(context,
+                                                listen: false)
+                                            .updateMenuItem(
+                                                list[index]['_id'],
+                                                list[index]['price'],
+                                                list[index]['name'],
+                                                list[index]['VEG'],
+                                                newValue);
                                       }
                                       setState(() {
                                         list[index]['category'] = newValue;
@@ -543,7 +556,9 @@ class _PerformanceState extends State<Performance> {
                           onTap: () async {
                             print(list);
                             AppWideLoadingBanner().loadingBanner(context);
-                            final code = await AddProductsForMenu(list);
+                            final code =
+                                await Provider.of<Auth>(context, listen: false)
+                                    .AddProductsForMenu(list);
                             Navigator.of(context).pop();
 
                             if (code == '200') {

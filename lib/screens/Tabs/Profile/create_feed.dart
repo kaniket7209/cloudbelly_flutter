@@ -6,6 +6,7 @@ import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class CreateFeed {
@@ -29,7 +30,8 @@ class CreateFeed {
           .split(',')
           .map((String s) => s.trim())
           .toList();
-      String msg = await createPost(imageUrlList, tags, caption);
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .createPost(imageUrlList, tags, caption);
       Navigator.of(context).pop();
       if (msg == "Post metadata updated successfully") {
         TOastNotification()

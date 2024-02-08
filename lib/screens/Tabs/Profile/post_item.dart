@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -8,7 +10,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
-import 'package:flutter_map/flutter_map.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PostItem extends StatefulWidget {
@@ -101,8 +103,8 @@ class _PostItemState extends State<PostItem> {
   bool _isLiked = false;
 
   void _getLikeData() {
-    _isLiked =
-        (widget.data['likes'] ?? [] as List<dynamic>).contains(Auth().user_id);
+    _isLiked = (widget.data['likes'] ?? [] as List<dynamic>)
+        .contains(Provider.of<Auth>(context, listen: false).user_id);
   }
 
   @override
@@ -136,14 +138,14 @@ class _PostItemState extends State<PostItem> {
                     cornerSmoothing: 1,
                   ),
                   child: Image.network(
-                    Auth().logo_url,
+                    Provider.of<Auth>(context, listen: false).logo_url,
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               Space(isHorizontal: true, 5.w),
               Text(
-                Auth().store_name,
+                Provider.of<Auth>(context, listen: false).store_name,
                 style: const TextStyle(
                   color: Color(0xFF094B60),
                   fontSize: 14,
@@ -233,7 +235,8 @@ class _PostItemState extends State<PostItem> {
             children: [
               IconButton(
                   onPressed: () async {
-                    await likePost(widget.data['id']);
+                    await Provider.of<Auth>(context, listen: false)
+                        .likePost(widget.data['id']);
                     setState(() {
                       _isLiked = !_isLiked;
                     });
@@ -283,7 +286,7 @@ class _PostItemState extends State<PostItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                Auth().store_name,
+                Provider.of<Auth>(context, listen: false).store_name,
                 style: const TextStyle(
                   color: Color(0xFFFA6E00),
                   fontSize: 12,
@@ -445,7 +448,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                       cornerSmoothing: 1,
                     ),
                     child: Image.network(
-                      Auth().logo_url,
+                      Provider.of<Auth>(context, listen: false).logo_url,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -460,7 +463,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                         fillColor: Colors.white,
                         contentPadding: const EdgeInsets.only(left: 14),
                         hintText:
-                            ' Type your comment here for ${Auth().store_name}...',
+                            ' Type your comment here for ${Provider.of<Auth>(context, listen: false).store_name}...',
                         hintStyle: const TextStyle(
                           color: Color(0xFF519796),
                           fontSize: 12,
@@ -481,14 +484,16 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                   onTap: () async {
                     AppWideLoadingBanner().loadingBanner(context);
 
-                    final code = await commentPost(newData['id'], _comment);
+                    final code = await Provider.of<Auth>(context, listen: false)
+                        .commentPost(newData['id'], _comment);
                     Navigator.of(context).pop();
 
                     if (code == '200') {
                       List<dynamic> _list = newData['comments'] ?? [];
                       _list.add({
                         'text': _comment,
-                        'user_id': Auth().user_id,
+                        'user_id':
+                            Provider.of<Auth>(context, listen: false).user_id,
                         'created_at': DateTime.now().toString(),
                       });
                       setState(() {
@@ -499,7 +504,8 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                     } else {
                       TOastNotification().showErrorToast(context, 'Error!');
                     }
-                    // _controller.clear();
+                    _controller.clear();
+                    // _controller.
                   },
                   child: Container(
                     height: 40,

@@ -13,6 +13,7 @@ import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -45,7 +46,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // For example, print the values:
     // Navigator.of(context).pushReplacementNamed(Tabs.routeName);
     AppWideLoadingBanner().loadingBanner(context);
-    String msg = await login(email, pass);
+    String msg =
+        await Provider.of<Auth>(context, listen: false).login(email, pass);
     Navigator.of(context).pop();
     if (msg == 'Login successful') {
       TOastNotification().showSuccesToast(context, msg);
@@ -63,10 +65,11 @@ class _LoginScreenState extends State<LoginScreen> {
     user_pass = user_pass.trim();
     // For example, print the values:
     AppWideLoadingBanner().loadingBanner(context);
-    String msg =
-        await signUp(user_email, user_pass, user_mobile_number, selectedOption);
+    String msg = await Provider.of<Auth>(context, listen: false)
+        .signUp(user_email, user_pass, user_mobile_number, selectedOption);
     if (msg == 'Registration successful') {
-      String msg = await login(user_email, user_pass);
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .login(user_email, user_pass);
 
       if (msg == 'Login successful') {
         TOastNotification().showSuccesToast(context, 'Registration successful');

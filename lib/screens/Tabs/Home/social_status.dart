@@ -1,12 +1,10 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
 
 import 'package:cloudbelly_app/screens/Tabs/Home/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Home/store_setup_sheets.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
-import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/appwide_progress_bar.dart';
@@ -16,6 +14,7 @@ import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SocialStatusContent extends StatefulWidget {
@@ -27,7 +26,8 @@ class SocialStatusContent extends StatefulWidget {
   State<SocialStatusContent> createState() => _SocialStatusContentState();
 }
 
-class _SocialStatusContentState extends State<SocialStatusContent> {
+class _SocialStatusContentState extends State<SocialStatusContent>
+    with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     // bool _isLoading = false;
@@ -48,11 +48,11 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
 
   @override
   Widget build(BuildContext context) {
-    final counter = Auth().pincode == ''
+    final counter = Provider.of<Auth>(context, listen: true).pincode == ''
         ? 1
-        : Auth().pan_number == ''
+        : Provider.of<Auth>(context, listen: true).pan_number == ''
             ? 2
-            : Auth().bank_name == ''
+            : Provider.of<Auth>(context, listen: true).bank_name == ''
                 ? 3
                 : 4;
     return Container(
@@ -277,7 +277,9 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                 txt: 'From gallery',
                 onTap: () async {
                   AppWideLoadingBanner().loadingBanner(context);
-                  List<String> url = await pickMultipleImagesAndUpoad();
+                  List<String> url =
+                      await Provider.of<Auth>(context, listen: false)
+                          .pickMultipleImagesAndUpoad();
                   Navigator.of(context).pop();
                   if (url.length == 0) {
                     TOastNotification()
@@ -298,7 +300,8 @@ class _SocialStatusContentState extends State<SocialStatusContent> {
                 onTap: () async {
                   AppWideLoadingBanner().loadingBanner(context);
                   List<String> url = [];
-                  url.add(await pickImageAndUpoad(src: 'Camera', context));
+                  url.add(await Provider.of<Auth>(context, listen: false)
+                      .pickImageAndUpoad(src: 'Camera', context));
                   print('object');
                   print(url[0]);
                   Navigator.of(context).pop();
@@ -682,16 +685,23 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
         TouchableOpacity(
           onTap: () async {
             AppWideLoadingBanner().loadingBanner(context);
-            final _url = await pickImageAndUpoad(context);
+            final _url = await Provider.of<Auth>(context, listen: false)
+                .pickImageAndUpoad(context);
             if (_url == 'file size very large') {
               TOastNotification()
                   .showErrorToast(context, 'file size very large');
             } else if (_url != '') {
               String code = isLogo
-                  ? await updateProfilePhoto(_url)
-                  : await updateCoverImage(_url);
+                  ? await Provider.of<Auth>(context, listen: false)
+                      .updateProfilePhoto(_url)
+                  : await Provider.of<Auth>(context, listen: false)
+                      .updateCoverImage(_url, context);
               if (code == '200') {
-                Auth().logo_url = _url;
+                if (isLogo) {
+                  Provider.of<Auth>(context, listen: false).logo_url = _url;
+                } else {
+                  Provider.of<Auth>(context, listen: false).cover_image = _url;
+                }
                 TOastNotification().showSuccesToast(context,
                     '${isLogo ? 'Store logo' : 'Cover Image'}  updated');
                 // Navigator.of(context)
@@ -700,7 +710,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
                 TOastNotification().showErrorToast(
                     context, 'Error happend while updating image');
               }
-              // Auth().logo_url=
+              // Provider.of<Auth>(context, listen: false).logo_url=
             }
             Navigator.of(context).pop();
             Navigator.of(context).pop();
@@ -731,16 +741,23 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
         TouchableOpacity(
           onTap: () async {
             AppWideLoadingBanner().loadingBanner(context);
-            final _url = await pickImageAndUpoad(context, src: 'Camera');
+            final _url = await Provider.of<Auth>(context, listen: false)
+                .pickImageAndUpoad(context, src: 'Camera');
             if (_url == 'file size very large') {
               TOastNotification()
                   .showErrorToast(context, 'file size very large');
             } else if (_url != '') {
               String code = isLogo
-                  ? await updateProfilePhoto(_url)
-                  : await updateCoverImage(_url);
+                  ? await Provider.of<Auth>(context, listen: false)
+                      .updateProfilePhoto(_url)
+                  : await Provider.of<Auth>(context, listen: false)
+                      .updateCoverImage(_url, context);
               if (code == '200') {
-                Auth().logo_url = _url;
+                if (isLogo) {
+                  Provider.of<Auth>(context, listen: false).logo_url = _url;
+                } else {
+                  Provider.of<Auth>(context, listen: false).cover_image = _url;
+                }
                 TOastNotification().showSuccesToast(context,
                     '${isLogo ? 'Store logo' : 'Cover Image'}  updated');
                 // Navigator.of(context)
@@ -749,7 +766,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
                 TOastNotification().showErrorToast(
                     context, 'Error happend while updating image');
               }
-              // Auth().logo_url=
+              // Provider.of<Auth>(context, listen: false).logo_url=
             }
             Navigator.of(context).pop();
             Navigator.of(context).pop();

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
@@ -24,6 +23,7 @@ class _PostsScreenState extends State<PostsScreen> {
       final Map<String, dynamic> arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       data = arguments['data'] as List<dynamic>;
+      data = data.reversed.toList();
       index = arguments['index'] as int;
 
       _didChanged = false;

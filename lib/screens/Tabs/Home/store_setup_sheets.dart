@@ -11,6 +11,7 @@ import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -20,7 +21,7 @@ class SlidingSheet {
         transitionBuilder: (context, a1, a2, widget) {
           final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.05;
           return ConstrainedBox(
-            constraints: BoxConstraints(
+            constraints: const BoxConstraints(
               maxWidth: 400, // Set the maximum width to 800
             ),
             child: Transform(
@@ -32,7 +33,7 @@ class SlidingSheet {
                     insetPadding: EdgeInsets.zero,
                     contentPadding: EdgeInsets.zero,
                     content: ConstrainedBox(
-                      constraints: BoxConstraints(
+                      constraints: const BoxConstraints(
                         maxWidth: 420, // Set the maximum width to 800
                       ),
                       child: num == 1
@@ -45,7 +46,7 @@ class SlidingSheet {
             ),
           );
         },
-        transitionDuration: Duration(milliseconds: 400),
+        transitionDuration: const Duration(milliseconds: 400),
         barrierDismissible: false,
         barrierLabel: '',
         context: context,
@@ -60,7 +61,7 @@ class Sheet1 extends StatefulWidget {
   State<Sheet1> createState() => _Sheet1State();
 }
 
-class _Sheet1State extends State<Sheet1> {
+class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
   String user_name = '';
 
   String store_name = '';
@@ -87,7 +88,7 @@ class _Sheet1State extends State<Sheet1> {
         location_details != '' &&
         max_order_capacity != '' &&
         profile_photo != 'file size very large') {
-      String msg = await storeSetup1(
+      String msg = await Provider.of<Auth>(context, listen: false).storeSetup1(
           user_name,
           pincode,
           profile_photo,
@@ -98,7 +99,7 @@ class _Sheet1State extends State<Sheet1> {
           max_order_capacity);
 
       if (msg == 'User information updated successfully.') {
-        Auth().pincode = pincode;
+        Provider.of<Auth>(context, listen: false).pincode = pincode;
         TOastNotification().showSuccesToast(context, 'User Details Updated');
         Navigator.of(context).pop();
         SlidingSheet().showAlertDialog(context, 2);
@@ -298,7 +299,7 @@ class _Sheet1State extends State<Sheet1> {
                         TextWidgetStoreSetup(
                             label: 'Upload your business’s logo'),
                         if (_isImageUploading)
-                          SizedBox(
+                          const SizedBox(
                               height: 10,
                               width: 10,
                               child: CircularProgressIndicator(
@@ -312,7 +313,9 @@ class _Sheet1State extends State<Sheet1> {
                           setState(() {
                             _isImageUploading = true;
                           });
-                          profile_photo = await pickImageAndUpoad(context);
+                          profile_photo =
+                              await Provider.of<Auth>(context, listen: false)
+                                  .pickImageAndUpoad(context);
                           if (profile_photo == 'file size very large') {
                             TOastNotification().showErrorToast(
                                 context, 'file size very large');
@@ -348,7 +351,7 @@ class _Sheet1State extends State<Sheet1> {
                                         profile_photo == 'file size very large'
                                     ? 'Upload from gallery'
                                     : 'Image Uploaded !',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Color(0xFF0A4C61),
                                   fontSize: 12,
                                   fontFamily: 'Product Sans',
@@ -357,7 +360,7 @@ class _Sheet1State extends State<Sheet1> {
                                   letterSpacing: 0.12,
                                 ),
                               ),
-                              Icon(
+                              const Icon(
                                 Icons.add,
                                 color: Color.fromRGBO(250, 110, 0, 0.7),
                               )
@@ -408,7 +411,7 @@ class TextWidgetStoreSetup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label,
-      style: TextStyle(
+      style: const TextStyle(
         color: Color(0xFF0A4C61),
         fontSize: 14,
         fontFamily: 'Product Sans',
@@ -429,7 +432,7 @@ class Sheet2 extends StatefulWidget {
   State<Sheet2> createState() => _Sheet2State();
 }
 
-class _Sheet2State extends State<Sheet2> {
+class _Sheet2State extends State<Sheet2> with SingleTickerProviderStateMixin {
   String pan_number = '';
 
   String aadhar_number = '';
@@ -439,11 +442,11 @@ class _Sheet2State extends State<Sheet2> {
   Future<void> _SubmitForm({int num = 1}) async {
     // final prefs = await SharedPreferences.getInstance();
     if (pan_number != '' && aadhar_number != '') {
-      String msg =
-          await storeSetup2(pan_number, aadhar_number, fssai_licence_document);
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .storeSetup2(pan_number, aadhar_number, fssai_licence_document);
 
       if (msg == 'User information updated successfully.') {
-        Auth().pan_number == pan_number;
+        Provider.of<Auth>(context, listen: false).pan_number == pan_number;
         TOastNotification().showSuccesToast(context, 'KYC details updated');
         if (num == 2) Navigator.of(context).pop();
         Navigator.of(context).pop();
@@ -508,11 +511,28 @@ class _Sheet2State extends State<Sheet2> {
                       children: [
                         Row(
                           children: [
-                            const Icon(
-                              Icons.arrow_back_ios_new,
-                              color: Color(0xFFFA6E00),
+                            TouchableOpacity(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                SlidingSheet().showAlertDialog(context, 1);
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.only(
+                                    right: 10.0, top: 10, bottom: 10),
+                                child: Text(
+                                  '<<',
+                                  style: TextStyle(
+                                    color: Color(0xFFFA6E00),
+                                    fontSize: 22,
+                                    fontFamily: 'Kavoon',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0.04,
+                                    letterSpacing: 0.66,
+                                  ),
+                                ),
+                              ),
                             ),
-                            Space(3.w, isHorizontal: true),
+                            // Space(2.w, isHorizontal: true),
                             const Text(
                               'KYC',
                               style: TextStyle(
@@ -573,7 +593,8 @@ class _Sheet2State extends State<Sheet2> {
                     GestureDetector(
                         onTap: () async {
                           fssai_licence_document =
-                              await pickImageAndUpoad(context);
+                              await Provider.of<Auth>(context, listen: false)
+                                  .pickImageAndUpoad(context);
                         },
                         child: Container(
                           // rgba(165, 200, 199, 1),
@@ -764,7 +785,7 @@ class Sheet3 extends StatefulWidget {
   State<Sheet3> createState() => _Sheet3State();
 }
 
-class _Sheet3State extends State<Sheet3> {
+class _Sheet3State extends State<Sheet3> with SingleTickerProviderStateMixin {
   // String bankList = [];
   bool _isSelected = false;
   String bank_name = '';
@@ -780,11 +801,11 @@ class _Sheet3State extends State<Sheet3> {
         ifsc_code != '' &&
         upi_id != '') {
       if (account_number == re_account_number) {
-        String msg =
-            await storeSetup3(bank_name, account_number, ifsc_code, upi_id);
+        String msg = await Provider.of<Auth>(context, listen: false)
+            .storeSetup3(bank_name, account_number, ifsc_code, upi_id);
 
         if (msg == 'User information updated successfully.') {
-          Auth().bank_name = bank_name;
+          Provider.of<Auth>(context, listen: false).bank_name = bank_name;
           TOastNotification()
               .showSuccesToast(context, 'Payemnt details updated');
           Navigator.of(context).pop();
@@ -846,10 +867,30 @@ class _Sheet3State extends State<Sheet3> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Row(
                       children: [
-                        Text(
+                        TouchableOpacity(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            SlidingSheet().showAlertDialog(context, 2);
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.only(
+                                right: 10.0, top: 10, bottom: 10),
+                            child: Text(
+                              '<<',
+                              style: TextStyle(
+                                color: Color(0xFFFA6E00),
+                                fontSize: 22,
+                                fontFamily: 'Kavoon',
+                                fontWeight: FontWeight.w400,
+                                height: 0.04,
+                                letterSpacing: 0.66,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Text(
                           'Payment Details',
                           style: TextStyle(
                             color: Color(0xFF094B60),
@@ -860,7 +901,8 @@ class _Sheet3State extends State<Sheet3> {
                             letterSpacing: 0.78,
                           ),
                         ),
-                        Text(
+                        const Spacer(),
+                        const Text(
                           '3/3',
                           style: TextStyle(
                             color: Color(0xFFFA6E00),

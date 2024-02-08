@@ -14,6 +14,7 @@ import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -24,7 +25,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   int _activeButtonIndex = 1;
 
   int delo() {
@@ -59,7 +60,10 @@ class _HomeState extends State<Home> {
                           children: [
                             CustomIconButton(
                               ic: Icons.notifications,
-                              onTap: () {},
+                              onTap: () {
+                                print(Provider.of<Auth>(context, listen: false)
+                                    .user_id);
+                              },
                             ),
                             Column(
                               // mainAxisAlignment: MainAxisAlignment.start,
@@ -85,14 +89,16 @@ class _HomeState extends State<Home> {
                                       cornerSmoothing: 1,
                                     ),
                                     child: Image.network(
-                                      Auth().logo_url,
+                                      Provider.of<Auth>(context, listen: true)
+                                          .logo_url,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                                 Space(2.h),
                                 Text(
-                                  Auth().store_name,
+                                  Provider.of<Auth>(context, listen: true)
+                                      .store_name,
                                   style: const TextStyle(
                                     color: Color(0xFF094B60),
                                     fontSize: 14,
@@ -152,17 +158,26 @@ class _HomeState extends State<Home> {
                                                   MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 ColumnWidgetHomeScreen(
-                                                  data: Auth().rating,
+                                                  data: Provider.of<Auth>(
+                                                          context,
+                                                          listen: false)
+                                                      .rating,
                                                   txt: 'Rating',
                                                 ),
                                                 ColumnWidgetHomeScreen(
-                                                  data: (Auth().followers)
+                                                  data: (Provider.of<Auth>(
+                                                              context,
+                                                              listen: false)
+                                                          .followers)
                                                       .length
                                                       .toString(),
                                                   txt: 'Followers',
                                                 ),
                                                 ColumnWidgetHomeScreen(
-                                                  data: (Auth().followings)
+                                                  data: (Provider.of<Auth>(
+                                                              context,
+                                                              listen: false)
+                                                          .followings)
                                                       .length
                                                       .toString(),
                                                   txt: 'Following',
@@ -216,8 +231,6 @@ class _HomeState extends State<Home> {
                                         children: [
                                           TouchableOpacity(
                                             onTap: () {
-                                              print('k');
-                                              print(100.w);
                                               setState(() {
                                                 _activeButtonIndex = 1;
                                               });

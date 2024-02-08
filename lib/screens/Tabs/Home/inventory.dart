@@ -13,6 +13,7 @@ import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -44,7 +45,8 @@ class _InventoryState extends State<Inventory> {
   Future<void> _getLowStockData() async {
     lowStockItems = [];
 
-    final data = await getInventoryData();
+    final data =
+        await Provider.of<Auth>(context, listen: false).getInventoryData();
 
     lowStockItems = findLowStockItems(data['data'][0]['inventory_data']);
     print(lowStockItems);
@@ -61,7 +63,8 @@ class _InventoryState extends State<Inventory> {
   Future<void> _getStocksYouMayNeed() async {
     stocksYouMayNeed = [];
 
-    final data = await getInventoryData();
+    final data =
+        await Provider.of<Auth>(context, listen: false).getInventoryData();
 
     stocksYouMayNeed = data['data'][0]['inventory_data'];
 
@@ -95,7 +98,8 @@ class _InventoryState extends State<Inventory> {
 
   Future<void> _getNearExpiryStocks() async {
     nearExpiryItems = [];
-    dynamic data = await getInventoryData();
+    dynamic data =
+        await Provider.of<Auth>(context, listen: false).getInventoryData();
     print(data);
     final int thresholdDays = 3;
     final currentDate = DateTime.now();
@@ -182,7 +186,8 @@ class _InventoryState extends State<Inventory> {
               txt: 'Make List',
               onTap: () async {
                 AppWideLoadingBanner().loadingBanner(context);
-                final data = await getSheetUrl();
+                final data = await Provider.of<Auth>(context, listen: false)
+                    .getSheetUrl();
                 Navigator.of(context).pop();
                 _launchURL(data['sheet_url']);
               },
@@ -190,7 +195,8 @@ class _InventoryState extends State<Inventory> {
             TouchableOpacity(
               onTap: () async {
                 AppWideLoadingBanner().loadingBanner(context);
-                final newData = await SyncInventory();
+                final newData = await Provider.of<Auth>(context, listen: false)
+                    .SyncInventory();
                 Navigator.of(context).pop();
                 if (newData['data'] != null) {
                   TOastNotification().showSuccesToast(context, 'List Synced!');
@@ -210,7 +216,9 @@ class _InventoryState extends State<Inventory> {
                       AppWideLoadingBanner().loadingBanner(context);
                       // if (_isUpdateLoading)
                       //   AppWideLoadingBanner().loadingBanner(context);
-                      final data = await getInventoryData();
+                      final data =
+                          await Provider.of<Auth>(context, listen: false)
+                              .getInventoryData();
                       Navigator.of(context).pop();
                       setState(() {
                         _isUpdateLoading = false;
@@ -659,7 +667,9 @@ class _InventoryState extends State<Inventory> {
                     AppWideButton(
                         onTap: () async {
                           AppWideLoadingBanner().loadingBanner(context);
-                          final newData = await SyncInventory();
+                          final newData =
+                              await Provider.of<Auth>(context, listen: false)
+                                  .SyncInventory();
                           Navigator.of(context).pop();
                           setState(() {
                             data = newData['data']['inventory_data'];
@@ -831,7 +841,7 @@ class LowStocksWidget extends StatelessWidget {
           originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));
       newUrl = 'https://drive.google.com/uc?export=view&id=$fileId';
     }
-    print(newUrl);
+    // print(newUrl);/
 
     double widhth = !isSheet ? 50.w : 40.w;
     Color color = percentage < 0.1
@@ -987,10 +997,10 @@ class LowStocksWidget extends StatelessWidget {
                   child: Text(
                     amountLeft,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 8,
                       fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w500,
                       height: 0,
                       letterSpacing: 0.08,
                     ),

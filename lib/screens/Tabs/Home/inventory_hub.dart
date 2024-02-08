@@ -10,6 +10,7 @@ import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -128,7 +129,10 @@ class _InventoryHubState extends State<InventoryHub> {
                               children: [
                                 TouchableOpacity(
                                   onTap: () async {
-                                    final data = await getSheetUrl();
+                                    final data = await Provider.of<Auth>(
+                                            context,
+                                            listen: false)
+                                        .getSheetUrl();
                                     _launchURL(data['sheet_url']);
                                   },
                                   child: ButtonWidgetHomeScreen(
@@ -137,7 +141,9 @@ class _InventoryHubState extends State<InventoryHub> {
                                 TouchableOpacity(
                                   onTap: () async {
                                     // final data =
-                                    await SyncInventory();
+                                    await Provider.of<Auth>(context,
+                                            listen: false)
+                                        .SyncInventory();
                                     // UpdateListBottomSheet(context, data);
                                   },
                                   child: ButtonWidgetHomeScreen(

@@ -1,6 +1,7 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu_item.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class Menu extends StatefulWidget {
@@ -16,10 +17,11 @@ class _MenuState extends State<Menu> {
     return Container(
       width: 85.w,
       child: FutureBuilder(
-        future: getMenu(),
+        future: Provider.of<Auth>(context, listen: false).getMenu(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            final data = snapshot.data as List<dynamic>;
+            List<dynamic> data = snapshot.data as List<dynamic>;
+            data = data.reversed.toList();
             print(data);
             return ListView.builder(
                 padding: const EdgeInsets.only(),
