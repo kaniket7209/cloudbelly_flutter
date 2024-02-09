@@ -70,7 +70,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           } else {
                             if (msg == '-1') msg = "Error!";
                             TOastNotification().showErrorToast(context, msg);
+                            Navigator.of(context)
+                                .pushNamed(LoginScreen.routeName);
                           }
+                          // Navigator.of(context)
+                          //     .pushNamed(LoginScreen.routeName);
                           // Navigator.of(context)
                           //     .pushReplacementNamed(Tabs.routeName);
                         },

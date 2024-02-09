@@ -29,10 +29,10 @@ class Auth with ChangeNotifier {
   List<dynamic> followers = [];
   List<dynamic> followings = [];
 
-  get user_logo_url {
-    notifyListeners();
-    return logo_url;
-  }
+  // get user_logo_url {
+  //   notifyListeners();
+  //   return logo_url;
+  // }
 
   String get_user_id() {
     return user_id;
@@ -102,7 +102,7 @@ class Auth with ChangeNotifier {
       followings = DataMap['followings'] ?? [];
       cover_image = DataMap['cover_image'] ?? '';
       store_name = store_name == '' ? user_email.split('@')[0] : store_name;
-      logo_url = logo_url == '' ? '' : logo_url;
+      // logo_url = logo_url == '' ? '' : logo_url;
       notifyListeners();
       final userData = json.encode(
         {'email': email, 'password': pass},
@@ -189,10 +189,13 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
+      notifyListeners();
 
       print(response.body);
       return jsonDecode((response.body))['message'];
     } catch (error) {
+      notifyListeners();
+
       // Handle exceptions
       return '-1';
     }
@@ -215,8 +218,12 @@ class Auth with ChangeNotifier {
 
       print(response.body);
       int code = response.statusCode;
+      notifyListeners();
+
       return code.toString();
     } catch (error) {
+      notifyListeners();
+
       // Handle exceptions
       return '-1';
     }
@@ -236,11 +243,14 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
+      notifyListeners();
 
       print(response.body);
       int code = response.statusCode;
       return code.toString();
     } catch (error) {
+      notifyListeners();
+
       // Handle exceptions
       return '-1';
     }
@@ -289,10 +299,11 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-
+      notifyListeners();
       print(response.body);
       return response.statusCode.toString();
     } catch (error) {
+      notifyListeners();
       // Handle exceptions
       return '-1';
     }
@@ -315,9 +326,12 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
+      notifyListeners();
 
       return jsonDecode((response.body))['message'];
     } catch (error) {
+      notifyListeners();
+
       // Handle exceptions
       return '-1';
     }
@@ -341,9 +355,12 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
+      notifyListeners();
 
       return jsonDecode((response.body))['message'];
     } catch (error) {
+      notifyListeners();
+
       // Handle exceptions
       return '-1';
     }
@@ -779,6 +796,31 @@ class Auth with ChangeNotifier {
       "user_id": user_id,
       'post_id': id,
       'like_user_id': user_id,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      print(response.body);
+      print(response.statusCode);
+
+      return response.statusCode.toString();
+    } catch (error) {
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
+  Future<String> deletePost(String id) async {
+    final String url = 'https://app.cloudbelly.in/delete-posts';
+
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {
+      "user_id": user_id,
+      'post_id': id,
     };
 
     try {

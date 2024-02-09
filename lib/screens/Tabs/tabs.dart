@@ -13,6 +13,7 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class Tabs extends StatefulWidget {
   static const routeName = '/tabs-screen';
@@ -40,11 +41,11 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   final PageController _pageController = PageController(initialPage: 0);
   final List<Widget> _pages = [
-    const Feed(),
+    // const Feed(),
     const DashBoard(),
 
     // UploadPage(),
-    const Cart(),
+    // const Cart(),
     const Profile(),
   ];
 
@@ -65,16 +66,16 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   // }
 
   final iconList = <IconData>[
-    Icons.home,
+    // Icons.home,
     Icons.laptop,
-    Icons.shopping_cart_outlined,
+    // Icons.shopping_cart_outlined,
     Icons.person,
     // Icons.brightness_1,
   ];
   final textList = <String>[
-    'Feed',
+    // 'Feed',
     'Dahboard',
-    'Cart',
+    // 'Cart',
     'Profile',
     // 'Account',
   ];
@@ -139,13 +140,15 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           // _pages[_selectedIndex]
         },
         activeIndex: _selectedIndex,
-        itemCount: 4,
+        itemCount: _pages.length,
 
         tabBuilder: (int index, bool isActive) {
           if (_selectedIndex == index) {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 5),
-              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10.w),
+              // margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+
               width: 100,
               height: 30,
               decoration: const ShapeDecoration(

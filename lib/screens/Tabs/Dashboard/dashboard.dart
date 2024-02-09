@@ -66,60 +66,7 @@ class _DashBoardState extends State<DashBoard>
                                     .user_id);
                               },
                             ),
-                            Column(
-                              // mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                const Space(15),
-                                Container(
-                                  height: 70,
-                                  width: 70,
-                                  decoration: const ShapeDecoration(
-                                    shadows: [
-                                      BoxShadow(
-                                        offset: Offset(0, 4),
-                                        color:
-                                            Color.fromRGBO(31, 111, 109, 0.6),
-                                        blurRadius: 20,
-                                      )
-                                    ],
-                                    shape: SmoothRectangleBorder(),
-                                  ),
-                                  child: ClipSmoothRect(
-                                    radius: SmoothBorderRadius(
-                                      cornerRadius: 15,
-                                      cornerSmoothing: 1,
-                                    ),
-                                    child: Image.network(
-                                      Provider.of<Auth>(context, listen: true)
-                                          .logo_url,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Space(2.h),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 1.h, horizontal: 3.w),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Center(
-                                    child: Text(
-                                      Provider.of<Auth>(context, listen: true)
-                                          .store_name,
-                                      style: const TextStyle(
-                                        color: Color(0xFF094B60),
-                                        fontSize: 14,
-                                        fontFamily: 'Product Sans',
-                                        fontWeight: FontWeight.w700,
-                                        height: 0.10,
-                                        letterSpacing: 0.42,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
+                            StoreNameAndLogoWidget(),
                             CustomIconButton(
                               ic: Icons.more_horiz,
                               onTap: () {},
@@ -298,6 +245,98 @@ class _DashBoardState extends State<DashBoard>
           ],
         ),
       ),
+    );
+  }
+}
+
+class StoreNameAndLogoWidget extends StatelessWidget {
+  const StoreNameAndLogoWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      // mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        const Space(15),
+        Provider.of<Auth>(context, listen: true).logo_url != ''
+            ? Container(
+                height: 70,
+                width: 70,
+                decoration: const ShapeDecoration(
+                  shadows: [
+                    BoxShadow(
+                      offset: Offset(0, 4),
+                      color: Color.fromRGBO(31, 111, 109, 0.6),
+                      blurRadius: 20,
+                    )
+                  ],
+                  shape: SmoothRectangleBorder(),
+                ),
+                child: ClipSmoothRect(
+                  radius: SmoothBorderRadius(
+                    cornerRadius: 15,
+                    cornerSmoothing: 1,
+                  ),
+                  child: Image.network(
+                    Provider.of<Auth>(context, listen: true).logo_url,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+            : Container(
+                height: 70,
+                width: 70,
+                decoration: ShapeDecoration(
+                  shadows: const [
+                    BoxShadow(
+                      offset: Offset(0, 4),
+                      color: Color.fromRGBO(31, 111, 109, 0.4),
+                      blurRadius: 20,
+                    ),
+                  ],
+                  color: Color.fromRGBO(31, 111, 109, 0.6),
+                  shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                    cornerRadius: 15,
+                    cornerSmoothing: 1,
+                  )),
+                ),
+                child: Center(
+                  child: Text(
+                    Provider.of<Auth>(context, listen: true)
+                        .store_name[0]
+                        .toUpperCase(),
+                    style: TextStyle(fontSize: 40),
+                  ),
+                )),
+        Space(2.h),
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 1.2.h, horizontal: 3.5.w),
+          decoration: ShapeDecoration(
+            color: Colors.white,
+            shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+              cornerRadius: 10,
+              cornerSmoothing: 1,
+            )),
+          ),
+          child: Center(
+            child: Text(
+              Provider.of<Auth>(context, listen: true).store_name,
+              style: const TextStyle(
+                color: Color(0xFF094B60),
+                fontSize: 14,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w700,
+                height: 0.10,
+                letterSpacing: 0.42,
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 }

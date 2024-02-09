@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, prefer_is_empty, use_build_context_synchronously, curly_braces_in_flow_control_structures
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
@@ -20,6 +21,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+enum SampleItem { itemOne }
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -30,7 +34,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   int _activeButtonIndex = 1;
-
+  SampleItem? selectedMenu;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -63,64 +67,8 @@ class _ProfileState extends State<Profile> {
                                 onTap: () {},
                               ),
                               Container(
-                                padding: EdgeInsets.only(left: 7.w),
-                                child: Column(
-                                  // mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    const Space(15),
-                                    Container(
-                                      height: 70,
-                                      width: 70,
-                                      decoration: const ShapeDecoration(
-                                        shadows: [
-                                          BoxShadow(
-                                            offset: Offset(0, 4),
-                                            color: Color.fromRGBO(
-                                                31, 111, 109, 0.6),
-                                            blurRadius: 20,
-                                          )
-                                        ],
-                                        shape: SmoothRectangleBorder(),
-                                      ),
-                                      child: ClipSmoothRect(
-                                        radius: SmoothBorderRadius(
-                                          cornerRadius: 15,
-                                          cornerSmoothing: 1,
-                                        ),
-                                        child: Image.network(
-                                          Provider.of<Auth>(context,
-                                                  listen: false)
-                                              .logo_url,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    Space(2.h),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 1.h, horizontal: 3.w),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Center(
-                                        child: Text(
-                                          Provider.of<Auth>(context,
-                                                  listen: true)
-                                              .store_name,
-                                          style: const TextStyle(
-                                            color: Color(0xFF094B60),
-                                            fontSize: 14,
-                                            fontFamily: 'Product Sans',
-                                            fontWeight: FontWeight.w700,
-                                            height: 0.10,
-                                            letterSpacing: 0.42,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
+                                padding: EdgeInsets.only(left: 9.w),
+                                child: const StoreNameAndLogoWidget(),
                               ),
                               Row(
                                 children: [
@@ -160,9 +108,61 @@ class _ProfileState extends State<Profile> {
                                     3.w,
                                     isHorizontal: true,
                                   ),
-                                  CustomIconButton(
-                                    ic: Icons.more_horiz,
-                                    onTap: () {},
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: ShapeDecoration(
+                                      shadows: [
+                                        const BoxShadow(
+                                          offset: Offset(0, 4),
+                                          color:
+                                              Color.fromRGBO(31, 111, 109, 0.5),
+                                          blurRadius: 20,
+                                        )
+                                      ],
+                                      color: Colors.white,
+                                      shape: SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius(
+                                          cornerRadius: 10,
+                                          cornerSmoothing: 1,
+                                        ),
+                                      ),
+                                    ),
+                                    child: PopupMenuButton<SampleItem>(
+                                      icon: const Icon(Icons.more_horiz),
+                                      initialValue: selectedMenu,
+                                      // Callback that sets the selected popup menu item.
+                                      onSelected: (SampleItem item) async {
+                                        AppWideLoadingBanner()
+                                            .loadingBanner(context);
+                                        final prefs = await SharedPreferences
+                                            .getInstance();
+                                        await prefs.remove('userData');
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context)
+                                            .pushReplacementNamed(
+                                                LoginScreen.routeName);
+                                        setState(() {
+                                          selectedMenu = item;
+                                        });
+                                      },
+                                      itemBuilder: (BuildContext context) =>
+                                          <PopupMenuEntry<SampleItem>>[
+                                        PopupMenuItem<SampleItem>(
+                                          value: SampleItem.itemOne,
+                                          child: Row(
+                                            children: [
+                                              const Icon(Icons.logout),
+                                              Space(
+                                                3.w,
+                                                isHorizontal: true,
+                                              ),
+                                              const Text('Logout'),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               )
@@ -250,8 +250,9 @@ class _ProfileState extends State<Profile> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 10),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10),
                                                     child: Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
@@ -388,26 +389,30 @@ class _ProfileState extends State<Profile> {
                                       ),
                                       TouchableOpacity(
                                         onTap: () {
-                                          final DynamicLinkParameters parameters = DynamicLinkParameters(
-              uriPrefix: 'https://kiitdev.page.link',
-              link: Uri.parse(
-                  'https://kiitdev.page.link/post/?id=${widget.id}&type=${widget.postType}'),
-              androidParameters: AndroidParameters(
-                packageName: 'com.kiitdev.Kide',
-              ),
-              socialMetaTagParameters: SocialMetaTagParameters(
-                  description: widget.subtitle,
-                  title: widget.title,
-                  imageUrl: Uri.parse(widget.image)),
-              dynamicLinkParametersOptions: DynamicLinkParametersOptions(
-                  shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short)
-              // NOT ALL ARE REQUIRED ===== HERE AS AN EXAMPLE =====
-              );
-          final ShortDynamicLink shortDynamicLink =
-              await parameters.buildShortLink();
-          final Uri shortUrl = shortDynamicLink.shortUrl;
-          print(shortUrl);
-          Share.share("${shortUrl}");
+                                          //id user id
+                                          //url prefix
+                                          //pacakge name
+
+                                          //                                 final DynamicLinkParameters parameters = DynamicLinkParameters(
+                                          //     uriPrefix: 'https://kiitdev.page.link',
+                                          //     link: Uri.parse(
+                                          //         'https://kiitdev.page.link/post/?id=${widget.id}&type=Profile'),
+                                          //     androidParameters: AndroidParameters(
+                                          //       packageName: 'com.kiitdev.Kide',
+                                          //     ),
+                                          //     // socialMetaTagParameters: SocialMetaTagParameters(
+                                          //     //     description: widget.subtitle,
+                                          //     //     title: widget.title,
+                                          //     //     imageUrl: Uri.parse(widget.image),),
+                                          //     dynamicLinkParametersOptions: DynamicLinkParametersOptions(
+                                          //         shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short)
+                                          //     // NOT ALL ARE REQUIRED ===== HERE AS AN EXAMPLE =====
+                                          //     );
+                                          // final ShortDynamicLink shortDynamicLink =
+                                          //     await parameters.buildShortLink();
+                                          // final Uri shortUrl = shortDynamicLink.shortUrl;
+                                          // print(shortUrl);
+                                          // Share.share("${shortUrl}");
                                         },
                                         child: ButtonWidgetHomeScreen(
                                           txt: 'Share profile',

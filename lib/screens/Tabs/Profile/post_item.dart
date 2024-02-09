@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -12,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+
+enum SampleItem { itemOne }
 
 class PostItem extends StatefulWidget {
   PostItem({
@@ -107,6 +110,8 @@ class _PostItemState extends State<PostItem> {
         .contains(Provider.of<Auth>(context, listen: false).user_id);
   }
 
+  SampleItem? selectedMenu;
+
   @override
   Widget build(BuildContext context) {
     CarouselController buttonCarouselController = CarouselController();
@@ -156,7 +161,51 @@ class _PostItemState extends State<PostItem> {
                 ),
               ),
               const Spacer(),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+              PopupMenuButton<SampleItem>(
+                // icon: const Icon(Icons.more_horiz),
+                initialValue: selectedMenu,
+                // Callback that sets the selected popup menu item.
+                onSelected: (SampleItem item) async {
+                  AppWideLoadingBanner().loadingBanner(context);
+                  final code = await Provider.of<Auth>(context, listen: false)
+                      .deletePost(widget.data['id']);
+
+                  if (code == '200') {
+                    TOastNotification()
+                        .showSuccesToast(context, 'Post deleted');
+                    final Data = await Provider.of<Auth>(context, listen: false)
+                        .getFeed() as List<dynamic>;
+                    Navigator.of(context).pop();
+
+                    Navigator.of(context).pushReplacementNamed(
+                        PostsScreen.routeName,
+                        arguments: {'data': Data, 'index': 0});
+                  } else {
+                    Navigator.of(context).pop();
+                    TOastNotification().showErrorToast(context, 'Error!');
+                  }
+
+                  setState(() {
+                    selectedMenu = item;
+                  });
+                },
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<SampleItem>>[
+                  PopupMenuItem<SampleItem>(
+                    value: SampleItem.itemOne,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.delete),
+                        Space(
+                          3.w,
+                          isHorizontal: true,
+                        ),
+                        const Text('Delete Post'),
+                      ],
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
           Space(1.5.h),

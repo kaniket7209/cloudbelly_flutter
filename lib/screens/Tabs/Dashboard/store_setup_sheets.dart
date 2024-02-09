@@ -100,6 +100,8 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
 
       if (msg == 'User information updated successfully.') {
         Provider.of<Auth>(context, listen: false).pincode = pincode;
+        Provider.of<Auth>(context, listen: false).logo_url = profile_photo;
+        // print(Provider.of<Auth>(context, listen: false).pincode);
         TOastNotification().showSuccesToast(context, 'User Details Updated');
         Navigator.of(context).pop();
         SlidingSheet().showAlertDialog(context, 2);
@@ -447,6 +449,7 @@ class _Sheet2State extends State<Sheet2> with SingleTickerProviderStateMixin {
 
       if (msg == 'User information updated successfully.') {
         Provider.of<Auth>(context, listen: false).pan_number == pan_number;
+        print('pin: ${pan_number}');
         TOastNotification().showSuccesToast(context, 'KYC details updated');
         if (num == 2) Navigator.of(context).pop();
         Navigator.of(context).pop();
@@ -807,7 +810,7 @@ class _Sheet3State extends State<Sheet3> with SingleTickerProviderStateMixin {
         if (msg == 'User information updated successfully.') {
           Provider.of<Auth>(context, listen: false).bank_name = bank_name;
           TOastNotification()
-              .showSuccesToast(context, 'Payemnt details updated');
+              .showSuccesToast(context, 'Payment details updated');
           Navigator.of(context).pop();
           // prefs.setInt('counter', 4);
         }

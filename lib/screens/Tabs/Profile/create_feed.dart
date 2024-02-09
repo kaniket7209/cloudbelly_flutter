@@ -141,7 +141,10 @@ class CreateFeed {
                               cornerRadius: 15,
                               cornerSmoothing: 1,
                             ),
-                            child: Image.network(imageUrlList[0]),
+                            child: Image.network(
+                              imageUrlList[0],
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       )

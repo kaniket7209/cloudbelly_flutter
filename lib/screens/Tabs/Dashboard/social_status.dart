@@ -55,6 +55,8 @@ class _SocialStatusContentState extends State<SocialStatusContent>
             : Provider.of<Auth>(context, listen: true).bank_name == ''
                 ? 3
                 : 4;
+    print(counter);
+
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
