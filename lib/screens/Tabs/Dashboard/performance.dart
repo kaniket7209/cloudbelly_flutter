@@ -498,7 +498,7 @@ class _PerformanceState extends State<Performance> {
                                           list[index]['_id'],
                                           list[index]['price'],
                                           list[index]['name'],
-                                          value,
+                                          !value,
                                           list[index]['category'],
                                         );
                                       }

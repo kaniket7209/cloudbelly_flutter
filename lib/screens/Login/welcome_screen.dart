@@ -41,12 +41,50 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Your logo or app name here
+            TweenAnimationBuilder(
+              tween: Tween<double>(begin: 0, end: 1),
+              duration: Duration(seconds: 3),
+              builder: (context, double value, child) {
+                return Opacity(
+                  opacity: value,
+                  child: child,
+                );
+              },
+              child: Image.asset(
+                'assets/images/cloudbelly_logo.jpg',
+                width: 200,
+                height: 200,
+                // adjust width and height according to your logo
+              ),
+            ),
+            SizedBox(height: 30),
+            // Animated text to make it more dynamic
+            TweenAnimationBuilder(
+              tween: Tween<double>(begin: 0, end: 1),
+              duration: Duration(seconds: 3),
+              builder: (context, double value, child) {
+                return Opacity(
+                  opacity: value,
+                  child: child,
+                );
+              },
+              child: Text(
+                'Welcome to Cloudbelly',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
             Space(10.h),
-            Text('Welcome Screen'),
-            Space(20.h),
+
             // Text('khkhk'),
             Center(
                 child: _isAvailable

@@ -16,11 +16,13 @@ import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum SampleItem { itemOne }
@@ -388,29 +390,39 @@ class _ProfileState extends State<Profile> {
                                             isActive: true),
                                       ),
                                       TouchableOpacity(
-                                        onTap: () {
+                                        onTap: () async {
                                           //id user id
                                           //url prefix
                                           //pacakge name
 
-                                          //                                 final DynamicLinkParameters parameters = DynamicLinkParameters(
-                                          //     uriPrefix: 'https://kiitdev.page.link',
-                                          //     link: Uri.parse(
-                                          //         'https://kiitdev.page.link/post/?id=${widget.id}&type=Profile'),
-                                          //     androidParameters: AndroidParameters(
-                                          //       packageName: 'com.kiitdev.Kide',
-                                          //     ),
-                                          //     // socialMetaTagParameters: SocialMetaTagParameters(
-                                          //     //     description: widget.subtitle,
-                                          //     //     title: widget.title,
-                                          //     //     imageUrl: Uri.parse(widget.image),),
-                                          //     dynamicLinkParametersOptions: DynamicLinkParametersOptions(
-                                          //         shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short)
-                                          //     // NOT ALL ARE REQUIRED ===== HERE AS AN EXAMPLE =====
-                                          //     );
-                                          // final ShortDynamicLink shortDynamicLink =
+                                          // final DynamicLinkParameters
+                                          //     parameters =
+                                          //     DynamicLinkParameters(
+                                          //   uriPrefix:
+                                          //       'https://api.cloudbelly.in',
+                                          //   link: Uri.parse(
+                                          //       'https://api.cloudbelly.in/post/?id=${widget.id}&type=Profile'),
+                                          //   androidParameters:
+                                          //       AndroidParameters(
+                                          //     packageName: 'com.kiitdev.Kide',
+                                          //   ),
+                                          // socialMetaTagParameters: SocialMetaTagParameters(
+                                          //     description: widget.subtitle,
+                                          //     title: widget.title,
+                                          //     imageUrl: Uri.parse(widget.image),),
+
+                                          // dynamicLinkParametersOptions:
+                                          //     DynamicLinkParametersOptions(
+                                          //         shortDynamicLinkPathLength:
+                                          //             ShortDynamicLinkPathLength
+                                          //                 .short)
+                                          // NOT ALL ARE REQUIRED ===== HERE AS AN EXAMPLE =====
+                                          // );
+                                          // final ShortDynamicLink
+                                          //     shortDynamicLink =
                                           //     await parameters.buildShortLink();
-                                          // final Uri shortUrl = shortDynamicLink.shortUrl;
+                                          // final Uri shortUrl =
+                                          //     shortDynamicLink.shortUrl;
                                           // print(shortUrl);
                                           // Share.share("${shortUrl}");
                                         },

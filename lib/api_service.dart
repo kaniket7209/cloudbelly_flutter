@@ -259,6 +259,7 @@ class Auth with ChangeNotifier {
   Future<String> updateMenuItem(String product_id, String price, String name,
       bool VEG, String category) async {
     final String url = 'https://app.cloudbelly.in/product/update';
+    // print(VEG);
 
     final Map<String, dynamic> requestBody = {
       'user_id': user_id,
