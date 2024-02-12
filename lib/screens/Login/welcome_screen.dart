@@ -24,17 +24,42 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    _getUserData();
+    Future.delayed(Duration(seconds: 5), () {
+      _getUserData();
+    });
     super.initState();
   }
 
   bool _isAvailable = false;
 
   Future<void> _getUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+
     final temp = await Provider.of<Auth>(context, listen: false).tryAutoLogin();
     setState(() {
       _isAvailable = temp;
     });
+
+    if (_isAvailable) {
+      final extractedUserData =
+          json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
+      AppWideLoadingBanner().loadingBanner(context);
+
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .login(extractedUserData['email'], extractedUserData['password']);
+      Navigator.of(context).pop();
+      if (msg == 'Login successful') {
+        TOastNotification().showSuccesToast(context, msg);
+        Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+      } else {
+        if (msg == '-1') msg = "Error!";
+        TOastNotification().showErrorToast(context, msg);
+        Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+      }
+      Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+    } else {
+      Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+    }
     print(_isAvailable);
   }
 
@@ -86,65 +111,61 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             Space(10.h),
 
             // Text('khkhk'),
-            Center(
-                child: _isAvailable
-                    ? GestureDetector(
-                        onTap: () async {
-                          final prefs = await SharedPreferences.getInstance();
-                          final extractedUserData =
-                              json.decode(prefs.getString('userData')!)
-                                  as Map<String, dynamic>;
-                          AppWideLoadingBanner().loadingBanner(context);
 
-                          String msg =
-                              await Provider.of<Auth>(context, listen: false)
-                                  .login(extractedUserData['email'],
-                                      extractedUserData['password']);
-                          Navigator.of(context).pop();
-                          if (msg == 'Login successful') {
-                            TOastNotification().showSuccesToast(context, msg);
-                            Navigator.of(context)
-                                .pushReplacementNamed(Tabs.routeName);
-                          } else {
-                            if (msg == '-1') msg = "Error!";
-                            TOastNotification().showErrorToast(context, msg);
-                            Navigator.of(context)
-                                .pushNamed(LoginScreen.routeName);
-                          }
-                          // Navigator.of(context)
-                          //     .pushNamed(LoginScreen.routeName);
-                          // Navigator.of(context)
-                          //     .pushReplacementNamed(Tabs.routeName);
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Text(
-                            "User deatils found | click to login".toUpperCase(),
-                            style: GoogleFonts.nunito(
-                              fontSize: 15,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(LoginScreen.routeName);
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(
-                            "Login".toUpperCase(),
-                            style: GoogleFonts.nunito(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      )),
+            Center(
+                child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                "Loading.....".toUpperCase(),
+                style: GoogleFonts.nunito(
+                  fontSize: 15,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            )
+
+                // GestureDetector(
+                //     onTap: () async {
+                //       final prefs = await SharedPreferences.getInstance();
+                //       final extractedUserData =
+                //           json.decode(prefs.getString('userData')!)
+                //               as Map<String, dynamic>;
+                //       AppWideLoadingBanner().loadingBanner(context);
+
+                //       String msg =
+                //           await Provider.of<Auth>(context, listen: false)
+                //               .login(extractedUserData['email'],
+                //                   extractedUserData['password']);
+                //       Navigator.of(context).pop();
+                //       if (msg == 'Login successful') {
+                //         TOastNotification().showSuccesToast(context, msg);
+                //         Navigator.of(context)
+                //             .pushReplacementNamed(Tabs.routeName);
+                //       } else {
+                //         if (msg == '-1') msg = "Error!";
+                //         TOastNotification().showErrorToast(context, msg);
+                //         Navigator.of(context)
+                //             .pushNamed(LoginScreen.routeName);
+                //       }
+                //       // Navigator.of(context)
+                //       //     .pushNamed(LoginScreen.routeName);
+                //       // Navigator.of(context)
+                //       //     .pushReplacementNamed(Tabs.routeName);
+                //     },
+                //     child: Padding(
+                //       padding: EdgeInsets.all(20),
+                //       child: Text(
+                //         "User deatils found | click to login".toUpperCase(),
+                //         style: GoogleFonts.nunito(
+                //           fontSize: 15,
+                //           color: Colors.black,
+                //           fontWeight: FontWeight.w600,
+                //         ),
+                //       ),
+                //     ),
+                //   )
+                ),
           ],
         ),
       ),

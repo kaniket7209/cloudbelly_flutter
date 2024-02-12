@@ -42,14 +42,17 @@ class _InventoryState extends State<Inventory> {
   List<dynamic> nearExpiryItems = [];
   List<dynamic> stocksYouMayNeed = [];
   bool _isUpdateLoading = false;
+
+  bool _somethingmissing = false;
   Future<void> _getLowStockData() async {
     lowStockItems = [];
 
     final data =
         await Provider.of<Auth>(context, listen: false).getInventoryData();
-
+    // print(data);
     lowStockItems = findLowStockItems(data['data'][0]['inventory_data']);
-    print(lowStockItems);
+
+    // print(lowStockItems);
     lowStockItems.sort((a, b) {
       int runwayComparison = a['runway'].compareTo(b['runway']);
       if (runwayComparison != 0) {
@@ -100,7 +103,7 @@ class _InventoryState extends State<Inventory> {
     nearExpiryItems = [];
     dynamic data =
         await Provider.of<Auth>(context, listen: false).getInventoryData();
-    print(data);
+    // print(data);
     final int thresholdDays = 3;
     final currentDate = DateTime.now();
     final dateFormat = DateFormat('dd-MM-yyyy');
@@ -139,6 +142,7 @@ class _InventoryState extends State<Inventory> {
     allStocks = [];
     for (var item in inventoryData) {
       if (item['shelf_life'] != null) {
+        print(item);
         double volumeLeft = double.parse(item['VOLUME LEFT']);
         item['runway'] = calculateDaysUntilRunOut(
           item['PURCHASE DATE'],
@@ -152,7 +156,8 @@ class _InventoryState extends State<Inventory> {
         allStocks.add(item);
       }
     }
-
+    print('all');
+    print(allStocks);
     return lowstocks;
   }
 
@@ -390,7 +395,7 @@ class _InventoryState extends State<Inventory> {
           child: FutureBuilder(
             future: _getLowStockData(),
             builder: (context, snapshot) {
-              print(lowStockItems.length == 0);
+              // print(lowStockItems.length == 0);
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(),

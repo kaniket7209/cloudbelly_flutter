@@ -8,11 +8,14 @@ import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:share_plus/share_plus.dart';
 
 enum SampleItem { itemOne }
 
@@ -21,9 +24,11 @@ class PostItem extends StatefulWidget {
     super.key,
     required bool isMultiple,
     required this.data,
+    this.isProfilePost = true,
   }) : _isMultiple = isMultiple;
 
   final bool _isMultiple;
+  bool isProfilePost;
   final data;
 
   @override
@@ -70,26 +75,27 @@ class _PostItemState extends State<PostItem> {
     // String extraText = '';
     double totalWidth = 0;
 
-    for (int i = 0; i < text.length; i++) {
-      final testText = fittedText + text[i];
-      final textPainter = TextPainter(
-        text: TextSpan(text: testText, style: textStyle),
-        maxLines: 1,
-        textDirection: TextDirection.ltr,
-      )..layout(maxWidth: double.infinity);
+    // for (int i = 0; i < text.length; i++) {
+    //   final testText = fittedText + text[i];
+    //   final textPainter = TextPainter(
+    //     text: TextSpan(text: testText, style: textStyle),
+    //     maxLines: 1,
+    //     // textDirection: TextDirection.LTR,
+    //     textDirection: TextDirection.LTR,
+    //   )..layout(maxWidth: double.infinity);
 
-      final textWidth = textPainter.size.width;
-      totalWidth += textWidth;
+    //   final textWidth = textPainter.size.width;
+    //   totalWidth += textWidth;
 
-      if (totalWidth <= screenWidth) {
-        // Text fits within available width
-        fittedText = testText;
-      } else {
-        // Text exceeds available width
-        // extraText = text.substring(i);
-        break;
-      }
-    }
+    //   if (totalWidth <= screenWidth) {
+    //     // Text fits within available width
+    //     fittedText = testText;
+    //   } else {
+    //     // Text exceeds available width
+    //     // extraText = text.substring(i);
+    //     break;
+    //   }
+    // }
     // print(fittedText);
     if (text.length < 50) {
       return [text, ''];
@@ -110,13 +116,41 @@ class _PostItemState extends State<PostItem> {
         .contains(Provider.of<Auth>(context, listen: false).user_id);
   }
 
+  String formatTimeDifference(String timestampString) {
+    // final DateFormat inputFormat = DateFormat('E, dd MMM yyyy HH:mm:ss ' 'GMT');
+    DateFormat format = DateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
+    print(timestampString);
+    DateTime timestamp = format.parse(timestampString);
+    // try {
+    //   timestamp = inputFormat.parse(timestampString);
+    // } catch (e) {
+    //   print('Error parsing timestamp: $e');
+    //   return 'Invalid timestamp';
+    // }
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds} seconds ago';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} minutes ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inDays == 1) {
+      return 'yesterday';
+    } else {
+      return DateFormat('dd MMMM, yyyy').format(timestamp);
+    }
+  }
+
   SampleItem? selectedMenu;
 
   @override
   Widget build(BuildContext context) {
+    // final date_time = formatTimeDifference('created_at');
     CarouselController buttonCarouselController = CarouselController();
     return Container(
-      height: 65.h,
+      height: 67.h,
       margin: EdgeInsets.only(bottom: 3.h),
       padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
       child: Column(
@@ -143,14 +177,18 @@ class _PostItemState extends State<PostItem> {
                     cornerSmoothing: 1,
                   ),
                   child: Image.network(
-                    Provider.of<Auth>(context, listen: false).logo_url,
+                    widget.isProfilePost
+                        ? Provider.of<Auth>(context, listen: false).logo_url
+                        : 'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               Space(isHorizontal: true, 5.w),
               Text(
-                Provider.of<Auth>(context, listen: false).store_name,
+                widget.isProfilePost
+                    ? Provider.of<Auth>(context, listen: false).store_name
+                    : 'Name_here',
                 style: const TextStyle(
                   color: Color(0xFF094B60),
                   fontSize: 14,
@@ -161,6 +199,39 @@ class _PostItemState extends State<PostItem> {
                 ),
               ),
               const Spacer(),
+              if (!widget.isProfilePost)
+                Container(
+                  width: 70,
+                  height: 25,
+                  decoration: ShapeDecoration(
+                    shadows: const [
+                      BoxShadow(
+                        offset: Offset(3, 6),
+                        color: Color.fromRGBO(116, 202, 199, 0.79),
+                        blurRadius: 20,
+                      ),
+                    ],
+                    color: Color.fromRGBO(124, 193, 191, 1),
+                    shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                      cornerRadius: 5,
+                      cornerSmoothing: 1,
+                    )),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Follow',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontFamily: 'Product Sans Medium',
+                        fontWeight: FontWeight.w500,
+                        height: 0.14,
+                        letterSpacing: 0.36,
+                      ),
+                    ),
+                  ),
+                ),
               PopupMenuButton<SampleItem>(
                 // icon: const Icon(Icons.more_horiz),
                 initialValue: selectedMenu,
@@ -299,7 +370,23 @@ class _PostItemState extends State<PostItem> {
                         context, CommentSheetContent(data: widget.data), 70.h);
                   },
                   icon: const Icon(Icons.mode_comment_outlined)),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.share))
+              IconButton(
+                  onPressed: () async {
+                    final DynamicLinkParameters parameters =
+                        DynamicLinkParameters(
+                      uriPrefix: 'https://api.cloudbelly.in',
+                      link: Uri.parse(
+                          'https://api.cloudbelly.in/post/?id=${widget.data['id']}&type=post'),
+                      androidParameters: AndroidParameters(
+                        packageName: 'com.example.cloudbelly_app',
+                      ),
+                    );
+
+                    final Uri shortUrl = parameters.link;
+                    print(shortUrl);
+                    Share.share("${shortUrl}");
+                  },
+                  icon: const Icon(Icons.share))
             ],
           ),
           Space(0.5.h),
@@ -398,6 +485,18 @@ class _PostItemState extends State<PostItem> {
                   letterSpacing: 0.11,
                 ),
               ),
+            ),
+          ),
+          Space(0.3.h),
+          Text(
+            '${formatTimeDifference(widget.data['created_at'])}',
+            style: TextStyle(
+              color: Color(0xFF519796),
+              fontSize: 9,
+              fontFamily: 'Product Sans Medium',
+              fontWeight: FontWeight.w500,
+              height: 0,
+              letterSpacing: 0.09,
             ),
           )
         ],

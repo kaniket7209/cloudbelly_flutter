@@ -638,7 +638,7 @@ class Auth with ChangeNotifier {
         body: jsonEncode(requestBody),
       );
 
-      print(jsonDecode((response.body)));
+      // print(jsonDecode((response.body)));
       return jsonDecode((response.body));
     } catch (error) {
       // Handle exceptions

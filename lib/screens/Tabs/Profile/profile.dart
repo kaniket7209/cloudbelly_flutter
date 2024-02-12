@@ -395,36 +395,35 @@ class _ProfileState extends State<Profile> {
                                           //url prefix
                                           //pacakge name
 
-                                          // final DynamicLinkParameters
-                                          //     parameters =
-                                          //     DynamicLinkParameters(
-                                          //   uriPrefix:
-                                          //       'https://api.cloudbelly.in',
-                                          //   link: Uri.parse(
-                                          //       'https://api.cloudbelly.in/post/?id=${widget.id}&type=Profile'),
-                                          //   androidParameters:
-                                          //       AndroidParameters(
-                                          //     packageName: 'com.kiitdev.Kide',
-                                          //   ),
-                                          // socialMetaTagParameters: SocialMetaTagParameters(
-                                          //     description: widget.subtitle,
-                                          //     title: widget.title,
-                                          //     imageUrl: Uri.parse(widget.image),),
-
-                                          // dynamicLinkParametersOptions:
-                                          //     DynamicLinkParametersOptions(
-                                          //         shortDynamicLinkPathLength:
-                                          //             ShortDynamicLinkPathLength
-                                          //                 .short)
-                                          // NOT ALL ARE REQUIRED ===== HERE AS AN EXAMPLE =====
-                                          // );
+                                          final DynamicLinkParameters
+                                              parameters =
+                                              DynamicLinkParameters(
+                                            uriPrefix:
+                                                'https://api.cloudbelly.in',
+                                            link: Uri.parse(
+                                                'https://api.cloudbelly.in/profile/?id=${Provider.of<Auth>(context, listen: false).user_id}&type=profile'),
+                                            androidParameters:
+                                                AndroidParameters(
+                                              packageName:
+                                                  'com.example.cloudbelly_app',
+                                            ),
+                                            socialMetaTagParameters:
+                                                SocialMetaTagParameters(
+                                              description: 'widget.subtitle',
+                                              title: 'widget.title',
+                                              imageUrl: Uri.parse(
+                                                  Provider.of<Auth>(context,
+                                                          listen: false)
+                                                      .logo_url),
+                                            ),
+                                          );
                                           // final ShortDynamicLink
                                           //     shortDynamicLink =
-                                          //     await parameters.buildShortLink();
-                                          // final Uri shortUrl =
-                                          //     shortDynamicLink.shortUrl;
-                                          // print(shortUrl);
-                                          // Share.share("${shortUrl}");
+                                          //     await parameters.link;
+                                          // buildShortLink();
+                                          final Uri shortUrl = parameters.link;
+                                          print(shortUrl);
+                                          Share.share("${shortUrl}");
                                         },
                                         child: ButtonWidgetHomeScreen(
                                           txt: 'Share profile',
@@ -545,7 +544,7 @@ class _ProfileState extends State<Profile> {
                                             builder: (context, snapshot) {
                                               if (snapshot.connectionState ==
                                                   ConnectionState.done) {
-                                                print(snapshot.data);
+                                                // print(snapshot.data);
                                                 List<dynamic> data = snapshot
                                                     .data as List<dynamic>;
                                                 data = data.reversed.toList();
