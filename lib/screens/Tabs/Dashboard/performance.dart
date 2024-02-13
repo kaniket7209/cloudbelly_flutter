@@ -176,6 +176,10 @@ class _PerformanceState extends State<Performance> {
 
       list.reversed;
     }
+    var uniqueCategories = data.map((e) => e['category']).toSet();
+
+    // Counting the number of unique categories
+    var numberOfCategories = uniqueCategories.length;
 
     return showModalBottomSheet(
       // useSafeArea: true,
@@ -316,9 +320,9 @@ class _PerformanceState extends State<Performance> {
                                 letterSpacing: 0.42,
                               ),
                             ),
-                            const Text(
-                              '7',
-                              style: TextStyle(
+                            Text(
+                              numberOfCategories.toString(),
+                              style: const TextStyle(
                                 color: Color(0xFFFA6E00),
                                 fontSize: 14,
                                 fontFamily: 'Product Sans',
@@ -488,28 +492,31 @@ class _PerformanceState extends State<Performance> {
                                 ),
                                 SizedBox(
                                   width: 15.w,
-                                  child: CupertinoSwitch(
-                                    value: !list[index]['VEG'],
-                                    onChanged: (value) async {
-                                      if (!isUpload) {
-                                        await Provider.of<Auth>(context,
-                                                listen: false)
-                                            .updateMenuItem(
-                                          list[index]['_id'],
-                                          list[index]['price'],
-                                          list[index]['name'],
-                                          !value,
-                                          list[index]['category'],
-                                        );
-                                      }
-                                      setState(() {
-                                        list[index]['VEG'] = !value;
-                                      });
-                                    },
-                                    activeColor:
-                                        const Color.fromRGBO(232, 89, 89, 1),
-                                    trackColor:
-                                        const Color.fromRGBO(77, 171, 75, 1),
+                                  child: Transform.scale(
+                                    scale: 0.9,
+                                    child: CupertinoSwitch(
+                                      value: !list[index]['VEG'],
+                                      onChanged: (value) async {
+                                        if (!isUpload) {
+                                          await Provider.of<Auth>(context,
+                                                  listen: false)
+                                              .updateMenuItem(
+                                            list[index]['_id'],
+                                            list[index]['price'],
+                                            list[index]['name'],
+                                            !value,
+                                            list[index]['category'],
+                                          );
+                                        }
+                                        setState(() {
+                                          list[index]['VEG'] = !value;
+                                        });
+                                      },
+                                      activeColor:
+                                          const Color.fromRGBO(232, 89, 89, 1),
+                                      trackColor:
+                                          const Color.fromRGBO(77, 171, 75, 1),
+                                    ),
                                   ),
                                 ),
                                 const Spacer(),

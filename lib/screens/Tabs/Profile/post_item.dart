@@ -1,6 +1,7 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -45,10 +46,10 @@ class _PostItemState extends State<PostItem> {
   @override
   void didChangeDependencies() {
     if (_didUpdate) {
-      discription = widget.data['caption'];
+      discription = widget.data['caption'] ?? '';
 
       caption1 = getFittedText(discription, context)[0];
-      print(caption1);
+      // print(caption1);
       caption2 = getFittedText(discription, context)[1];
       _getLikeData();
       _didUpdate = false;
@@ -59,21 +60,21 @@ class _PostItemState extends State<PostItem> {
 
   // bool _isExpanded = false;
   List<String> getFittedText(String text, BuildContext context) {
-    text = widget.data['caption'];
-    final screenWidth = MediaQuery.of(context).size.width;
-    final textStyle = const TextStyle(
-      color: Color(0xFF0A4C61),
-      fontSize: 12,
-      fontFamily: 'Product Sans Medium',
-      fontWeight: FontWeight.w500,
-      height: 0,
-      letterSpacing: 0.12,
-    ); // Adjust the font size as needed
+    text = widget.data['caption'] ?? '';
+    // final screenWidth = MediaQuery.of(context).size.width;
+    // const textStyle = TextStyle(
+    //   color: Color(0xFF0A4C61),
+    //   fontSize: 12,
+    //   fontFamily: 'Product Sans Medium',
+    //   fontWeight: FontWeight.w500,
+    //   height: 0,
+    //   letterSpacing: 0.12,
+    // ); // Adjust the font size as needed
 
     // Initialize variables
-    String fittedText = '';
+    // String fittedText = '';
     // String extraText = '';
-    double totalWidth = 0;
+    // double totalWidth = 0;
 
     // for (int i = 0; i < text.length; i++) {
     //   final testText = fittedText + text[i];
@@ -101,7 +102,7 @@ class _PostItemState extends State<PostItem> {
       return [text, ''];
     } else {
       String text1 = text.substring(0, 50);
-      print(text1);
+      // print(text1);
       text1 = text1 + ' - ';
       String text2 = text.length > 50 ? text.substring(50) : '';
 
@@ -119,7 +120,7 @@ class _PostItemState extends State<PostItem> {
   String formatTimeDifference(String timestampString) {
     // final DateFormat inputFormat = DateFormat('E, dd MMM yyyy HH:mm:ss ' 'GMT');
     DateFormat format = DateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
-    print(timestampString);
+    // print(timestampString);
     DateTime timestamp = format.parse(timestampString);
     // try {
     //   timestamp = inputFormat.parse(timestampString);
@@ -158,37 +159,72 @@ class _PostItemState extends State<PostItem> {
         children: [
           Row(
             children: [
-              Container(
-                height: 35,
-                width: 35,
-                decoration: const ShapeDecoration(
-                  shadows: [
-                    BoxShadow(
-                      offset: Offset(0, 4),
-                      color: Color.fromRGBO(31, 111, 109, 0.6),
-                      blurRadius: 20,
-                    )
-                  ],
-                  shape: SmoothRectangleBorder(),
-                ),
-                child: ClipSmoothRect(
-                  radius: SmoothBorderRadius(
-                    cornerRadius: 5,
-                    cornerSmoothing: 1,
-                  ),
-                  child: Image.network(
-                    widget.isProfilePost
-                        ? Provider.of<Auth>(context, listen: false).logo_url
-                        : 'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
+              Provider.of<Auth>(context, listen: false).logo_url == '' ||
+                      widget.data['profile_photo'] == '' ||
+                      widget.data['profile_photo'] == null
+                  ? Container(
+                      height: 35,
+                      width: 35,
+                      decoration: ShapeDecoration(
+                        shadows: const [
+                          BoxShadow(
+                            offset: Offset(0, 4),
+                            color: Color.fromRGBO(31, 111, 109, 0.4),
+                            blurRadius: 20,
+                          ),
+                        ],
+                        color: Color.fromRGBO(31, 111, 109, 0.6),
+                        shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                          cornerRadius: 15,
+                          cornerSmoothing: 1,
+                        )),
+                      ),
+                      child: Center(
+                        child: Text(
+                          widget.isProfilePost
+                              ? Provider.of<Auth>(context, listen: true)
+                                  .store_name[0]
+                                  .toUpperCase()
+                              : widget.data['user_name'][0],
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ))
+                  : Container(
+                      height: 35,
+                      width: 35,
+                      decoration: ShapeDecoration(
+                        shadows: [
+                          const BoxShadow(
+                            offset: Offset(0, 4),
+                            color: Color.fromRGBO(31, 111, 109, 0.6),
+                            blurRadius: 20,
+                          )
+                        ],
+                        shape: SmoothRectangleBorder(),
+                      ),
+                      child: ClipSmoothRect(
+                        radius: SmoothBorderRadius(
+                          cornerRadius: 5,
+                          cornerSmoothing: 1,
+                        ),
+                        child: Image.network(
+                          widget.isProfilePost
+                              ? Provider.of<Auth>(context, listen: false)
+                                  .logo_url
+                              : widget.data['profile_photo'],
+                          fit: BoxFit.cover,
+                          loadingBuilder:
+                              GlobalVariables().loadingBuilderForImage,
+                          errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                        ),
+                      ),
+                    ),
               Space(isHorizontal: true, 5.w),
               Text(
                 widget.isProfilePost
                     ? Provider.of<Auth>(context, listen: false).store_name
-                    : 'Name_here',
+                    : widget.data['user_name'],
                 style: const TextStyle(
                   color: Color(0xFF094B60),
                   fontSize: 14,
@@ -211,14 +247,14 @@ class _PostItemState extends State<PostItem> {
                         blurRadius: 20,
                       ),
                     ],
-                    color: Color.fromRGBO(124, 193, 191, 1),
+                    color: const Color.fromRGBO(124, 193, 191, 1),
                     shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(
                       cornerRadius: 5,
                       cornerSmoothing: 1,
                     )),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'Follow',
                       style: TextStyle(
@@ -232,51 +268,53 @@ class _PostItemState extends State<PostItem> {
                     ),
                   ),
                 ),
-              PopupMenuButton<SampleItem>(
-                // icon: const Icon(Icons.more_horiz),
-                initialValue: selectedMenu,
-                // Callback that sets the selected popup menu item.
-                onSelected: (SampleItem item) async {
-                  AppWideLoadingBanner().loadingBanner(context);
-                  final code = await Provider.of<Auth>(context, listen: false)
-                      .deletePost(widget.data['id']);
+              if (widget.isProfilePost)
+                PopupMenuButton<SampleItem>(
+                  // icon: const Icon(Icons.more_horiz),
+                  initialValue: selectedMenu,
+                  // Callback that sets the selected popup menu item.
+                  onSelected: (SampleItem item) async {
+                    AppWideLoadingBanner().loadingBanner(context);
+                    final code = await Provider.of<Auth>(context, listen: false)
+                        .deletePost(widget.data['id']);
 
-                  if (code == '200') {
-                    TOastNotification()
-                        .showSuccesToast(context, 'Post deleted');
-                    final Data = await Provider.of<Auth>(context, listen: false)
-                        .getFeed() as List<dynamic>;
-                    Navigator.of(context).pop();
+                    if (code == '200') {
+                      TOastNotification()
+                          .showSuccesToast(context, 'Post deleted');
+                      final Data =
+                          await Provider.of<Auth>(context, listen: false)
+                              .getFeed() as List<dynamic>;
+                      Navigator.of(context).pop();
 
-                    Navigator.of(context).pushReplacementNamed(
-                        PostsScreen.routeName,
-                        arguments: {'data': Data, 'index': 0});
-                  } else {
-                    Navigator.of(context).pop();
-                    TOastNotification().showErrorToast(context, 'Error!');
-                  }
+                      Navigator.of(context).pushReplacementNamed(
+                          PostsScreen.routeName,
+                          arguments: {'data': Data, 'index': 0});
+                    } else {
+                      Navigator.of(context).pop();
+                      TOastNotification().showErrorToast(context, 'Error!');
+                    }
 
-                  setState(() {
-                    selectedMenu = item;
-                  });
-                },
-                itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<SampleItem>>[
-                  PopupMenuItem<SampleItem>(
-                    value: SampleItem.itemOne,
-                    child: Row(
-                      children: [
-                        const Icon(Icons.delete),
-                        Space(
-                          3.w,
-                          isHorizontal: true,
-                        ),
-                        const Text('Delete Post'),
-                      ],
+                    setState(() {
+                      selectedMenu = item;
+                    });
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<SampleItem>>[
+                    PopupMenuItem<SampleItem>(
+                      value: SampleItem.itemOne,
+                      child: Row(
+                        children: [
+                          const Icon(Icons.delete),
+                          Space(
+                            3.w,
+                            isHorizontal: true,
+                          ),
+                          const Text('Delete Post'),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              )
+                  ],
+                )
             ],
           ),
           Space(1.5.h),
@@ -306,6 +344,10 @@ class _PostItemState extends State<PostItem> {
                           child: Image.network(
                             widget.data['file_path'],
                             fit: BoxFit.cover,
+                            loadingBuilder:
+                                GlobalVariables().loadingBuilderForImage,
+                            errorBuilder:
+                                GlobalVariables().ErrorBuilderForImage,
                           ),
                         ),
                       ),
@@ -336,6 +378,9 @@ class _PostItemState extends State<PostItem> {
                         child: Image.network(
                           url,
                           fit: BoxFit.cover,
+                          loadingBuilder:
+                              GlobalVariables().loadingBuilderForImage,
+                          errorBuilder: GlobalVariables().ErrorBuilderForImage,
                         ),
                       ),
                     );
@@ -377,13 +422,13 @@ class _PostItemState extends State<PostItem> {
                       uriPrefix: 'https://api.cloudbelly.in',
                       link: Uri.parse(
                           'https://api.cloudbelly.in/post/?id=${widget.data['id']}&type=post'),
-                      androidParameters: AndroidParameters(
+                      androidParameters: const AndroidParameters(
                         packageName: 'com.example.cloudbelly_app',
                       ),
                     );
 
                     final Uri shortUrl = parameters.link;
-                    print(shortUrl);
+                    // print(shortUrl);
                     Share.share("${shortUrl}");
                   },
                   icon: const Icon(Icons.share))
@@ -490,7 +535,7 @@ class _PostItemState extends State<PostItem> {
           Space(0.3.h),
           Text(
             '${formatTimeDifference(widget.data['created_at'])}',
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF519796),
               fontSize: 9,
               fontFamily: 'Product Sans Medium',
@@ -540,7 +585,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
           Container(
             height: 53.h,
             child: (newData['comments'] ?? [] as List<dynamic>).length == 0
-                ? Center(
+                ? const Center(
                     child: Text('No Comments Yet'),
                   )
                 : ListView.builder(

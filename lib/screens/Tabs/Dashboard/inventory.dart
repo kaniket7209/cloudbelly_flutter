@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'dart:async';
 
@@ -28,14 +28,6 @@ class Inventory extends StatefulWidget {
 }
 
 class _InventoryState extends State<Inventory> {
-  void _launchURL(String url) async {
-    Uri googleSheetUrl = Uri.parse(url);
-    if (!await launchUrl(googleSheetUrl, mode: LaunchMode.inAppBrowserView)) {
-      TOastNotification().showErrorToast(context, 'Error while opening Sheet');
-      throw Exception('Could not launch $url');
-    }
-  }
-
   // bool _isSyncLoading = false;
   List<dynamic> lowStockItems = [];
   List<dynamic> allStocks = [];
@@ -44,6 +36,15 @@ class _InventoryState extends State<Inventory> {
   bool _isUpdateLoading = false;
 
   bool _somethingmissing = false;
+
+  void _launchURL(String url) async {
+    Uri googleSheetUrl = Uri.parse(url);
+    if (!await launchUrl(googleSheetUrl, mode: LaunchMode.inAppBrowserView)) {
+      TOastNotification().showErrorToast(context, 'Error while opening Sheet');
+      throw Exception('Could not launch $url');
+    }
+  }
+
   Future<void> _getLowStockData() async {
     lowStockItems = [];
 
@@ -70,15 +71,31 @@ class _InventoryState extends State<Inventory> {
         await Provider.of<Auth>(context, listen: false).getInventoryData();
 
     stocksYouMayNeed = data['data'][0]['inventory_data'];
-
+    _somethingmissing = false;
     List<dynamic> temp = [];
     stocksYouMayNeed.forEach((element) {
-      if (element['shelf_life'] != null) {
+      if (element['shelf_life'] == null ||
+          element['VOLUME LEFT'] == null ||
+          element['PURCHASE DATE'] == null ||
+          element['VOLUME PURCHASED'] == null) {
+        _somethingmissing = true;
+      }
+      // print('object: $_somethingmissing');
+      if (element['shelf_life'] != null &&
+          element['VOLUME LEFT'] != null &&
+          element['PURCHASE DATE'] != null &&
+          element['VOLUME PURCHASED'] != null) {
         element['runway'] = calculateDaysUntilRunOut(element['PURCHASE DATE'],
             int.parse(element['shelf_life']), element['EXP DATE']);
         temp.add(element);
       }
     });
+    print('something');
+    if (_somethingmissing) {
+      print(_somethingmissing);
+      TOastNotification()
+          .showErrorToast(context, 'Some fields are missing in Sheet data');
+    }
     stocksYouMayNeed = temp;
 
     stocksYouMayNeed.sort((a, b) {
@@ -110,7 +127,10 @@ class _InventoryState extends State<Inventory> {
 
     data = data['data'][0]['inventory_data'];
     data.forEach((item) {
-      if (item['shelf_life'] != null) {
+      if (item['shelf_life'] != null &&
+          item['VOLUME LEFT'] != null &&
+          item['PURCHASE DATE'] != null &&
+          item['VOLUME PURCHASED'] != null) {
         var daysUntilExpiry;
         var expiryDate;
         if (item['EXP DATE'] != '-' && item['EXP DATE'].isNotEmpty) {
@@ -141,8 +161,11 @@ class _InventoryState extends State<Inventory> {
     List<dynamic> lowstocks = [];
     allStocks = [];
     for (var item in inventoryData) {
-      if (item['shelf_life'] != null) {
-        print(item);
+      if (item['shelf_life'] != null &&
+          item['VOLUME LEFT'] != null &&
+          item['PURCHASE DATE'] != null &&
+          item['VOLUME PURCHASED'] != null) {
+        // print(item);
         double volumeLeft = double.parse(item['VOLUME LEFT']);
         item['runway'] = calculateDaysUntilRunOut(
           item['PURCHASE DATE'],
@@ -150,14 +173,14 @@ class _InventoryState extends State<Inventory> {
           item['EXP DATE'] ?? '-',
         );
 
-        if (volumeLeft / double.parse(item['VOLUME PURCHASED']) <= 0.3) {
-          lowstocks.add(item);
-        }
+        if (volumeLeft / double.parse(item['VOLUME PURCHASED']) <= 1) {}
+        lowstocks.add(item);
+
         allStocks.add(item);
       }
     }
-    print('all');
-    print(allStocks);
+    // print('all');/
+    // print(allStocks);
     return lowstocks;
   }
 
@@ -563,10 +586,10 @@ class _InventoryState extends State<Inventory> {
                 color: Colors.white,
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                    topLeft: SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                    topRight:
+                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                  ),
                 ),
               ),
               height: MediaQuery.of(context).size.height * 0.9,

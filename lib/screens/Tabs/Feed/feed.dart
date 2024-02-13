@@ -1,4 +1,5 @@
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -58,16 +59,20 @@ class _FeedState extends State<Feed> {
               ),
             ),
             FutureBuilder(
-                future: Provider.of<Auth>(context).getFeed(),
+                future: Provider.of<Auth>(context).getGlobalFeed(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    Center(
+                    return Center(
                       child: CircularProgressIndicator(),
                     );
                   } else {
-                    final data = snapshot.data as List<dynamic>;
+                    List<dynamic> data = snapshot.data as List<dynamic>;
+                    data = data.reversed.toList();
+                    print(data);
                     return Column(
                       children: data.map<Widget>((item) {
+                        if (item['user_id'] ==
+                            Provider.of<Auth>(context).user_id) print(item);
                         bool _isMultiple = item['multiple_files'] != null &&
                             item['multiple_files'].length != 0;
                         return PostItem(
@@ -75,6 +80,7 @@ class _FeedState extends State<Feed> {
                           isMultiple: _isMultiple,
                           data: item,
                         );
+                        // return SizedBox.shrink();
                       }).toList(),
                     );
                   }
@@ -125,6 +131,8 @@ class StoryItemWidget extends StatelessWidget {
                   child: Image.network(
                     url,
                     fit: BoxFit.cover,
+                    loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                    errorBuilder: GlobalVariables().ErrorBuilderForImage,
                   ),
                 ),
               )

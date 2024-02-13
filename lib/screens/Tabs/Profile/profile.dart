@@ -5,6 +5,7 @@ import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/edit_profile.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
@@ -247,142 +248,8 @@ class _ProfileState extends State<Profile> {
                                                       .store_name);
                                           AppWideBottomSheet().showSheet(
                                               context,
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 10),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        const Text(
-                                                          'Edit Profile',
-                                                          style: TextStyle(
-                                                            color: Color(
-                                                                0xFF094B60),
-                                                            fontSize: 26,
-                                                            fontFamily: 'Jost',
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            height: 0.03,
-                                                            letterSpacing: 0.78,
-                                                          ),
-                                                        ),
-                                                        Space(3.h),
-                                                        TextWidgetStoreSetup(
-                                                            label:
-                                                                'Edit Store Name'),
-                                                        Space(1.h),
-                                                        Container(
-                                                          // rgba(165, 200, 199, 1),
-                                                          decoration:
-                                                              const ShapeDecoration(
-                                                            shadows: [
-                                                              BoxShadow(
-                                                                offset: Offset(
-                                                                    0, 4),
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        165,
-                                                                        200,
-                                                                        199,
-                                                                        0.6),
-                                                                blurRadius: 20,
-                                                              )
-                                                            ],
-                                                            color: Colors.white,
-                                                            shape:
-                                                                SmoothRectangleBorder(
-                                                              borderRadius: SmoothBorderRadius
-                                                                  .all(SmoothRadius(
-                                                                      cornerRadius:
-                                                                          10,
-                                                                      cornerSmoothing:
-                                                                          1)),
-                                                            ),
-                                                          ),
-                                                          height: 6.h,
-                                                          child: Center(
-                                                            child: TextField(
-                                                              onSubmitted:
-                                                                  (newvalue) async {
-                                                                AppWideLoadingBanner()
-                                                                    .loadingBanner(
-                                                                        context);
-                                                                final code = await Provider.of<
-                                                                            Auth>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .updateStoreName(
-                                                                        _controller
-                                                                            .text);
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                                if (code ==
-                                                                    '200') {
-                                                                  TOastNotification()
-                                                                      .showSuccesToast(
-                                                                          context,
-                                                                          'Store name updated');
-                                                                  Provider.of<Auth>(
-                                                                              context,
-                                                                              listen:
-                                                                                  false)
-                                                                          .store_name =
-                                                                      _controller
-                                                                          .text;
-                                                                } else {
-                                                                  TOastNotification()
-                                                                      .showErrorToast(
-                                                                          context,
-                                                                          'Error!');
-                                                                }
-                                                              },
-                                                              controller:
-                                                                  _controller,
-                                                              decoration:
-                                                                  const InputDecoration(
-                                                                fillColor:
-                                                                    Colors
-                                                                        .white,
-                                                                contentPadding:
-                                                                    EdgeInsets.only(
-                                                                        left:
-                                                                            14),
-                                                                hintStyle: TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    color: Color(
-                                                                        0xFF0A4C61),
-                                                                    fontFamily:
-                                                                        'Product Sans',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400),
-                                                                border:
-                                                                    InputBorder
-                                                                        .none,
-                                                              ),
-                                                              // onChanged: onChanged,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Space(3.h),
-                                                  AddCoverImageOrLogoSheetContent(
-                                                      isProfile: true,
-                                                      isLogo: true),
-                                                ],
-                                              ),
+                                              EditProfileWidget(
+                                                  controller: _controller),
                                               75.h);
                                         },
                                         child: ButtonWidgetHomeScreen(
@@ -547,6 +414,7 @@ class _ProfileState extends State<Profile> {
                                                 // print(snapshot.data);
                                                 List<dynamic> data = snapshot
                                                     .data as List<dynamic>;
+                                                print(data);
                                                 data = data.reversed.toList();
                                                 return GridView.builder(
                                                   physics:

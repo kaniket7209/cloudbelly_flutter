@@ -88,28 +88,29 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
         location_details != '' &&
         max_order_capacity != '' &&
         profile_photo != 'file size very large') {
-      String msg = await Provider.of<Auth>(context, listen: false).storeSetup1(
-          user_name,
-          pincode,
-          profile_photo,
-          location_details,
-          latitude,
-          longitude,
-          store_name,
-          max_order_capacity);
+      String pinStatus = await Provider.of<Auth>(context, listen: false)
+          .postalCodeCheck(pincode);
+      print('status: $pinStatus');
 
-      if (msg == 'User information updated successfully.') {
-        Provider.of<Auth>(context, listen: false).pincode = pincode;
-        Provider.of<Auth>(context, listen: false).logo_url = profile_photo;
-        // print(Provider.of<Auth>(context, listen: false).pincode);
-        TOastNotification().showSuccesToast(context, 'User Details Updated');
-        Navigator.of(context).pop();
-        SlidingSheet().showAlertDialog(context, 2);
+      if (pinStatus == 'Success') {
+        String msg = await Provider.of<Auth>(context, listen: false)
+            .storeSetup1(user_name, pincode, profile_photo, location_details,
+                latitude, longitude, store_name, max_order_capacity);
 
-        // prefs.setInt('counter', 2);
+        if (msg == 'User information updated successfully.') {
+          Provider.of<Auth>(context, listen: false).pincode = pincode;
+          Provider.of<Auth>(context, listen: false).logo_url = profile_photo;
+          // print(Provider.of<Auth>(context, listen: false).pincode);
+          TOastNotification().showSuccesToast(context, 'User Details Updated');
+          Navigator.of(context).pop();
+          SlidingSheet().showAlertDialog(context, 2);
+
+          // prefs.setInt('counter', 2);
+        }
+      } else {
+        TOastNotification()
+            .showErrorToast(context, 'Entered pin-code is not valid');
       }
-
-      print(msg);
     } else {
       TOastNotification().showErrorToast(context, 'Please fill all fields');
     }

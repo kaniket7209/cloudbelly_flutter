@@ -1,4 +1,5 @@
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
@@ -144,6 +145,10 @@ class CreateFeed {
                             child: Image.network(
                               imageUrlList[0],
                               fit: BoxFit.cover,
+                              loadingBuilder:
+                                  GlobalVariables().loadingBuilderForImage,
+                              errorBuilder:
+                                  GlobalVariables().ErrorBuilderForImage,
                             ),
                           ),
                         ),

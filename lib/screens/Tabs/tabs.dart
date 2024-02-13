@@ -111,6 +111,8 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         ),
         onPressed: () async {
           // awa
+          // await Provider.of<Auth>(context, listen: false)
+          //     .postalCodeCheck('332030');
           AppWideLoadingBanner().loadingBanner(context);
           List<String> url = await Provider.of<Auth>(context, listen: false)
               .pickMultipleImagesAndUpoad();

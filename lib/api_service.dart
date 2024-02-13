@@ -646,6 +646,24 @@ class Auth with ChangeNotifier {
     }
   }
 
+  Future<dynamic> getGlobalFeed() async {
+    final String url = 'https://app.cloudbelly.in/get-posts';
+    final data = '{}';
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: data,
+      );
+
+      // print(jsonDecode((response.body)));
+      return jsonDecode((response.body));
+    } catch (error) {
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
   Future<dynamic> getMenu() async {
     final String url = 'https://app.cloudbelly.in/product/get';
 
@@ -834,6 +852,26 @@ class Auth with ChangeNotifier {
       print(response.statusCode);
 
       return response.statusCode.toString();
+    } catch (error) {
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
+  Future<String> postalCodeCheck(String code) async {
+    final String url = 'https://api.postalpincode.in/pincode/$code';
+
+    // bool _isOK = false;
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        // headers: headers,
+      );
+      // print(response.body);
+      // print((response.body)['Status']);
+
+      return jsonDecode((response.body))[0]['Status'];
     } catch (error) {
       // Handle exceptions
       return '-1';

@@ -98,6 +98,7 @@ class _PostsScreenState extends State<PostsScreen> {
             // Space(400.h),
             Column(
               children: data.map<Widget>((item) {
+                print(item);
                 bool _isMultiple = item['multiple_files'] != null &&
                     item['multiple_files'].length != 0;
                 return PostItem(

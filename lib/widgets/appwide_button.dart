@@ -38,7 +38,8 @@ class AppWideButton extends StatelessWidget {
                 blurRadius: 4,
               )
             ],
-            color: Color.fromRGBO(250, 110, 0, 0.7),
+            // rgba(250, 110, 0, 1)
+            color: Color.fromRGBO(250, 110, 0, 1),
             shape: SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius.all(
                   SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
