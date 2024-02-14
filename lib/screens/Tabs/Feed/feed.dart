@@ -111,8 +111,8 @@ class StoryItemWidget extends StatelessWidget {
       child: Stack(children: [
         url != ''
             ? Container(
-                height: 80,
-                width: 80,
+                height: 60,
+                width: 60,
                 decoration: const ShapeDecoration(
                   shadows: [
                     BoxShadow(
@@ -140,8 +140,8 @@ class StoryItemWidget extends StatelessWidget {
                 padding: EdgeInsets.all(
                   10,
                 ),
-                height: 80,
-                width: 80,
+                height: 60,
+                width: 60,
                 decoration: ShapeDecoration(
                   shadows: const [
                     BoxShadow(

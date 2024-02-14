@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 
 class GlobalVariables {
@@ -127,14 +128,50 @@ class GlobalVariables {
       BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
     if (loadingProgress == null) return child;
     return Center(
-      child: CircularProgressIndicator(
-        value: loadingProgress.expectedTotalBytes != null
-            ? loadingProgress.cumulativeBytesLoaded /
-                loadingProgress.expectedTotalBytes!
-            : null,
+      child: SizedBox(
+        height: 10,
+        width: 10,
+        child: CircularProgressIndicator(
+          value: loadingProgress.expectedTotalBytes != null
+              ? loadingProgress.cumulativeBytesLoaded /
+                  loadingProgress.expectedTotalBytes!
+              : null,
+        ),
       ),
     );
   }
 
+  ShapeDecoration ContainerDecoration(
+      {required Offset offset,
+      required double blurRadius,
+      required Color shadowColor,
+      required Color boxColor,
+      required double cornerRadius}) {
+    return ShapeDecoration(
+      shadows: [
+        BoxShadow(
+          offset: offset,
+          color: shadowColor,
+          blurRadius: blurRadius,
+        ),
+      ],
+      color: boxColor,
+      shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+        cornerRadius: cornerRadius,
+        cornerSmoothing: 1,
+      )),
+    );
+  }
+
+//  decoration: GlobalVariables()
+  // .ContainerDecoration(
+  //     offset: Offset(3, 6),
+  //     blurRadius: 20,
+  //     boxColor: Color.fromRGBO(
+  //         124, 193, 191, 1),
+  //     cornerRadius: 10,
+  //     shadowColor: Color.fromRGBO(
+  //         116, 202, 199, 0.79)),
   GlobalVariables._internal();
 }

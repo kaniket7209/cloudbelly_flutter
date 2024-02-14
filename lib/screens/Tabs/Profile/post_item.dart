@@ -151,7 +151,7 @@ class _PostItemState extends State<PostItem> {
     // final date_time = formatTimeDifference('created_at');
     CarouselController buttonCarouselController = CarouselController();
     return Container(
-      height: 67.h,
+      height: caption1 != '' ? 67.h : 63.h,
       margin: EdgeInsets.only(bottom: 3.h),
       padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
       child: Column(
@@ -160,8 +160,9 @@ class _PostItemState extends State<PostItem> {
           Row(
             children: [
               Provider.of<Auth>(context, listen: false).logo_url == '' ||
-                      widget.data['profile_photo'] == '' ||
-                      widget.data['profile_photo'] == null
+                      ((widget.data['profile_photo'] == '' ||
+                              widget.data['profile_photo'] == null) &&
+                          !widget.isProfilePost)
                   ? Container(
                       height: 35,
                       width: 35,
@@ -176,7 +177,7 @@ class _PostItemState extends State<PostItem> {
                         color: Color.fromRGBO(31, 111, 109, 0.6),
                         shape: SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius(
-                          cornerRadius: 15,
+                          cornerRadius: 5,
                           cornerSmoothing: 1,
                         )),
                       ),
@@ -268,53 +269,296 @@ class _PostItemState extends State<PostItem> {
                     ),
                   ),
                 ),
-              if (widget.isProfilePost)
-                PopupMenuButton<SampleItem>(
-                  // icon: const Icon(Icons.more_horiz),
-                  initialValue: selectedMenu,
-                  // Callback that sets the selected popup menu item.
-                  onSelected: (SampleItem item) async {
-                    AppWideLoadingBanner().loadingBanner(context);
-                    final code = await Provider.of<Auth>(context, listen: false)
-                        .deletePost(widget.data['id']);
+              IconButton(
+                  onPressed: () async {
+                    {
+                      return AppWideBottomSheet().showSheet(
+                          context,
+                          widget.isProfilePost
+                              ? Column(
+                                  children: [
+                                    Space(4.h),
+                                    Row(
+                                      children: [
+                                        Space(
+                                          11.w,
+                                          isHorizontal: true,
+                                        ),
+                                        PostMoreButtonRowWidget(
+                                          icon: Icon(Icons.bookmark),
+                                          text: 'Save',
+                                        ),
+                                        Space(
+                                          12.w,
+                                          isHorizontal: true,
+                                        ),
+                                        PostMoreButtonRowWidget(
+                                          icon: Icon(Icons.qr_code),
+                                          text: 'QR code',
+                                        ),
+                                      ],
+                                    ),
+                                    Space(4.h),
+                                    Row(
+                                      children: [
+                                        Space(
+                                          11.w,
+                                          isHorizontal: true,
+                                        ),
+                                        PostMoreButtonRowWidget(
+                                          icon: Icon(Icons.edit),
+                                          text: 'Edit',
+                                        ),
+                                        Space(
+                                          13.5.w,
+                                          isHorizontal: true,
+                                        ),
+                                        PostMoreButtonRowWidget(
+                                          icon: Icon(Icons.qr_code),
+                                          text: 'View insights',
+                                        ),
+                                      ],
+                                    ),
+                                    Space(4.h),
+                                    PostMoreButtonBigContainerWidget(
+                                      color: Color.fromRGBO(250, 110, 0, 1),
+                                      icon: Icon(Icons.visibility_off),
+                                      text: 'Turn off commenting',
+                                    ),
+                                    Space(3.h),
+                                    PostMoreButtonBigContainerWidget(
+                                      color: Color.fromRGBO(171, 171, 171, 1),
+                                      icon: Icon(Icons.comments_disabled),
+                                      text: 'Hide like counts',
+                                    ),
+                                    Space(5.h),
+                                    TouchableOpacity(
+                                      onTap: () async {
+                                        AppWideLoadingBanner()
+                                            .loadingBanner(context);
+                                        final code = await Provider.of<Auth>(
+                                                context,
+                                                listen: false)
+                                            .deletePost(widget.data['id']);
 
-                    if (code == '200') {
-                      TOastNotification()
-                          .showSuccesToast(context, 'Post deleted');
-                      final Data =
-                          await Provider.of<Auth>(context, listen: false)
-                              .getFeed() as List<dynamic>;
-                      Navigator.of(context).pop();
+                                        if (code == '200') {
+                                          TOastNotification().showSuccesToast(
+                                              context, 'Post deleted');
+                                          final Data = await Provider.of<Auth>(
+                                                  context,
+                                                  listen: false)
+                                              .getFeed() as List<dynamic>;
+                                          Navigator.of(context).pop();
 
-                      Navigator.of(context).pushReplacementNamed(
-                          PostsScreen.routeName,
-                          arguments: {'data': Data, 'index': 0});
-                    } else {
-                      Navigator.of(context).pop();
-                      TOastNotification().showErrorToast(context, 'Error!');
+                                          Navigator.of(context)
+                                              .pushReplacementNamed(
+                                                  PostsScreen.routeName,
+                                                  arguments: {
+                                                'data': Data,
+                                                'index': 0
+                                              });
+                                        } else {
+                                          Navigator.of(context).pop();
+                                          TOastNotification().showErrorToast(
+                                              context, 'Error!');
+                                        }
+                                      },
+                                      child: Container(
+                                        decoration: GlobalVariables()
+                                            .ContainerDecoration(
+                                                offset: Offset(0, 8),
+                                                blurRadius: 20,
+                                                boxColor: Color.fromRGBO(
+                                                    255, 77, 77, 1),
+                                                cornerRadius: 10,
+                                                shadowColor: Color.fromRGBO(
+                                                    152, 202, 201, 0.8)),
+                                        width: double.infinity,
+                                        height: 6.h,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.delete,
+                                              color: Colors.white,
+                                            ),
+                                            Space(
+                                              3.w,
+                                              isHorizontal: true,
+                                            ),
+                                            Text(
+                                              'Delete',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontFamily: 'Product Sans',
+                                                fontWeight: FontWeight.w700,
+                                                height: 0,
+                                                letterSpacing: 0.16,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              : Column(
+                                  children: [
+                                    Space(4.h),
+                                    Row(
+                                      children: [
+                                        Space(
+                                          11.w,
+                                          isHorizontal: true,
+                                        ),
+                                        PostMoreButtonRowWidget(
+                                          icon: Icon(Icons.bookmark),
+                                          text: 'Save',
+                                        ),
+                                        Space(
+                                          12.w,
+                                          isHorizontal: true,
+                                        ),
+                                        PostMoreButtonRowWidget(
+                                          icon: Icon(Icons.qr_code),
+                                          text: 'QR code',
+                                        ),
+                                      ],
+                                    ),
+                                    Space(4.h),
+                                    Row(
+                                      children: [
+                                        Space(
+                                          11.w,
+                                          isHorizontal: true,
+                                        ),
+                                        PostMoreButtonRowWidget(
+                                          icon: Icon(Icons.visibility_off),
+                                          text: 'Hide',
+                                        ),
+                                        Space(
+                                          13.5.w,
+                                          isHorizontal: true,
+                                        ),
+                                        PostMoreButtonRowWidget(
+                                          icon: Icon(Icons.error_outline),
+                                          text: 'Report',
+                                        ),
+                                      ],
+                                    ),
+                                    Space(5.h),
+                                    TouchableOpacity(
+                                      onTap: () async {
+                                        AppWideLoadingBanner()
+                                            .loadingBanner(context);
+                                        final code = await Provider.of<Auth>(
+                                                context,
+                                                listen: false)
+                                            .deletePost(widget.data['id']);
+
+                                        if (code == '200') {
+                                          TOastNotification().showSuccesToast(
+                                              context, 'Post deleted');
+                                          final Data = await Provider.of<Auth>(
+                                                  context,
+                                                  listen: false)
+                                              .getFeed() as List<dynamic>;
+                                          Navigator.of(context).pop();
+
+                                          Navigator.of(context)
+                                              .pushReplacementNamed(
+                                                  PostsScreen.routeName,
+                                                  arguments: {
+                                                'data': Data,
+                                                'index': 0
+                                              });
+                                        } else {
+                                          Navigator.of(context).pop();
+                                          TOastNotification().showErrorToast(
+                                              context, 'Error!');
+                                        }
+                                      },
+                                      child: Container(
+                                          decoration: GlobalVariables()
+                                              .ContainerDecoration(
+                                                  offset: Offset(0, 8),
+                                                  blurRadius: 20,
+                                                  boxColor: Color.fromRGBO(
+                                                      84, 166, 193, 1),
+                                                  cornerRadius: 10,
+                                                  shadowColor: Color.fromRGBO(
+                                                      152, 202, 201, 0.8)),
+                                          width: double.infinity,
+                                          height: 6.h,
+                                          child: Center(
+                                            child: Text(
+                                              'Unfollow',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontFamily: 'Product Sans',
+                                                fontWeight: FontWeight.w700,
+                                                height: 0,
+                                                letterSpacing: 0.16,
+                                              ),
+                                            ),
+                                          )),
+                                    )
+                                  ],
+                                ),
+                          widget.isProfilePost ? 60.h : 40.h);
                     }
-
-                    setState(() {
-                      selectedMenu = item;
-                    });
                   },
-                  itemBuilder: (BuildContext context) =>
-                      <PopupMenuEntry<SampleItem>>[
-                    PopupMenuItem<SampleItem>(
-                      value: SampleItem.itemOne,
-                      child: Row(
-                        children: [
-                          const Icon(Icons.delete),
-                          Space(
-                            3.w,
-                            isHorizontal: true,
-                          ),
-                          const Text('Delete Post'),
-                        ],
-                      ),
-                    ),
-                  ],
-                )
+                  icon: Icon(Icons.more_vert)),
+              // if (widget.isProfilePost)
+              //   PopupMenuButton<SampleItem>(
+              //     // icon: const Icon(Icons.more_horiz),
+              //     initialValue: selectedMenu,
+              //     // Callback that sets the selected popup menu item.
+              //     onSelected: (SampleItem item) async {
+              //       AppWideLoadingBanner().loadingBanner(context);
+              //       final code = await Provider.of<Auth>(context, listen: false)
+              //           .deletePost(widget.data['id']);
+
+              //       if (code == '200') {
+              //         TOastNotification()
+              //             .showSuccesToast(context, 'Post deleted');
+              //         final Data =
+              //             await Provider.of<Auth>(context, listen: false)
+              //                 .getFeed() as List<dynamic>;
+              //         Navigator.of(context).pop();
+
+              //         Navigator.of(context).pushReplacementNamed(
+              //             PostsScreen.routeName,
+              //             arguments: {'data': Data, 'index': 0});
+              //       } else {
+              //         Navigator.of(context).pop();
+              //         TOastNotification().showErrorToast(context, 'Error!');
+              //       }
+
+              //       setState(() {
+              //         selectedMenu = item;
+              //       });
+              //     },
+              //     itemBuilder: (BuildContext context) =>
+              //         <PopupMenuEntry<SampleItem>>[
+              //       PopupMenuItem<SampleItem>(
+              //         value: SampleItem.itemOne,
+              //         child: Row(
+              //           children: [
+              //             const Icon(Icons.delete),
+              //             Space(
+              //               3.w,
+              //               isHorizontal: true,
+              //             ),
+              //             const Text('Delete Post'),
+              //           ],
+              //         ),
+              //       ),
+              //     ],
+              //   )
             ],
           ),
           Space(1.5.h),
@@ -462,53 +706,60 @@ class _PostItemState extends State<PostItem> {
               )
             ],
           ),
-          Space(1.h),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                Provider.of<Auth>(context, listen: false).store_name,
-                style: const TextStyle(
-                  color: Color(0xFFFA6E00),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans',
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.36,
+          if (caption1 != '')
+            Column(
+              children: [
+                Space(1.h),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      widget.isProfilePost
+                          ? Provider.of<Auth>(context, listen: false).store_name
+                          : widget.data['user_name'],
+                      style: const TextStyle(
+                        color: Color(0xFFFA6E00),
+                        fontSize: 12,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.36,
+                      ),
+                    ),
+                    Space(isHorizontal: true, 3.w),
+                    Expanded(
+                      child: SizedBox(
+                        child: Text(
+                          caption1,
+                          overflow: TextOverflow.clip,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            color: Color(0xFF0A4C61),
+                            fontSize: 12,
+                            fontFamily: 'Product Sans Medium',
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.12,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-              ),
-              Space(isHorizontal: true, 3.w),
-              Expanded(
-                child: SizedBox(
-                  child: Text(
-                    caption1,
-                    overflow: TextOverflow.clip,
-                    maxLines: 1,
-                    style: const TextStyle(
-                      color: Color(0xFF0A4C61),
-                      fontSize: 12,
-                      fontFamily: 'Product Sans Medium',
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.12,
+                if (caption2.length > 0)
+                  SizedBox(
+                    height: 1.4.h,
+                    child: Text(
+                      caption2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFF0A4C61),
+                        fontSize: 12,
+                        fontFamily: 'Product Sans Medium',
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.12,
+                      ),
                     ),
                   ),
-                ),
-              )
-            ],
-          ),
-          if (caption2.length > 0)
-            SizedBox(
-              height: 1.4.h,
-              child: Text(
-                caption2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Color(0xFF0A4C61),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans Medium',
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.12,
-                ),
-              ),
+              ],
             ),
           TouchableOpacity(
             onTap: () {
@@ -546,6 +797,112 @@ class _PostItemState extends State<PostItem> {
           )
         ],
       ),
+    );
+  }
+}
+
+class PostMoreButtonBigContainerWidget extends StatelessWidget {
+  String text;
+  Color color;
+  Icon icon;
+  PostMoreButtonBigContainerWidget(
+      {super.key, required this.color, required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: GlobalVariables().ContainerDecoration(
+        offset: Offset(0, 4),
+        blurRadius: 20,
+        boxColor: Colors.white,
+        cornerRadius: 10,
+        shadowColor: Color.fromRGBO(165, 200, 199, 0.6),
+      ),
+      width: double.infinity,
+      height: 6.h,
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+        icon,
+        Text(
+          text,
+          style: TextStyle(
+            color: Color(0xFF094B60),
+            fontSize: 14,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.w700,
+            height: 0.08,
+            letterSpacing: 0.42,
+          ),
+        ),
+        Container(
+          height: 40,
+          width: 40,
+          decoration: ShapeDecoration(
+            color: color,
+            // color: const Color.fromRGBO(250, 110, 0, 1),
+            shadows: const [
+              BoxShadow(
+                offset: Offset(0, 4),
+                color: Color.fromRGBO(31, 111, 109, 0.3),
+                blurRadius: 20,
+              )
+            ],
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 10,
+                cornerSmoothing: 1,
+              ),
+            ),
+          ),
+          child: const Icon(
+            Icons.done,
+            color: Colors.white,
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+class PostMoreButtonRowWidget extends StatelessWidget {
+  Icon icon;
+  String text;
+  PostMoreButtonRowWidget({
+    super.key,
+    required this.icon,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+            height: 45,
+            width: 45,
+            decoration: GlobalVariables().ContainerDecoration(
+              offset: Offset(0, 4),
+              blurRadius: 20,
+              boxColor: Color.fromRGBO(200, 233, 233, 1),
+              cornerRadius: 10,
+              shadowColor: Color.fromRGBO(124, 193, 191, 0.3),
+            ),
+            child: icon),
+        Space(
+          5.w,
+          isHorizontal: true,
+        ),
+        Text(
+          text,
+          style: TextStyle(
+            color: Color(0xFF094B60),
+            fontSize: 14,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.w700,
+            height: 0.08,
+            letterSpacing: 0.42,
+          ),
+        )
+      ],
     );
   }
 }
