@@ -56,6 +56,10 @@ dependencies:
   provider: ^6.1.1
   firebase_dynamic_links: ^5.4.13
   share_plus: ^7.2.2
+  jose: ^0.3.4
+  webview_flutter: ^4.7.0
+  jwt_decoder: ^2.0.1
+  dart_jsonwebtoken: ^2.13.0
   # multiple_images_picker: ^1.0.1
 
 dev_dependencies:

@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/performance.dart';
@@ -282,6 +283,8 @@ class StoreNameAndLogoWidget extends StatelessWidget {
                   child: Image.network(
                     Provider.of<Auth>(context, listen: true).logo_url,
                     fit: BoxFit.cover,
+                    loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                    errorBuilder: GlobalVariables().ErrorBuilderForImage,
                   ),
                 ),
               )

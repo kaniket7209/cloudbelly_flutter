@@ -15,64 +15,151 @@ class Feed extends StatefulWidget {
 }
 
 class _FeedState extends State<Feed> {
+  final ScrollController _scrollController = ScrollController();
+
+  List<dynamic> FeedList = [];
+
+  bool _isLoading = false;
+
+  Future<void> _refreshFeed() async {
+    setState(() {
+      // _isLoading = true;
+      _pageNumber = 1;
+    });
+    await Provider.of<Auth>(context, listen: false)
+        .getGlobalFeed()
+        .then((newFeed) {
+      setState(() {
+        print('object');
+        FeedList.clear();
+        // print(FeedList);
+        // print(newFeed);
+        FeedList.addAll(newFeed);
+        FeedList = FeedList.reversed.toList();
+        print(FeedList);
+        _isLoading = false;
+      });
+    });
+  }
+
+  bool _isLoadingMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _fetchFeed();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      // _fetchMoreFeed();
+    }
+  }
+
+  Future<void> _fetchFeed() async {
+    setState(() {
+      _isLoading = true;
+      _pageNumber = 1;
+    });
+
+    await Provider.of<Auth>(context, listen: false)
+        .getGlobalFeed()
+        .then((newFeed) {
+      setState(() {
+        FeedList.addAll(newFeed);
+        FeedList = FeedList.reversed.toList();
+
+        _isLoading = false;
+      });
+    });
+  }
+
+  Future<void> _fetchMoreFeed() async {
+    if (!_isLoadingMore) {
+      setState(() {
+        _isLoadingMore = true;
+      });
+      _pageNumber++;
+      // await Provider.of<Feed>(context, listen: false)
+      //     .fetchAndGetProduct(context, _pageNumber)
+      //     .then((newFeeds) {
+      //   setState(() {
+      //     FeedList.addAll(newFeeds);
+      //     _isLoadingMore = false;
+      //   });
+      // });
+    }
+  }
+
+  int _pageNumber = 1;
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Space(10.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: Text(
-                'Cloudbelly',
-                style: TextStyle(
-                  color: Color(0xFF094B60),
-                  fontSize: 24,
-                  fontFamily: 'Jost',
-                  fontWeight: FontWeight.w500,
-                  height: 0.04,
+    // FeedList = FeedList.reversed.toList();
+    return RefreshIndicator(
+      onRefresh: _refreshFeed,
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+
+        // primary: true, // Ensure vertical scroll works
+        controller: _scrollController,
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Space(10.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child: Text(
+                  'Cloudbelly',
+                  style: TextStyle(
+                    color: Color(0xFF094B60),
+                    fontSize: 24,
+                    fontFamily: 'Jost',
+                    fontWeight: FontWeight.w500,
+                    height: 0.04,
+                  ),
                 ),
               ),
-            ),
-            Space(2.h),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 4.w),
-                child: Row(
-                  children: [
-                    StoryItemWidget(
-                      url: Provider.of<Auth>(context, listen: true).logo_url,
-                      name: Provider.of<Auth>(context, listen: true).store_name,
-                      isYours: true,
-                    ),
-                    for (int index = 0; index < 10; index++)
+              Space(2.h),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 4.w),
+                  child: Row(
+                    children: [
                       StoryItemWidget(
-                        url:
-                            'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
-                        name: 'Raj',
+                        url: Provider.of<Auth>(context, listen: true).logo_url,
+                        name:
+                            Provider.of<Auth>(context, listen: true).store_name,
+                        isYours: true,
                       ),
-                  ],
+                      for (int index = 0; index < 10; index++)
+                        StoryItemWidget(
+                          url:
+                              'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
+                          name: 'Raj',
+                        ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            FutureBuilder(
-                future: Provider.of<Auth>(context).getGlobalFeed(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
+              _isLoading == true
+                  ? Center(
                       child: CircularProgressIndicator(),
-                    );
-                  } else {
-                    List<dynamic> data = snapshot.data as List<dynamic>;
-                    data = data.reversed.toList();
-                    print(data);
-                    return Column(
-                      children: data.map<Widget>((item) {
-                        if (item['user_id'] ==
-                            Provider.of<Auth>(context).user_id) print(item);
+                    )
+                  : Column(
+                      children: FeedList.map<Widget>((item) {
+                        // if (item['user_id'] ==
+                        //     Provider.of<Auth>(context).user_id) print(item);
                         bool _isMultiple = item['multiple_files'] != null &&
                             item['multiple_files'].length != 0;
                         return PostItem(
@@ -82,11 +169,21 @@ class _FeedState extends State<Feed> {
                         );
                         // return SizedBox.shrink();
                       }).toList(),
-                    );
-                  }
-                  return SizedBox.shrink();
-                })
-          ],
+                    ),
+              _isLoadingMore == true
+                  ? const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        Space(isHorizontal: true, 7),
+                        Text('Loading more feed...')
+                      ],
+                    )
+                  : SizedBox(height: 0, width: 0)
+            ],
+          ),
         ),
       ),
     );

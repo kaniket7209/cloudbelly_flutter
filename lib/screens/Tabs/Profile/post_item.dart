@@ -644,8 +644,11 @@ class _PostItemState extends State<PostItem> {
             children: [
               IconButton(
                   onPressed: () async {
-                    await Provider.of<Auth>(context, listen: false)
-                        .likePost(widget.data['id']);
+                    // await Provider.of<Auth>(context, listen: false).likePost(
+                    //     widget.data['id'],
+                    //     widget.isProfilePost
+                    //         ? Provider.of<Auth>(context).user_id
+                    //         : widget.data['user_id']);
                     setState(() {
                       _isLiked = !_isLiked;
                     });
@@ -656,7 +659,12 @@ class _PostItemState extends State<PostItem> {
               IconButton(
                   onPressed: () {
                     AppWideBottomSheet().showSheet(
-                        context, CommentSheetContent(data: widget.data), 70.h);
+                        context,
+                        CommentSheetContent(
+                          data: widget.data,
+                          isProfilePost: widget.isProfilePost,
+                        ),
+                        70.h);
                   },
                   icon: const Icon(Icons.mode_comment_outlined)),
               IconButton(
@@ -764,7 +772,12 @@ class _PostItemState extends State<PostItem> {
           TouchableOpacity(
             onTap: () {
               AppWideBottomSheet().showSheet(
-                  context, CommentSheetContent(data: widget.data), 70.h);
+                  context,
+                  CommentSheetContent(
+                    data: widget.data,
+                    isProfilePost: widget.isProfilePost,
+                  ),
+                  70.h);
             },
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -908,9 +921,11 @@ class PostMoreButtonRowWidget extends StatelessWidget {
 }
 
 class CommentSheetContent extends StatefulWidget {
-  const CommentSheetContent({super.key, required this.data});
+  const CommentSheetContent(
+      {super.key, required this.data, required this.isProfilePost});
 
   final data;
+  final isProfilePost;
 
   @override
   State<CommentSheetContent> createState() => _CommentSheetContentState();
@@ -1013,7 +1028,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                         fillColor: Colors.white,
                         contentPadding: const EdgeInsets.only(left: 14),
                         hintText:
-                            ' Type your comment here for ${Provider.of<Auth>(context, listen: false).store_name}...',
+                            ' Type your comment here for ${widget.isProfilePost ? Provider.of<Auth>(context, listen: false).store_name : widget.data['user_name']}...',
                         hintStyle: const TextStyle(
                           color: Color(0xFF519796),
                           fontSize: 12,

@@ -1,5 +1,6 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Login/map.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
 // import 'package:cloudbelly_app/screens/Login/signup.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory_hub.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
               Tabs.routeName: (context) => Tabs(),
               InventoryHub.routeName: (context) => InventoryHub(),
               PostsScreen.routeName: (context) => PostsScreen(),
+              GraphsScreen.routeName: (context) => GraphsScreen(),
             },
           ),
         ),

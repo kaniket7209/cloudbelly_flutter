@@ -1,22 +1,29 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:jose/jose.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
+import 'package:crypto/crypto.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class Inventory extends StatefulWidget {
   const Inventory({
@@ -34,8 +41,66 @@ class _InventoryState extends State<Inventory> {
   List<dynamic> nearExpiryItems = [];
   List<dynamic> stocksYouMayNeed = [];
   bool _isUpdateLoading = false;
-
   bool _somethingmissing = false;
+
+  String iframeUrl = "";
+  var _iframeController;
+
+  @override
+  void initState() {
+    String temp = _generateTokenAndLaunchDashboard();
+    _setWebviewController(temp);
+    // TODO: implement initState
+    super.initState();
+  }
+
+  void _setWebviewController(String url) {
+    _iframeController = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // Update loading bar.
+          },
+          onPageStarted: (String url) {},
+          onPageFinished: (String url) {},
+          onWebResourceError: (WebResourceError error) {},
+          onNavigationRequest: (NavigationRequest request) {
+            if (request.url.startsWith('https://www.youtube.com/')) {
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(url));
+  }
+
+  String _generateTokenAndLaunchDashboard() {
+    final String METABASE_SITE_URL = "https://metabase.cloudbelly.in";
+    final String METABASE_SECRET_KEY =
+        "efdd99d7d0b5d40cac89a83bf3a9c0ada50377c09b586d3aceb71078c1234b43";
+
+    final payload = JWT({
+      "resource": {"dashboard": 8},
+      "params": {
+        'email': Provider.of<Auth>(context, listen: false).user_email,
+        'item_id': '1',
+      },
+      // "exp": (DateTime.now().millisecondsSinceEpoch ~/ 1000) +
+      //     (10 * 60) // 10 minute expiration
+    });
+
+    String token = payload.sign(SecretKey(METABASE_SECRET_KEY));
+
+    String iframeUrl =
+        '$METABASE_SITE_URL/embed/dashboard/$token#bordered=true&titled=false';
+
+    print('iframe: $iframeUrl');
+
+    return iframeUrl;
+  }
 
   void _launchURL(String url) async {
     Uri googleSheetUrl = Uri.parse(url);
@@ -90,7 +155,7 @@ class _InventoryState extends State<Inventory> {
         temp.add(element);
       }
     });
-    print('something');
+    // print('something');
     if (_somethingmissing) {
       print(_somethingmissing);
       TOastNotification()
@@ -114,6 +179,7 @@ class _InventoryState extends State<Inventory> {
         return a['VOLUME LEFT'].compareTo(b['VOLUME LEFT']);
       }
     });
+    print('all: $allStocks');
   }
 
   Future<void> _getNearExpiryStocks() async {
@@ -204,9 +270,12 @@ class _InventoryState extends State<Inventory> {
 
   @override
   Widget build(BuildContext context) {
+    // print('iframeUrl: $iframeUrl');
+    // print(_iframeController);/
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Space(5.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -261,6 +330,24 @@ class _InventoryState extends State<Inventory> {
           ],
         ),
         Space(3.h),
+        Center(
+          child: Make_Update_ListWidget(
+            txt: 'KPI',
+            onTap: () async {
+              if (allStocks.length == 0) {
+                TOastNotification()
+                    .showErrorToast(context, 'No Item in inventory for KIP');
+              } else {
+                Navigator.of(context)
+                    .pushNamed(GraphsScreen.routeName, arguments: {
+                  'items': allStocks,
+                });
+              }
+            },
+          ),
+        ),
+        Space(3.h),
+
         Row(
           children: [
             const BoldTextWidgetHomeScreen(
@@ -567,7 +654,8 @@ class _InventoryState extends State<Inventory> {
                 }
               }
             }),
-        Space(2.h),
+
+        Space(3.h),
       ],
     );
   }

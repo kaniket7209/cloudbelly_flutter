@@ -1,4 +1,5 @@
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -59,6 +60,8 @@ class _AppwideBannerState extends State<AppwideBanner>
                   child: Image.network(
                     Provider.of<Auth>(context, listen: true).cover_image,
                     fit: BoxFit.cover,
+                    loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                    errorBuilder: GlobalVariables().ErrorBuilderForImage,
                   ),
                 ),
               ),

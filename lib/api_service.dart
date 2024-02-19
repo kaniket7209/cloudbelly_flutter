@@ -807,15 +807,17 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<String> likePost(String id) async {
+  Future<String> likePost(String id, String userId) async {
     final String url = 'https://app.cloudbelly.in/update-posts';
 
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
-      "user_id": user_id,
+      "user_id": userId,
       'post_id': id,
       'like_user_id': user_id,
     };
+
+    // print(requestBody);
 
     try {
       final response = await http.post(

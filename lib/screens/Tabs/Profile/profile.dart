@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, prefer_is_empty, use_build_context_synchronously, curly_braces_in_flow_control_structures
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
@@ -529,6 +530,8 @@ class FeedWidget extends StatelessWidget {
                 child: Image.network(
                   data['file_path'],
                   fit: BoxFit.cover,
+                  loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                  errorBuilder: GlobalVariables().ErrorBuilderForImage,
                 ),
               ),
             ),
