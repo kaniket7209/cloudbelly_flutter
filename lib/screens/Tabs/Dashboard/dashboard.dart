@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:convert';
+
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 
@@ -7,6 +9,7 @@ import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/performance.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
+import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -18,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
@@ -30,220 +34,243 @@ class _DashBoardState extends State<DashBoard>
     with SingleTickerProviderStateMixin {
   int _activeButtonIndex = 1;
 
-  int delo() {
-    return 1;
+  Future<void> _refreshFeed() async {
+    bool _isAvailable = false;
+    final prefs = await SharedPreferences.getInstance();
+
+    final temp = await Provider.of<Auth>(context, listen: false).tryAutoLogin();
+    setState(() {
+      _isAvailable = temp;
+    });
+
+    if (_isAvailable) {
+      final extractedUserData =
+          json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
+
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .login(extractedUserData['email'], extractedUserData['password']);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        constraints: const BoxConstraints(
-          maxWidth: 800, // Set your maximum width here
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                AppwideBanner(),
-                Column(
-                  children: [
-                    Space(10.h),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: 800, // Set the maximum width to 800
-                      ),
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5.w),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomIconButton(
-                              ic: Icons.notifications,
-                              onTap: () {
-                                print(Provider.of<Auth>(context, listen: false)
-                                    .user_id);
-                              },
-                            ),
-                            StoreNameAndLogoWidget(),
-                            CustomIconButton(
-                              ic: Icons.more_horiz,
-                              onTap: () {},
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: ConstrainedBox(
+    return RefreshIndicator(
+      onRefresh: _refreshFeed,
+      child: SingleChildScrollView(
+        child: Container(
+          constraints: const BoxConstraints(
+            maxWidth: 800, // Set your maximum width here
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  AppwideBanner(),
+                  Column(
+                    children: [
+                      Space(10.h),
+                      ConstrainedBox(
                         constraints: const BoxConstraints(
-                          maxWidth: 420, // Set the maximum width to 420
+                          maxWidth: 800, // Set the maximum width to 800
                         ),
                         child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 3.w),
-                          child: Column(
+                          margin: EdgeInsets.symmetric(horizontal: 5.w),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Space(3.h),
-                              Center(
-                                child: Container(
-                                  height: 20.h,
-                                  decoration: ShapeDecoration(
-                                    shadows: const [
-                                      BoxShadow(
-                                        offset: Offset(0, 4),
-                                        color:
-                                            Color.fromRGBO(165, 200, 199, 0.6),
-                                        blurRadius: 25,
-                                      )
-                                    ],
-                                    color: Colors.white,
-                                    shape: SmoothRectangleBorder(
-                                      borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 10,
-                                        cornerSmoothing: 1,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Space(3.h),
-                                      // Adjusted the width of buttons based on screen width
-                                      _activeButtonIndex == 1
-                                          ? Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                ColumnWidgetHomeScreen(
-                                                  data: Provider.of<Auth>(
-                                                          context,
-                                                          listen: false)
-                                                      .rating,
-                                                  txt: 'Rating',
-                                                ),
-                                                ColumnWidgetHomeScreen(
-                                                  data: (Provider.of<Auth>(
-                                                              context,
-                                                              listen: false)
-                                                          .followers)
-                                                      .length
-                                                      .toString(),
-                                                  txt: 'Followers',
-                                                ),
-                                                ColumnWidgetHomeScreen(
-                                                  data: (Provider.of<Auth>(
-                                                              context,
-                                                              listen: false)
-                                                          .followings)
-                                                      .length
-                                                      .toString(),
-                                                  txt: 'Following',
-                                                )
-                                              ],
-                                            )
-                                          : _activeButtonIndex == 2
-                                              ? Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    ColumnWidgetHomeScreen(
-                                                      data: '-',
-                                                      txt: 'Stock health',
-                                                    ),
-                                                    ColumnWidgetHomeScreen(
-                                                      data: '-',
-                                                      txt: 'Waste %age',
-                                                    ),
-                                                    ColumnWidgetHomeScreen(
-                                                      data: '-',
-                                                      txt: 'Avg turnaround',
-                                                    )
-                                                  ],
-                                                )
-                                              : Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    ColumnWidgetHomeScreen(
-                                                      data: '-',
-                                                      txt: 'Total Customers',
-                                                    ),
-                                                    ColumnWidgetHomeScreen(
-                                                      data: '-',
-                                                      txt: 'Total orders',
-                                                    ),
-                                                    ColumnWidgetHomeScreen(
-                                                      data: '-',
-                                                      txt: 'Repeat Customers',
-                                                    )
-                                                  ],
-                                                ),
-
-                                      Space(3.h),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          TouchableOpacity(
-                                            onTap: () {
-                                              setState(() {
-                                                _activeButtonIndex = 1;
-                                              });
-                                            },
-                                            child: ButtonWidgetHomeScreen(
-                                              width: 27.w,
-                                              txt: 'Social Status',
-                                              isActive: _activeButtonIndex == 1,
-                                            ),
-                                          ),
-                                          TouchableOpacity(
-                                            onTap: () {
-                                              setState(() {
-                                                _activeButtonIndex = 2;
-                                              });
-                                            },
-                                            child: ButtonWidgetHomeScreen(
-                                              width: 27.w,
-                                              txt: 'Inventory',
-                                              isActive: _activeButtonIndex == 2,
-                                            ),
-                                          ),
-                                          TouchableOpacity(
-                                            onTap: () {
-                                              setState(() {
-                                                _activeButtonIndex = 3;
-                                              });
-                                            },
-                                            child: ButtonWidgetHomeScreen(
-                                              width: 28.w,
-                                              txt: 'Performance',
-                                              isActive: _activeButtonIndex == 3,
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
+                              CustomIconButton(
+                                ic: Icons.notifications,
+                                onTap: () {
+                                  print(
+                                      Provider.of<Auth>(context, listen: false)
+                                          .user_id);
+                                },
                               ),
-                              Space(3.h),
-                              if (_activeButtonIndex == 1)
-                                SocialStatusContent(),
-                              if (_activeButtonIndex == 2) const Inventory(),
-                              if (_activeButtonIndex == 3) const Performance(),
+                              StoreNameAndLogoWidget(),
+                              CustomIconButton(
+                                ic: Icons.more_horiz,
+                                onTap: () {},
+                              ),
                             ],
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ],
+                      Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxWidth: 420, // Set the maximum width to 420
+                          ),
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 3.w),
+                            child: Column(
+                              children: [
+                                Space(3.h),
+                                Center(
+                                  child: Container(
+                                    height: 20.h,
+                                    decoration: ShapeDecoration(
+                                      shadows: const [
+                                        BoxShadow(
+                                          offset: Offset(0, 4),
+                                          color: Color.fromRGBO(
+                                              165, 200, 199, 0.6),
+                                          blurRadius: 25,
+                                        )
+                                      ],
+                                      color: Colors.white,
+                                      shape: SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius(
+                                          cornerRadius: 10,
+                                          cornerSmoothing: 1,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Space(3.h),
+                                        // Adjusted the width of buttons based on screen width
+                                        _activeButtonIndex == 1
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  ColumnWidgetHomeScreen(
+                                                    data: Provider.of<Auth>(
+                                                            context,
+                                                            listen: false)
+                                                        .rating,
+                                                    txt: 'Rating',
+                                                  ),
+                                                  ColumnWidgetHomeScreen(
+                                                    data: (Provider.of<Auth>(
+                                                                context,
+                                                                listen: false)
+                                                            .followers)
+                                                        .length
+                                                        .toString(),
+                                                    txt: 'Followers',
+                                                  ),
+                                                  ColumnWidgetHomeScreen(
+                                                    data: (Provider.of<Auth>(
+                                                                context,
+                                                                listen: false)
+                                                            .followings)
+                                                        .length
+                                                        .toString(),
+                                                    txt: 'Following',
+                                                  )
+                                                ],
+                                              )
+                                            : _activeButtonIndex == 2
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    children: [
+                                                      ColumnWidgetHomeScreen(
+                                                        data: '-',
+                                                        txt: 'Stock health',
+                                                      ),
+                                                      ColumnWidgetHomeScreen(
+                                                        data: '-',
+                                                        txt: 'Waste %age',
+                                                      ),
+                                                      ColumnWidgetHomeScreen(
+                                                        data: '-',
+                                                        txt: 'Avg turnaround',
+                                                      )
+                                                    ],
+                                                  )
+                                                : Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    children: [
+                                                      ColumnWidgetHomeScreen(
+                                                        data: '-',
+                                                        txt: 'Total Customers',
+                                                      ),
+                                                      ColumnWidgetHomeScreen(
+                                                        data: '-',
+                                                        txt: 'Total orders',
+                                                      ),
+                                                      ColumnWidgetHomeScreen(
+                                                        data: '-',
+                                                        txt: 'Repeat Customers',
+                                                      )
+                                                    ],
+                                                  ),
+
+                                        Space(3.h),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            TouchableOpacity(
+                                              onTap: () {
+                                                setState(() {
+                                                  _activeButtonIndex = 1;
+                                                });
+                                              },
+                                              child: ButtonWidgetHomeScreen(
+                                                width: 27.w,
+                                                txt: 'Social Status',
+                                                isActive:
+                                                    _activeButtonIndex == 1,
+                                              ),
+                                            ),
+                                            TouchableOpacity(
+                                              onTap: () {
+                                                setState(() {
+                                                  _activeButtonIndex = 2;
+                                                });
+                                              },
+                                              child: ButtonWidgetHomeScreen(
+                                                width: 27.w,
+                                                txt: 'Inventory',
+                                                isActive:
+                                                    _activeButtonIndex == 2,
+                                              ),
+                                            ),
+                                            TouchableOpacity(
+                                              onTap: () {
+                                                setState(() {
+                                                  _activeButtonIndex = 3;
+                                                });
+                                              },
+                                              child: ButtonWidgetHomeScreen(
+                                                width: 28.w,
+                                                txt: 'Performance',
+                                                isActive:
+                                                    _activeButtonIndex == 3,
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Space(3.h),
+                                if (_activeButtonIndex == 1)
+                                  SocialStatusContent(),
+                                if (_activeButtonIndex == 2) const Inventory(),
+                                if (_activeButtonIndex == 3)
+                                  const Performance(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

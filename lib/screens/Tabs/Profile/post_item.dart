@@ -145,7 +145,7 @@ class _PostItemState extends State<PostItem> {
   }
 
   SampleItem? selectedMenu;
-
+  bool _showLikeIcon = false;
   @override
   Widget build(BuildContext context) {
     // final date_time = formatTimeDifference('created_at');
@@ -562,100 +562,156 @@ class _PostItemState extends State<PostItem> {
             ],
           ),
           Space(1.5.h),
-          !widget._isMultiple
-              ? Hero(
-                  tag: widget.data['id'],
-                  child: Center(
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: Container(
-                        width: double.infinity,
-                        decoration: const ShapeDecoration(
-                          shadows: [
-                            BoxShadow(
-                              offset: Offset(0, 4),
-                              color: Color.fromRGBO(124, 193, 191, 0.3),
-                              blurRadius: 20,
-                            )
-                          ],
-                          shape: SmoothRectangleBorder(),
-                        ),
-                        child: ClipSmoothRect(
-                          radius: SmoothBorderRadius(
-                            cornerRadius: 15,
-                            cornerSmoothing: 1,
+          Stack(
+            children: [
+              !widget._isMultiple
+                  ? Hero(
+                      tag: widget.data['id'],
+                      child: Center(
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            width: double.infinity,
+                            decoration: const ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  offset: Offset(0, 4),
+                                  color: Color.fromRGBO(124, 193, 191, 0.3),
+                                  blurRadius: 20,
+                                )
+                              ],
+                              shape: SmoothRectangleBorder(),
+                            ),
+                            child: ClipSmoothRect(
+                              radius: SmoothBorderRadius(
+                                cornerRadius: 15,
+                                cornerSmoothing: 1,
+                              ),
+                              child: Image.network(
+                                widget.data['file_path'],
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    GlobalVariables().loadingBuilderForImage,
+                                errorBuilder:
+                                    GlobalVariables().ErrorBuilderForImage,
+                              ),
+                            ),
                           ),
-                          child: Image.network(
-                            widget.data['file_path'],
-                            fit: BoxFit.cover,
-                            loadingBuilder:
-                                GlobalVariables().loadingBuilderForImage,
-                            errorBuilder:
-                                GlobalVariables().ErrorBuilderForImage,
-                          ),
                         ),
+                      ),
+                    )
+                  : FlutterCarousel(
+                      items: (widget.data['multiple_files'] as List<dynamic>)
+                          .map<Widget>((url) {
+                        return Container(
+                          width: double
+                              .infinity, // Take up full width of the screen
+                          decoration: const ShapeDecoration(
+                            shadows: [
+                              BoxShadow(
+                                offset: Offset(0, 4),
+                                color: Color.fromRGBO(124, 193, 191, 0.3),
+                                blurRadius: 20,
+                              )
+                            ],
+                            shape: SmoothRectangleBorder(),
+                          ),
+                          child: ClipSmoothRect(
+                            radius: SmoothBorderRadius(
+                              cornerRadius: 15,
+                              cornerSmoothing: 1,
+                            ),
+                            child: Image.network(
+                              url,
+                              fit: BoxFit.cover,
+                              loadingBuilder:
+                                  GlobalVariables().loadingBuilderForImage,
+                              errorBuilder:
+                                  GlobalVariables().ErrorBuilderForImage,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      options: CarouselOptions(
+                        autoPlay: false,
+                        controller: buttonCarouselController,
+                        enlargeCenterPage: true,
+
+                        viewportFraction: 1.0,
+                        aspectRatio:
+                            1, // Set overall carousel aspect ratio to 1:1
+                        initialPage: 0,
                       ),
                     ),
-                  ),
-                )
-              : FlutterCarousel(
-                  items: (widget.data['multiple_files'] as List<dynamic>)
-                      .map<Widget>((url) {
-                    return Container(
-                      width:
-                          double.infinity, // Take up full width of the screen
-                      decoration: const ShapeDecoration(
-                        shadows: [
-                          BoxShadow(
-                            offset: Offset(0, 4),
-                            color: Color.fromRGBO(124, 193, 191, 0.3),
-                            blurRadius: 20,
-                          )
-                        ],
-                        shape: SmoothRectangleBorder(),
-                      ),
-                      child: ClipSmoothRect(
-                        radius: SmoothBorderRadius(
-                          cornerRadius: 15,
-                          cornerSmoothing: 1,
-                        ),
-                        child: Image.network(
-                          url,
-                          fit: BoxFit.cover,
-                          loadingBuilder:
-                              GlobalVariables().loadingBuilderForImage,
-                          errorBuilder: GlobalVariables().ErrorBuilderForImage,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  options: CarouselOptions(
-                    autoPlay: false,
-                    controller: buttonCarouselController,
-                    enlargeCenterPage: true,
-
-                    viewportFraction: 1.0,
-                    aspectRatio: 1, // Set overall carousel aspect ratio to 1:1
-                    initialPage: 0,
+              if (_showLikeIcon) // Show like icon if _showLikeIcon is true
+                Positioned(
+                  left: 35.w,
+                  top: 15.h,
+                  child: AnimatedOpacity(
+                    duration: Duration(milliseconds: 500),
+                    opacity: _showLikeIcon ? 0.8 : 0.0,
+                    child: TweenAnimationBuilder<double>(
+                      duration: Duration(milliseconds: 500),
+                      tween: Tween<double>(begin: 0.8, end: 1.0),
+                      builder: (_, scale, __) {
+                        return Transform.scale(
+                          scale: scale,
+                          child: RotationTransition(
+                            turns: AlwaysStoppedAnimation(
+                                -0), // Rotate by 30 degrees
+                            child: Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                              size: 100, // Adjust size as needed
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
+            ],
+          ),
           Space(1.5.h),
           Row(
             children: [
+              //like button
               IconButton(
-                  onPressed: () async {
-                    // await Provider.of<Auth>(context, listen: false).likePost(
-                    //     widget.data['id'],
-                    //     widget.isProfilePost
-                    //         ? Provider.of<Auth>(context).user_id
-                    //         : widget.data['user_id']);
+                onPressed: () async {
+                  String code = '';
+
+                  code = widget.isProfilePost
+                      ? await Provider.of<Auth>(context, listen: false)
+                          .likePost(widget.data['id'],
+                              Provider.of<Auth>(context, listen: false).user_id)
+                      : await Provider.of<Auth>(context, listen: false)
+                          .likePost(widget.data['id'], widget.data['user_id']);
+
+                  if (code == '200') {
                     setState(() {
                       _isLiked = !_isLiked;
+                      if (_isLiked == true) _showLikeIcon = true;
                     });
-                  },
-                  icon: !_isLiked
-                      ? const Icon(Icons.favorite_border)
-                      : const Icon(Icons.favorite)),
+                    Future.delayed(Duration(seconds: 2), () {
+                      setState(() {
+                        _showLikeIcon = false;
+                      });
+                    });
+                  } else {
+                    TOastNotification().showErrorToast(context, 'Error!');
+                  }
+                },
+                icon: AnimatedContainer(
+                  duration: Duration(milliseconds: 3000),
+                  curve: Curves.easeInOut,
+                  child: Icon(
+                    _isLiked ? Icons.favorite : Icons.favorite_border,
+                    color:
+                        _isLiked ? Colors.red : null, // Change color when liked
+                  ),
+                ),
+              ),
+              //comment button
               IconButton(
                   onPressed: () {
                     AppWideBottomSheet().showSheet(
@@ -667,6 +723,7 @@ class _PostItemState extends State<PostItem> {
                         70.h);
                   },
                   icon: const Icon(Icons.mode_comment_outlined)),
+              //share button
               IconButton(
                   onPressed: () async {
                     final DynamicLinkParameters parameters =

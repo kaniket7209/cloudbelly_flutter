@@ -1,4 +1,6 @@
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -46,68 +48,79 @@ class _PostsScreenState extends State<PostsScreen> {
     });
   }
 
+  Future<void> _refreshFeed() async {
+    final Data = await Provider.of<Auth>(context, listen: false).getFeed()
+        as List<dynamic>;
+
+    Navigator.of(context).pushReplacementNamed(PostsScreen.routeName,
+        arguments: {'data': Data, 'index': 0});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Space(7.h),
-            Row(
-              children: [
-                TouchableOpacity(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                    padding: EdgeInsets.only(
-                      top: 1.h,
-                      bottom: 1.h,
-                      right: 3.w,
-                      left: 5.w,
-                    ),
-                    child: const Text(
-                      '<<',
-                      style: TextStyle(
-                        color: Color(0xFFFA6E00),
-                        fontSize: 24,
-                        fontFamily: 'Kavoon',
-                        fontWeight: FontWeight.w900,
-                        height: 0.04,
-                        letterSpacing: 0.66,
+      body: RefreshIndicator(
+        onRefresh: _refreshFeed,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Space(7.h),
+              Row(
+                children: [
+                  TouchableOpacity(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        top: 1.h,
+                        bottom: 1.h,
+                        right: 3.w,
+                        left: 5.w,
+                      ),
+                      child: const Text(
+                        '<<',
+                        style: TextStyle(
+                          color: Color(0xFFFA6E00),
+                          fontSize: 24,
+                          fontFamily: 'Kavoon',
+                          fontWeight: FontWeight.w900,
+                          height: 0.04,
+                          letterSpacing: 0.66,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const Text(
-                  'Post',
-                  style: TextStyle(
-                    color: Color(0xFF094B60),
-                    fontSize: 26,
-                    fontFamily: 'Jost',
-                    fontWeight: FontWeight.w600,
-                    height: 0.03,
-                    letterSpacing: 0.78,
-                  ),
-                )
-              ],
-            ),
-            Space(2.h),
-            // Space(400.h),
-            Column(
-              children: data.map<Widget>((item) {
-                print(item);
-                bool _isMultiple = item['multiple_files'] != null &&
-                    item['multiple_files'].length != 0;
-                return PostItem(
-                  isMultiple: _isMultiple,
-                  data: item,
-                );
-              }).toList(),
-            )
-          ],
+                  const Text(
+                    'Post',
+                    style: TextStyle(
+                      color: Color(0xFF094B60),
+                      fontSize: 26,
+                      fontFamily: 'Jost',
+                      fontWeight: FontWeight.w600,
+                      height: 0.03,
+                      letterSpacing: 0.78,
+                    ),
+                  )
+                ],
+              ),
+              Space(2.h),
+              // Space(400.h),
+              Column(
+                children: data.map<Widget>((item) {
+                  // print(item);
+                  bool _isMultiple = item['multiple_files'] != null &&
+                      item['multiple_files'].length != 0;
+                  return PostItem(
+                    isMultiple: _isMultiple,
+                    data: item,
+                  );
+                }).toList(),
+              )
+            ],
+          ),
         ),
       ),
     );

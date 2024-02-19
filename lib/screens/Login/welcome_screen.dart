@@ -82,7 +82,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 );
               },
               child: Image.asset(
-                'assets/images/cloudbelly_logo.jpg',
+                'assets/images/cloudbelly_logo.png',
                 width: 200,
                 height: 200,
                 // adjust width and height according to your logo

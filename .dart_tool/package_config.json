@@ -452,6 +452,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "loading_indicator",
+      "rootUri": "file:///C:/Users/rk621/AppData/Local/Pub/Cache/hosted/pub.dev/loading_indicator-3.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "logger",
       "rootUri": "file:///C:/Users/rk621/AppData/Local/Pub/Cache/hosted/pub.dev/logger-2.0.2+1",
       "packageUri": "lib/",
@@ -872,7 +878,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-02-18T15:50:20.985900Z",
+  "generated": "2024-02-19T19:37:00.127539Z",
   "generator": "pub",
   "generatorVersion": "3.2.5"
 }
