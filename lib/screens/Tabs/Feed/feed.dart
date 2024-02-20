@@ -1,9 +1,11 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
+import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -18,16 +20,16 @@ class _FeedState extends State<Feed> {
   final ScrollController _scrollController = ScrollController();
 
   List<dynamic> FeedList = [];
-
+  int index = 1;
   bool _isLoading = false;
-
+  int _pageNumber = 1;
   Future<void> _refreshFeed() async {
     setState(() {
       // _isLoading = true;
       _pageNumber = 1;
     });
     await Provider.of<Auth>(context, listen: false)
-        .getGlobalFeed()
+        .getGlobalFeed(_pageNumber)
         .then((newFeed) {
       setState(() {
         print('object');
@@ -61,7 +63,7 @@ class _FeedState extends State<Feed> {
   void _onScroll() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      // _fetchMoreFeed();
+      _fetchMoreFeed();
     }
   }
 
@@ -72,9 +74,10 @@ class _FeedState extends State<Feed> {
     });
 
     await Provider.of<Auth>(context, listen: false)
-        .getGlobalFeed()
+        .getGlobalFeed(_pageNumber)
         .then((newFeed) {
       setState(() {
+        print('new: $newFeed');
         FeedList.addAll(newFeed);
         FeedList = FeedList.reversed.toList();
 
@@ -87,20 +90,20 @@ class _FeedState extends State<Feed> {
     if (!_isLoadingMore) {
       setState(() {
         _isLoadingMore = true;
+        _pageNumber++;
       });
-      _pageNumber++;
-      // await Provider.of<Feed>(context, listen: false)
-      //     .fetchAndGetProduct(context, _pageNumber)
-      //     .then((newFeeds) {
-      //   setState(() {
-      //     FeedList.addAll(newFeeds);
-      //     _isLoadingMore = false;
-      //   });
-      // });
+      await Provider.of<Auth>(context, listen: false)
+          .getGlobalFeed(_pageNumber)
+          .then((newFeeds) {
+        setState(() {
+          FeedList.addAll(newFeeds);
+          _isLoadingMore = false;
+        });
+      });
     }
   }
 
-  int _pageNumber = 1;
+  // int _pageNumber = 1;/
   @override
   Widget build(BuildContext context) {
     // FeedList = FeedList.reversed.toList();
@@ -154,7 +157,7 @@ class _FeedState extends State<Feed> {
               ),
               _isLoading == true
                   ? Center(
-                      child: CircularProgressIndicator(),
+                      child: AppWideLoadingBanner().LoadingCircle(context),
                     )
                   : Column(
                       children: FeedList.map<Widget>((item) {
@@ -171,15 +174,16 @@ class _FeedState extends State<Feed> {
                       }).toList(),
                     ),
               _isLoadingMore == true
-                  ? const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                        Space(isHorizontal: true, 7),
-                        Text('Loading more feed...')
-                      ],
+                  ? Padding(
+                      padding: EdgeInsets.only(bottom: 2.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AppWideLoadingBanner().LoadingCircle(context),
+                          Space(isHorizontal: true, 7),
+                          Text('Loading more feed...')
+                        ],
+                      ),
                     )
                   : SizedBox(height: 0, width: 0)
             ],

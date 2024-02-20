@@ -646,14 +646,17 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<dynamic> getGlobalFeed() async {
+  Future<dynamic> getGlobalFeed(int index) async {
     final String url = 'https://app.cloudbelly.in/get-posts';
-    final data = '{}';
+    final data = {
+      "page": index,
+      "limit": 10,
+    };
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: headers,
-        body: data,
+        body: jsonEncode(data),
       );
 
       // print(jsonDecode((response.body)));

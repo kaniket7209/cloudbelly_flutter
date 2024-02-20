@@ -49,4 +49,26 @@ class AppWideLoadingBanner {
       },
     );
   }
+
+  Widget LoadingCircle(BuildContext context) {
+    return SizedBox(
+      height: 4.h,
+      child: Center(
+        child: LoadingIndicator(
+            indicatorType: Indicator.ballSpinFadeLoader,
+            colors: const [
+              Colors.red,
+              Colors.orange,
+              Colors.yellow,
+              Colors.green,
+              Colors.blue,
+              Colors.indigo,
+              Colors.purple
+            ],
+            strokeWidth: 2,
+            backgroundColor: Colors.transparent,
+            pathBackgroundColor: Colors.black),
+      ),
+    );
+  }
 }
