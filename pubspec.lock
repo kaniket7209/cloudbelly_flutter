@@ -209,6 +209,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.3+1"
+  fine_bar_chart:
+    dependency: "direct main"
+    description:
+      name: fine_bar_chart
+      sha256: f27688df3acf5191c99c788e6736c622c2988665465fe83328f654fb2f18e51d
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   firebase_core:
     dependency: transitive
     description:
@@ -262,6 +270,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_animation_progress_bar:
+    dependency: transitive
+    description:
+      name: flutter_animation_progress_bar
+      sha256: "85f05404faeef7141b1c5b53571293fc19359c120c4aea4430b2b7d808461d09"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.1"
   flutter_carousel_widget:
     dependency: "direct main"
     description:
@@ -965,6 +981,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+  unique_simple_bar_chart:
+    dependency: "direct main"
+    description:
+      name: unique_simple_bar_chart
+      sha256: "238e874e9338cfe0030204ee4be026edce006bedb6bf92c8f4611adc085895fe"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   url_launcher:
     dependency: "direct main"
     description:

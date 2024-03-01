@@ -1,4 +1,6 @@
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
@@ -156,6 +158,84 @@ class _PerformanceState extends State<Performance> {
               txt: 'Edit product',
             )
           ],
+        ),
+        Space(4.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const BoldTextWidgetHomeScreen(
+              txt: 'Top selling items',
+            ),
+            SeeAllWidget(),
+          ],
+        ),
+        Space(1.h),
+        TopSellingItemWidget(
+          title: 'Chicken tandoori',
+          text: 'Last week (Dec23-31)',
+          tail: '176 units sold already',
+        ),
+        TopSellingItemWidget(
+          title: 'Chicken tandoori',
+          text: 'Last week (Dec23-31)',
+          tail: '176 units sold already',
+        ),
+        TopSellingItemWidget(
+          title: 'Chicken tandoori',
+          text: 'Last week (Dec23-31)',
+          tail: '176 units sold already',
+        ),
+        Space(2.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const BoldTextWidgetHomeScreen(
+              txt: 'Your favourite customers',
+            ),
+            SeeAllWidget(),
+          ],
+        ),
+        Space(1.h),
+        TopSellingItemWidget(
+          title: 'Pinki Yadav',
+          text: 'Fav dish - Kaju paneer',
+          tail: '16 times ordered!',
+        ),
+        TopSellingItemWidget(
+          title: 'Pinki Yadav',
+          text: 'Fav dish - Kaju paneer',
+          tail: '16 times ordered!',
+        ),
+        TopSellingItemWidget(
+          title: 'Pinki Yadav',
+          text: 'Fav dish - Kaju paneer',
+          tail: '16 times ordered!',
+        ),
+        Space(2.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const BoldTextWidgetHomeScreen(
+              txt: 'Highest rated items',
+            ),
+            SeeAllWidget(),
+          ],
+        ),
+        Space(1.h),
+        TopSellingItemWidget(
+          title: 'Chicken tandoori',
+          text: 'Last week (Dec23-31)',
+          tail: '',
+        ),
+        TopSellingItemWidget(
+          title: 'Chicken tandoori',
+          text: 'Last week (Dec23-31)',
+          tail: '',
+        ),
+        TopSellingItemWidget(
+          title: 'Chicken tandoori',
+          text: 'Last week (Dec23-31)',
+          tail: '',
         ),
       ],
     );
@@ -589,6 +669,142 @@ class _PerformanceState extends State<Performance> {
           },
         );
       },
+    );
+  }
+}
+
+class TopSellingItemWidget extends StatelessWidget {
+  String title;
+  String text;
+  String tail;
+
+  TopSellingItemWidget({
+    super.key,
+    required this.title,
+    required this.text,
+    required this.tail,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 4.w),
+      margin: EdgeInsets.only(bottom: 2.h),
+      height: 7.h,
+      width: double.infinity,
+      decoration: GlobalVariables().ContainerDecoration(
+        offset: Offset(0, 4),
+        blurRadius: 15,
+        boxColor: Colors.white,
+        cornerRadius: 15,
+        shadowColor: Color.fromRGBO(177, 202, 202, 0.6),
+      ),
+      child: Row(
+        children: [
+          Container(
+            decoration: GlobalVariables().ContainerDecoration(
+              offset: Offset(0, 4),
+              blurRadius: 20,
+              boxColor: Colors.white,
+              cornerRadius: 10,
+              shadowColor: Color.fromRGBO(124, 193, 191, 0.3),
+            ),
+            height: 35,
+            width: 35,
+            child: ClipRRect(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 8,
+                cornerSmoothing: 1,
+              ),
+              child: Image.network(
+                'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Space(isHorizontal: true, 3.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  color: Color(0xFF0A4C61),
+                  fontSize: 14,
+                  fontFamily: 'Product Sans',
+                  fontWeight: FontWeight.w400,
+                  // height: 0.05,
+                  letterSpacing: 0.14,
+                ),
+              ),
+              Text(
+                text,
+                style: TextStyle(
+                  color: Color(0xFFFA6E00),
+                  fontSize: 10,
+                  fontFamily: 'Product Sans',
+                  fontWeight: FontWeight.w400,
+                  // height: 0.10,
+                  letterSpacing: 0.10,
+                ),
+              )
+            ],
+          ),
+          Spacer(),
+          if (tail != '')
+            Container(
+              height: 3.h,
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              // width: double.infinity,
+              decoration: GlobalVariables().ContainerDecoration(
+                offset: Offset(0, 4),
+                blurRadius: 15,
+                boxColor: Color.fromRGBO(223, 244, 248, 1),
+                cornerRadius: 15,
+                shadowColor: Colors.white,
+              ),
+              child: Center(
+                child: Text(
+                  tail,
+                  style: TextStyle(
+                    color: Color(0xFF094B60),
+                    fontSize: 10,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                    letterSpacing: 0.10,
+                  ),
+                ),
+              ),
+            )
+          else
+            Row(
+              children: [
+                Icon(
+                  Icons.favorite_border,
+                  size: 15,
+                ),
+                Icon(
+                  Icons.favorite_border,
+                  size: 15,
+                ),
+                Icon(
+                  Icons.favorite_border,
+                  size: 15,
+                ),
+                Icon(
+                  Icons.favorite_border,
+                  size: 15,
+                ),
+                Icon(
+                  Icons.favorite_border,
+                  size: 15,
+                )
+              ],
+            )
+        ],
+      ),
     );
   }
 }

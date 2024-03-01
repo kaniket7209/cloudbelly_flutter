@@ -1,6 +1,8 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
@@ -12,10 +14,13 @@ import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:fine_bar_chart/fine_bar_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:unique_simple_bar_chart/data_models.dart';
+import 'package:unique_simple_bar_chart/simple_bar_chart.dart';
 
 class SocialStatusContent extends StatefulWidget {
   const SocialStatusContent({
@@ -46,6 +51,19 @@ class _SocialStatusContentState extends State<SocialStatusContent>
   int _currentPageIndex = 0;
   // bool _isLoading = false;
 
+  List<String> _dailyList = ['Daily', 'Weekly', "monthly"];
+  int _dailyIndex = 0;
+  List<double> barValue = [50, 30, 90, 60, 80, 25];
+  List<Color> barColors = [
+    Color(0xFFFA6E00),
+    Color(0xFFFA6E00),
+    Color(0xFFFA6E00),
+    Color(0xFFFA6E00),
+    Color(0xFFFA6E00),
+    Color(0xFFFA6E00),
+    // Color(0xFFFA6E00),
+  ];
+  List<String> bottomBarName = ["Mon", "Tue", "Wed", "Thu", "Sat", "Sun"];
   @override
   Widget build(BuildContext context) {
     final counter = Provider.of<Auth>(context, listen: true).pincode == ''
@@ -322,6 +340,238 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                 },
               ),
             ],
+          ),
+          Space(4.h),
+
+          Row(
+            children: [
+              const BoldTextWidgetHomeScreen(
+                txt: 'Customer visits',
+              ),
+              Spacer(),
+              IconButton(
+                  onPressed: () {
+                    if (_dailyIndex == 0)
+                      return null;
+                    else {
+                      setState(() {
+                        _dailyIndex--;
+                      });
+                    }
+                  },
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    size: 14,
+                    color: Color(0xFFFA6E00),
+                  )),
+              SizedBox(
+                width: 14.w,
+                child: Center(
+                  child: Text(
+                    _dailyList[_dailyIndex],
+                    style: TextStyle(
+                      color: Color(0xFF094B60),
+                      fontSize: 12,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w700,
+                      height: 0.14,
+                      letterSpacing: 0.36,
+                    ),
+                  ),
+                ),
+              ),
+              IconButton(
+                  onPressed: () {
+                    if (_dailyIndex == _dailyList.length - 1)
+                      return null;
+                    else {
+                      setState(() {
+                        _dailyIndex++;
+                      });
+                    }
+                  },
+                  icon: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 14,
+                    color: Color(0xFFFA6E00),
+                  ))
+            ],
+          ),
+          Space(1.h),
+          Container(
+            height: 27.h,
+            width: double.infinity,
+            decoration: GlobalVariables().ContainerDecoration(
+              offset: Offset(0, 4),
+              blurRadius: 25,
+              boxColor: Colors.white,
+              cornerRadius: 20,
+              shadowColor: Color.fromRGBO(165, 200, 199, 0.6),
+            ),
+            child: Column(
+              children: [
+                Space(2.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CustomerVisitWidget(
+                      title: 'Total visits',
+                      number: '345',
+                      text: 'Vs 221 visits',
+                      date: 'last mon, Jan 29',
+                    ),
+                    CustomerVisitWidget(
+                      title: 'Unique visits',
+                      number: '+34',
+                      text: 'Vs 221 visits',
+                      date: 'last mon, Jan 29',
+                    ),
+                  ],
+                ),
+                Space(1.5.h),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10.w),
+                  width: double.infinity,
+                  height: 2,
+                  decoration: BoxDecoration(color: Color(0xFFD9D9D9)),
+                ),
+                Space(1.5.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CustomerVisitWidget(
+                      title: 'Total conversion',
+                      number: '+34',
+                      text: 'Vs 221 visits',
+                      date: 'last mon, Jan 29',
+                    ),
+                    CustomerVisitWidget(
+                      title: 'Conversion from unique visit',
+                      number: '+34',
+                      text: 'Vs 221 visits',
+                      date: 'last mon, Jan 29',
+                    ),
+                  ],
+                ),
+                Space(2.h),
+              ],
+            ),
+          ),
+          Space(4.h),
+          const BoldTextWidgetHomeScreen(
+            txt: 'Top 3 performing posts',
+          ),
+          Space(1.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              TopPerformingPostWidget(),
+              TopPerformingPostWidget(),
+              TopPerformingPostWidget(),
+            ],
+          ),
+          Space(4.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const BoldTextWidgetHomeScreen(
+                txt: 'Customer’s review',
+              ),
+              SeeAllWidget(),
+            ],
+          ),
+          Space(1.h),
+          CustomerReviewWidget(),
+          CustomerReviewWidget(),
+          CustomerReviewWidget(),
+          Space(2.h),
+
+          const BoldTextWidgetHomeScreen(
+            txt: 'Most activities on store (views)',
+          ),
+
+          Space(1.h),
+
+          Container(
+            height: 34.h,
+            width: double.infinity,
+            decoration: GlobalVariables().ContainerDecoration(
+              offset: Offset(0, 4),
+              blurRadius: 15,
+              boxColor: Colors.white,
+              cornerRadius: 15,
+              shadowColor: Color.fromRGBO(177, 202, 202, 0.6),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          if (_dailyIndex == 0)
+                            return null;
+                          else {
+                            setState(() {
+                              _dailyIndex--;
+                            });
+                          }
+                        },
+                        icon: Icon(
+                          Icons.arrow_back_ios,
+                          size: 14,
+                          color: Color(0xFFFA6E00),
+                        )),
+                    SizedBox(
+                      width: 14.w,
+                      child: Center(
+                        child: Text(
+                          _dailyList[_dailyIndex],
+                          style: TextStyle(
+                            color: Color(0xFF094B60),
+                            fontSize: 12,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w700,
+                            height: 0.14,
+                            letterSpacing: 0.36,
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          if (_dailyIndex == _dailyList.length - 1)
+                            return null;
+                          else {
+                            setState(() {
+                              _dailyIndex++;
+                            });
+                          }
+                        },
+                        icon: Icon(
+                          Icons.arrow_forward_ios,
+                          size: 14,
+                          color: Color(0xFFFA6E00),
+                        ))
+                  ],
+                ),
+                FineBarChart(
+                    barWidth: 25,
+                    barHeight: 20.h,
+                    backgroundColors: Colors.white,
+                    isBottomNameDisable: false,
+                    isValueDisable: false,
+                    textStyle: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                    ),
+                    barBackgroundColors: Colors.grey.withOpacity(0.3),
+                    barValue: barValue,
+                    barColors: barColors,
+                    barBottomName: bottomBarName),
+                Space(1.h),
+              ],
+            ),
           ),
           Space(4.h),
           // const BoldTextWidgetHomeScreen(txt: 'Tools & essentials'),
@@ -657,6 +907,242 @@ class _SocialStatusContentState extends State<SocialStatusContent>
   }
 }
 
+class CustomerReviewWidget extends StatelessWidget {
+  const CustomerReviewWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 2.h),
+      height: 10.h,
+      width: double.infinity,
+      decoration: GlobalVariables().ContainerDecoration(
+        offset: Offset(0, 4),
+        blurRadius: 15,
+        boxColor: Colors.white,
+        cornerRadius: 15,
+        shadowColor: Color.fromRGBO(177, 202, 202, 0.6),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Space(isHorizontal: true, 4.w),
+          Container(
+            decoration: GlobalVariables().ContainerDecoration(
+              offset: Offset(0, 4),
+              blurRadius: 20,
+              boxColor: Colors.white,
+              cornerRadius: 10,
+              shadowColor: Color.fromRGBO(124, 193, 191, 0.3),
+            ),
+            height: 50,
+            width: 50,
+            child: ClipRRect(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 8,
+                cornerSmoothing: 1,
+              ),
+              child: Image.network(
+                'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Space(isHorizontal: true, 3.w),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Shweta',
+                    style: TextStyle(
+                      color: Color(0xFF0A4C61),
+                      fontSize: 16,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.16,
+                    ),
+                  ),
+                  Space(isHorizontal: true, 2.w),
+                  Text(
+                    '22 hrs ago',
+                    style: TextStyle(
+                      color: Color(0xFFFA6E00),
+                      fontSize: 10,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w400,
+                      height: 0.10,
+                      letterSpacing: 0.10,
+                    ),
+                  ),
+                  // Spacer(),
+                  Space(
+                    25.w,
+                    isHorizontal: true,
+                  ),
+                  Icon(
+                    Icons.favorite_border,
+                    size: 15,
+                  ),
+                  Icon(
+                    Icons.favorite_border,
+                    size: 15,
+                  ),
+                  Icon(
+                    Icons.favorite_border,
+                    size: 15,
+                  ),
+                  Icon(
+                    Icons.favorite_border,
+                    size: 15,
+                  ),
+                  Icon(
+                    Icons.favorite_border,
+                    size: 15,
+                  )
+                ],
+              ),
+              Text(
+                'Food is good how ever it can be done better,\nit breaks my heart to write...',
+                style: TextStyle(
+                  color: Color(0xFF0A4C61),
+                  fontSize: 12,
+                  fontFamily: 'Product Sans',
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.12,
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class TopPerformingPostWidget extends StatelessWidget {
+  const TopPerformingPostWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 97,
+      height: 104,
+      decoration: GlobalVariables().ContainerDecoration(
+        offset: Offset(0, 4),
+        blurRadius: 20,
+        boxColor: Colors.white,
+        cornerRadius: 10,
+        shadowColor: Color.fromRGBO(124, 193, 191, 0.3),
+      ),
+      child:
+          Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+        Container(
+          decoration: GlobalVariables().ContainerDecoration(
+            offset: Offset(0, 4),
+            blurRadius: 20,
+            boxColor: Colors.white,
+            cornerRadius: 10,
+            shadowColor: Color.fromRGBO(124, 193, 191, 0.3),
+          ),
+          height: 68,
+          width: 78,
+          child: ClipRRect(
+            borderRadius: SmoothBorderRadius(
+              cornerRadius: 8,
+              cornerSmoothing: 1,
+            ),
+            child: Image.network(
+              'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Text(
+          '10.2k views',
+          style: TextStyle(
+            color: Color(0xFF0A4C61),
+            fontSize: 12,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.w700,
+            height: 0,
+            letterSpacing: 0.12,
+          ),
+        )
+      ]),
+    );
+  }
+}
+
+class CustomerVisitWidget extends StatelessWidget {
+  String title;
+  String number;
+  String text;
+  String date;
+  CustomerVisitWidget({
+    super.key,
+    required this.text,
+    required this.date,
+    required this.number,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 40.w,
+      child: Column(
+        children: [
+          Text(
+            title,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Color(0xFF0A4C61),
+              fontSize: 14,
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Text(
+            number,
+            style: TextStyle(
+              color: Color(0xFFFA6E00),
+              fontSize: 20,
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Text(
+            text,
+            style: TextStyle(
+              color: Color(0xFF0A4C61),
+              fontSize: 10,
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          Text(
+            date,
+            style: TextStyle(
+              color: Color(0xFF0A4C61),
+              fontSize: 10,
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w400,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class AddCoverImageOrLogoSheetContent extends StatelessWidget {
   bool isProfile;
   bool isLogo;
@@ -793,7 +1279,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }

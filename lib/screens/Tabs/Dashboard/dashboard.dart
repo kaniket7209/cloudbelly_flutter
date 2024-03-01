@@ -734,7 +734,7 @@ class BoldTextWidgetHomeScreen extends StatelessWidget {
         fontSize: 18,
         fontFamily: 'Jost',
         fontWeight: FontWeight.w600,
-        height: 0.06,
+        // height: 0.06,
         letterSpacing: 0.54,
       ),
     );

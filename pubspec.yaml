@@ -61,6 +61,8 @@ dependencies:
   jwt_decoder: ^2.0.1
   dart_jsonwebtoken: ^2.13.0
   loading_indicator: ^3.1.1
+  unique_simple_bar_chart: ^0.0.4
+  fine_bar_chart: ^0.0.3
   # multiple_images_picker: ^1.0.1
 
 dev_dependencies:
