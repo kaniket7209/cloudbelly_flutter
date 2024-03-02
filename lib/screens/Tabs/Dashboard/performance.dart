@@ -2,6 +2,7 @@ import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/rating_widget.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -717,8 +718,12 @@ class TopSellingItemWidget extends StatelessWidget {
                 cornerSmoothing: 1,
               ),
               child: Image.network(
-                'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
+                text.contains('Fav')
+                    ? 'https://images.pexels.com/photos/1162983/pexels-photo-1162983.jpeg?auto=compress&cs=tinysrgb&w=600'
+                    : 'https://images.pexels.com/photos/60616/fried-chicken-chicken-fried-crunchy-60616.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 fit: BoxFit.cover,
+                loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                errorBuilder: GlobalVariables().ErrorBuilderForImage,
               ),
             ),
           ),
@@ -779,30 +784,7 @@ class TopSellingItemWidget extends StatelessWidget {
               ),
             )
           else
-            Row(
-              children: [
-                Icon(
-                  Icons.favorite_border,
-                  size: 15,
-                ),
-                Icon(
-                  Icons.favorite_border,
-                  size: 15,
-                ),
-                Icon(
-                  Icons.favorite_border,
-                  size: 15,
-                ),
-                Icon(
-                  Icons.favorite_border,
-                  size: 15,
-                ),
-                Icon(
-                  Icons.favorite_border,
-                  size: 15,
-                )
-              ],
-            )
+            RatingIcons(rating: 3),
         ],
       ),
     );

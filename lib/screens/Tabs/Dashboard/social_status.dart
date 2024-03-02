@@ -5,6 +5,7 @@ import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/rating_widget.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
@@ -914,112 +915,121 @@ class CustomerReviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 2.h),
-      height: 10.h,
-      width: double.infinity,
-      decoration: GlobalVariables().ContainerDecoration(
-        offset: Offset(0, 4),
-        blurRadius: 15,
-        boxColor: Colors.white,
-        cornerRadius: 15,
-        shadowColor: Color.fromRGBO(177, 202, 202, 0.6),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Space(isHorizontal: true, 4.w),
-          Container(
-            decoration: GlobalVariables().ContainerDecoration(
-              offset: Offset(0, 4),
-              blurRadius: 20,
-              boxColor: Colors.white,
-              cornerRadius: 10,
-              shadowColor: Color.fromRGBO(124, 193, 191, 0.3),
-            ),
-            height: 50,
-            width: 50,
-            child: ClipRRect(
-              borderRadius: SmoothBorderRadius(
-                cornerRadius: 8,
-                cornerSmoothing: 1,
-              ),
-              child: Image.network(
-                'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
-                fit: BoxFit.cover,
-              ),
-            ),
+    return Stack(
+      children: [
+        Container(
+          margin: EdgeInsets.only(bottom: 2.h),
+          height: 10.h,
+          width: double.infinity,
+          decoration: GlobalVariables().ContainerDecoration(
+            offset: Offset(0, 4),
+            blurRadius: 15,
+            boxColor: Colors.white,
+            cornerRadius: 15,
+            shadowColor: Color.fromRGBO(177, 202, 202, 0.6),
           ),
-          Space(isHorizontal: true, 3.w),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
+              Space(isHorizontal: true, 4.w),
+              Container(
+                decoration: GlobalVariables().ContainerDecoration(
+                  offset: Offset(0, 4),
+                  blurRadius: 20,
+                  boxColor: Colors.white,
+                  cornerRadius: 10,
+                  shadowColor: Color.fromRGBO(124, 193, 191, 0.3),
+                ),
+                height: 50,
+                width: 50,
+                child: ClipRRect(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 8,
+                    cornerSmoothing: 1,
+                  ),
+                  child: Image.network(
+                    'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=600',
+                    fit: BoxFit.cover,
+                    loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                    errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                  ),
+                ),
+              ),
+              Space(isHorizontal: true, 3.w),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Naveen',
+                        style: TextStyle(
+                          color: Color(0xFF0A4C61),
+                          fontSize: 16,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.16,
+                        ),
+                      ),
+                      Space(isHorizontal: true, 2.w),
+                      Text(
+                        '22 hrs ago',
+                        style: TextStyle(
+                          color: Color(0xFFFA6E00),
+                          fontSize: 10,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400,
+                          height: 0.10,
+                          letterSpacing: 0.10,
+                        ),
+                      ),
+                      // Spacer(),
+                      Space(
+                        25.w,
+                        isHorizontal: true,
+                      ),
+                      RatingIcons(rating: 4.5),
+                    ],
+                  ),
                   Text(
-                    'Shweta',
+                    'Food is good how ever it can be done better,\nit breaks my heart to write...',
                     style: TextStyle(
                       color: Color(0xFF0A4C61),
-                      fontSize: 16,
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.16,
-                    ),
-                  ),
-                  Space(isHorizontal: true, 2.w),
-                  Text(
-                    '22 hrs ago',
-                    style: TextStyle(
-                      color: Color(0xFFFA6E00),
-                      fontSize: 10,
+                      fontSize: 12,
                       fontFamily: 'Product Sans',
                       fontWeight: FontWeight.w400,
-                      height: 0.10,
-                      letterSpacing: 0.10,
+                      letterSpacing: 0.12,
                     ),
-                  ),
-                  // Spacer(),
-                  Space(
-                    25.w,
-                    isHorizontal: true,
-                  ),
-                  Icon(
-                    Icons.favorite_border,
-                    size: 15,
-                  ),
-                  Icon(
-                    Icons.favorite_border,
-                    size: 15,
-                  ),
-                  Icon(
-                    Icons.favorite_border,
-                    size: 15,
-                  ),
-                  Icon(
-                    Icons.favorite_border,
-                    size: 15,
-                  ),
-                  Icon(
-                    Icons.favorite_border,
-                    size: 15,
                   )
                 ],
-              ),
-              Text(
-                'Food is good how ever it can be done better,\nit breaks my heart to write...',
-                style: TextStyle(
-                  color: Color(0xFF0A4C61),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans',
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 0.12,
-                ),
               )
             ],
-          )
-        ],
-      ),
+          ),
+        ),
+        Positioned(
+            right: 0,
+            bottom: 5,
+            child: Container(
+                decoration: GlobalVariables().ContainerDecoration(
+                  offset: Offset(0, 4),
+                  blurRadius: 20,
+                  boxColor: Color.fromRGBO(10, 76, 97, 1),
+                  cornerRadius: 10,
+                  shadowColor: Color.fromRGBO(124, 193, 191, 0.3),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 0.5.h),
+                child: Text(
+                  'Reply',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.10,
+                  ),
+                ))),
+      ],
     );
   }
 }
@@ -1059,13 +1069,15 @@ class TopPerformingPostWidget extends StatelessWidget {
               cornerSmoothing: 1,
             ),
             child: Image.network(
-              'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
+              'https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=600',
               fit: BoxFit.cover,
+              loadingBuilder: GlobalVariables().loadingBuilderForImage,
+              errorBuilder: GlobalVariables().ErrorBuilderForImage,
             ),
           ),
         ),
         Text(
-          '10.2k views',
+          '10.2k Likes',
           style: TextStyle(
             color: Color(0xFF0A4C61),
             fontSize: 12,

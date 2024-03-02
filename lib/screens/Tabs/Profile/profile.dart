@@ -13,6 +13,7 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/menu.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu_item.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
+import 'package:cloudbelly_app/screens/pitch_deck.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -91,10 +92,14 @@ class _ProfileState extends State<Profile> {
                               children: [
                                 CustomIconButton(
                                   ic: Icons.arrow_back_ios_new_outlined,
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .pushNamed(PitchDeck.routeName);
+                                  },
                                 ),
                                 Container(
-                                  padding: EdgeInsets.only(left: 9.w),
+                                  width: 40.w,
+                                  padding: EdgeInsets.only(left: 10.w),
                                   child: const StoreNameAndLogoWidget(),
                                 ),
                                 Row(

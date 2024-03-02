@@ -160,18 +160,21 @@ class _FeedState extends State<Feed> {
                       child: AppWideLoadingBanner().LoadingCircle(context),
                     )
                   : Column(
-                      children: FeedList.map<Widget>((item) {
-                        // if (item['user_id'] ==
-                        //     Provider.of<Auth>(context).user_id) print(item);
-                        bool _isMultiple = item['multiple_files'] != null &&
-                            item['multiple_files'].length != 0;
-                        return PostItem(
-                          isProfilePost: false,
-                          isMultiple: _isMultiple,
-                          data: item,
-                        );
-                        // return SizedBox.shrink();
-                      }).toList(),
+                      children: FeedList == []
+                          ? []
+                          : FeedList.map<Widget>((item) {
+                              // if (item['user_id'] ==
+                              //     Provider.of<Auth>(context).user_id) print(item);
+                              bool _isMultiple =
+                                  item['multiple_files'] != null &&
+                                      item['multiple_files'].length != 0;
+                              return PostItem(
+                                isProfilePost: false,
+                                isMultiple: _isMultiple,
+                                data: item,
+                              );
+                              // return SizedBox.shrink();
+                            }).toList(),
                     ),
               _isLoadingMore == true
                   ? Padding(

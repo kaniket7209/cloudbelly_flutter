@@ -88,7 +88,8 @@ class _DashBoardState extends State<DashBoard>
                                           .user_id);
                                 },
                               ),
-                              StoreNameAndLogoWidget(),
+                              Container(
+                                  width: 40.w, child: StoreNameAndLogoWidget()),
                               CustomIconButton(
                                 ic: Icons.more_horiz,
                                 onTap: () {},
@@ -355,12 +356,15 @@ class StoreNameAndLogoWidget extends StatelessWidget {
           child: Center(
             child: Text(
               Provider.of<Auth>(context, listen: true).store_name,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Color(0xFF094B60),
                 fontSize: 14,
                 fontFamily: 'Product Sans',
                 fontWeight: FontWeight.w700,
-                height: 0.10,
+                // height: 0.10,
                 letterSpacing: 0.42,
               ),
             ),

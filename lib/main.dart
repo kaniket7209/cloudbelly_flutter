@@ -9,6 +9,7 @@ import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 
 import 'package:cloudbelly_app/screens/Login/welcome_screen.dart';
+import 'package:cloudbelly_app/screens/pitch_deck.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -59,6 +60,7 @@ class MyApp extends StatelessWidget {
               InventoryHub.routeName: (context) => InventoryHub(),
               PostsScreen.routeName: (context) => PostsScreen(),
               GraphsScreen.routeName: (context) => GraphsScreen(),
+              PitchDeck.routeName: (context) => PitchDeck(),
             },
           ),
         ),

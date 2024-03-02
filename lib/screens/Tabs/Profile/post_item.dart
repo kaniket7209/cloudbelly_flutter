@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
@@ -13,6 +14,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -187,7 +189,9 @@ class _PostItemState extends State<PostItem> {
                               ? Provider.of<Auth>(context, listen: true)
                                   .store_name[0]
                                   .toUpperCase()
-                              : widget.data['user_name'][0],
+                              : widget.data['user_name'] == ''
+                                  ? 'U'
+                                  : widget.data['user_name'][0],
                           style: TextStyle(fontSize: 20),
                         ),
                       ))
@@ -675,6 +679,13 @@ class _PostItemState extends State<PostItem> {
           Space(1.5.h),
           Row(
             children: [
+              // SvgPicture.asset(
+              //   Assets.favourite_svg,
+              //   // color: Colors.red,
+              //   semanticsLabel: 'My SVG Picture',
+              //   width: 50, // adjust width as needed
+              //   height: 10, // adjust height as needed
+              // ),
               //like button
               IconButton(
                 onPressed: () async {
@@ -743,9 +754,50 @@ class _PostItemState extends State<PostItem> {
                   icon: const Icon(Icons.share))
             ],
           ),
-          Space(0.5.h),
+          Space(0.3.h),
           Row(
             children: [
+              Container(
+                width: 17,
+                height: 17,
+                decoration: ShapeDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(
+                        "https://images.pexels.com/photos/938639/pexels-photo-938639.jpeg?auto=compress&cs=tinysrgb&w=600"),
+                    fit: BoxFit.fill,
+                  ),
+                  shape: OvalBorder(
+                    side: BorderSide(
+                      width: 2,
+                      strokeAlign: BorderSide.strokeAlignOutside,
+                      color: Color(0xFFEAF5F7),
+                    ),
+                  ),
+                ),
+              ),
+              for (int i = 0; i < 2; i++)
+                Container(
+                  width: 17,
+                  height: 17,
+                  decoration: ShapeDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(
+                          "https://images.pexels.com/photos/1297483/pexels-photo-1297483.jpeg?auto=compress&cs=tinysrgb&w=600"),
+                      fit: BoxFit.fill,
+                    ),
+                    shape: OvalBorder(
+                      side: BorderSide(
+                        width: 2,
+                        strokeAlign: BorderSide.strokeAlignOutside,
+                        color: Color(0xFFEAF5F7),
+                      ),
+                    ),
+                  ),
+                ),
+              Space(
+                2.7.w,
+                isHorizontal: true,
+              ),
               const Text(
                 'Liked by',
                 style: TextStyle(
@@ -757,7 +809,7 @@ class _PostItemState extends State<PostItem> {
                   letterSpacing: 0.12,
                 ),
               ),
-              Space(isHorizontal: true, 5.w),
+              Space(isHorizontal: true, 1.5.w),
               Text(
                 '${(widget.data['likes'] ?? [] as List<dynamic>).length} peoples',
                 style: const TextStyle(

@@ -60,34 +60,69 @@ class EditProfileWidget extends StatelessWidget {
                 ),
                 height: 6.h,
                 child: Center(
-                  child: TextField(
-                    onSubmitted: (newvalue) async {
-                      AppWideLoadingBanner().loadingBanner(context);
-                      final code =
-                          await Provider.of<Auth>(context, listen: false)
-                              .updateStoreName(_controller.text);
-                      Navigator.of(context).pop();
-                      if (code == '200') {
-                        TOastNotification()
-                            .showSuccesToast(context, 'Store name updated');
-                        Provider.of<Auth>(context, listen: false).store_name =
-                            _controller.text;
-                      } else {
-                        TOastNotification().showErrorToast(context, 'Error!');
-                      }
-                    },
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      fillColor: Colors.white,
-                      contentPadding: EdgeInsets.only(left: 14),
-                      hintStyle: TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF0A4C61),
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w400),
-                      border: InputBorder.none,
-                    ),
-                    // onChanged: onChanged,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 70.w,
+                        child: TextField(
+                          onSubmitted: (newvalue) async {
+                            AppWideLoadingBanner().loadingBanner(context);
+                            final code =
+                                await Provider.of<Auth>(context, listen: false)
+                                    .updateStoreName(_controller.text);
+                            Navigator.of(context).pop();
+                            if (code == '200') {
+                              TOastNotification().showSuccesToast(
+                                  context, 'Store name updated');
+                              Provider.of<Auth>(context, listen: false)
+                                  .store_name = _controller.text;
+                            } else {
+                              TOastNotification()
+                                  .showErrorToast(context, 'Error!');
+                            }
+                          },
+                          controller: _controller,
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            contentPadding: EdgeInsets.only(left: 14),
+                            hintStyle: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF0A4C61),
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.w400),
+                            border: InputBorder.none,
+                            // suffixIcon:
+                          ),
+                          // onChanged: onChanged,
+                        ),
+                      ),
+                      Space(
+                        3.w,
+                        isHorizontal: true,
+                      ),
+                      TouchableOpacity(
+                        onTap: () async {
+                          AppWideLoadingBanner().loadingBanner(context);
+                          final code =
+                              await Provider.of<Auth>(context, listen: false)
+                                  .updateStoreName(_controller.text);
+                          Navigator.of(context).pop();
+                          if (code == '200') {
+                            TOastNotification()
+                                .showSuccesToast(context, 'Store name updated');
+                            Provider.of<Auth>(context, listen: false)
+                                .store_name = _controller.text;
+                          } else {
+                            TOastNotification()
+                                .showErrorToast(context, 'Error!');
+                          }
+                        },
+                        child: Icon(
+                          Icons.done,
+                          color: Color(0xFFFA6E00),
+                        ),
+                      )
+                    ],
                   ),
                 ),
               ),

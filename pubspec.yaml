@@ -37,7 +37,7 @@ dependencies:
   responsive_sizer: ^3.2.0
   image_picker: ^1.0.5
   google_fonts: ^6.1.0
-  flutter_svg: ^2.0.9
+  flutter_svg: ^2.0.10+1
   figma_squircle: ^0.5.3
   flutter_map: ^6.1.0
   toastification: ^1.1.0
@@ -90,7 +90,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
-    - assets/icons/Registration.svg
+    # - assets/icons/Registration.svg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
