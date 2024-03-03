@@ -51,7 +51,9 @@ class _HomeState extends State<Home> {
                           children: [
                             CustomIconButton(
                               ic: Icons.notifications,
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(context, "/map");
+                              },
                             ),
                             Column(
                               // mainAxisAlignment: MainAxisAlignment.start,
@@ -81,15 +83,20 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 Space(2.h),
-                                const Text(
-                                  'Geeta Kitchen',
-                                  style: TextStyle(
-                                    color: Color(0xFF094B60),
-                                    fontSize: 14,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0.10,
-                                    letterSpacing: 0.42,
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, "/map");
+                                  },
+                                  child: const Text(
+                                    'Geeta Kitchen',
+                                    style: TextStyle(
+                                      color: Color(0xFF094B60),
+                                      fontSize: 14,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w700,
+                                      height: 0.10,
+                                      letterSpacing: 0.42,
+                                    ),
                                   ),
                                 )
                               ],

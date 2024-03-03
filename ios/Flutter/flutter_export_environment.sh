@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=C:\Users\rk621\Documents\Development\sdks\flutter"
-export "FLUTTER_APPLICATION_PATH=C:\Users\rk621\Documents\Development\cloudbelly\cloudbelly_app"
+export "FLUTTER_ROOT=C:\flutter\flutter"
+export "FLUTTER_APPLICATION_PATH=C:\Users\gsara\OneDrive\Documents\GitHub\cloudbelly_flutter"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib\main.dart"
 export "FLUTTER_BUILD_DIR=build"
