@@ -83,7 +83,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(247, 247, 247, 1),
+      backgroundColor: const Color.fromRGBO(234, 245, 247, 1),
 
       body: _pages[_selectedIndex],
       floatingActionButton: FloatingActionButton(

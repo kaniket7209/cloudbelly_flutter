@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+// import 'dart:html';
 
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:flutter/cupertino.dart';
@@ -882,6 +883,30 @@ class Auth with ChangeNotifier {
     } catch (error) {
       // Handle exceptions
       return '-1';
+    }
+  }
+
+  Future<List<dynamic>> getUserInfo(List<dynamic> list) async {
+    final String url = 'https://app.cloudbelly.in/get-user-info';
+
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {
+      "user_ids": list,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      print(response.body);
+      print(response.statusCode);
+
+      return jsonDecode(response.body) as List<dynamic>;
+    } catch (error) {
+      // Handle exceptions
+      return ['-1'];
     }
   }
 }

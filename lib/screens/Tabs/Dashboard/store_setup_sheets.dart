@@ -84,7 +84,6 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
     if (user_name != '' &&
         store_name != '' &&
         pincode != '' &&
-        profile_photo != '' &&
         location_details != '' &&
         max_order_capacity != '' &&
         profile_photo != 'file size very large') {

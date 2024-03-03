@@ -32,13 +32,13 @@ class _FeedState extends State<Feed> {
         .getGlobalFeed(_pageNumber)
         .then((newFeed) {
       setState(() {
-        print('object');
+        // print('object');
         FeedList.clear();
         // print(FeedList);
         // print(newFeed);
         FeedList.addAll(newFeed);
-        FeedList = FeedList.reversed.toList();
-        print(FeedList);
+        // FeedList = FeedList.reversed.toList();
+        // print(FeedList);
         _isLoading = false;
       });
     });
@@ -77,9 +77,9 @@ class _FeedState extends State<Feed> {
         .getGlobalFeed(_pageNumber)
         .then((newFeed) {
       setState(() {
-        print('new: $newFeed');
+        // print('new: $newFeed');SW
         FeedList.addAll(newFeed);
-        FeedList = FeedList.reversed.toList();
+        // FeedList = FeedList.reversed.toList();
 
         _isLoading = false;
       });

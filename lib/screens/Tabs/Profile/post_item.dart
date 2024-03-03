@@ -51,85 +51,62 @@ class _PostItemState extends State<PostItem> {
       discription = widget.data['caption'] ?? '';
 
       caption1 = getFittedText(discription, context)[0];
-      // print(caption1);
+
       caption2 = getFittedText(discription, context)[1];
       _getLikeData();
+
       _didUpdate = false;
     }
-    // TODO: implement didChangeDependencies
+
     super.didChangeDependencies();
   }
 
-  // bool _isExpanded = false;
   List<String> getFittedText(String text, BuildContext context) {
     text = widget.data['caption'] ?? '';
-    // final screenWidth = MediaQuery.of(context).size.width;
-    // const textStyle = TextStyle(
-    //   color: Color(0xFF0A4C61),
-    //   fontSize: 12,
-    //   fontFamily: 'Product Sans Medium',
-    //   fontWeight: FontWeight.w500,
-    //   height: 0,
-    //   letterSpacing: 0.12,
-    // ); // Adjust the font size as needed
-
-    // Initialize variables
-    // String fittedText = '';
-    // String extraText = '';
-    // double totalWidth = 0;
-
-    // for (int i = 0; i < text.length; i++) {
-    //   final testText = fittedText + text[i];
-    //   final textPainter = TextPainter(
-    //     text: TextSpan(text: testText, style: textStyle),
-    //     maxLines: 1,
-    //     // textDirection: TextDirection.LTR,
-    //     textDirection: TextDirection.LTR,
-    //   )..layout(maxWidth: double.infinity);
-
-    //   final textWidth = textPainter.size.width;
-    //   totalWidth += textWidth;
-
-    //   if (totalWidth <= screenWidth) {
-    //     // Text fits within available width
-    //     fittedText = testText;
-    //   } else {
-    //     // Text exceeds available width
-    //     // extraText = text.substring(i);
-    //     break;
-    //   }
-    // }
-    // print(fittedText);
     if (text.length < 50) {
       return [text, ''];
     } else {
       String text1 = text.substring(0, 50);
-      // print(text1);
+
       text1 = text1 + ' - ';
       String text2 = text.length > 50 ? text.substring(50) : '';
-
       return [text1, text2];
     }
   }
 
   bool _isLiked = false;
+  // List<dynamic> likePorfileUrlList = [];
+  void _getLikeData() async {
+    List<dynamic> likeIds = widget.data['likes'] ?? [];
+    List<dynamic> temp = await Provider.of<Auth>(context).getUserInfo(likeIds);
 
-  void _getLikeData() {
-    _isLiked = (widget.data['likes'] ?? [] as List<dynamic>)
+    setState(() {
+      temp.forEach((element) {
+        _likeData.add({
+          'id': element['_id'],
+          'name': element['store_name'],
+          'profile_photo': element['profile_photo']
+        });
+      });
+    });
+
+    // print(_likeData);
+
+    _isLiked = (widget.data['likes'] ?? [])
         .contains(Provider.of<Auth>(context, listen: false).user_id);
   }
 
   String formatTimeDifference(String timestampString) {
-    // final DateFormat inputFormat = DateFormat('E, dd MMM yyyy HH:mm:ss ' 'GMT');
     DateFormat format = DateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
-    // print(timestampString);
-    DateTime timestamp = format.parse(timestampString);
-    // try {
-    //   timestamp = inputFormat.parse(timestampString);
-    // } catch (e) {
-    //   print('Error parsing timestamp: $e');
-    //   return 'Invalid timestamp';
-    // }
+    DateTime timestamp;
+
+    try {
+      timestamp = format.parse(timestampString, true).toLocal();
+    } catch (e) {
+      print('Error parsing timestamp: $e');
+      return 'Invalid timestamp';
+    }
+
     final now = DateTime.now();
     final difference = now.difference(timestamp);
 
@@ -148,8 +125,10 @@ class _PostItemState extends State<PostItem> {
 
   SampleItem? selectedMenu;
   bool _showLikeIcon = false;
+  List<dynamic> _likeData = [];
   @override
   Widget build(BuildContext context) {
+    // print(widget.data);
     // final date_time = formatTimeDifference('created_at');
     CarouselController buttonCarouselController = CarouselController();
     return Container(
@@ -276,243 +255,7 @@ class _PostItemState extends State<PostItem> {
               IconButton(
                   onPressed: () async {
                     {
-                      return AppWideBottomSheet().showSheet(
-                          context,
-                          widget.isProfilePost
-                              ? Column(
-                                  children: [
-                                    Space(4.h),
-                                    Row(
-                                      children: [
-                                        Space(
-                                          11.w,
-                                          isHorizontal: true,
-                                        ),
-                                        PostMoreButtonRowWidget(
-                                          icon: Icon(Icons.bookmark),
-                                          text: 'Save',
-                                        ),
-                                        Space(
-                                          12.w,
-                                          isHorizontal: true,
-                                        ),
-                                        PostMoreButtonRowWidget(
-                                          icon: Icon(Icons.qr_code),
-                                          text: 'QR code',
-                                        ),
-                                      ],
-                                    ),
-                                    Space(4.h),
-                                    Row(
-                                      children: [
-                                        Space(
-                                          11.w,
-                                          isHorizontal: true,
-                                        ),
-                                        PostMoreButtonRowWidget(
-                                          icon: Icon(Icons.edit),
-                                          text: 'Edit',
-                                        ),
-                                        Space(
-                                          13.5.w,
-                                          isHorizontal: true,
-                                        ),
-                                        PostMoreButtonRowWidget(
-                                          icon: Icon(Icons.qr_code),
-                                          text: 'View insights',
-                                        ),
-                                      ],
-                                    ),
-                                    Space(4.h),
-                                    PostMoreButtonBigContainerWidget(
-                                      color: Color.fromRGBO(250, 110, 0, 1),
-                                      icon: Icon(Icons.visibility_off),
-                                      text: 'Turn off commenting',
-                                    ),
-                                    Space(3.h),
-                                    PostMoreButtonBigContainerWidget(
-                                      color: Color.fromRGBO(171, 171, 171, 1),
-                                      icon: Icon(Icons.comments_disabled),
-                                      text: 'Hide like counts',
-                                    ),
-                                    Space(5.h),
-                                    TouchableOpacity(
-                                      onTap: () async {
-                                        AppWideLoadingBanner()
-                                            .loadingBanner(context);
-                                        final code = await Provider.of<Auth>(
-                                                context,
-                                                listen: false)
-                                            .deletePost(widget.data['id']);
-
-                                        if (code == '200') {
-                                          TOastNotification().showSuccesToast(
-                                              context, 'Post deleted');
-                                          final Data = await Provider.of<Auth>(
-                                                  context,
-                                                  listen: false)
-                                              .getFeed() as List<dynamic>;
-                                          Navigator.of(context).pop();
-
-                                          Navigator.of(context)
-                                              .pushReplacementNamed(
-                                                  PostsScreen.routeName,
-                                                  arguments: {
-                                                'data': Data,
-                                                'index': 0
-                                              });
-                                        } else {
-                                          Navigator.of(context).pop();
-                                          TOastNotification().showErrorToast(
-                                              context, 'Error!');
-                                        }
-                                      },
-                                      child: Container(
-                                        decoration: GlobalVariables()
-                                            .ContainerDecoration(
-                                                offset: Offset(0, 8),
-                                                blurRadius: 20,
-                                                boxColor: Color.fromRGBO(
-                                                    255, 77, 77, 1),
-                                                cornerRadius: 10,
-                                                shadowColor: Color.fromRGBO(
-                                                    152, 202, 201, 0.8)),
-                                        width: double.infinity,
-                                        height: 6.h,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.delete,
-                                              color: Colors.white,
-                                            ),
-                                            Space(
-                                              3.w,
-                                              isHorizontal: true,
-                                            ),
-                                            Text(
-                                              'Delete',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontFamily: 'Product Sans',
-                                                fontWeight: FontWeight.w700,
-                                                height: 0,
-                                                letterSpacing: 0.16,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                )
-                              : Column(
-                                  children: [
-                                    Space(4.h),
-                                    Row(
-                                      children: [
-                                        Space(
-                                          11.w,
-                                          isHorizontal: true,
-                                        ),
-                                        PostMoreButtonRowWidget(
-                                          icon: Icon(Icons.bookmark),
-                                          text: 'Save',
-                                        ),
-                                        Space(
-                                          12.w,
-                                          isHorizontal: true,
-                                        ),
-                                        PostMoreButtonRowWidget(
-                                          icon: Icon(Icons.qr_code),
-                                          text: 'QR code',
-                                        ),
-                                      ],
-                                    ),
-                                    Space(4.h),
-                                    Row(
-                                      children: [
-                                        Space(
-                                          11.w,
-                                          isHorizontal: true,
-                                        ),
-                                        PostMoreButtonRowWidget(
-                                          icon: Icon(Icons.visibility_off),
-                                          text: 'Hide',
-                                        ),
-                                        Space(
-                                          13.5.w,
-                                          isHorizontal: true,
-                                        ),
-                                        PostMoreButtonRowWidget(
-                                          icon: Icon(Icons.error_outline),
-                                          text: 'Report',
-                                        ),
-                                      ],
-                                    ),
-                                    Space(5.h),
-                                    TouchableOpacity(
-                                      onTap: () async {
-                                        AppWideLoadingBanner()
-                                            .loadingBanner(context);
-                                        final code = await Provider.of<Auth>(
-                                                context,
-                                                listen: false)
-                                            .deletePost(widget.data['id']);
-
-                                        if (code == '200') {
-                                          TOastNotification().showSuccesToast(
-                                              context, 'Post deleted');
-                                          final Data = await Provider.of<Auth>(
-                                                  context,
-                                                  listen: false)
-                                              .getFeed() as List<dynamic>;
-                                          Navigator.of(context).pop();
-
-                                          Navigator.of(context)
-                                              .pushReplacementNamed(
-                                                  PostsScreen.routeName,
-                                                  arguments: {
-                                                'data': Data,
-                                                'index': 0
-                                              });
-                                        } else {
-                                          Navigator.of(context).pop();
-                                          TOastNotification().showErrorToast(
-                                              context, 'Error!');
-                                        }
-                                      },
-                                      child: Container(
-                                          decoration: GlobalVariables()
-                                              .ContainerDecoration(
-                                                  offset: Offset(0, 8),
-                                                  blurRadius: 20,
-                                                  boxColor: Color.fromRGBO(
-                                                      84, 166, 193, 1),
-                                                  cornerRadius: 10,
-                                                  shadowColor: Color.fromRGBO(
-                                                      152, 202, 201, 0.8)),
-                                          width: double.infinity,
-                                          height: 6.h,
-                                          child: Center(
-                                            child: Text(
-                                              'Unfollow',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontFamily: 'Product Sans',
-                                                fontWeight: FontWeight.w700,
-                                                height: 0,
-                                                letterSpacing: 0.16,
-                                              ),
-                                            ),
-                                          )),
-                                    )
-                                  ],
-                                ),
-                          widget.isProfilePost ? 60.h : 40.h);
+                      return MoreSheetInPostItem(context);
                     }
                   },
                   icon: Icon(Icons.more_vert)),
@@ -676,9 +419,11 @@ class _PostItemState extends State<PostItem> {
                 ),
             ],
           ),
-          Space(1.5.h),
+          Space(5),
           Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              // Text('knknhkink'),
               // SvgPicture.asset(
               //   Assets.favourite_svg,
               //   // color: Colors.red,
@@ -688,7 +433,10 @@ class _PostItemState extends State<PostItem> {
               // ),
               //like button
               IconButton(
+                padding: EdgeInsets.zero,
+                // pa
                 onPressed: () async {
+                  print(widget.data['likes'] ?? []);
                   String code = '';
 
                   code = widget.isProfilePost
@@ -701,6 +449,28 @@ class _PostItemState extends State<PostItem> {
                   if (code == '200') {
                     setState(() {
                       _isLiked = !_isLiked;
+                      if (_isLiked) {
+                        setState(() {
+                          _likeData.add({
+                            'id': Provider.of<Auth>(context, listen: false)
+                                .user_id,
+                            'profile_photo':
+                                Provider.of<Auth>(context, listen: false)
+                                    .logo_url,
+                            'name': Provider.of<Auth>(context, listen: false)
+                                .store_name,
+                          });
+                        });
+                      } else {
+                        setState(() {
+                          _likeData.removeWhere(
+                            (element) =>
+                                element ==
+                                Provider.of<Auth>(context, listen: false)
+                                    .user_id,
+                          );
+                        });
+                      }
                       if (_isLiked == true) _showLikeIcon = true;
                     });
                     Future.delayed(Duration(seconds: 2), () {
@@ -724,6 +494,7 @@ class _PostItemState extends State<PostItem> {
               ),
               //comment button
               IconButton(
+                  padding: EdgeInsets.zero,
                   onPressed: () {
                     AppWideBottomSheet().showSheet(
                         context,
@@ -736,6 +507,7 @@ class _PostItemState extends State<PostItem> {
                   icon: const Icon(Icons.mode_comment_outlined)),
               //share button
               IconButton(
+                  padding: EdgeInsets.zero,
                   onPressed: () async {
                     final DynamicLinkParameters parameters =
                         DynamicLinkParameters(
@@ -754,35 +526,16 @@ class _PostItemState extends State<PostItem> {
                   icon: const Icon(Icons.share))
             ],
           ),
-          Space(0.3.h),
+          // Space(14),
           Row(
             children: [
-              Container(
-                width: 17,
-                height: 17,
-                decoration: ShapeDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                        "https://images.pexels.com/photos/938639/pexels-photo-938639.jpeg?auto=compress&cs=tinysrgb&w=600"),
-                    fit: BoxFit.fill,
-                  ),
-                  shape: OvalBorder(
-                    side: BorderSide(
-                      width: 2,
-                      strokeAlign: BorderSide.strokeAlignOutside,
-                      color: Color(0xFFEAF5F7),
-                    ),
-                  ),
-                ),
-              ),
-              for (int i = 0; i < 2; i++)
+              if (_likeData.length != 0 && _likeData[0]['profile_photo'] != '')
                 Container(
                   width: 17,
                   height: 17,
                   decoration: ShapeDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(
-                          "https://images.pexels.com/photos/1297483/pexels-photo-1297483.jpeg?auto=compress&cs=tinysrgb&w=600"),
+                      image: NetworkImage(_likeData[0]['profile_photo']),
                       fit: BoxFit.fill,
                     ),
                     shape: OvalBorder(
@@ -794,10 +547,32 @@ class _PostItemState extends State<PostItem> {
                     ),
                   ),
                 ),
-              Space(
-                2.7.w,
-                isHorizontal: true,
-              ),
+              if (_likeData.length > 1)
+                for (int i = 0; (_likeData.length > 2 ? i < 2 : i < 1); i++)
+                  if (_likeData[i + 1]['profile_photo'] != '')
+                    Container(
+                      width: 17,
+                      height: 17,
+                      decoration: ShapeDecoration(
+                        image: DecorationImage(
+                          image:
+                              NetworkImage(_likeData[i + 1]['profile_photo']),
+                          fit: BoxFit.fill,
+                        ),
+                        shape: OvalBorder(
+                          side: BorderSide(
+                            width: 2,
+                            strokeAlign: BorderSide.strokeAlignOutside,
+                            color: Color(0xFFEAF5F7),
+                          ),
+                        ),
+                      ),
+                    ),
+              if (_likeData.length != 0 && _likeData[0]['profile_photo'] != '')
+                Space(
+                  7,
+                  isHorizontal: true,
+                ),
               const Text(
                 'Liked by',
                 style: TextStyle(
@@ -809,9 +584,9 @@ class _PostItemState extends State<PostItem> {
                   letterSpacing: 0.12,
                 ),
               ),
-              Space(isHorizontal: true, 1.5.w),
+              Space(isHorizontal: true, 5),
               Text(
-                '${(widget.data['likes'] ?? [] as List<dynamic>).length} peoples',
+                '${_likeData.length == 0 ? '0 people' : _likeData.length == 1 ? _likeData[0]['name'] : '${_likeData[0]['name']} and ${_likeData.length - 1} others'}',
                 style: const TextStyle(
                   color: Color(0xFF0A4C61),
                   fontSize: 12,
@@ -842,7 +617,7 @@ class _PostItemState extends State<PostItem> {
                         letterSpacing: 0.36,
                       ),
                     ),
-                    Space(isHorizontal: true, 3.w),
+                    Space(isHorizontal: true, 9),
                     Expanded(
                       child: SizedBox(
                         child: Text(
@@ -893,7 +668,9 @@ class _PostItemState extends State<PostItem> {
                 vertical: 0.6.h,
               ),
               child: Text(
-                'View ${(widget.data['comments'] ?? [] as List<dynamic>).length} comments',
+                (widget.data['comments'] ?? []).length > 0
+                    ? 'View ${(widget.data['comments'] ?? []).length} comments'
+                    : '${(widget.data['comments'] ?? []).length} comments',
                 style: const TextStyle(
                   color: Color(0xFF519796),
                   fontSize: 11,
@@ -920,6 +697,223 @@ class _PostItemState extends State<PostItem> {
         ],
       ),
     );
+  }
+
+  Future<void> MoreSheetInPostItem(BuildContext context) {
+    return AppWideBottomSheet().showSheet(
+        context,
+        widget.isProfilePost
+            ? Column(
+                children: [
+                  Space(4.h),
+                  Row(
+                    children: [
+                      Space(
+                        11.w,
+                        isHorizontal: true,
+                      ),
+                      PostMoreButtonRowWidget(
+                        icon: Icon(Icons.bookmark),
+                        text: 'Save',
+                      ),
+                      Space(
+                        12.w,
+                        isHorizontal: true,
+                      ),
+                      PostMoreButtonRowWidget(
+                        icon: Icon(Icons.qr_code),
+                        text: 'QR code',
+                      ),
+                    ],
+                  ),
+                  Space(4.h),
+                  Row(
+                    children: [
+                      Space(
+                        11.w,
+                        isHorizontal: true,
+                      ),
+                      PostMoreButtonRowWidget(
+                        icon: Icon(Icons.edit),
+                        text: 'Edit',
+                      ),
+                      Space(
+                        13.5.w,
+                        isHorizontal: true,
+                      ),
+                      PostMoreButtonRowWidget(
+                        icon: Icon(Icons.qr_code),
+                        text: 'View insights',
+                      ),
+                    ],
+                  ),
+                  Space(4.h),
+                  PostMoreButtonBigContainerWidget(
+                    color: Color.fromRGBO(250, 110, 0, 1),
+                    icon: Icon(Icons.visibility_off),
+                    text: 'Turn off commenting',
+                  ),
+                  Space(3.h),
+                  PostMoreButtonBigContainerWidget(
+                    color: Color.fromRGBO(171, 171, 171, 1),
+                    icon: Icon(Icons.comments_disabled),
+                    text: 'Hide like counts',
+                  ),
+                  Space(5.h),
+                  TouchableOpacity(
+                    onTap: () async {
+                      AppWideLoadingBanner().loadingBanner(context);
+                      final code =
+                          await Provider.of<Auth>(context, listen: false)
+                              .deletePost(widget.data['id']);
+
+                      if (code == '200') {
+                        TOastNotification()
+                            .showSuccesToast(context, 'Post deleted');
+                        final Data =
+                            await Provider.of<Auth>(context, listen: false)
+                                .getFeed() as List<dynamic>;
+                        Navigator.of(context).pop();
+
+                        Navigator.of(context).pushReplacementNamed(
+                            PostsScreen.routeName,
+                            arguments: {'data': Data, 'index': 0});
+                      } else {
+                        Navigator.of(context).pop();
+                        TOastNotification().showErrorToast(context, 'Error!');
+                      }
+                    },
+                    child: Container(
+                      decoration: GlobalVariables().ContainerDecoration(
+                          offset: Offset(0, 8),
+                          blurRadius: 20,
+                          boxColor: Color.fromRGBO(255, 77, 77, 1),
+                          cornerRadius: 10,
+                          shadowColor: Color.fromRGBO(152, 202, 201, 0.8)),
+                      width: double.infinity,
+                      height: 6.h,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                          Space(
+                            3.w,
+                            isHorizontal: true,
+                          ),
+                          Text(
+                            'Delete',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w700,
+                              height: 0,
+                              letterSpacing: 0.16,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              )
+            : Column(
+                children: [
+                  Space(4.h),
+                  Row(
+                    children: [
+                      Space(
+                        11.w,
+                        isHorizontal: true,
+                      ),
+                      PostMoreButtonRowWidget(
+                        icon: Icon(Icons.bookmark),
+                        text: 'Save',
+                      ),
+                      Space(
+                        12.w,
+                        isHorizontal: true,
+                      ),
+                      PostMoreButtonRowWidget(
+                        icon: Icon(Icons.qr_code),
+                        text: 'QR code',
+                      ),
+                    ],
+                  ),
+                  Space(4.h),
+                  Row(
+                    children: [
+                      Space(
+                        11.w,
+                        isHorizontal: true,
+                      ),
+                      PostMoreButtonRowWidget(
+                        icon: Icon(Icons.visibility_off),
+                        text: 'Hide',
+                      ),
+                      Space(
+                        13.5.w,
+                        isHorizontal: true,
+                      ),
+                      PostMoreButtonRowWidget(
+                        icon: Icon(Icons.error_outline),
+                        text: 'Report',
+                      ),
+                    ],
+                  ),
+                  Space(5.h),
+                  TouchableOpacity(
+                    onTap: () async {
+                      AppWideLoadingBanner().loadingBanner(context);
+                      final code =
+                          await Provider.of<Auth>(context, listen: false)
+                              .deletePost(widget.data['id']);
+
+                      if (code == '200') {
+                        TOastNotification()
+                            .showSuccesToast(context, 'Post deleted');
+                        final Data =
+                            await Provider.of<Auth>(context, listen: false)
+                                .getFeed() as List<dynamic>;
+                        Navigator.of(context).pop();
+
+                        Navigator.of(context).pushReplacementNamed(
+                            PostsScreen.routeName,
+                            arguments: {'data': Data, 'index': 0});
+                      } else {
+                        Navigator.of(context).pop();
+                        TOastNotification().showErrorToast(context, 'Error!');
+                      }
+                    },
+                    child: Container(
+                        decoration: GlobalVariables().ContainerDecoration(
+                            offset: Offset(0, 8),
+                            blurRadius: 20,
+                            boxColor: Color.fromRGBO(84, 166, 193, 1),
+                            cornerRadius: 10,
+                            shadowColor: Color.fromRGBO(152, 202, 201, 0.8)),
+                        width: double.infinity,
+                        height: 6.h,
+                        child: Center(
+                          child: Text(
+                            'Unfollow',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w700,
+                              height: 0,
+                              letterSpacing: 0.16,
+                            ),
+                          ),
+                        )),
+                  )
+                ],
+              ),
+        widget.isProfilePost ? 60.h : 40.h);
   }
 }
 
@@ -1065,14 +1059,14 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
           ),
           Container(
             height: 53.h,
-            child: (newData['comments'] ?? [] as List<dynamic>).length == 0
+            child: (newData['comments'] ?? []).length == 0
                 ? const Center(
                     child: Text('No Comments Yet'),
                   )
                 : ListView.builder(
-                    itemCount:
-                        (newData['comments'] ?? [] as List<dynamic>).length,
+                    itemCount: (newData['comments'] ?? []).length,
                     itemBuilder: (context, index) {
+                      print(newData);
                       return CommentItemWidget(
                         name: 'user_name',
                         text: newData['comments'][index]['text'],
@@ -1103,30 +1097,57 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
             child: Row(
               children: [
                 const Space(isHorizontal: true, 10),
-                Container(
-                  height: 40,
-                  width: 40,
-                  decoration: const ShapeDecoration(
-                    shadows: [
-                      BoxShadow(
-                        offset: Offset(0, 4),
-                        color: Color.fromRGBO(31, 111, 109, 0.3),
-                        blurRadius: 20,
-                      )
-                    ],
-                    shape: SmoothRectangleBorder(),
-                  ),
-                  child: ClipSmoothRect(
-                    radius: SmoothBorderRadius(
-                      cornerRadius: 5,
-                      cornerSmoothing: 1,
-                    ),
-                    child: Image.network(
-                      Provider.of<Auth>(context, listen: false).logo_url,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+                Provider.of<Auth>(context, listen: false).logo_url == ''
+                    ? Container(
+                        height: 35,
+                        width: 35,
+                        decoration: ShapeDecoration(
+                          shadows: const [
+                            BoxShadow(
+                              offset: Offset(0, 4),
+                              color: Color.fromRGBO(31, 111, 109, 0.4),
+                              blurRadius: 20,
+                            ),
+                          ],
+                          color: Color.fromRGBO(31, 111, 109, 0.6),
+                          shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                            cornerRadius: 5,
+                            cornerSmoothing: 1,
+                          )),
+                        ),
+                        child: Center(
+                          child: Text(
+                            Provider.of<Auth>(context, listen: true)
+                                .store_name[0]
+                                .toUpperCase(),
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ))
+                    : Container(
+                        height: 40,
+                        width: 40,
+                        decoration: const ShapeDecoration(
+                          shadows: [
+                            BoxShadow(
+                              offset: Offset(0, 4),
+                              color: Color.fromRGBO(31, 111, 109, 0.3),
+                              blurRadius: 20,
+                            )
+                          ],
+                          shape: SmoothRectangleBorder(),
+                        ),
+                        child: ClipSmoothRect(
+                          radius: SmoothBorderRadius(
+                            cornerRadius: 5,
+                            cornerSmoothing: 1,
+                          ),
+                          child: Image.network(
+                            Provider.of<Auth>(context, listen: false).logo_url,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                 SizedBox(
                   width: 55.w,
                   child: Center(
