@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -6,7 +8,10 @@ class AppwideTextField extends StatelessWidget {
   final String hintText;
   final Function(String) onChanged;
 
-  AppwideTextField({required this.hintText, required this.onChanged});
+  double height;
+
+  AppwideTextField(
+      {required this.hintText, required this.onChanged, this.height = 1.1});
 
   @override
   Widget build(BuildContext context) {
@@ -26,20 +31,22 @@ class AppwideTextField extends StatelessWidget {
               SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
         ),
       ),
-      height: 6.h,
-      child: TextField(
-        decoration: InputDecoration(
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.only(left: 14),
-          hintText: hintText,
-          hintStyle: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF0A4C61),
-              fontFamily: 'Product Sans',
-              fontWeight: FontWeight.w400),
-          border: InputBorder.none,
+      height: height == 1.1 ? 6.h : height,
+      child: Center(
+        child: TextField(
+          decoration: InputDecoration(
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.only(left: 14),
+            hintText: hintText,
+            hintStyle: const TextStyle(
+                fontSize: 12,
+                color: Color(0xFF0A4C61),
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w400),
+            border: InputBorder.none,
+          ),
+          onChanged: onChanged,
         ),
-        onChanged: onChanged,
       ),
     );
   }

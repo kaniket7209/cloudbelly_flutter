@@ -1,13 +1,18 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:cloudbelly_app/screens/Tabs/Home/home.dart';
+import 'package:cloudbelly_app/api_service.dart';
+
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
+import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class InventoryHub extends StatefulWidget {
   static const routeName = '/profile/inventory-hub';
@@ -18,6 +23,15 @@ class InventoryHub extends StatefulWidget {
 
 class _InventoryHubState extends State<InventoryHub> {
   // int _activeButtonIndex = 1;
+
+  void _launchURL(String url) async {
+    // url = 'https://rgbacolorpicker.com/hex-to-rgba';
+    Uri googleSheetUrl = Uri.parse(url);
+    if (!await launchUrl(googleSheetUrl, mode: LaunchMode.inAppBrowserView)) {
+      TOastNotification().showErrorToast(context, 'Error while opening Sheet');
+      throw Exception('Could not launch $url');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +57,13 @@ class _InventoryHubState extends State<InventoryHub> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CustomIconButton(
-                              color: Color.fromRGBO(250, 110, 0, 1),
+                              color: const Color.fromRGBO(250, 110, 0, 1),
                               ic: Icons.arrow_back_ios_new_outlined,
                               onTap: () {
                                 return Navigator.of(context).pop();
                               },
                             ),
-                            Text(
+                            const Text(
                               'Inventory Hub',
                               style: TextStyle(
                                 color: Color(0xFF094B60),
@@ -61,7 +75,7 @@ class _InventoryHubState extends State<InventoryHub> {
                               ),
                             ),
                             CustomIconButton(
-                              color: Color.fromRGBO(250, 110, 0, 1),
+                              color: const Color.fromRGBO(250, 110, 0, 1),
                               ic: Icons.more_horiz,
                               onTap: () {},
                             ),
@@ -114,14 +128,26 @@ class _InventoryHubState extends State<InventoryHub> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 TouchableOpacity(
-                                  onTap: () {},
+                                  onTap: () async {
+                                    final data = await Provider.of<Auth>(
+                                            context,
+                                            listen: false)
+                                        .getSheetUrl();
+                                    _launchURL(data['sheet_url']);
+                                  },
                                   child: ButtonWidgetHomeScreen(
-                                      txt: 'Add items', isActive: true),
+                                      txt: 'Make List', isActive: true),
                                 ),
                                 TouchableOpacity(
-                                  onTap: () {},
+                                  onTap: () async {
+                                    // final data =
+                                    await Provider.of<Auth>(context,
+                                            listen: false)
+                                        .SyncInventory();
+                                    // UpdateListBottomSheet(context, data);
+                                  },
                                   child: ButtonWidgetHomeScreen(
-                                    txt: 'Quick View',
+                                    txt: 'Update List',
                                     isActive: true,
                                   ),
                                 ),
@@ -166,7 +192,7 @@ class CommonButtonProfile extends StatelessWidget {
                     blurRadius: 20,
                   )
                 ],
-                color: Color.fromRGBO(177, 217, 216, 1),
+                color: const Color.fromRGBO(177, 217, 216, 1),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
                     cornerRadius: 10,
@@ -174,12 +200,12 @@ class CommonButtonProfile extends StatelessWidget {
                   ),
                 ),
               )
-            : ShapeDecoration(shape: SmoothRectangleBorder()),
+            : const ShapeDecoration(shape: SmoothRectangleBorder()),
         child: Center(
           child: Text(
             txt,
             style: TextStyle(
-              color: isActive ? Colors.white : Color(0xFF094B60),
+              color: isActive ? Colors.white : const Color(0xFF094B60),
               fontSize: 14,
               fontFamily: 'Product Sans',
               fontWeight: FontWeight.w700,

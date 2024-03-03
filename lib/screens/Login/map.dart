@@ -1,8 +1,8 @@
-import 'dart:typed_data';
 import 'dart:ui';
+
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:cloudbelly_app/screens/Login/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 
@@ -46,7 +46,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _initMarkers() async {
     try {
-      var data = await AuthApi().sendUserTypeRequest();
+      var data = await Auth().sendUserTypeRequest();
       print(data);
       Set<Marker> markers = {};
 

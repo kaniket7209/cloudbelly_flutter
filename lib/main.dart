@@ -1,13 +1,19 @@
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Login/map.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
 // import 'package:cloudbelly_app/screens/Login/signup.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory_hub.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 
 import 'package:cloudbelly_app/screens/Login/welcome_screen.dart';
+import 'package:cloudbelly_app/screens/pitch_deck.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 void main() async {
@@ -15,7 +21,9 @@ void main() async {
   // await Firebase.initializeApp(
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => Auth()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -23,23 +31,39 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return ResponsiveSizer(builder: (context, orientation, screenType) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'CloudBelly',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
+      return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (ctx) => Auth(),
+          ),
+        ],
+        child: Consumer<Auth>(
+          builder: (ctx, auth, _) => MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'CloudBelly',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            initialRoute: WelcomeScreen.routeName,
+            routes: {
+              LoginScreen.routeName: (context) => LoginScreen(),
+              // '/signup': (context) => SignUpPage(),
+              '/map': (context) => MapScreen(),
+              WelcomeScreen.routeName: (context) => WelcomeScreen(),
+              Tabs.routeName: (context) => Tabs(),
+              InventoryHub.routeName: (context) => InventoryHub(),
+              PostsScreen.routeName: (context) => PostsScreen(),
+              GraphsScreen.routeName: (context) => GraphsScreen(),
+              PitchDeck.routeName: (context) => PitchDeck(),
+            },
+          ),
         ),
-        initialRoute: LoginScreen.routeName,
-        routes: {
-          LoginScreen.routeName: (context) => LoginScreen(),
-          // '/signup': (context) => SignUpPage(),
-          '/map': (context) => MapScreen(),
-          WelcomeScreen.routeName: (context) => WelcomeScreen(),
-          Tabs.routeName: (context) => Tabs(),
-          InventoryHub.routeName: (context) => InventoryHub(),
-        },
       );
     });
   }
