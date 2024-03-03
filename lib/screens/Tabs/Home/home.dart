@@ -1,9 +1,9 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 
-import 'package:cloudbelly_app/screens/Tabs/Home/inventory_hub.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory_hub.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
-import 'package:cloudbelly_app/screens/Tabs/Home/store_setup_sheets.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
@@ -272,11 +272,11 @@ class _HomeState extends State<Home> {
                                               final counter =
                                                   prefs.getInt('counter') ?? 1;
 
-                                              if (counter < 4)
+                                              if (counter < 4) {
                                                 return SlidingSheet()
                                                     .showAlertDialog(
                                                         context, counter);
-                                              else {
+                                              } else {
                                                 TOastNotification()
                                                     .showSuccesToast(
                                                         context, 'All Set ');
