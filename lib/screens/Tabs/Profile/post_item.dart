@@ -119,32 +119,39 @@ class _PostItemState extends State<PostItem> {
         .contains(Provider.of<Auth>(context, listen: false).user_id);
   }
 
-  String formatTimeDifference(String timestampString) {
-    // final DateFormat inputFormat = DateFormat('E, dd MMM yyyy HH:mm:ss ' 'GMT');
-    DateFormat format = DateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
-    // print(timestampString);
-    DateTime timestamp = format.parse(timestampString);
-    // try {
-    //   timestamp = inputFormat.parse(timestampString);
-    // } catch (e) {
-    //   print('Error parsing timestamp: $e');
-    //   return 'Invalid timestamp';
-    // }
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
+String formatTimeDifference(String timestampString) {
+  // Define the expected format of the input timestamp string
+  DateFormat format = DateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
+  DateTime timestamp;
 
-    if (difference.inSeconds < 60) {
-      return '${difference.inSeconds} seconds ago';
-    } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes} minutes ago';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours} hours ago';
-    } else if (difference.inDays == 1) {
-      return 'yesterday';
-    } else {
-      return DateFormat('dd MMMM, yyyy').format(timestamp);
-    }
+  // Attempt to parse the timestamp string using the specified format
+  try {
+    timestamp = format.parse(timestampString, true).toLocal();
+    // The `true` argument tells the parser that the input string is in UTC.
+    // The `.toLocal()` method then converts the parsed DateTime from UTC to local time.
+  } catch (e) {
+    // If parsing fails, log the error and return a fallback message
+    print('Error parsing timestamp: $e');
+    return 'Invalid timestamp';
   }
+
+  // Calculate the difference between now and the parsed timestamp
+  final now = DateTime.now();
+  final difference = now.difference(timestamp);
+
+  // Determine and return the formatted time difference
+  if (difference.inSeconds < 60) {
+    return '${difference.inSeconds} seconds ago';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes} minutes ago';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours} hours ago';
+  } else if (difference.inDays == 1) {
+    return 'yesterday';
+  } else {
+    return DateFormat('dd MMMM, yyyy').format(timestamp);
+  }
+}
 
   SampleItem? selectedMenu;
   bool _showLikeIcon = false;
