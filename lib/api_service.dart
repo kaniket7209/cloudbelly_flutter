@@ -900,8 +900,8 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-      print(response.body);
-      print(response.statusCode);
+      // print(response.body);
+      // print(response.statusCode);
 
       return jsonDecode(response.body) as List<dynamic>;
     } catch (error) {

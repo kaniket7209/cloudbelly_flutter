@@ -436,7 +436,7 @@ class _PostItemState extends State<PostItem> {
                 padding: EdgeInsets.zero,
                 // pa
                 onPressed: () async {
-                  print(widget.data['likes'] ?? []);
+                  // print(widget.data['likes'] ?? []);
                   String code = '';
 
                   code = widget.isProfilePost
@@ -1041,6 +1041,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
   @override
   Widget build(BuildContext context) {
     dynamic newData = widget.data;
+    print(widget.data);
     return Container(
       child: SingleChildScrollView(
         child: Column(children: [
