@@ -137,7 +137,7 @@ class Auth with ChangeNotifier {
 
     // Your request data
     Map<String, dynamic> requestData = {
-      "user_type": "vendor",
+      // "user_type": "vendor",
     };
 
     try {
@@ -146,7 +146,7 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestData),
       );
-
+      print('response: ${jsonDecode(response.body)}}');
       if (response.statusCode == 200) {
         // Request was successful, handle the response here
         return jsonDecode(response.body);

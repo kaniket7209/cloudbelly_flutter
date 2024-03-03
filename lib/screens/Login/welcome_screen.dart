@@ -7,7 +7,6 @@ import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -117,7 +116,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               padding: EdgeInsets.all(20),
               child: Text(
                 "Loading.....".toUpperCase(),
-                style: GoogleFonts.nunito(
+                style: TextStyle(
                   fontSize: 15,
                   color: Colors.black,
                   fontWeight: FontWeight.w600,

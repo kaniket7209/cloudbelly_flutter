@@ -83,9 +83,7 @@ class _DashBoardState extends State<DashBoard>
                               CustomIconButton(
                                 ic: Icons.notifications,
                                 onTap: () {
-                                  print(
-                                      Provider.of<Auth>(context, listen: false)
-                                          .user_id);
+                                  Navigator.of(context).pushNamed('/map');
                                 },
                               ),
                               Container(
