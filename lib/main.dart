@@ -1,8 +1,6 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Login/map.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
-// import 'package:cloudbelly_app/screens/Login/signup.dart';
-import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory_hub.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 
@@ -53,11 +51,9 @@ class MyApp extends StatelessWidget {
             initialRoute: WelcomeScreen.routeName,
             routes: {
               LoginScreen.routeName: (context) => LoginScreen(),
-              // '/signup': (context) => SignUpPage(),
               '/map': (context) => MapScreen(),
               WelcomeScreen.routeName: (context) => WelcomeScreen(),
               Tabs.routeName: (context) => Tabs(),
-              InventoryHub.routeName: (context) => InventoryHub(),
               PostsScreen.routeName: (context) => PostsScreen(),
               GraphsScreen.routeName: (context) => GraphsScreen(),
               PitchDeck.routeName: (context) => PitchDeck(),

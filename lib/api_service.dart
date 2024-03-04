@@ -909,4 +909,41 @@ class Auth with ChangeNotifier {
       return ['-1'];
     }
   }
+
+  Future<dynamic> getdataInventory(String id) async {
+    id = '65e31e9f0bf98389f417cf71';
+    final String url = 'https://app.cloudbelly.in/inventory/get-data';
+
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {
+      "user_id": "65e31e9f0bf98389f417cf71",
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Accept': '*/*',
+          'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
+          'Connection': 'keep-alive',
+          'Content-Type': 'application/json',
+          'Origin': 'https://app.cloudbelly.in',
+          'Referer': 'https://app.cloudbelly.in/inventory',
+          'Sec-Fetch-Dest': 'empty',
+          'Sec-Fetch-Mode': 'cors',
+          'Sec-Fetch-Site': 'same-origin',
+          'User-Agent':
+              'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
+        },
+        body: jsonEncode(requestBody),
+      );
+      print(response.body);
+      // print(response.statusCode);
+
+      return jsonDecode(response.body);
+    } catch (error) {
+      // Handle exceptions
+      return '-1';
+    }
+  }
 }
