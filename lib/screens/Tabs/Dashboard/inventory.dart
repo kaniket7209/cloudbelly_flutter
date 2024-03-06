@@ -8,6 +8,7 @@ import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory_bottom_sheet.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/make_list_inventory.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -282,17 +283,7 @@ class _InventoryState extends State<Inventory> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Make_Update_ListWidget(
-              txt: 'Make List',
-              onTap: () async {
-                AppWideLoadingBanner().loadingBanner(context);
-                final _data = await Provider.of<Auth>(context, listen: false)
-                    .getdataInventory(
-                        Provider.of<Auth>(context, listen: false).user_id);
-                Navigator.of(context).pop();
-                InventoryBottomSheets().MakeListBottomSheet(context, _data);
-              },
-            ),
+            MakeListInventoryButton(),
             TouchableOpacity(
               onTap: () async {
                 AppWideLoadingBanner().loadingBanner(context);

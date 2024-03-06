@@ -7,11 +7,15 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class AppwideTextField extends StatelessWidget {
   final String hintText;
   final Function(String) onChanged;
+  Function(String)? onSubmitted;
 
   double height;
 
   AppwideTextField(
-      {required this.hintText, required this.onChanged, this.height = 1.1});
+      {required this.hintText,
+      required this.onChanged,
+      this.height = 1.1,
+      this.onSubmitted});
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +50,7 @@ class AppwideTextField extends StatelessWidget {
             border: InputBorder.none,
           ),
           onChanged: onChanged,
+          onSubmitted: onSubmitted,
         ),
       ),
     );

@@ -916,7 +916,7 @@ class Auth with ChangeNotifier {
 
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
-      "user_id": "65e31e9f0bf98389f417cf71",
+      "user_id": user_id,
     };
 
     try {
@@ -944,6 +944,76 @@ class Auth with ChangeNotifier {
     } catch (error) {
       // Handle exceptions
       return '-1';
+    }
+  }
+
+  Future<dynamic> saveInventoryData(List<dynamic> data) async {
+    // id = '65e31e9f0bf98389f417cf71';
+    final String url = 'https://app.cloudbelly.in/inventory/save-data';
+    print(data);
+    // bool _isOK = false;
+
+    List<dynamic> _newList = [];
+    for (int i = 0; i < data.length; i++) {
+      _newList.add({
+        "itemId": data[i]['itemId'],
+        "itemName": data[i]['itemName'],
+        "pricePerUnit": data[i]['pricePerUnit'],
+        "purchaseDate": data[i]['purchaseDate'],
+        "sellingDate": data[i]['sellingDate'],
+        "sellingPrice": data[i]['sellingPrice'],
+        // "shelf_life": "",
+        "unitType": data[i]['unitType'],
+        "volumeLeft": data[i]['volumeLeft'],
+        "volumePurchased": data[i]['volumePurchased'],
+        "volumeSold": data[i]['volumeSold'],
+      });
+    }
+    Map<String, dynamic> requestBody = {
+      'user_id': user_id,
+      'data': _newList
+      // {
+      //   "itemId": "1",
+      //   "itemName": "Aloo",
+      //   "pricePerUnit": "20",
+      //   "unitType": "kg",
+      //   "purchaseDate": "2024-03-02",
+      //   "volumePurchased": "200",
+      //   "volumeSold": "0",
+      //   "volumeLeft": "200",
+      //   "sellingPrice": "",
+      //   "sellingDate": ""
+      // }
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Accept': '*/*',
+          'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8',
+          'Connection': 'keep-alive',
+          'Content-Type': 'application/json',
+          'Origin': 'https://app.cloudbelly.in',
+          'Referer': 'https://app.cloudbelly.in/inventory',
+          'Sec-Fetch-Dest': 'empty',
+          'Sec-Fetch-Mode': 'cors',
+          'Sec-Fetch-Site': 'same-origin',
+          'User-Agent':
+              'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
+        },
+        body: jsonEncode(requestBody),
+      );
+      print(response.body);
+      // print(response.statusCode);
+
+      return {
+        'body': jsonDecode(response.body),
+        'code': response.statusCode,
+      };
+    } catch (error) {
+      // Handle exceptions
+      return {'Error': error};
     }
   }
 }
