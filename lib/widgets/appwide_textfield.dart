@@ -8,14 +8,17 @@ class AppwideTextField extends StatelessWidget {
   final String hintText;
   final Function(String) onChanged;
   Function(String)? onSubmitted;
+  TextEditingController? controller;
 
   double height;
 
-  AppwideTextField(
-      {required this.hintText,
-      required this.onChanged,
-      this.height = 1.1,
-      this.onSubmitted});
+  AppwideTextField({
+    required this.hintText,
+    required this.onChanged,
+    this.height = 1.1,
+    this.onSubmitted,
+    this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +41,7 @@ class AppwideTextField extends StatelessWidget {
       height: height == 1.1 ? 6.h : height,
       child: Center(
         child: TextField(
+          controller: controller,
           decoration: InputDecoration(
             fillColor: Colors.white,
             contentPadding: const EdgeInsets.only(left: 14),

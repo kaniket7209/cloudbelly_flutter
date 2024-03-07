@@ -45,6 +45,11 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'CloudBelly',
             theme: ThemeData(
+              scrollbarTheme: ScrollbarThemeData(
+                thumbColor: MaterialStateProperty.all<Color>(Color(0xFFFA6E00)),
+                trackColor: MaterialStateProperty.all<Color>(
+                    Color.fromRGBO(177, 217, 216, 1)),
+              ),
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
               useMaterial3: true,
             ),

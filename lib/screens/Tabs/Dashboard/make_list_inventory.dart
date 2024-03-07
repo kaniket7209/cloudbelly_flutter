@@ -3,6 +3,7 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -32,11 +33,10 @@ class _MakeListInventoryButtonState extends State<MakeListInventoryButton> {
       txt: 'Make List',
       onTap: () async {
         AppWideLoadingBanner().loadingBanner(context);
-        final _data = await Provider.of<Auth>(context, listen: false)
-            .getdataInventory(
-                Provider.of<Auth>(context, listen: false).user_id);
+        final _data =
+            await Provider.of<Auth>(context, listen: false).getInventoryData();
         Navigator.of(context).pop();
-        dataList = _data['inventory_data'];
+        dataList = _data['inventory_data'] ?? [];
         _bottomSheet(context, dataList);
       },
     );
@@ -100,42 +100,8 @@ class _MakeListInventoryButtonState extends State<MakeListInventoryButton> {
                           ),
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TouchableOpacity(
-                            onTap: () {
-                              print('march');
-                            },
-                            child: Container(
-                                height: 4.h,
-                                width: 30.w,
-                                decoration: const ShapeDecoration(
-                                  color: Color.fromRGBO(177, 217, 216, 1),
-                                  shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius.all(
-                                      SmoothRadius(
-                                          cornerRadius: 15, cornerSmoothing: 1),
-                                    ),
-                                  ),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    '05 March, 2024',
-                                    style: TextStyle(
-                                      color: Color(0xFF094B60),
-                                      fontSize: 12,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0.14,
-                                      letterSpacing: 0.36,
-                                    ),
-                                  ),
-                                )),
-                          )
-                        ],
-                      ),
-                      Space(2.h),
+                      DateWidgetSHeet(),
+                      Space(29),
                       const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -191,7 +157,13 @@ class SheetWidget extends StatefulWidget {
   State<SheetWidget> createState() => _SheetWidgetState();
 }
 
+ScrollController _scrollController = ScrollController();
+
 class _SheetWidgetState extends State<SheetWidget> {
+  void _setState() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     List<dynamic> list = widget.dataList;
@@ -199,18 +171,20 @@ class _SheetWidgetState extends State<SheetWidget> {
       children: [
         Space(3.h),
         Scrollbar(
+          controller: _scrollController,
           trackVisibility: true,
           thumbVisibility: true,
           radius: const Radius.circular(10),
           interactive: true,
-          scrollbarOrientation: ScrollbarOrientation.top,
+          scrollbarOrientation: ScrollbarOrientation.bottom,
           child: SingleChildScrollView(
+            controller: _scrollController,
             scrollDirection: Axis.horizontal,
             child: Column(
               children: [
                 Space(1.h),
                 Container(
-                  width: 150.w,
+                  width: 144.w,
                   height: 1.2,
                   decoration: const BoxDecoration(color: Color(0xC1FA6E00)),
                 ),
@@ -220,20 +194,20 @@ class _SheetWidgetState extends State<SheetWidget> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SheetLabelWidget(
-                      txt: 'Product',
+                      txt: 'Product Name',
                       width: 22.w,
                     ),
                     SheetLabelWidget(
-                      txt: 'Unit',
+                      txt: 'Unit Type',
                       width: 13.w,
                     ),
                     SheetLabelWidget(
                       txt: 'Purchase Price/unit',
-                      width: 22.w,
+                      width: 24.w,
                     ),
                     SheetLabelWidget(
-                      txt: 'Volume',
-                      width: 20.w,
+                      txt: 'Volume Purchased',
+                      width: 25.w,
                     ),
                     SheetLabelWidget(
                       txt: 'Selling price',
@@ -251,14 +225,14 @@ class _SheetWidgetState extends State<SheetWidget> {
                 ),
                 Space(1.h),
                 Container(
-                  width: 150.w,
+                  width: 144.w,
                   height: 1.2,
                   decoration: const BoxDecoration(color: Color(0xC1FA6E00)),
                 ),
                 // Space(2.h),
                 SizedBox(
                   height: 53.h,
-                  width: 138.w,
+                  width: 145.w,
                   child: ListView.builder(
                       itemCount: list.length,
                       itemBuilder: (context, index) {
@@ -319,13 +293,14 @@ class _SheetWidgetState extends State<SheetWidget> {
                         );
 
                         return Container(
-                          margin: EdgeInsets.symmetric(vertical: 1.4.h),
+                          margin: EdgeInsets.symmetric(vertical: 0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               SizedBox(
                                 width: 22.w,
                                 child: MakeListTextField(
+                                  hintText: 'Name',
                                   isStringEntry: true,
                                   editable: list[index]['new'] != null,
                                   controller: nameController,
@@ -340,6 +315,7 @@ class _SheetWidgetState extends State<SheetWidget> {
                               SizedBox(
                                 width: 13.w,
                                 child: MakeListTextField(
+                                  hintText: 'Kg',
                                   isStringEntry: true,
                                   editable: list[index]['new'] != null,
                                   controller: unitController,
@@ -352,8 +328,9 @@ class _SheetWidgetState extends State<SheetWidget> {
                                 ),
                               ),
                               SizedBox(
-                                width: 22.w,
+                                width: 24.w,
                                 child: MakeListTextField(
+                                  hintText: '10',
                                   editable: list[index]['new'] != null,
                                   controller: purchasePriceController,
                                   onChanged: (newValue) async {
@@ -365,142 +342,173 @@ class _SheetWidgetState extends State<SheetWidget> {
                                 ),
                               ),
                               SizedBox(
-                                width: 20.w,
+                                width: 25.w,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
+                                    SizedBox(
+                                      width: 10.w,
+                                      child: MakeListTextField(
+                                        hintText: "10",
+                                        editable: list[index]['new'] != null,
+                                        controller: volumePurchasedController,
+                                        onChanged: (newValue) async {
+                                          setState(() {
+                                            list[index]['volumePurchased'] =
+                                                newValue;
+                                            volumePurchasedController.text =
+                                                newValue;
+                                          });
+                                          setState(() {
+                                            list[index]['volumeLeft'] =
+                                                newValue;
+                                            volumeLeftController.text =
+                                                newValue;
+                                          });
+                                        },
+                                      ),
+                                    ),
                                     TouchableOpacity(
                                       onTap: () {
-                                        // String newValue = '';
-                                        return showModalBottomSheet(
+                                        String newValue = '';
+                                        TextEditingController _cotrolller =
+                                            TextEditingController();
+                                        showModalBottomSheet(
                                           // useSafeArea: true,
                                           context: context,
                                           isScrollControlled: true,
-
                                           builder: (BuildContext context) {
-                                            // print(data);
                                             return StatefulBuilder(
                                               builder: (BuildContext context,
                                                   StateSetter setState) {
-                                                return SingleChildScrollView(
-                                                  child: Container(
-                                                    decoration:
-                                                        const ShapeDecoration(
-                                                      color: Colors.white,
-                                                      shape:
-                                                          SmoothRectangleBorder(
-                                                        borderRadius: SmoothBorderRadius.only(
-                                                            topLeft: SmoothRadius(
-                                                                cornerRadius:
-                                                                    35,
-                                                                cornerSmoothing:
-                                                                    1),
-                                                            topRight: SmoothRadius(
-                                                                cornerRadius:
-                                                                    35,
-                                                                cornerSmoothing:
-                                                                    1)),
+                                                return Container(
+                                                  decoration:
+                                                      const ShapeDecoration(
+                                                    color: Colors.white,
+                                                    shape:
+                                                        SmoothRectangleBorder(
+                                                      borderRadius:
+                                                          SmoothBorderRadius
+                                                              .only(
+                                                        topLeft: SmoothRadius(
+                                                            cornerRadius: 35,
+                                                            cornerSmoothing: 1),
+                                                        topRight: SmoothRadius(
+                                                            cornerRadius: 35,
+                                                            cornerSmoothing: 1),
                                                       ),
                                                     ),
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.6,
-                                                    width: double.infinity,
-                                                    padding: EdgeInsets.only(
-                                                        left: 6.w,
-                                                        right: 6.w,
-                                                        top: 2.h,
-                                                        bottom: MediaQuery.of(
-                                                                context)
-                                                            .viewInsets
-                                                            .bottom),
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      child: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          TouchableOpacity(
-                                                            onTap: () {
-                                                              return Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            child: Center(
-                                                              child: Container(
-                                                                padding: EdgeInsets
-                                                                    .symmetric(
-                                                                        vertical:
-                                                                            1.h,
-                                                                        horizontal:
-                                                                            3.w),
-                                                                width: 65,
-                                                                height: 9,
-                                                                decoration:
-                                                                    ShapeDecoration(
-                                                                  color: const Color(
-                                                                      0xFFFA6E00),
-                                                                  shape: RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              6)),
-                                                                ),
+                                                  ),
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.6,
+                                                  width: double.infinity,
+                                                  padding: EdgeInsets.only(
+                                                      left: 6.w,
+                                                      right: 6.w,
+                                                      top: 2.h,
+                                                      bottom: 2.h),
+                                                  child: SingleChildScrollView(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        TouchableOpacity(
+                                                          onTap: () {
+                                                            return Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          child: Center(
+                                                            child: Container(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          1.h,
+                                                                      horizontal:
+                                                                          3.w),
+                                                              width: 65,
+                                                              height: 9,
+                                                              decoration:
+                                                                  ShapeDecoration(
+                                                                color: const Color(
+                                                                    0xFFFA6E00),
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            6)),
                                                               ),
                                                             ),
                                                           ),
-                                                          Container(
-                                                            child: Column(
-                                                              children: [
-                                                                const Center(
-                                                                  child: Text(
-                                                                    'Update volume',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      color: Color(
-                                                                          0xFF094B60),
-                                                                      fontSize:
-                                                                          24,
-                                                                      fontFamily:
-                                                                          'Jost',
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      // height: 0.03,
-                                                                      letterSpacing:
-                                                                          0.72,
-                                                                    ),
+                                                        ),
+                                                        // Space(1.h),
+                                                        Container(
+                                                          child: Column(
+                                                            children: [
+                                                              Space(2.h),
+                                                              const Center(
+                                                                child: Text(
+                                                                  'Update volume',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Color(
+                                                                        0xFF094B60),
+                                                                    fontSize:
+                                                                        24,
+                                                                    fontFamily:
+                                                                        'Jost',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    // height: 0.03,
+                                                                    letterSpacing:
+                                                                        0.72,
                                                                   ),
                                                                 ),
-                                                                Space(4.h),
-                                                                AppwideTextField(
-                                                                  hintText:
-                                                                      'Enter new volume',
-                                                                  onChanged:
-                                                                      (p0) {
-                                                                    print(p0);
-                                                                    // newValue = p0;
-                                                                  },
-                                                                  onSubmitted:
-                                                                      (newValue) {
+                                                              ),
+                                                              Space(4.h),
+                                                              AppwideTextField(
+                                                                controller:
+                                                                    _cotrolller,
+                                                                hintText:
+                                                                    'Enter new volume',
+                                                                onChanged:
+                                                                    (p0) {
+                                                                  newValue = p0;
+                                                                },
+                                                              ),
+                                                              Space(5.h),
+                                                              AppWideButton(
+                                                                  onTap: () {
                                                                     list[index][
                                                                         'volumePurchased'] = (double.parse(list[index]['volumePurchased']) +
                                                                             double.parse(newValue))
                                                                         .toString();
-                                                                    // newValue =
-                                                                    //     newValue;
+                                                                    list[index][
+                                                                        'volumeLeft'] = (double.parse(list[index]['volumeLeft']) +
+                                                                            double.parse(newValue))
+                                                                        .toString();
+                                                                    volumePurchasedController
+                                                                        .text = list[
+                                                                            index]
+                                                                        [
+                                                                        'volumePurchased'];
+                                                                    _cotrolller
+                                                                        .clear();
+                                                                    _setState();
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
                                                                   },
-                                                                ),
-                                                                Space(5.h),
-                                                              ],
-                                                            ),
+                                                                  num: 1,
+                                                                  txt:
+                                                                      'Update Volume'),
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 );
@@ -519,28 +527,16 @@ class _SheetWidgetState extends State<SheetWidget> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 14.w,
-                                      child: MakeListTextField(
-                                        editable: list[index]['new'] != null,
-                                        controller: volumePurchasedController,
-                                        onChanged: (newValue) async {
-                                          setState(() {
-                                            list[index]['volumePurchased'] =
-                                                newValue;
-                                            volumePurchasedController.text =
-                                                newValue;
-                                          });
-                                        },
-                                      ),
-                                    ),
                                   ],
                                 ),
                               ),
                               SizedBox(
                                 width: 20.w,
                                 child: MakeListTextField(
-                                  editable: true,
+                                  hintText: '-',
+                                  editable: list[index]['sold'] != null
+                                      ? true
+                                      : false,
                                   controller: sellingPriceController,
                                   onChanged: (newValue) {
                                     setState(() {
@@ -552,7 +548,7 @@ class _SheetWidgetState extends State<SheetWidget> {
                                       //           .format(DateTime.now())
                                       //           .toString();
                                       // }
-                                      list[index]['sold'] = true;
+                                      // list[index]['sold'] = true;
                                     });
                                   },
                                 ),
@@ -560,6 +556,7 @@ class _SheetWidgetState extends State<SheetWidget> {
                               SizedBox(
                                 width: 20.w,
                                 child: MakeListTextField(
+                                  hintText: '0',
                                   editable: true,
                                   controller: volumeSoldController,
                                   onChanged: (newValue) {
@@ -586,6 +583,7 @@ class _SheetWidgetState extends State<SheetWidget> {
                               SizedBox(
                                 width: 20.w,
                                 child: MakeListTextField(
+                                  hintText: '',
                                   editable: false,
                                   controller: volumeLeftController,
                                   onChanged: (newValue) async {
@@ -606,30 +604,55 @@ class _SheetWidgetState extends State<SheetWidget> {
             ),
           ),
         ),
-        Space(1.h),
+        Space(1.5.h),
         Center(
           child: TouchableOpacity(
             onTap: () {
-              print('object');
-              setState(() {
-                dynamic newItem = {
-                  "itemId": '${list.length + 1}',
-                  "itemName": "Name",
-                  "pricePerUnit": "10",
-                  "purchaseDate": DateFormat('yyyy-MM-dd')
-                      .format(DateTime.now())
-                      .toString(),
-                  "sellingDate": "",
-                  "sellingPrice": "",
-                  // "shelf_life": "",
-                  "unitType": "kg",
-                  "volumeLeft": "10",
-                  "volumePurchased": "10",
-                  "volumeSold": "0",
-                  "new": true,
-                };
-                list.insert(0, newItem);
+              // print('object');
+              String msg = "";
+              // RegExp digitRegExp = RegExp(r'^[0-9]+$');
+              list.forEach((element) {
+                if (element['itemName'] == '') {
+                  msg = "Product name missing";
+                }
+                if (element['pricePerUnit'] == '') {
+                  msg = "Product price missing";
+                }
+                if (element['unitType'] == '') {
+                  msg = "Unit type missing";
+                }
+                if (element['volumePurchased'] == '') {
+                  msg = "Volume purchased missing";
+                }
+                if (element['sellingPrice'] == "" &&
+                    element['volumeSold'] != "0") {
+                  msg = "Plese enter selling price";
+                }
               });
+              if (msg == '') {
+                setState(() {
+                  dynamic newItem = {
+                    "itemId": '${list.length + 1}',
+                    "itemName": "",
+                    "pricePerUnit": "",
+                    "purchaseDate": DateFormat('yyyy-MM-dd')
+                        .format(DateTime.now())
+                        .toString(),
+                    "sellingDate": "",
+                    "sellingPrice": "",
+                    // "shelf_life": "",
+                    "unitType": "",
+                    "volumeLeft": "",
+                    "volumePurchased": "",
+                    "volumeSold": "0",
+                    "new": true,
+                  };
+                  list.insert(0, newItem);
+                });
+              } else {
+                TOastNotification().showErrorToast(context, msg);
+              }
+
               // widget.updateDataList(newItem);
             },
             child: Container(
@@ -657,33 +680,35 @@ class _SheetWidgetState extends State<SheetWidget> {
           ),
         ),
         // Space(2.h),
-        Space(1.h),
+        Space(2.5.h),
         AppWideButton(
             onTap: () async {
               String msg = "";
-              RegExp digitRegExp = RegExp(r'^[0-9]+$');
+              // RegExp digitRegExp = RegExp(r'^[0-9]+$');
               list.forEach((element) {
+                if (element['itemName'] == '') {
+                  msg = "Product name missing";
+                }
+                if (element['pricePerUnit'] == '') {
+                  msg = "Product price missing";
+                }
+                if (element['unitType'] == '') {
+                  msg = "Unit type missing";
+                }
+                if (element['volumePurchased'] == '') {
+                  msg = "Volume purchased missing";
+                }
                 if (element['sellingPrice'] == "" &&
                     element['volumeSold'] != "0") {
                   msg = "Plese enter selling price";
                 }
-                if (element['sellingPrice'] != "" &&
-                    element['volumeSold'] == "0") {
-                  msg = "Plese enter Vol. sold";
-                }
+
                 if (element['sellingPrice'] != "" &&
                     element['volumeSold'] != "0") {
                   element['sellingDate'] = DateFormat('yyyy-MM-dd')
                       .format(DateTime.now())
                       .toString();
                 }
-
-                // if (!checkString(element['pricePerUnit']) ||
-                //     !checkString(element['volumePurchased']) ||
-                //     !checkString(element['sellingPrice']) ||
-                //     !checkString(element['volumeSold'])) {
-                //   msg = 'inappropriate adata entered in some fields';
-                // }
               });
 
               if (msg == '') {
@@ -723,6 +748,7 @@ class _SheetWidgetState extends State<SheetWidget> {
         Container(
           child: Column(
             children: [
+              Space(1.h),
               Center(
                 child: Text(
                   'Update volume',
@@ -738,7 +764,8 @@ class _SheetWidgetState extends State<SheetWidget> {
               ),
               Space(4.h),
               AppwideTextField(
-                  hintText: 'Enter new volume', onChanged: (newValue) {})
+                  hintText: 'Enter new volume', onChanged: (newValue) {}),
+              AppWideButton(num: 1, txt: 'Update Volume'),
             ],
           ),
         ),
@@ -751,6 +778,7 @@ class MakeListTextField extends StatefulWidget {
   final Function(String) onChanged;
   final bool editable;
   final bool isStringEntry;
+  final String hintText;
 
   // double height;
 //
@@ -759,6 +787,7 @@ class MakeListTextField extends StatefulWidget {
     required this.onChanged,
     required this.editable,
     this.isStringEntry = false,
+    this.hintText = '',
   });
 
   @override
@@ -782,7 +811,15 @@ class _MakeListTextFieldState extends State<MakeListTextField> {
           widget.isStringEntry ? [] : [FilteringTextInputFormatter.digitsOnly],
       textInputAction: TextInputAction.done,
       controller: widget.controller,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
+        hintText: widget.hintText == '' ? null : widget.hintText,
+        hintStyle: TextStyle(
+          color: Color(0x66094B60),
+          fontSize: 13,
+          fontFamily: 'Product Sans',
+          fontWeight: FontWeight.w400,
+// height: 0.15,
+        ),
         contentPadding: EdgeInsets.zero,
         border: InputBorder.none,
       ),

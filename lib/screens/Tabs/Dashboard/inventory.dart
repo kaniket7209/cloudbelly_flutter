@@ -101,18 +101,18 @@ class _InventoryState extends State<Inventory> {
     String iframeUrl =
         '$METABASE_SITE_URL/embed/dashboard/$token#bordered=true&titled=false';
 
-    print('iframe: $iframeUrl');
+    // print('iframe: $iframeUrl');
 
     return iframeUrl;
   }
 
-  void _launchURL(String url) async {
-    Uri googleSheetUrl = Uri.parse(url);
-    if (!await launchUrl(googleSheetUrl, mode: LaunchMode.inAppBrowserView)) {
-      TOastNotification().showErrorToast(context, 'Error while opening Sheet');
-      throw Exception('Could not launch $url');
-    }
-  }
+  // void _launchURL(String url) async {
+  //   Uri googleSheetUrl = Uri.parse(url);
+  //   if (!await launchUrl(googleSheetUrl, mode: LaunchMode.inAppBrowserView)) {
+  //     TOastNotification().showErrorToast(context, 'Error while opening Sheet');
+  //     throw Exception('Could not launch $url');
+  //   }
+  // }
 
   Future<void> _getLowStockData() async {
     lowStockItems = [];
@@ -120,7 +120,7 @@ class _InventoryState extends State<Inventory> {
     final data =
         await Provider.of<Auth>(context, listen: false).getInventoryData();
     // print(data);
-    lowStockItems = findLowStockItems(data['data'][0]['inventory_data']);
+    lowStockItems = findLowStockItems(data['inventory_data']);
 
     // print(lowStockItems);
     lowStockItems.sort((a, b) {
@@ -139,7 +139,7 @@ class _InventoryState extends State<Inventory> {
     final data =
         await Provider.of<Auth>(context, listen: false).getInventoryData();
 
-    stocksYouMayNeed = data['data'][0]['inventory_data'];
+    stocksYouMayNeed = data['inventory_data'];
     _somethingmissing = false;
     List<dynamic> temp = [];
     stocksYouMayNeed.forEach((element) {
@@ -161,9 +161,9 @@ class _InventoryState extends State<Inventory> {
     });
     // print('something');
     if (_somethingmissing) {
-      print(_somethingmissing);
-      TOastNotification()
-          .showErrorToast(context, 'Some fields are missing in Sheet data');
+      // print(_somethingmissing);
+      // TOastNotification()
+      //     .showErrorToast(context, 'Some fields are missing in Sheet data');
     }
     stocksYouMayNeed = temp;
 
@@ -183,7 +183,7 @@ class _InventoryState extends State<Inventory> {
         return a['VOLUME LEFT'].compareTo(b['VOLUME LEFT']);
       }
     });
-    print('all: $allStocks');
+    // print('all: $allStocks');
   }
 
   Future<void> _getNearExpiryStocks() async {
@@ -195,7 +195,7 @@ class _InventoryState extends State<Inventory> {
     final currentDate = DateTime.now();
     final dateFormat = DateFormat('dd-MM-yyyy');
 
-    data = data['data'][0]['inventory_data'];
+    data = data['inventory_data'];
     data.forEach((item) {
       if (item['shelf_life'] != null &&
           item['VOLUME LEFT'] != null &&
@@ -286,13 +286,13 @@ class _InventoryState extends State<Inventory> {
             MakeListInventoryButton(),
             TouchableOpacity(
               onTap: () async {
-                AppWideLoadingBanner().loadingBanner(context);
-                final newData = await Provider.of<Auth>(context, listen: false)
-                    .SyncInventory();
-                Navigator.of(context).pop();
-                if (newData['data'] != null) {
-                  TOastNotification().showSuccesToast(context, 'List Synced!');
-                }
+                // AppWideLoadingBanner().loadingBanner(context);
+                // final newData = await Provider.of<Auth>(context, listen: false)
+                //     .SyncInventory();
+                // Navigator.of(context).pop();
+                // if (newData['data'] != null) {
+                //   TOastNotification().showSuccesToast(context, 'List Synced!');
+                // }
               },
               child: Icon(Icons.refresh),
             ),
@@ -314,9 +314,16 @@ class _InventoryState extends State<Inventory> {
                       setState(() {
                         _isUpdateLoading = false;
                       });
-                      if ((data['data'] as List<dynamic>).length != 0) {
-                        InventoryBottomSheets().UpdateListBottomSheet(
-                            context, data['data'][0]['inventory_data']);
+
+                      if ((data['inventory_data'] as List<dynamic>).length !=
+                          0) {
+                        List<dynamic> _dataList = data['inventory_data'];
+                        print(_dataList);
+                        _dataList
+                            .sort((a, b) => a["itemId"].compareTo(b["itemId"]));
+                        print('object: ${data['inventory_data']}');
+                        InventoryBottomSheets()
+                            .UpdateListBottomSheet(context, _dataList);
                       }
                       // print(data);
                     },
@@ -1106,116 +1113,6 @@ class SeeAllWidget extends StatelessWidget {
           color: Color(0xFFFA6E00),
         ),
       ],
-    );
-  }
-}
-
-class BottomSheetRowWidget extends StatelessWidget {
-  String id;
-  String name;
-
-  String price;
-  String volume;
-  String type;
-  BottomSheetRowWidget({
-    super.key,
-    required this.id,
-    required this.name,
-    required this.price,
-    required this.volume,
-    required this.type,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 1.4.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            width: 7.w,
-            child: Text(
-              id,
-              style: const TextStyle(
-                color: Color(0xFF094B60),
-                fontSize: 14,
-                fontFamily: 'Product Sans',
-                fontWeight: FontWeight.w400,
-                height: 0.13,
-              ),
-            ),
-          ),
-          Container(
-            width: 23.w,
-            child: Text(
-              name,
-              style: const TextStyle(
-                color: Color(0xFF094B60),
-                fontSize: 14,
-                fontFamily: 'Product Sans',
-                fontWeight: FontWeight.w400,
-                height: 0.13,
-              ),
-            ),
-          ),
-          Container(
-            width: 15.w,
-            child: Text(
-              'Rs  ' + price,
-              style: const TextStyle(
-                color: Color(0xFF094B60),
-                fontSize: 14,
-                fontFamily: 'Product Sans',
-                fontWeight: FontWeight.w400,
-                height: 0.13,
-              ),
-            ),
-          ),
-          Container(
-            width: 20.w,
-            child: Text(
-              volume + ' ' + type,
-              style: const TextStyle(
-                color: Color(0xFF094B60),
-                fontSize: 13,
-                fontFamily: 'Product Sans',
-                fontWeight: FontWeight.w700,
-                height: 0.15,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SheetLabelWidget extends StatelessWidget {
-  String txt;
-  double width;
-  SheetLabelWidget({
-    super.key,
-    required this.txt,
-    required this.width,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      child: Text(
-        txt,
-        maxLines: 2,
-        textAlign: TextAlign.left,
-        style: const TextStyle(
-          color: Color(0xFF094B60),
-          fontSize: 18,
-          fontFamily: 'Jost',
-          fontWeight: FontWeight.w600,
-          // height: 0.06,
-        ),
-      ),
     );
   }
 }

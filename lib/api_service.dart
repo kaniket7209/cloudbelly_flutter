@@ -501,51 +501,51 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<dynamic> getSheetUrl() async {
-    final String url = 'https://app.cloudbelly.in/inventory/get-sheet';
+  // Future<dynamic> getSheetUrl() async {
+  //   final String url = 'https://app.cloudbelly.in/inventory/get-sheet';
 
-    final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
-      'user_email': user_email, //email id here
-    };
+  //   final Map<String, dynamic> requestBody = {
+  //     'user_id': user_id,
+  //     'user_email': user_email, //email id here
+  //   };
 
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
-        body: jsonEncode(requestBody),
-      );
-      print(jsonDecode((response.body)));
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       headers: headers,
+  //       body: jsonEncode(requestBody),
+  //     );
+  //     print(jsonDecode((response.body)));
 
-      return jsonDecode((response.body));
-    } catch (error) {
-      // Handle exceptions
-      return '-1';
-    }
-  }
+  //     return jsonDecode((response.body));
+  //   } catch (error) {
+  //     // Handle exceptions
+  //     return '-1';
+  //   }
+  // }
 
-  Future<dynamic> SyncInventory() async {
-    final String url = 'https://app.cloudbelly.in/inventory/sync';
+  // Future<dynamic> SyncInventory() async {
+  //   final String url = 'https://app.cloudbelly.in/inventory/sync';
 
-    final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
-      'user_email': user_email, //email id here
-    };
+  //   final Map<String, dynamic> requestBody = {
+  //     'user_id': user_id,
+  //     'user_email': user_email, //email id here
+  //   };
 
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
-        body: jsonEncode(requestBody),
-      );
-      print(response.body);
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       headers: headers,
+  //       body: jsonEncode(requestBody),
+  //     );
+  //     print(response.body);
 
-      return jsonDecode((response.body));
-    } catch (error) {
-      // Handle exceptions
-      return '-1';
-    }
-  }
+  //     return jsonDecode((response.body));
+  //   } catch (error) {
+  //     // Handle exceptions
+  //     return '-1';
+  //   }
+  // }
 
   Future<String> createPost(
       List<String> list, List<String> tags, String caption) async {
@@ -765,27 +765,27 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<dynamic> getInventoryData() async {
-    final String url = 'https://app.cloudbelly.in/inventory/data';
+  // Future<dynamic> getInventoryData() async {
+  //   final String url = 'https://app.cloudbelly.in/inventory/data';
 
-    // bool _isOK = false;
-    Map<String, dynamic> requestBody = {
-      "user_id": user_id,
-    };
+  //   // bool _isOK = false;
+  //   Map<String, dynamic> requestBody = {
+  //     "user_id": user_id,
+  //   };
 
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
-        body: jsonEncode(requestBody),
-      );
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       headers: headers,
+  //       body: jsonEncode(requestBody),
+  //     );
 
-      return jsonDecode((response.body));
-    } catch (error) {
-      // Handle exceptions
-      return '-1';
-    }
-  }
+  //     return jsonDecode((response.body));
+  //   } catch (error) {
+  //     // Handle exceptions
+  //     return '-1';
+  //   }
+  // }
 
   Future<String> commentPost(String id, String comment) async {
     final String url = 'https://app.cloudbelly.in/update-posts';
@@ -910,8 +910,9 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<dynamic> getdataInventory(String id) async {
-    id = '65e31e9f0bf98389f417cf71';
+  Future<dynamic> getInventoryData() async {
+    // print(user_id);
+    // id = '65e31e9f0bf98389f417cf71';
     final String url = 'https://app.cloudbelly.in/inventory/get-data';
 
     // bool _isOK = false;
@@ -937,7 +938,7 @@ class Auth with ChangeNotifier {
         },
         body: jsonEncode(requestBody),
       );
-      print(response.body);
+      // print('response: ${response.body}');
       // print(response.statusCode);
 
       return jsonDecode(response.body);
@@ -1004,7 +1005,7 @@ class Auth with ChangeNotifier {
         },
         body: jsonEncode(requestBody),
       );
-      print(response.body);
+      // pr/int(response.body);
       // print(response.statusCode);
 
       return {

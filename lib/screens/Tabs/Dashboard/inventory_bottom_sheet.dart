@@ -13,7 +13,9 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class InventoryBottomSheets {
   Future<dynamic> UpdateListBottomSheet(BuildContext context, dynamic data) {
+    // print('data: $data');
     // dynamic UiData = data;
+
     return showModalBottomSheet(
       // useSafeArea: true,
       context: context,
@@ -58,12 +60,14 @@ class InventoryBottomSheets {
                         ),
                       ),
                     ),
-                    Space(6.h),
+                    // Space(1.h),
+                    DateWidgetSHeet(),
+                    Space(3.h),
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Inventory List',
+                          'Preview List',
                           style: TextStyle(
                             color: Color(0xFF094B60),
                             fontSize: 30,
@@ -89,64 +93,68 @@ class InventoryBottomSheets {
                     const Divider(
                       color: Color(0xFFFA6E00),
                     ),
-                    Space(1.h),
+                    // Space(0.5.h),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SheetLabelWidget(
-                          txt: 'ID',
-                          width: 7.w,
+                          txt: 'Product',
+                          width: 20.w,
                         ),
                         SheetLabelWidget(
-                          txt: 'Item name',
-                          width: 23.w,
+                          txt: 'Purchase price/unit',
+                          width: 25.w,
                         ),
                         SheetLabelWidget(
-                          txt: 'Price',
-                          width: 15.w,
+                          txt: 'Volume',
+                          width: 20.w,
                         ),
                         SheetLabelWidget(
-                          txt: 'Vol left',
+                          txt: 'Selling price',
                           width: 20.w,
                         ),
                       ],
                     ),
-                    Space(1.h),
+                    // Space(0.5.h),
                     const Divider(
                       color: Color(0xFFFA6E00),
                     ),
                     Space(2.h),
                     Container(
-                      height: 60.h,
+                      height: 70.h,
                       // ma: EdgeInsets.symmetric(vertical: 6.h),
                       child: ListView.builder(
                         itemCount: (data as List<dynamic>).length,
                         itemBuilder: (context, index) {
                           return BottomSheetRowWidget(
-                              id: data[index]['ID'],
-                              name: data[index]['NAME'],
-                              price: data[index]['TOTAL PRICE( Rs)'] ?? '-',
-                              volume: data[index]['VOLUME LEFT'] ?? '-',
-                              type: data[index]['PRODUCT TYPE']);
+                              sellPrice: data[index]['sellingPrice'] == ""
+                                  ? '-'
+                                  : data[index]['sellingPrice'],
+                              name: data[index]['itemName'],
+                              price: data[index]['pricePerUnit'] ?? '-',
+                              volume: data[index]['volumeLeft'] ?? '-',
+                              type: data[index]['unitType']);
                         },
                       ),
                     ),
                     Space(2.h),
-                    AppWideButton(
-                        onTap: () async {
-                          AppWideLoadingBanner().loadingBanner(context);
-                          final newData =
-                              await Provider.of<Auth>(context, listen: false)
-                                  .SyncInventory();
-                          Navigator.of(context).pop();
-                          setState(() {
-                            data = newData['data']['inventory_data'];
-                            // print('ui');
-                            // print(UiData);
-                          });
-                        },
-                        num: 1,
-                        txt: 'Sync the inventory items')
+                    // AppWideButton(
+                    //     onTap: () async {
+                    //       AppWideLoadingBanner().loadingBanner(context);
+                    //       // final newData =
+                    //       //     await Provider.of<Auth>(context, listen: false)
+                    //       //         .SyncInventory();
+                    //       // print(newData);
+                    //       Navigator.of(context).pop();
+                    //       // setState(() {
+                    //       //   data = newData['data']['inventory_data'];
+                    //       //   // print('ui');
+                    //       //   // print(UiData);
+                    //       // });
+                    //     },
+                    //     num: 1,
+                    //     txt: 'Sync the inventory items')
                   ],
                 ),
               ),
@@ -154,6 +162,162 @@ class InventoryBottomSheets {
           },
         );
       },
+    );
+  }
+}
+
+class DateWidgetSHeet extends StatelessWidget {
+  const DateWidgetSHeet({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+            height: 4.h,
+            width: 30.w,
+            decoration: GlobalVariables().ContainerDecoration(
+                blurRadius: 20,
+                offset: Offset(5, 6),
+                boxColor: Color.fromRGBO(177, 217, 216, 1),
+                cornerRadius: 10,
+                shadowColor: Color.fromRGBO(124, 193, 191, 0.44)),
+            child: Center(
+              child: Text(
+                DateFormat('dd MMMM, yyyy').format(DateTime.now()).toString(),
+                style: const TextStyle(
+                  color: Color(0xFF094B60),
+                  fontSize: 12,
+                  fontFamily: 'Product Sans',
+                  fontWeight: FontWeight.w400,
+                  height: 0.14,
+                  letterSpacing: 0.36,
+                ),
+              ),
+            )),
+      ],
+    );
+  }
+}
+
+class SheetLabelWidget extends StatelessWidget {
+  String txt;
+  double width;
+  SheetLabelWidget({
+    super.key,
+    required this.txt,
+    required this.width,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: width,
+          child: Text(
+            txt,
+            maxLines: 2,
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+              color: Color(0xFF094B60),
+              fontSize: 18,
+              fontFamily: 'Jost',
+              fontWeight: FontWeight.w600,
+              // height: 0.06,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class BottomSheetRowWidget extends StatelessWidget {
+  String sellPrice;
+  String name;
+
+  String price;
+  String volume;
+  String type;
+  BottomSheetRowWidget({
+    super.key,
+    required this.sellPrice,
+    required this.name,
+    required this.price,
+    required this.volume,
+    required this.type,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 1.4.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            width: 20.w,
+            child: Text(
+              name,
+              maxLines: null,
+              style: const TextStyle(
+                color: Color(0xFF094B60),
+                fontSize: 14,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w400,
+                height: 0.13,
+              ),
+            ),
+          ),
+          Container(
+            width: 25.w,
+            child: Text(
+              'Rs  ' + price,
+              maxLines: null,
+              style: const TextStyle(
+                color: Color(0xFF094B60),
+                fontSize: 14,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w400,
+                height: 0.13,
+              ),
+            ),
+          ),
+          Container(
+            width: 20.w,
+            child: Text(
+              volume + ' ' + type,
+              maxLines: null,
+              style: const TextStyle(
+                color: Color(0xFF094B60),
+                fontSize: 13,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w700,
+                height: 0.15,
+              ),
+            ),
+          ),
+          Container(
+            width: 20.w,
+            child: Text(
+              'Rs  ' + sellPrice,
+              maxLines: null,
+              style: const TextStyle(
+                color: Color(0xFF094B60),
+                fontSize: 14,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w400,
+                height: 0.13,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
