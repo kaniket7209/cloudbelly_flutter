@@ -180,7 +180,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       textList[index],
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 8,
+                        fontSize: 9,
                         fontFamily: 'Product Sans',
                         fontWeight: FontWeight.w700,
                         height: 0,
@@ -202,7 +202,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           }
         },
         backgroundColor: Colors.white,
-
+// gapWidth: 0/,
         splashColor: Colors.blue,
         // notchAndCornersAnimation: borderRadiusAnimation,
         splashSpeedInMilliseconds: 300,
@@ -210,7 +210,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         gapLocation: GapLocation.center,
         leftCornerRadius: 15,
         rightCornerRadius: 15,
-
+        notchMargin: 5,
         // onTap: (index) => setState(() => _bottomNavIndex = index),
         hideAnimationController: _hideBottomBarAnimationController,
         shadow: const BoxShadow(

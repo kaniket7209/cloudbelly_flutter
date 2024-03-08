@@ -132,7 +132,7 @@ class _FeedState extends State<Feed> {
                   ),
                 ),
               ),
-              Space(2.h),
+              Space(3.h),
               // SingleChildScrollView(
               //   scrollDirection: Axis.horizontal,
               //   child: Padding(

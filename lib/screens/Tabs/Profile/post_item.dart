@@ -1,7 +1,6 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
@@ -14,7 +13,6 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -132,8 +130,8 @@ class _PostItemState extends State<PostItem> {
     // final date_time = formatTimeDifference('created_at');
     CarouselController buttonCarouselController = CarouselController();
     return Container(
-      height: caption1 != '' ? 67.h : 63.h,
-      margin: EdgeInsets.only(bottom: 3.h),
+      // height: caption1 != '' ? 67.h : 63.h,
+      margin: EdgeInsets.only(bottom: 2.7.h),
       padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,56 +257,9 @@ class _PostItemState extends State<PostItem> {
                     }
                   },
                   icon: Icon(Icons.more_vert)),
-              // if (widget.isProfilePost)
-              //   PopupMenuButton<SampleItem>(
-              //     // icon: const Icon(Icons.more_horiz),
-              //     initialValue: selectedMenu,
-              //     // Callback that sets the selected popup menu item.
-              //     onSelected: (SampleItem item) async {
-              //       AppWideLoadingBanner().loadingBanner(context);
-              //       final code = await Provider.of<Auth>(context, listen: false)
-              //           .deletePost(widget.data['id']);
-
-              //       if (code == '200') {
-              //         TOastNotification()
-              //             .showSuccesToast(context, 'Post deleted');
-              //         final Data =
-              //             await Provider.of<Auth>(context, listen: false)
-              //                 .getFeed() as List<dynamic>;
-              //         Navigator.of(context).pop();
-
-              //         Navigator.of(context).pushReplacementNamed(
-              //             PostsScreen.routeName,
-              //             arguments: {'data': Data, 'index': 0});
-              //       } else {
-              //         Navigator.of(context).pop();
-              //         TOastNotification().showErrorToast(context, 'Error!');
-              //       }
-
-              //       setState(() {
-              //         selectedMenu = item;
-              //       });
-              //     },
-              //     itemBuilder: (BuildContext context) =>
-              //         <PopupMenuEntry<SampleItem>>[
-              //       PopupMenuItem<SampleItem>(
-              //         value: SampleItem.itemOne,
-              //         child: Row(
-              //           children: [
-              //             const Icon(Icons.delete),
-              //             Space(
-              //               3.w,
-              //               isHorizontal: true,
-              //             ),
-              //             const Text('Delete Post'),
-              //           ],
-              //         ),
-              //       ),
-              //     ],
-              //   )
             ],
           ),
-          Space(1.5.h),
+          Space(0.5.h),
           Stack(
             children: [
               !widget._isMultiple
@@ -465,7 +416,7 @@ class _PostItemState extends State<PostItem> {
                         setState(() {
                           _likeData.removeWhere(
                             (element) =>
-                                element ==
+                                element['id'] ==
                                 Provider.of<Auth>(context, listen: false)
                                     .user_id,
                           );
@@ -495,10 +446,28 @@ class _PostItemState extends State<PostItem> {
               //comment button
               IconButton(
                   padding: EdgeInsets.zero,
-                  onPressed: () {
+                  onPressed: () async {
+                    AppWideLoadingBanner().loadingBanner(context);
+                    List<String> userIds = [];
+                    for (var item in widget.data['comments'] ?? []) {
+                      String userId = item['user_id'];
+                      userIds.add(userId);
+                    }
+                    final temp = await Provider.of<Auth>(context, listen: false)
+                        .getUserInfo(userIds);
+                    for (int i = 0;
+                        i < (widget.data['comments'] ?? []).length;
+                        i++) {
+                      widget.data['comments'][i]['store_name'] =
+                          temp[i]['store_name'];
+                      widget.data['comments'][i]['profile_photo'] =
+                          temp[i]['profile_photo'];
+                    }
+                    Navigator.of(context).pop();
                     AppWideBottomSheet().showSheet(
                         context,
                         CommentSheetContent(
+                          userData: temp,
                           data: widget.data,
                           isProfilePost: widget.isProfilePost,
                         ),
@@ -606,6 +575,7 @@ class _PostItemState extends State<PostItem> {
               ),
               if (caption1 != '')
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Space(1.h),
                     Row(
@@ -645,10 +615,11 @@ class _PostItemState extends State<PostItem> {
                     ),
                     if (caption2.length > 0)
                       SizedBox(
-                        height: 1.4.h,
+                        // height: 1.4.h,
                         child: Text(
                           caption2,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: null,
+                          // overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Color(0xFF0A4C61),
                             fontSize: 12,
@@ -661,10 +632,32 @@ class _PostItemState extends State<PostItem> {
                   ],
                 ),
               TouchableOpacity(
-                onTap: () {
+                onTap: () async {
+                  AppWideLoadingBanner().loadingBanner(context);
+                  List<String> userIds = [];
+                  // print(widget.data['comments'].length);
+// if(widget.data['comments']==null)
+                  for (var item in widget.data['comments'] ?? []) {
+                    String userId = item['user_id'];
+                    userIds.add(userId);
+                  }
+                  final temp = await Provider.of<Auth>(context, listen: false)
+                      .getUserInfo(userIds);
+
+                  for (int i = 0;
+                      i < (widget.data['comments'] ?? []).length;
+                      i++) {
+                    widget.data['comments'][i]['store_name'] =
+                        temp[i]['store_name'];
+                    widget.data['comments'][i]['profile_photo'] =
+                        temp[i]['profile_photo'];
+                  }
+                  Navigator.of(context).pop();
+
                   AppWideBottomSheet().showSheet(
                       context,
                       CommentSheetContent(
+                        userData: temp,
                         data: widget.data,
                         isProfilePost: widget.isProfilePost,
                       ),
@@ -1034,10 +1027,14 @@ class PostMoreButtonRowWidget extends StatelessWidget {
 
 class CommentSheetContent extends StatefulWidget {
   const CommentSheetContent(
-      {super.key, required this.data, required this.isProfilePost});
+      {super.key,
+      required this.data,
+      required this.isProfilePost,
+      required this.userData});
 
   final data;
   final isProfilePost;
+  final userData;
 
   @override
   State<CommentSheetContent> createState() => _CommentSheetContentState();
@@ -1047,10 +1044,16 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
   TextEditingController _controller = TextEditingController();
   String _comment = '';
 
+  List<bool> _isDeleting = List<bool>.filled(5000, false);
+
   @override
   Widget build(BuildContext context) {
+    // List<dynamic> userData = widget.userData;
     dynamic newData = widget.data;
-    print(widget.data);
+    // print('${widget.userData.length}');
+    // print('${newData.length}');
+
+    // print(widget.data);
     return Container(
       child: SingleChildScrollView(
         child: Column(children: [
@@ -1061,12 +1064,12 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                 color: Color(0xFF0A4C61),
                 fontSize: 18,
                 fontFamily: 'Product Sans',
-                fontWeight: FontWeight.w700,
-                height: 0,
+                fontWeight: FontWeight.w800,
                 letterSpacing: 0.18,
               ),
             ),
           ),
+          Space(1.h),
           Container(
             height: 53.h,
             child: (newData['comments'] ?? []).length == 0
@@ -1076,15 +1079,83 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                 : ListView.builder(
                     itemCount: (newData['comments'] ?? []).length,
                     itemBuilder: (context, index) {
-                      print(newData);
-                      return CommentItemWidget(
-                        name: 'user_name',
-                        text: newData['comments'][index]['text'],
+                      // bool isDeleting = false;
+                      // print(newData);
+                      return GestureDetector(
+                        onLongPress: () {
+                          // print('longpress');
+
+                          if (newData['comments'][index]['user_id'] ==
+                              Provider.of<Auth>(context, listen: false)
+                                  .user_id) {
+                            setState(() {
+                              _isDeleting[index] =
+                                  true; // Assuming isDeleting is a boolean variable to handle whether the delete button should be displayed
+                            });
+                          }
+                          // print(_isDeleting);
+                        },
+                        child: Stack(
+                          children: [
+                            CommentItemWidget(
+                              dateString: newData['comments'][index]
+                                  ['created_at'],
+                              url: newData['comments'][index]['profile_photo'],
+                              name: newData['comments'][index]['store_name'],
+                              text: newData['comments'][index]['text'],
+                            ),
+                            if (_isDeleting[
+                                index]) // Only display delete button if isDeleting is true
+                              Positioned(
+                                top: 0,
+                                right: 10,
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () async {
+                                    // Handle delete action here
+                                    setState(() {
+                                      _isDeleting[index] =
+                                          false; // Hide delete button
+                                    });
+                                    final code = await Provider.of<Auth>(
+                                            context,
+                                            listen: false)
+                                        .deleteComment(newData['id'],
+                                            newData['comments'][index]['text']);
+
+                                    if (code == '200') {
+                                      TOastNotification().showSuccesToast(
+                                          context, 'Comment deleted');
+                                      List<dynamic> _list =
+                                          newData['comments'] ?? [];
+                                      int indexToRemove = _list.indexWhere(
+                                          (element) =>
+                                              element['text'] ==
+                                              newData['comments'][index]
+                                                  ['text']);
+                                      if (indexToRemove != -1) {
+                                        _list.removeAt(indexToRemove);
+                                      }
+                                      setState(() {
+                                        newData['comments'] = _list;
+                                      });
+                                    } else {
+                                      TOastNotification().showErrorToast(
+                                          context, 'Error!1111');
+                                    }
+                                  },
+                                ),
+                              ),
+                          ],
+                        ),
                       );
                     },
                   ),
           ),
-          Space(1.h),
+          // Space(.h),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 1.5.w),
             // width: 80.w,
@@ -1109,8 +1180,8 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                 const Space(isHorizontal: true, 10),
                 Provider.of<Auth>(context, listen: false).logo_url == ''
                     ? Container(
-                        height: 35,
-                        width: 35,
+                        height: 30,
+                        width: 30,
                         decoration: ShapeDecoration(
                           shadows: const [
                             BoxShadow(
@@ -1135,13 +1206,13 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                           ),
                         ))
                     : Container(
-                        height: 40,
-                        width: 40,
+                        height: 30,
+                        width: 30,
                         decoration: const ShapeDecoration(
                           shadows: [
                             BoxShadow(
                               offset: Offset(0, 4),
-                              color: Color.fromRGBO(31, 111, 109, 0.3),
+                              color: Color.fromRGBO(31, 111, 109, 0.6),
                               blurRadius: 20,
                             )
                           ],
@@ -1149,7 +1220,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                         ),
                         child: ClipSmoothRect(
                           radius: SmoothBorderRadius(
-                            cornerRadius: 5,
+                            cornerRadius: 10,
                             cornerSmoothing: 1,
                           ),
                           child: Image.network(
@@ -1195,11 +1266,19 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
 
                     if (code == '200') {
                       List<dynamic> _list = newData['comments'] ?? [];
+                      DateFormat format =
+                          DateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
+                      String formattedDate =
+                          format.format(DateTime.now().toUtc());
                       _list.add({
                         'text': _comment,
                         'user_id':
                             Provider.of<Auth>(context, listen: false).user_id,
-                        'created_at': DateTime.now().toString(),
+                        'created_at': formattedDate,
+                        'store_name': Provider.of<Auth>(context, listen: false)
+                            .store_name,
+                        'profile_photo':
+                            Provider.of<Auth>(context, listen: false).logo_url,
                       });
                       setState(() {
                         newData['comments'] = _list;
@@ -1213,20 +1292,20 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                     // _controller.
                   },
                   child: Container(
-                    height: 40,
-                    width: 40,
+                    height: 30,
+                    width: 30,
                     decoration: ShapeDecoration(
                       color: const Color.fromRGBO(250, 110, 0, 1),
                       shadows: const [
                         BoxShadow(
                           offset: Offset(0, 4),
-                          color: Color.fromRGBO(31, 111, 109, 0.3),
+                          color: Color.fromRGBO(31, 111, 109, 0.6),
                           blurRadius: 20,
                         )
                       ],
                       shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(
-                          cornerRadius: 5,
+                          cornerRadius: 10,
                           cornerSmoothing: 1,
                         ),
                       ),
@@ -1248,13 +1327,44 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
 }
 
 class CommentItemWidget extends StatelessWidget {
-  CommentItemWidget({
-    super.key,
-    required this.name,
-    required this.text,
-  });
+  CommentItemWidget(
+      {super.key,
+      required this.name,
+      required this.text,
+      required this.url,
+      required this.dateString});
   String name;
   String text;
+  String url;
+  String dateString;
+
+  String formatTimeDifference(String timestampString) {
+    // print(timestampString);
+    DateFormat format = DateFormat("E, d MMM yyyy HH:mm:ss 'GMT'");
+    DateTime timestamp;
+
+    try {
+      timestamp = format.parse(timestampString, true).toLocal();
+    } catch (e) {
+      print('Error parsing timestamp: $e');
+      return 'Invalid timestamp';
+    }
+
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds}s';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h';
+    } else if (difference.inDays == 1) {
+      return 'yesterday';
+    } else {
+      return DateFormat('dd MMMM, yyyy').format(timestamp);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1270,7 +1380,7 @@ class CommentItemWidget extends StatelessWidget {
               shadows: [
                 BoxShadow(
                   offset: Offset(0, 4),
-                  color: Color.fromRGBO(31, 111, 109, 0.3),
+                  color: Color.fromRGBO(31, 111, 109, 0.6),
                   blurRadius: 20,
                 )
               ],
@@ -1278,11 +1388,13 @@ class CommentItemWidget extends StatelessWidget {
             ),
             child: ClipSmoothRect(
               radius: SmoothBorderRadius(
-                cornerRadius: 5,
+                cornerRadius: 10,
                 cornerSmoothing: 1,
               ),
               child: Image.network(
-                'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
+                url,
+                loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                errorBuilder: GlobalVariables().ErrorBuilderForImage,
                 fit: BoxFit.cover,
               ),
             ),
@@ -1291,15 +1403,31 @@ class CommentItemWidget extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                name,
-                style: const TextStyle(
-                  color: Color(0xFF0A4C61),
-                  fontSize: 10,
-                  fontFamily: 'Product Sans',
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.10,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      color: Color(0xFF0A4C61),
+                      fontSize: 10,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.10,
+                    ),
+                  ),
+                  Space(isHorizontal: true, 6),
+                  Text(
+                    formatTimeDifference(dateString),
+                    style: TextStyle(
+                      color: Color(0xFFFA6E00),
+                      fontSize: 10,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w400,
+                      // height: 0.16,
+                    ),
+                  )
+                ],
               ),
               SizedBox(
                 width: 58.w,
@@ -1318,7 +1446,10 @@ class CommentItemWidget extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border))
+          //like button for comments
+          // IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border))
+          // if(Provider.of<Auth>(context).user_id==)
+          // IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border))
         ],
       ),
     );

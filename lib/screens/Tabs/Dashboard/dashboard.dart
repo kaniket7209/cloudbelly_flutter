@@ -69,7 +69,7 @@ class _DashBoardState extends State<DashBoard>
                   AppwideBanner(),
                   Column(
                     children: [
-                      Space(10.h),
+                      Space(6.h),
                       ConstrainedBox(
                         constraints: const BoxConstraints(
                           maxWidth: 800, // Set the maximum width to 800
@@ -80,17 +80,23 @@ class _DashBoardState extends State<DashBoard>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              CustomIconButton(
-                                ic: Icons.notifications,
-                                onTap: () {
-                                  Navigator.of(context).pushNamed('/map');
-                                },
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 40),
+                                child: CustomIconButton(
+                                  ic: Icons.notifications,
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed('/map');
+                                  },
+                                ),
                               ),
                               Container(
                                   width: 40.w, child: StoreNameAndLogoWidget()),
-                              CustomIconButton(
-                                ic: Icons.more_horiz,
-                                onTap: () {},
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 40),
+                                child: CustomIconButton(
+                                  ic: Icons.more_horiz,
+                                  onTap: () {},
+                                ),
                               ),
                             ],
                           ),

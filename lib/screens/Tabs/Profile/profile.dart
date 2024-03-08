@@ -78,7 +78,7 @@ class _ProfileState extends State<Profile> {
                   AppwideBanner(),
                   Column(
                     children: [
-                      Space(10.h),
+                      Space(6.h),
                       ConstrainedBox(
                         constraints: const BoxConstraints(
                           maxWidth: 800, // Set the maximum width to 800
@@ -90,113 +90,126 @@ class _ProfileState extends State<Profile> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                CustomIconButton(
-                                  ic: Icons.arrow_back_ios_new_outlined,
-                                  onTap: () {
-                                    Navigator.of(context)
-                                        .pushNamed(PitchDeck.routeName);
-                                  },
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 40),
+                                  child: CustomIconButton(
+                                    ic: Icons.arrow_back_ios_new_outlined,
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .pushNamed(PitchDeck.routeName);
+                                    },
+                                  ),
                                 ),
                                 Container(
                                   width: 40.w,
                                   padding: EdgeInsets.only(left: 10.w),
                                   child: const StoreNameAndLogoWidget(),
                                 ),
-                                Row(
-                                  children: [
-                                    CustomIconButton(
-                                      boxColor:
-                                          const Color.fromRGBO(38, 115, 140, 1),
-                                      color: Colors.white,
-                                      ic: Icons.add,
-                                      onTap: () async {
-                                        AppWideLoadingBanner()
-                                            .loadingBanner(context);
-
-                                        List<String> url =
-                                            await Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .pickMultipleImagesAndUpoad();
-                                        Navigator.of(context).pop();
-                                        if (url.length == 0) {
-                                          TOastNotification().showErrorToast(
-                                              context,
-                                              'Error While Uploading Image');
-                                        } else if (url
-                                            .contains('file size very large'))
-                                          TOastNotification().showErrorToast(
-                                              context, 'file size very large');
-                                        else if (!url.contains('element'))
-                                          CreateFeed().showModalSheetForNewPost(
-                                              context, url);
-                                        else {
-                                          TOastNotification().showErrorToast(
-                                              context,
-                                              'Error While Uploading Image');
-                                        }
-                                      },
-                                    ),
-                                    Space(
-                                      3.w,
-                                      isHorizontal: true,
-                                    ),
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: ShapeDecoration(
-                                        shadows: [
-                                          const BoxShadow(
-                                            offset: Offset(0, 4),
-                                            color: Color.fromRGBO(
-                                                31, 111, 109, 0.5),
-                                            blurRadius: 20,
-                                          )
-                                        ],
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 40),
+                                  child: Row(
+                                    children: [
+                                      CustomIconButton(
+                                        boxColor: const Color.fromRGBO(
+                                            38, 115, 140, 1),
                                         color: Colors.white,
-                                        shape: SmoothRectangleBorder(
-                                          borderRadius: SmoothBorderRadius(
-                                            cornerRadius: 10,
-                                            cornerSmoothing: 1,
-                                          ),
-                                        ),
-                                      ),
-                                      child: PopupMenuButton<SampleItem>(
-                                        icon: const Icon(Icons.more_horiz),
-                                        initialValue: selectedMenu,
-                                        // Callback that sets the selected popup menu item.
-                                        onSelected: (SampleItem item) async {
+                                        ic: Icons.add,
+                                        onTap: () async {
                                           AppWideLoadingBanner()
                                               .loadingBanner(context);
-                                          final prefs = await SharedPreferences
-                                              .getInstance();
-                                          await prefs.remove('userData');
+
+                                          List<String> url =
+                                              await Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .pickMultipleImagesAndUpoad();
                                           Navigator.of(context).pop();
-                                          Navigator.of(context)
-                                              .pushReplacementNamed(
-                                                  LoginScreen.routeName);
-                                          setState(() {
-                                            selectedMenu = item;
-                                          });
+                                          if (url.length == 0) {
+                                            TOastNotification().showErrorToast(
+                                                context,
+                                                'Error While Uploading Image');
+                                          } else if (url
+                                              .contains('file size very large'))
+                                            TOastNotification().showErrorToast(
+                                                context,
+                                                'file size very large');
+                                          else if (!url.contains('element')) {
+                                            CreateFeed()
+                                                .showModalSheetForNewPost(
+                                                    context, url)
+                                                .then((value) {
+                                              setState(() {});
+                                            });
+                                          } else {
+                                            TOastNotification().showErrorToast(
+                                                context,
+                                                'Error While Uploading Image');
+                                          }
+                                          setState(() {});
                                         },
-                                        itemBuilder: (BuildContext context) =>
-                                            <PopupMenuEntry<SampleItem>>[
-                                          PopupMenuItem<SampleItem>(
-                                            value: SampleItem.itemOne,
-                                            child: Row(
-                                              children: [
-                                                const Icon(Icons.logout),
-                                                Space(
-                                                  3.w,
-                                                  isHorizontal: true,
-                                                ),
-                                                const Text('Logout'),
-                                              ],
+                                      ),
+                                      Space(
+                                        3.w,
+                                        isHorizontal: true,
+                                      ),
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: ShapeDecoration(
+                                          shadows: [
+                                            const BoxShadow(
+                                              offset: Offset(0, 4),
+                                              color: Color.fromRGBO(
+                                                  31, 111, 109, 0.5),
+                                              blurRadius: 20,
+                                            )
+                                          ],
+                                          color: Colors.white,
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                              cornerRadius: 10,
+                                              cornerSmoothing: 1,
                                             ),
                                           ),
-                                        ],
+                                        ),
+                                        child: PopupMenuButton<SampleItem>(
+                                          icon: const Icon(Icons.more_horiz),
+                                          initialValue: selectedMenu,
+                                          // Callback that sets the selected popup menu item.
+                                          onSelected: (SampleItem item) async {
+                                            AppWideLoadingBanner()
+                                                .loadingBanner(context);
+                                            final prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            await prefs.remove('userData');
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context)
+                                                .pushReplacementNamed(
+                                                    LoginScreen.routeName);
+                                            setState(() {
+                                              selectedMenu = item;
+                                            });
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                              <PopupMenuEntry<SampleItem>>[
+                                            PopupMenuItem<SampleItem>(
+                                              value: SampleItem.itemOne,
+                                              child: Row(
+                                                children: [
+                                                  const Icon(Icons.logout),
+                                                  Space(
+                                                    3.w,
+                                                    isHorizontal: true,
+                                                  ),
+                                                  const Text('Logout'),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 )
                               ],
                             ),
@@ -373,7 +386,7 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         Space(2.h),
                                         Container(
-                                          height: 7.h,
+                                          height: 6.5.h,
                                           width: 90.w,
                                           decoration: ShapeDecoration(
                                             shadows: const [
@@ -433,7 +446,7 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                               ]),
                                         ),
-                                        Space(4.h),
+                                        Space(3.h),
                                         if (_activeButtonIndex == 1)
                                           Container(
                                             width: 85.w,
@@ -466,9 +479,9 @@ class _ProfileState extends State<Profile> {
                                                       childAspectRatio: 1,
                                                       crossAxisCount:
                                                           3, // Number of items in a row
-                                                      crossAxisSpacing: 4
+                                                      crossAxisSpacing: 2
                                                           .w, // Spacing between columns
-                                                      mainAxisSpacing: 1.5
+                                                      mainAxisSpacing: 1
                                                           .h, // Spacing between rows
                                                     ),
                                                     itemCount: data
@@ -614,7 +627,7 @@ class FeedWidget extends StatelessWidget {
               ),
               child: ClipSmoothRect(
                 radius: SmoothBorderRadius(
-                  cornerRadius: 10,
+                  cornerRadius: 17,
                   cornerSmoothing: 1,
                 ),
                 child: Image.network(
@@ -654,7 +667,7 @@ class CommonButtonProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 5.h,
+        height: 4.4.h,
         width: 25.w,
         decoration: isActive
             ? ShapeDecoration(
@@ -665,7 +678,7 @@ class CommonButtonProfile extends StatelessWidget {
                     blurRadius: 20,
                   )
                 ],
-                color: const Color.fromRGBO(177, 217, 216, 1),
+                color: const Color.fromRGBO(84, 166, 193, 1),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
                     cornerRadius: 10,

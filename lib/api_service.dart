@@ -813,6 +813,33 @@ class Auth with ChangeNotifier {
     }
   }
 
+  Future<String> deleteComment(String id, String comment) async {
+    final String url = 'https://app.cloudbelly.in/delete-comment';
+
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {
+      "user_id": user_id,
+      'post_id': id,
+      'comment_text': comment,
+      'comment_user_id': user_id,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      print(response.body);
+      print(response.statusCode);
+
+      return response.statusCode.toString();
+    } catch (error) {
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
   Future<String> likePost(String id, String userId) async {
     final String url = 'https://app.cloudbelly.in/update-posts';
 
