@@ -133,28 +133,28 @@ class _FeedState extends State<Feed> {
                 ),
               ),
               Space(2.h),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 4.w),
-                  child: Row(
-                    children: [
-                      StoryItemWidget(
-                        url: Provider.of<Auth>(context, listen: true).logo_url,
-                        name:
-                            Provider.of<Auth>(context, listen: true).store_name,
-                        isYours: true,
-                      ),
-                      for (int index = 0; index < 10; index++)
-                        StoryItemWidget(
-                          url:
-                              'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
-                          name: 'Raj',
-                        ),
-                    ],
-                  ),
-                ),
-              ),
+              // SingleChildScrollView(
+              //   scrollDirection: Axis.horizontal,
+              //   child: Padding(
+              //     padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 4.w),
+              //     child: Row(
+              //       children: [
+              //         StoryItemWidget(
+              //           url: Provider.of<Auth>(context, listen: true).logo_url,
+              //           name:
+              //               Provider.of<Auth>(context, listen: true).store_name,
+              //           isYours: true,
+              //         ),
+              //         for (int index = 0; index < 10; index++)
+              //           StoryItemWidget(
+              //             url:
+              //                 'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
+              //             name: 'Raj',
+              //           ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               _isLoading == true
                   ? Center(
                       child: AppWideLoadingBanner().LoadingCircle(context),

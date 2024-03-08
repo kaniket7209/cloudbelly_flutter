@@ -164,6 +164,17 @@ class _SheetWidgetState extends State<SheetWidget> {
     setState(() {});
   }
 
+  bool _isKeyboardVisible = false;
+
+  @override
+  void didChangeMetrics() {
+    // print("marrr");
+    // Called whenever system metrics change (e.g., keyboard visibility)
+    setState(() {
+      _isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     List<dynamic> list = widget.dataList;
@@ -373,6 +384,7 @@ class _SheetWidgetState extends State<SheetWidget> {
                                         String newValue = '';
                                         TextEditingController _cotrolller =
                                             TextEditingController();
+
                                         showModalBottomSheet(
                                           // useSafeArea: true,
                                           context: context,
@@ -402,7 +414,9 @@ class _SheetWidgetState extends State<SheetWidget> {
                                                   height: MediaQuery.of(context)
                                                           .size
                                                           .height *
-                                                      0.6,
+                                                      (_isKeyboardVisible
+                                                          ? 0.32
+                                                          : 0.6),
                                                   width: double.infinity,
                                                   padding: EdgeInsets.only(
                                                       left: 6.w,
@@ -468,7 +482,7 @@ class _SheetWidgetState extends State<SheetWidget> {
                                                                   ),
                                                                 ),
                                                               ),
-                                                              Space(4.h),
+                                                              Space(2.5.h),
                                                               AppwideTextField(
                                                                 controller:
                                                                     _cotrolller,
@@ -479,7 +493,7 @@ class _SheetWidgetState extends State<SheetWidget> {
                                                                   newValue = p0;
                                                                 },
                                                               ),
-                                                              Space(5.h),
+                                                              Space(6.h),
                                                               AppWideButton(
                                                                   onTap: () {
                                                                     list[index][

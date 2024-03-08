@@ -331,7 +331,7 @@ class _PostItemState extends State<PostItem> {
                             ),
                             child: ClipSmoothRect(
                               radius: SmoothBorderRadius(
-                                cornerRadius: 15,
+                                cornerRadius: 20,
                                 cornerSmoothing: 1,
                               ),
                               child: Image.network(
@@ -365,7 +365,7 @@ class _PostItemState extends State<PostItem> {
                           ),
                           child: ClipSmoothRect(
                             radius: SmoothBorderRadius(
-                              cornerRadius: 15,
+                              cornerRadius: 20,
                               cornerSmoothing: 1,
                             ),
                             child: Image.network(
@@ -526,37 +526,21 @@ class _PostItemState extends State<PostItem> {
                   icon: const Icon(Icons.share))
             ],
           ),
-          // Space(14),
-          Row(
-            children: [
-              if (_likeData.length != 0 && _likeData[0]['profile_photo'] != '')
-                Container(
-                  width: 17,
-                  height: 17,
-                  decoration: ShapeDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(_likeData[0]['profile_photo']),
-                      fit: BoxFit.fill,
-                    ),
-                    shape: OvalBorder(
-                      side: BorderSide(
-                        width: 2,
-                        strokeAlign: BorderSide.strokeAlignOutside,
-                        color: Color(0xFFEAF5F7),
-                      ),
-                    ),
-                  ),
-                ),
-              if (_likeData.length > 1)
-                for (int i = 0; (_likeData.length > 2 ? i < 2 : i < 1); i++)
-                  if (_likeData[i + 1]['profile_photo'] != '')
+          Container(
+            padding: EdgeInsets.only(left: 3.w),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              // Space(14),
+              Row(
+                children: [
+                  if (_likeData.length != 0 &&
+                      _likeData[0]['profile_photo'] != '')
                     Container(
                       width: 17,
                       height: 17,
                       decoration: ShapeDecoration(
                         image: DecorationImage(
-                          image:
-                              NetworkImage(_likeData[i + 1]['profile_photo']),
+                          image: NetworkImage(_likeData[0]['profile_photo']),
                           fit: BoxFit.fill,
                         ),
                         shape: OvalBorder(
@@ -568,62 +552,103 @@ class _PostItemState extends State<PostItem> {
                         ),
                       ),
                     ),
-              if (_likeData.length != 0 && _likeData[0]['profile_photo'] != '')
-                Space(
-                  7,
-                  isHorizontal: true,
-                ),
-              const Text(
-                'Liked by',
-                style: TextStyle(
-                  color: Color(0xFF519896),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans Medium',
-                  fontWeight: FontWeight.w500,
-                  height: 0,
-                  letterSpacing: 0.12,
-                ),
-              ),
-              Space(isHorizontal: true, 5),
-              Text(
-                '${_likeData.length == 0 ? '0 people' : _likeData.length == 1 ? _likeData[0]['name'] : '${_likeData[0]['name']} and ${_likeData.length - 1} others'}',
-                style: const TextStyle(
-                  color: Color(0xFF0A4C61),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans',
-                  fontWeight: FontWeight.w700,
-                  height: 0,
-                  letterSpacing: 0.12,
-                ),
-              )
-            ],
-          ),
-          if (caption1 != '')
-            Column(
-              children: [
-                Space(1.h),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      widget.isProfilePost
-                          ? Provider.of<Auth>(context, listen: false).store_name
-                          : widget.data['user_name'],
-                      style: const TextStyle(
-                        color: Color(0xFFFA6E00),
-                        fontSize: 12,
-                        fontFamily: 'Product Sans',
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.36,
-                      ),
+                  if (_likeData.length > 1)
+                    for (int i = 0; (_likeData.length > 2 ? i < 2 : i < 1); i++)
+                      if (_likeData[i + 1]['profile_photo'] != '')
+                        Container(
+                          width: 17,
+                          height: 17,
+                          decoration: ShapeDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                  _likeData[i + 1]['profile_photo']),
+                              fit: BoxFit.fill,
+                            ),
+                            shape: OvalBorder(
+                              side: BorderSide(
+                                width: 2,
+                                strokeAlign: BorderSide.strokeAlignOutside,
+                                color: Color(0xFFEAF5F7),
+                              ),
+                            ),
+                          ),
+                        ),
+                  if (_likeData.length != 0 &&
+                      _likeData[0]['profile_photo'] != '')
+                    Space(
+                      7,
+                      isHorizontal: true,
                     ),
-                    Space(isHorizontal: true, 9),
-                    Expanded(
-                      child: SizedBox(
+                  const Text(
+                    'Liked by',
+                    style: TextStyle(
+                      color: Color(0xFF519896),
+                      fontSize: 12,
+                      fontFamily: 'Product Sans Medium',
+                      fontWeight: FontWeight.w500,
+                      height: 0,
+                      letterSpacing: 0.12,
+                    ),
+                  ),
+                  Space(isHorizontal: true, 5),
+                  Text(
+                    '${_likeData.length == 0 ? '0 people' : _likeData.length == 1 ? _likeData[0]['name'] : '${_likeData[0]['name']} and ${_likeData.length - 1} others'}',
+                    style: const TextStyle(
+                      color: Color(0xFF0A4C61),
+                      fontSize: 12,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w700,
+                      height: 0,
+                      letterSpacing: 0.12,
+                    ),
+                  )
+                ],
+              ),
+              if (caption1 != '')
+                Column(
+                  children: [
+                    Space(1.h),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          widget.isProfilePost
+                              ? Provider.of<Auth>(context, listen: false)
+                                  .store_name
+                              : widget.data['user_name'],
+                          style: const TextStyle(
+                            color: Color(0xFFFA6E00),
+                            fontSize: 12,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.36,
+                          ),
+                        ),
+                        Space(isHorizontal: true, 9),
+                        Expanded(
+                          child: SizedBox(
+                            child: Text(
+                              caption1,
+                              overflow: TextOverflow.clip,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                color: Color(0xFF0A4C61),
+                                fontSize: 12,
+                                fontFamily: 'Product Sans Medium',
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.12,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    if (caption2.length > 0)
+                      SizedBox(
+                        height: 1.4.h,
                         child: Text(
-                          caption1,
-                          overflow: TextOverflow.clip,
-                          maxLines: 1,
+                          caption2,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Color(0xFF0A4C61),
                             fontSize: 12,
@@ -633,66 +658,50 @@ class _PostItemState extends State<PostItem> {
                           ),
                         ),
                       ),
-                    )
                   ],
                 ),
-                if (caption2.length > 0)
-                  SizedBox(
-                    height: 1.4.h,
-                    child: Text(
-                      caption2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFF0A4C61),
-                        fontSize: 12,
-                        fontFamily: 'Product Sans Medium',
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.12,
+              TouchableOpacity(
+                onTap: () {
+                  AppWideBottomSheet().showSheet(
+                      context,
+                      CommentSheetContent(
+                        data: widget.data,
+                        isProfilePost: widget.isProfilePost,
                       ),
+                      70.h);
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 0.6.h,
+                  ),
+                  child: Text(
+                    (widget.data['comments'] ?? []).length > 0
+                        ? 'View ${(widget.data['comments'] ?? []).length} comments'
+                        : '${(widget.data['comments'] ?? []).length} comments',
+                    style: const TextStyle(
+                      color: Color(0xFF519796),
+                      fontSize: 11,
+                      fontFamily: 'Product Sans Medium',
+                      fontWeight: FontWeight.w500,
+                      height: 0,
+                      letterSpacing: 0.11,
                     ),
                   ),
-              ],
-            ),
-          TouchableOpacity(
-            onTap: () {
-              AppWideBottomSheet().showSheet(
-                  context,
-                  CommentSheetContent(
-                    data: widget.data,
-                    isProfilePost: widget.isProfilePost,
-                  ),
-                  70.h);
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: 0.6.h,
+                ),
               ),
-              child: Text(
-                (widget.data['comments'] ?? []).length > 0
-                    ? 'View ${(widget.data['comments'] ?? []).length} comments'
-                    : '${(widget.data['comments'] ?? []).length} comments',
+              Space(0.3.h),
+              Text(
+                '${formatTimeDifference(widget.data['created_at'])}',
                 style: const TextStyle(
                   color: Color(0xFF519796),
-                  fontSize: 11,
+                  fontSize: 9,
                   fontFamily: 'Product Sans Medium',
                   fontWeight: FontWeight.w500,
                   height: 0,
-                  letterSpacing: 0.11,
+                  letterSpacing: 0.09,
                 ),
-              ),
-            ),
-          ),
-          Space(0.3.h),
-          Text(
-            '${formatTimeDifference(widget.data['created_at'])}',
-            style: const TextStyle(
-              color: Color(0xFF519796),
-              fontSize: 9,
-              fontFamily: 'Product Sans Medium',
-              fontWeight: FontWeight.w500,
-              height: 0,
-              letterSpacing: 0.09,
-            ),
+              )
+            ]),
           )
         ],
       ),

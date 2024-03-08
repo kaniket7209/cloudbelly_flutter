@@ -99,8 +99,8 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 Color.fromRGBO(250, 110, 0, 1),
                 Color.fromRGBO(248, 185, 177, 1),
               ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
             ),
           ),
           child: const Icon(

@@ -415,6 +415,10 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    Space(
+                      12.w,
+                      isHorizontal: true,
+                    ),
                     CustomerVisitWidget(
                       title: 'Total visits',
                       number: '345',
@@ -438,16 +442,20 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                 ),
                 Space(1.5.h),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  // mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    Space(
+                      12.w,
+                      isHorizontal: true,
+                    ),
                     CustomerVisitWidget(
-                      title: 'Total conversion',
+                      title: 'Total \nconversion',
                       number: '+34',
                       text: 'Vs 221 visits',
                       date: 'last mon, Jan 29',
                     ),
                     CustomerVisitWidget(
-                      title: 'Conversion from unique visit',
+                      title: 'Conversion from\n unique visit',
                       number: '+34',
                       text: 'Vs 221 visits',
                       date: 'last mon, Jan 29',
@@ -1110,11 +1118,12 @@ class CustomerVisitWidget extends StatelessWidget {
     return SizedBox(
       width: 40.w,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
             maxLines: 2,
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left,
             style: TextStyle(
               color: Color(0xFF0A4C61),
               fontSize: 14,
@@ -1124,6 +1133,7 @@ class CustomerVisitWidget extends StatelessWidget {
           ),
           Text(
             number,
+            textAlign: TextAlign.left,
             style: TextStyle(
               color: Color(0xFFFA6E00),
               fontSize: 20,
@@ -1133,6 +1143,7 @@ class CustomerVisitWidget extends StatelessWidget {
           ),
           Text(
             text,
+            textAlign: TextAlign.left,
             style: TextStyle(
               color: Color(0xFF0A4C61),
               fontSize: 10,
@@ -1142,6 +1153,7 @@ class CustomerVisitWidget extends StatelessWidget {
           ),
           Text(
             date,
+            textAlign: TextAlign.left,
             style: TextStyle(
               color: Color(0xFF0A4C61),
               fontSize: 10,
