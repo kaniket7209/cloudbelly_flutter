@@ -169,7 +169,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               ),
               child: Center(
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Icon(
                       iconList[index],

@@ -127,14 +127,14 @@ class _DashBoardState extends State<DashBoard>
                                       color: Colors.white,
                                       shape: SmoothRectangleBorder(
                                         borderRadius: SmoothBorderRadius(
-                                          cornerRadius: 10,
+                                          cornerRadius: 20,
                                           cornerSmoothing: 1,
                                         ),
                                       ),
                                     ),
                                     child: Column(
                                       children: [
-                                        Space(3.h),
+                                        Space(4.h),
                                         // Adjusted the width of buttons based on screen width
                                         _activeButtonIndex == 1
                                             ? Row(
@@ -148,6 +148,7 @@ class _DashBoardState extends State<DashBoard>
                                                             listen: false)
                                                         .rating,
                                                     txt: 'Rating',
+                                                    
                                                   ),
                                                   ColumnWidgetHomeScreen(
                                                     data: (Provider.of<Auth>(

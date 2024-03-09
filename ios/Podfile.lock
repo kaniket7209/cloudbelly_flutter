@@ -4,10 +4,10 @@ PODS:
   - Firebase/DynamicLinks (10.20.0):
     - Firebase/CoreOnly
     - FirebaseDynamicLinks (~> 10.20.0)
-  - firebase_core (2.25.4):
+  - firebase_core (2.25.5):
     - Firebase/CoreOnly (= 10.20.0)
     - Flutter
-  - firebase_dynamic_links (5.4.13):
+  - firebase_dynamic_links (5.4.15):
     - Firebase/DynamicLinks (= 10.20.0)
     - firebase_core
     - Flutter
@@ -29,6 +29,14 @@ PODS:
     - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
+  - google_maps_flutter_ios (0.0.1):
+    - Flutter
+    - GoogleMaps (< 9.0)
+  - GoogleMaps (6.2.1):
+    - GoogleMaps/Maps (= 6.2.1)
+  - GoogleMaps/Base (6.2.1)
+  - GoogleMaps/Maps (6.2.1):
+    - GoogleMaps/Base
   - GoogleUtilities/Environment (7.13.0):
     - GoogleUtilities/Privacy
     - PromisesObjC (< 3.0, >= 1.2)
@@ -82,6 +90,7 @@ DEPENDENCIES:
   - flutter_image_compress_common (from `.symlinks/plugins/flutter_image_compress_common/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
@@ -95,6 +104,7 @@ SPEC REPOS:
     - FirebaseCore
     - FirebaseCoreInternal
     - FirebaseDynamicLinks
+    - GoogleMaps
     - GoogleUtilities
     - libwebp
     - Mantle
@@ -115,6 +125,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geocoding_ios/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
+  google_maps_flutter_ios:
+    :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   path_provider_foundation:
@@ -130,8 +142,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Firebase: 10c8cb12fb7ad2ae0c09ffc86cd9c1ab392a0031
-  firebase_core: a46c312d8bae4defa3d009b2aa7b5b413aeb394e
-  firebase_dynamic_links: 58354c4228a25d8c77185baafafaffa2debcc076
+  firebase_core: c8628c7ce80f79439149549052bff22f6784fbf5
+  firebase_dynamic_links: c45216717e2c651300092a5bc7f7675b604337d5
   FirebaseCore: 28045c1560a2600d284b9c45a904fe322dc890b6
   FirebaseCoreInternal: 43c1788eaeee9d1b97caaa751af567ce11010d00
   FirebaseDynamicLinks: 61a82d43b81cd74a3cdbb1d65f07fb0241aaa553
@@ -139,6 +151,8 @@ SPEC CHECKSUMS:
   flutter_image_compress_common: ec1d45c362c9d30a3f6a0426c297f47c52007e3e
   geocoding_ios: a389ea40f6f548de6e63006a2e31bf66ff80769a
   geolocator_apple: 9157311f654584b9bb72686c55fc02a97b73f461
+  google_maps_flutter_ios: f135b968a67c05679e0a53538e900b5c174b0d99
+  GoogleMaps: 20d7b12be49a14287f797e88e0e31bc4156aaeb4
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
   image_picker_ios: 99dfe1854b4fa34d0364e74a78448a0151025425
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
@@ -149,7 +163,7 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: d25b638fc2c98782072f159165f22232f225b9d7
   share_plus: c3fef564749587fc939ef86ffb283ceac0baf9f5
   shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
-  url_launcher_ios: bbd758c6e7f9fd7b5b1d4cde34d2b95fcce5e812
+  url_launcher_ios: 6116280ddcfe98ab8820085d8d76ae7449447586
   webview_flutter_wkwebview: be0f0d33777f1bfd0c9fdcb594786704dbf65f36
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
