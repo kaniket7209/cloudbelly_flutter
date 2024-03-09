@@ -1,18 +1,14 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory_bottom_sheet.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/make_list_inventory.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
-import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
-import 'package:cloudbelly_app/widgets/appwide_progress_bar.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
@@ -20,13 +16,9 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:jose/jose.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
-import 'package:crypto/crypto.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class Inventory extends StatefulWidget {
@@ -92,8 +84,6 @@ class _InventoryState extends State<Inventory> {
         'email': Provider.of<Auth>(context, listen: false).user_email,
         'item_id': '1',
       },
-      // "exp": (DateTime.now().millisecondsSinceEpoch ~/ 1000) +
-      //     (10 * 60) // 10 minute expiration
     });
 
     String token = payload.sign(SecretKey(METABASE_SECRET_KEY));
@@ -128,9 +118,10 @@ class _InventoryState extends State<Inventory> {
       if (runwayComparison != 0) {
         return runwayComparison;
       } else {
-        return a['VOLUME LEFT'].compareTo(b['VOLUME LEFT']);
+        return a['volumeLeft'].compareTo(b['volumeLeft']);
       }
     });
+    // print(lowStockItems);
   }
 
   Future<void> _getStocksYouMayNeed() async {
@@ -144,26 +135,26 @@ class _InventoryState extends State<Inventory> {
     List<dynamic> temp = [];
     stocksYouMayNeed.forEach((element) {
       if (element['shelf_life'] == null ||
-          element['VOLUME LEFT'] == null ||
-          element['PURCHASE DATE'] == null ||
-          element['VOLUME PURCHASED'] == null) {
+          element['volumeLeft'] == null ||
+          element['purchaseDate'] == null ||
+          element['volumePurchased'] == null) {
         _somethingmissing = true;
       }
       // print('object: $_somethingmissing');
       if (element['shelf_life'] != null &&
-          element['VOLUME LEFT'] != null &&
-          element['PURCHASE DATE'] != null &&
-          element['VOLUME PURCHASED'] != null) {
-        element['runway'] = calculateDaysUntilRunOut(element['PURCHASE DATE'],
-            int.parse(element['shelf_life']), element['EXP DATE']);
+          element['volumeLeft'] != null &&
+          element['purchaseDate'] != null &&
+          element['volumePurchased'] != null) {
+        element['runway'] = calculateDaysUntilRunOut(
+            element['purchaseDate'], int.parse(element['shelf_life']));
         temp.add(element);
       }
     });
     // print('something');
     if (_somethingmissing) {
       // print(_somethingmissing);
-      // TOastNotification()
-      //     .showErrorToast(context, 'Some fields are missing in Sheet data');
+      TOastNotification()
+          .showErrorToast(context, 'Some fields are missing in Sheet data');
     }
     stocksYouMayNeed = temp;
 
@@ -172,7 +163,7 @@ class _InventoryState extends State<Inventory> {
       if (runwayComparison != 0) {
         return runwayComparison;
       } else {
-        return a['VOLUME LEFT'].compareTo(b['VOLUME LEFT']);
+        return a['volumeLeft'].compareTo(b['volumeLeft']);
       }
     });
     allStocks.sort((a, b) {
@@ -180,7 +171,7 @@ class _InventoryState extends State<Inventory> {
       if (runwayComparison != 0) {
         return runwayComparison;
       } else {
-        return a['VOLUME LEFT'].compareTo(b['VOLUME LEFT']);
+        return a['volumeLeft'].compareTo(b['volumeLeft']);
       }
     });
     // print('all: $allStocks');
@@ -193,28 +184,26 @@ class _InventoryState extends State<Inventory> {
     // print(data);
     final int thresholdDays = 3;
     final currentDate = DateTime.now();
-    final dateFormat = DateFormat('dd-MM-yyyy');
+    final dateFormat = DateFormat('yyyy-MM-dd');
 
     data = data['inventory_data'];
     data.forEach((item) {
       if (item['shelf_life'] != null &&
-          item['VOLUME LEFT'] != null &&
-          item['PURCHASE DATE'] != null &&
-          item['VOLUME PURCHASED'] != null) {
+          item['volumeLeft'] != null &&
+          item['purchaseDate'] != null &&
+          item['volumePurchased'] != null) {
         var daysUntilExpiry;
         var expiryDate;
-        if (item['EXP DATE'] != '-' && item['EXP DATE'].isNotEmpty) {
-          expiryDate = dateFormat.parse(item['EXP DATE']);
-        } else {
-          expiryDate =
-              currentDate.add(Duration(days: int.parse(item['shelf_life'])));
-        }
+
+        expiryDate =
+            currentDate.add(Duration(days: int.parse(item['shelf_life'])));
+
         daysUntilExpiry = expiryDate.difference(currentDate).inDays;
+        // print(daysUntilExpiry);
         if (daysUntilExpiry <= thresholdDays) {
           item['runway'] = calculateDaysUntilRunOut(
-            item['PURCHASE DATE'],
+            item['purchaseDate'],
             int.parse(item['shelf_life']),
-            item['EXP DATE'],
           );
           nearExpiryItems.add(item);
         }
@@ -232,18 +221,17 @@ class _InventoryState extends State<Inventory> {
     allStocks = [];
     for (var item in inventoryData) {
       if (item['shelf_life'] != null &&
-          item['VOLUME LEFT'] != null &&
-          item['PURCHASE DATE'] != null &&
-          item['VOLUME PURCHASED'] != null) {
+          item['volumeLeft'] != null &&
+          item['purchaseDate'] != null &&
+          item['volumePurchased'] != null) {
         // print(item);
-        double volumeLeft = double.parse(item['VOLUME LEFT']);
+        double volumeLeft = double.parse(item['volumeLeft']);
         item['runway'] = calculateDaysUntilRunOut(
-          item['PURCHASE DATE'],
+          item['purchaseDate'],
           int.parse(item['shelf_life']),
-          item['EXP DATE'] ?? '-',
         );
 
-        if (volumeLeft / double.parse(item['VOLUME PURCHASED']) <= 1) {}
+        if (volumeLeft / double.parse(item['volumePurchased']) <= 1) {}
         lowstocks.add(item);
 
         allStocks.add(item);
@@ -254,22 +242,15 @@ class _InventoryState extends State<Inventory> {
     return lowstocks;
   }
 
-  int calculateDaysUntilRunOut(
-      String purchaseDateStr, int shelfLife, String expiry) {
+  int calculateDaysUntilRunOut(String purchaseDateStr, int shelfLife) {
     DateTime currentDate = DateTime.now();
-    if (expiry == '-') {
-      final DateFormat dateFormat = DateFormat("dd-MM-yyyy");
-      DateTime purchaseDate = dateFormat.parse(purchaseDateStr);
 
-      DateTime expirationDate = purchaseDate.add(Duration(days: shelfLife));
-      int daysUntilRunOut = expirationDate.difference(currentDate).inDays;
-      return daysUntilRunOut + 1;
-    } else {
-      DateTime expirationDate = DateFormat('dd-MM-yyyy').parse(expiry);
-      int daysUntilRunOut = expirationDate.difference(currentDate).inDays;
+    final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+    DateTime purchaseDate = dateFormat.parse(purchaseDateStr);
 
-      return daysUntilRunOut + 1;
-    }
+    DateTime expirationDate = purchaseDate.add(Duration(days: shelfLife));
+    int daysUntilRunOut = expirationDate.difference(currentDate).inDays;
+    return daysUntilRunOut + 1;
   }
 
   @override
@@ -284,18 +265,18 @@ class _InventoryState extends State<Inventory> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             MakeListInventoryButton(),
-            TouchableOpacity(
-              onTap: () async {
-                // AppWideLoadingBanner().loadingBanner(context);
-                // final newData = await Provider.of<Auth>(context, listen: false)
-                //     .SyncInventory();
-                // Navigator.of(context).pop();
-                // if (newData['data'] != null) {
-                //   TOastNotification().showSuccesToast(context, 'List Synced!');
-                // }
-              },
-              child: Icon(Icons.refresh),
-            ),
+            // TouchableOpacity(
+            //   onTap: () async {
+            //     // AppWideLoadingBanner().loadingBanner(context);
+            //     // final newData = await Provider.of<Auth>(context, listen: false)
+            //     //     .SyncInventory();
+            //     // Navigator.of(context).pop();
+            //     // if (newData['data'] != null) {
+            //     //   TOastNotification().showSuccesToast(context, 'List Synced!');
+            //     // }
+            //   },
+            //   child: Icon(Icons.refresh),
+            // ),
             _isUpdateLoading
                 ? SizedBox(
                     width: 30.w,
@@ -318,10 +299,10 @@ class _InventoryState extends State<Inventory> {
                       if ((data['inventory_data'] as List<dynamic>).length !=
                           0) {
                         List<dynamic> _dataList = data['inventory_data'];
-                        print(_dataList);
+                        // print(_dataList);
                         _dataList
                             .sort((a, b) => a["itemId"].compareTo(b["itemId"]));
-                        print('object: ${data['inventory_data']}');
+                        // print('object: ${data['inventory_data']}');
                         InventoryBottomSheets()
                             .UpdateListBottomSheet(context, _dataList);
                       }
@@ -390,7 +371,7 @@ class _InventoryState extends State<Inventory> {
                               itemBuilder: (context, index) {
                                 // You can replace this container with your custom item widget
                                 return StocksMayBeNeedWidget(
-                                    txt: allStocks[index]['NAME'],
+                                    txt: allStocks[index]['itemName'],
                                     url: allStocks[index]['image_url'] ?? '');
                               },
                             ),
@@ -429,7 +410,7 @@ class _InventoryState extends State<Inventory> {
                                 : stocksYouMayNeed.length);
                         index++)
                       StocksMayBeNeedWidget(
-                        txt: stocksYouMayNeed[index]['NAME'],
+                        txt: stocksYouMayNeed[index]['itemName'],
                         url: stocksYouMayNeed[index]['image_url'] ?? '',
                       ),
                   ],
@@ -476,17 +457,18 @@ class _InventoryState extends State<Inventory> {
 
                               itemCount: allStocks.length,
                               itemBuilder: (context, index) {
+                                // print('object');
+                                print(allStocks[index]);
                                 int runway = allStocks[index]['runway'];
-
                                 return LowStocksWidget(
                                     isSheet: true,
                                     amountLeft:
-                                        '${allStocks[index]['VOLUME LEFT']}  ${allStocks[index]['PRODUCT TYPE']} left',
-                                    item: allStocks[index]['NAME'],
+                                        '${allStocks[index]['volumeLeft']}  ${allStocks[index]['unitType']} left',
+                                    item: allStocks[index]['itemName'],
                                     percentage: double.parse(
-                                            allStocks[index]['VOLUME LEFT']) /
+                                            allStocks[index]['volumeLeft']) /
                                         double.parse(allStocks[index]
-                                            ['VOLUME PURCHASED']),
+                                            ['volumePurchased']),
                                     text: runway < 0
                                         ? 'Expired'
                                         : '${runway} days runway',
@@ -533,12 +515,12 @@ class _InventoryState extends State<Inventory> {
                         return LowStocksWidget(
                           // url: lowStockItems[index]['image_url'],
                           amountLeft:
-                              '${lowStockItems[index]['VOLUME LEFT']}  ${lowStockItems[index]['PRODUCT TYPE']} left',
-                          item: lowStockItems[index]['NAME'],
-                          percentage: double.parse(
-                                  lowStockItems[index]['VOLUME LEFT']) /
-                              double.parse(
-                                  lowStockItems[index]['VOLUME PURCHASED']),
+                              '${lowStockItems[index]['volumeLeft']}  ${lowStockItems[index]['unitType']} left',
+                          item: lowStockItems[index]['itemName'],
+                          percentage:
+                              double.parse(lowStockItems[index]['volumeLeft']) /
+                                  double.parse(
+                                      lowStockItems[index]['volumePurchased']),
                           text:
                               runway < 0 ? 'Expired' : '${runway} days runway',
                           url: lowStockItems[index]['image_url'] ?? '',
@@ -593,9 +575,8 @@ class _InventoryState extends State<Inventory> {
                               itemBuilder: (context, index) {
                                 // You can replace this container with your custom item widget
                                 return StocksNearExpiryWidget(
-                                  name: nearExpiryItems[index]['NAME'],
-                                  volume: nearExpiryItems[index]
-                                          ['VOLUME LEFT'] +
+                                  name: nearExpiryItems[index]['itemName'],
+                                  volume: nearExpiryItems[index]['volumeLeft'] +
                                       ' ' +
                                       nearExpiryItems[index]['PRODUCT TYPE'],
                                   url:
@@ -643,10 +624,10 @@ class _InventoryState extends State<Inventory> {
                                     : nearExpiryItems.length);
                             index++)
                           StocksNearExpiryWidget(
-                            name: nearExpiryItems[index]['NAME'],
-                            volume: nearExpiryItems[index]['VOLUME LEFT'] +
+                            name: nearExpiryItems[index]['itemName'],
+                            volume: nearExpiryItems[index]['volumeLeft'] +
                                 ' ' +
-                                nearExpiryItems[index]['PRODUCT TYPE'],
+                                nearExpiryItems[index]['unitType'],
                             url: nearExpiryItems[index]['image_url'] ?? '',
                           ),
                       ],
@@ -915,7 +896,7 @@ class LowStocksWidget extends StatelessWidget {
             ),
           ),
           !isSheet
-              ? Space(isHorizontal: true, 7.w)
+              ? Space(isHorizontal: true, 3.w)
               : Space(isHorizontal: true, 2.w),
           Stack(
             children: [

@@ -33,9 +33,9 @@ class _AppwideBannerState extends State<AppwideBanner>
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.only(
                         bottomLeft:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
                         bottomRight:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
                   ),
                 ))
             : Container(
@@ -46,17 +46,17 @@ class _AppwideBannerState extends State<AppwideBanner>
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.only(
                         bottomLeft:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
                         bottomRight:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
                   ),
                 ),
                 child: ClipSmoothRect(
                   radius: SmoothBorderRadius.only(
                       bottomLeft:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                          SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
                       bottomRight:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                          SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
                   child: Image.network(
                     Provider.of<Auth>(context, listen: true).cover_image,
                     fit: BoxFit.cover,

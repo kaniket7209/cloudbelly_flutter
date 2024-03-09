@@ -102,19 +102,21 @@ class EditProfileWidget extends StatelessWidget {
                       ),
                       TouchableOpacity(
                         onTap: () async {
-                          AppWideLoadingBanner().loadingBanner(context);
-                          final code =
-                              await Provider.of<Auth>(context, listen: false)
-                                  .updateStoreName(_controller.text);
-                          Navigator.of(context).pop();
-                          if (code == '200') {
-                            TOastNotification()
-                                .showSuccesToast(context, 'Store name updated');
-                            Provider.of<Auth>(context, listen: false)
-                                .store_name = _controller.text;
-                          } else {
-                            TOastNotification()
-                                .showErrorToast(context, 'Error!');
+                          if (_controller.text != '') {
+                            AppWideLoadingBanner().loadingBanner(context);
+                            final body =
+                                await Provider.of<Auth>(context, listen: false)
+                                    .updateStoreName(_controller.text);
+                            Navigator.of(context).pop();
+                            if (body['code'] == '200') {
+                              TOastNotification().showSuccesToast(
+                                  context, 'Store name updated');
+                              Provider.of<Auth>(context, listen: false)
+                                  .store_name = _controller.text;
+                            } else {
+                              TOastNotification()
+                                  .showErrorToast(context, body['message']);
+                            }
                           }
                         },
                         child: Icon(

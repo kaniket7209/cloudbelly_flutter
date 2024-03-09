@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
@@ -13,7 +14,6 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/menu.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu_item.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
-import 'package:cloudbelly_app/screens/pitch_deck.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -93,11 +93,9 @@ class _ProfileState extends State<Profile> {
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 40),
                                   child: CustomIconButton(
+                                    text: 'back',
                                     ic: Icons.arrow_back_ios_new_outlined,
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .pushNamed(PitchDeck.routeName);
-                                    },
+                                    onTap: () {},
                                   ),
                                 ),
                                 Container(
@@ -239,7 +237,7 @@ class _ProfileState extends State<Profile> {
                                   color: Colors.white,
                                   shape: SmoothRectangleBorder(
                                     borderRadius: SmoothBorderRadius(
-                                      cornerRadius: 15,
+                                      cornerRadius: 20,
                                       cornerSmoothing: 1,
                                     ),
                                   ),
@@ -363,7 +361,7 @@ class _ProfileState extends State<Profile> {
                                     color: Colors.white,
                                     shape: SmoothRectangleBorder(
                                       borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 15,
+                                        cornerRadius: 20,
                                         cornerSmoothing: 1,
                                       ),
                                     ),
@@ -376,7 +374,7 @@ class _ProfileState extends State<Profile> {
                                           padding: EdgeInsets.symmetric(
                                               vertical: 1.h, horizontal: 3.w),
                                           width: 55,
-                                          height: 9,
+                                          height: 6,
                                           decoration: ShapeDecoration(
                                             color: const Color(0xFFFA6E00),
                                             shape: RoundedRectangleBorder(

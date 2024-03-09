@@ -13,15 +13,18 @@ import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../constants/assets.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
@@ -80,10 +83,17 @@ class _DashBoardState extends State<DashBoard>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              // SvgPicture.asset(
+                              //   Assets.notification_svg,
+                              //   color: Colors.red,
+                              //   width: 20, // Adjust width and height as needed
+                              //   height: 20,
+                              // ),
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 40),
                                 child: CustomIconButton(
-                                  ic: Icons.notifications,
+                                  text: 'notification',
+                                  ic: Icons.notifications_outlined,
                                   onTap: () {
                                     Navigator.of(context).pushNamed('/map');
                                   },
@@ -108,7 +118,7 @@ class _DashBoardState extends State<DashBoard>
                             maxWidth: 420, // Set the maximum width to 420
                           ),
                           child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 3.w),
+                            margin: EdgeInsets.symmetric(horizontal: 5.w),
                             child: Column(
                               children: [
                                 Space(3.h),
@@ -127,7 +137,7 @@ class _DashBoardState extends State<DashBoard>
                                       color: Colors.white,
                                       shape: SmoothRectangleBorder(
                                         borderRadius: SmoothBorderRadius(
-                                          cornerRadius: 10,
+                                          cornerRadius: 15,
                                           cornerSmoothing: 1,
                                         ),
                                       ),
@@ -864,14 +874,15 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height == 1 ? 5.h : height,
-      width: width == 1 ? 30.w : width,
+      height: height == 1 ? 41 : height,
+      width: width == 1 ? 125 : width,
       decoration: ShapeDecoration(
         shadows: isActive == true
             ? [
-                const BoxShadow(
+                BoxShadow(
+                    offset: Offset(5, 6),
                     spreadRadius: 0.1,
-                    color: Color.fromRGBO(245, 187, 143, 1),
+                    color: Color.fromRGBO(232, 128, 55, 0.5),
                     blurRadius: 10)
               ]
             : [],

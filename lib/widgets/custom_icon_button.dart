@@ -7,13 +7,15 @@ class CustomIconButton extends StatelessWidget {
   IconData ic;
   Color color;
   Color boxColor;
+  String text;
 
   final Function? onTap;
   CustomIconButton(
       {required this.ic,
       this.onTap,
       this.color = Colors.cyan,
-      this.boxColor = Colors.white});
+      this.boxColor = Colors.white,
+      this.text = ''});
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +41,32 @@ class CustomIconButton extends StatelessWidget {
             ),
           ),
         ),
-        child: Icon(
-          ic,
-          color: color,
-        ),
+        child: text == ''
+            ? Icon(
+                ic,
+                color: color,
+              )
+            : text == 'notification'
+                ? Transform.rotate(
+                    angle: 25 * 3.1415926535 / 180, //
+                    child: Icon(
+                      ic,
+                      color: color,
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      '<<',
+                      style: TextStyle(
+                        color: Color(0xFFFA6E00),
+                        fontSize: 24,
+                        fontFamily: 'Kavoon',
+                        fontWeight: FontWeight.w900,
+                        height: 0.04,
+                        letterSpacing: 0.66,
+                      ),
+                    ),
+                  ),
       ),
     );
   }

@@ -156,7 +156,7 @@ class _PostItemState extends State<PostItem> {
                         color: Color.fromRGBO(31, 111, 109, 0.6),
                         shape: SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius(
-                          cornerRadius: 5,
+                          cornerRadius: 10,
                           cornerSmoothing: 1,
                         )),
                       ),
@@ -187,7 +187,7 @@ class _PostItemState extends State<PostItem> {
                       ),
                       child: ClipSmoothRect(
                         radius: SmoothBorderRadius(
-                          cornerRadius: 5,
+                          cornerRadius: 10,
                           cornerSmoothing: 1,
                         ),
                         child: Image.network(
@@ -202,7 +202,7 @@ class _PostItemState extends State<PostItem> {
                         ),
                       ),
                     ),
-              Space(isHorizontal: true, 5.w),
+              const Space(isHorizontal: true, 15),
               Text(
                 widget.isProfilePost
                     ? Provider.of<Auth>(context, listen: false).store_name
@@ -282,7 +282,7 @@ class _PostItemState extends State<PostItem> {
                             ),
                             child: ClipSmoothRect(
                               radius: SmoothBorderRadius(
-                                cornerRadius: 20,
+                                cornerRadius: 40,
                                 cornerSmoothing: 1,
                               ),
                               child: Image.network(

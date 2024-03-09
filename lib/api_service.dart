@@ -231,7 +231,7 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<String> updateStoreName(String name) async {
+  Future<dynamic> updateStoreName(String name) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
     final Map<String, dynamic> requestBody = {
@@ -247,9 +247,10 @@ class Auth with ChangeNotifier {
       );
       notifyListeners();
 
-      print(response.body);
+      print(jsonDecode(response.body));
       int code = response.statusCode;
-      return code.toString();
+      // return code.toString();
+      return jsonDecode(response.body);
     } catch (error) {
       notifyListeners();
 
@@ -850,7 +851,7 @@ class Auth with ChangeNotifier {
       'like_user_id': user_id,
     };
 
-    // print(requestBody);
+    print(requestBody);
 
     try {
       final response = await http.post(
@@ -938,7 +939,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<dynamic> getInventoryData() async {
-    // print(user_id);
+    print(user_id);
     // id = '65e31e9f0bf98389f417cf71';
     final String url = 'https://app.cloudbelly.in/inventory/get-data';
 

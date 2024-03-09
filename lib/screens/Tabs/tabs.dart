@@ -2,6 +2,7 @@
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/cart.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -103,11 +104,20 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               end: Alignment.topCenter,
             ),
           ),
-          child: const Icon(
-            Icons.add,
-            color: Colors.white,
+          child: Center(
+            // child: Icon(Icons.add, size: 30, color: Colors.white,),
+            child: Image.asset(
+              Assets.plus_png,
+              width: 25,
+              height: 25,
+            ),
+            // child: Text(
+            //   '+',
+            //   textAlign: TextAlign.start,
+            //   style: TextStyle(color: Colors.white, fontSize: 35),
+            // ),
           ),
-          padding: const EdgeInsets.all(16), // Adjust padding as needed
+          // Adjust padding as needed
         ),
         onPressed: () async {
           // awa
@@ -169,7 +179,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               ),
               child: Center(
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Icon(
                       iconList[index],

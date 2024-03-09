@@ -416,7 +416,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Space(
-                      12.w,
+                      10.w,
                       isHorizontal: true,
                     ),
                     CustomerVisitWidget(
@@ -445,7 +445,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                   // mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Space(
-                      12.w,
+                      10.w,
                       isHorizontal: true,
                     ),
                     CustomerVisitWidget(
