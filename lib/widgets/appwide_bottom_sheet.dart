@@ -32,8 +32,8 @@ class AppWideBottomSheet {
                 height: height,
                 width: double.infinity,
                 padding: EdgeInsets.only(
-                    left: 6.w,
-                    right: 6.w,
+                    left: 5.w,
+                    right: 5.w,
                     top: 2.h,
                     bottom: MediaQuery.of(context).viewInsets.bottom),
                 child: SingleChildScrollView(

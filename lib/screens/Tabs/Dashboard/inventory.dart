@@ -121,6 +121,8 @@ class _InventoryState extends State<Inventory> {
         return a['volumeLeft'].compareTo(b['volumeLeft']);
       }
     });
+    // lowStockItems = lowStockItems.sublist(0, 4).toList();
+    print(lowStockItems);
     // print(lowStockItems);
   }
 
@@ -138,6 +140,7 @@ class _InventoryState extends State<Inventory> {
           element['volumeLeft'] == null ||
           element['purchaseDate'] == null ||
           element['volumePurchased'] == null) {
+        print(element);
         _somethingmissing = true;
       }
       // print('object: $_somethingmissing');
@@ -231,12 +234,13 @@ class _InventoryState extends State<Inventory> {
           int.parse(item['shelf_life']),
         );
 
-        if (volumeLeft / double.parse(item['volumePurchased']) <= 1) {}
+        if (volumeLeft / double.parse(item['volumePurchased']) <= 0.3) {}
         lowstocks.add(item);
 
         allStocks.add(item);
       }
     }
+    // print(lowstocks);
     // print('all');/
     // print(allStocks);
     return lowstocks;
@@ -342,9 +346,13 @@ class _InventoryState extends State<Inventory> {
                       context,
                       // Container(),
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const BoldTextWidgetHomeScreen(
-                            txt: 'Stocks you may need',
+                          Padding(
+                            padding: EdgeInsets.only(left: 4.w),
+                            child: const BoldTextWidgetHomeScreen(
+                              txt: 'Stocks you may need',
+                            ),
                           ),
                           Space(2.h),
                           SizedBox(
@@ -417,14 +425,7 @@ class _InventoryState extends State<Inventory> {
                 ),
               );
             }),
-        // Space(2.h),
-        // Center(
-        //   child: ButtonWidgetHomeScreen(
-        //     width: 33.w,
-        //     txt: 'Add to cart',
-        //     isActive: true,
-        //   ),
-        // ),
+
         Space(3.h),
         Row(
           children: [
@@ -438,9 +439,13 @@ class _InventoryState extends State<Inventory> {
                       context,
                       // Container(),
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          BoldTextWidgetHomeScreen(
-                            txt: 'Low stocks',
+                          Padding(
+                            padding: EdgeInsets.only(left: 3.w),
+                            child: BoldTextWidgetHomeScreen(
+                              txt: 'Low stocks',
+                            ),
                           ),
                           Space(2.h),
                           Container(
@@ -509,7 +514,7 @@ class _InventoryState extends State<Inventory> {
                   return Container(
                     child: Column(
                       children: List.generate(
-                          lowStockItems.length > 5 ? 5 : lowStockItems.length,
+                          lowStockItems.length > 4 ? 4 : lowStockItems.length,
                           (index) {
                         int runway = lowStockItems[index]['runway'];
                         return LowStocksWidget(
@@ -546,9 +551,13 @@ class _InventoryState extends State<Inventory> {
                       context,
                       // Container(),
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          BoldTextWidgetHomeScreen(
-                            txt: 'Stocks near expiry',
+                          Padding(
+                            padding: EdgeInsets.only(left: 2.w),
+                            child: BoldTextWidgetHomeScreen(
+                              txt: 'Stocks near expiry',
+                            ),
                           ),
                           Space(2.h),
                           Container(
@@ -798,9 +807,9 @@ class LowStocksWidget extends StatelessWidget {
 
     double widhth = !isSheet ? 50.w : 40.w;
     Color color = percentage < 0.1
-        ? const Color(0xFFF54B4B)
+        ? const Color.fromRGBO(245, 75, 75, 1)
         : percentage < 0.2
-            ? const Color(0xFFFA6E00)
+            ? const Color.fromRGBO(250, 110, 0, 1)
             : percentage < 0.3
                 ? const Color.fromARGB(255, 237, 172, 123)
                 : const Color(0xFF8EE239);

@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
                 trackColor: MaterialStateProperty.all<Color>(
                     Color.fromRGBO(177, 217, 216, 1)),
               ),
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
               useMaterial3: true,
             ),
             initialRoute: WelcomeScreen.routeName,

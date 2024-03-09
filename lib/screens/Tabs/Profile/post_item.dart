@@ -464,14 +464,18 @@ class _PostItemState extends State<PostItem> {
                           temp[i]['profile_photo'];
                     }
                     Navigator.of(context).pop();
-                    AppWideBottomSheet().showSheet(
-                        context,
-                        CommentSheetContent(
-                          userData: temp,
-                          data: widget.data,
-                          isProfilePost: widget.isProfilePost,
-                        ),
-                        70.h);
+                    AppWideBottomSheet()
+                        .showSheet(
+                            context,
+                            CommentSheetContent(
+                              userData: temp,
+                              data: widget.data,
+                              isProfilePost: widget.isProfilePost,
+                            ),
+                            70.h)
+                        .then((value) {
+                      setState(() {});
+                    });
                   },
                   icon: const Icon(Icons.mode_comment_outlined)),
               //share button
@@ -654,14 +658,18 @@ class _PostItemState extends State<PostItem> {
                   }
                   Navigator.of(context).pop();
 
-                  AppWideBottomSheet().showSheet(
-                      context,
-                      CommentSheetContent(
-                        userData: temp,
-                        data: widget.data,
-                        isProfilePost: widget.isProfilePost,
-                      ),
-                      70.h);
+                  AppWideBottomSheet()
+                      .showSheet(
+                          context,
+                          CommentSheetContent(
+                            userData: temp,
+                            data: widget.data,
+                            isProfilePost: widget.isProfilePost,
+                          ),
+                          70.h)
+                      .then((value) {
+                    setState(() {});
+                  });
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(
@@ -1129,6 +1137,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                                     if (code == '200') {
                                       TOastNotification().showSuccesToast(
                                           context, 'Comment deleted');
+
                                       List<dynamic> _list =
                                           newData['comments'] ?? [];
                                       int indexToRemove = _list.indexWhere(
@@ -1136,10 +1145,11 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                                               element['text'] ==
                                               newData['comments'][index]
                                                   ['text']);
-                                      if (indexToRemove != -1) {
-                                        _list.removeAt(indexToRemove);
-                                      }
+
                                       setState(() {
+                                        if (indexToRemove != -1) {
+                                          _list.removeAt(indexToRemove);
+                                        }
                                         newData['comments'] = _list;
                                       });
                                     } else {

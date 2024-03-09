@@ -195,7 +195,7 @@ class _SheetWidgetState extends State<SheetWidget> {
               children: [
                 Space(1.h),
                 Container(
-                  width: 144.w,
+                  width: 153.w,
                   height: 1.2,
                   decoration: const BoxDecoration(color: Color(0xC1FA6E00)),
                 ),
@@ -232,18 +232,21 @@ class _SheetWidgetState extends State<SheetWidget> {
                       txt: 'Volume left',
                       width: 20.w,
                     ),
+                    SizedBox(
+                      width: 8.w,
+                    )
                   ],
                 ),
                 Space(1.h),
                 Container(
-                  width: 144.w,
+                  width: 153.w,
                   height: 1.2,
                   decoration: const BoxDecoration(color: Color(0xC1FA6E00)),
                 ),
                 // Space(2.h),
                 SizedBox(
                   height: 53.h,
-                  width: 145.w,
+                  width: 153.w,
                   child: ListView.builder(
                       itemCount: list.length,
                       itemBuilder: (context, index) {
@@ -316,10 +319,11 @@ class _SheetWidgetState extends State<SheetWidget> {
                                   editable: list[index]['new'] != null,
                                   controller: nameController,
                                   onChanged: (newValue) async {
-                                    setState(() {
-                                      list[index]['itemName'] = newValue;
-                                      nameController.text = newValue;
-                                    });
+                                    // setState(() {
+                                    list[index]['itemName'] =
+                                        newValue.toString();
+                                    // nameController.text = newValue;
+                                    // });/
                                   },
                                 ),
                               ),
@@ -331,10 +335,10 @@ class _SheetWidgetState extends State<SheetWidget> {
                                   editable: list[index]['new'] != null,
                                   controller: unitController,
                                   onChanged: (newValue) async {
-                                    setState(() {
-                                      list[index]['unitType'] = newValue;
-                                      unitController.text = newValue;
-                                    });
+                                    // setState(() {
+                                    list[index]['unitType'] = newValue;
+                                    unitController.text = newValue;
+                                    // });
                                   },
                                 ),
                               ),
@@ -345,16 +349,17 @@ class _SheetWidgetState extends State<SheetWidget> {
                                   editable: list[index]['new'] != null,
                                   controller: purchasePriceController,
                                   onChanged: (newValue) async {
-                                    setState(() {
-                                      list[index]['pricePerUnit'] = newValue;
-                                      purchasePriceController.text = newValue;
-                                    });
+                                    // setState(() {
+                                    list[index]['pricePerUnit'] = newValue;
+                                    purchasePriceController.text = newValue;
+                                    // });/
                                   },
                                 ),
                               ),
                               SizedBox(
                                 width: 25.w,
                                 child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     SizedBox(
@@ -364,18 +369,20 @@ class _SheetWidgetState extends State<SheetWidget> {
                                         editable: list[index]['new'] != null,
                                         controller: volumePurchasedController,
                                         onChanged: (newValue) async {
-                                          setState(() {
-                                            list[index]['volumePurchased'] =
-                                                newValue;
-                                            volumePurchasedController.text =
-                                                newValue;
-                                          });
-                                          setState(() {
-                                            list[index]['volumeLeft'] =
-                                                newValue;
-                                            volumeLeftController.text =
-                                                newValue;
-                                          });
+                                          // setState(() {
+                                          list[index]['volumePurchased'] =
+                                              newValue;
+                                          volumePurchasedController.text =
+                                              newValue;
+                                          // });
+                                          // setState(() {
+                                          list[index]['volumeLeft'] =
+                                              (double.parse(newValue) -
+                                                      double.parse(list[index]
+                                                          ['volumeSold']))
+                                                  .toString();
+                                          volumeLeftController.text = newValue;
+                                          // });
                                         },
                                       ),
                                     ),
@@ -553,17 +560,17 @@ class _SheetWidgetState extends State<SheetWidget> {
                                       : false,
                                   controller: sellingPriceController,
                                   onChanged: (newValue) {
-                                    setState(() {
-                                      list[index]['sellingPrice'] = newValue;
-                                      sellingPriceController.text = newValue;
-                                      // if (list[index]['sold'] == null) {
-                                      //   list[index]['sellingDate'] =
-                                      //       DateFormat('yyyy-MM-dd')
-                                      //           .format(DateTime.now())
-                                      //           .toString();
-                                      // }
-                                      // list[index]['sold'] = true;
-                                    });
+                                    // setState(() {
+                                    list[index]['sellingPrice'] = newValue;
+                                    sellingPriceController.text = newValue;
+                                    // if (list[index]['sold'] == null) {
+                                    //   list[index]['sellingDate'] =
+                                    //       DateFormat('yyyy-MM-dd')
+                                    //           .format(DateTime.now())
+                                    //           .toString();
+                                    // }
+                                    // list[index]['sold'] = true;
+                                    // });
                                   },
                                 ),
                               ),
@@ -574,23 +581,23 @@ class _SheetWidgetState extends State<SheetWidget> {
                                   editable: true,
                                   controller: volumeSoldController,
                                   onChanged: (newValue) {
-                                    setState(() {
-                                      list[index]['volumeSold'] = newValue;
-                                      volumeSoldController.text = newValue;
-                                      // if (list[index]['sold'] == null) {
-                                      //   list[index]['sellingDate'] =
-                                      //       DateFormat('yyyy-MM-dd')
-                                      //           .format(DateTime.now())
-                                      //           .toString();
-                                      // }
+                                    // setState(() {
+                                    list[index]['volumeSold'] = newValue;
+                                    volumeSoldController.text = newValue;
+                                    // if (list[index]['sold'] == null) {
+                                    //   list[index]['sellingDate'] =
+                                    //       DateFormat('yyyy-MM-dd')
+                                    //           .format(DateTime.now())
+                                    //           .toString();
+                                    // }
 
-                                      list[index]['sold'] = true;
-                                      list[index]['volumeLeft'] = (double.parse(
-                                                  list[index]['volumeLeft']) -
-                                              double.parse(newValue) +
-                                              _volumeSold)
-                                          .toString();
-                                    });
+                                    list[index]['sold'] = true;
+                                    list[index]['volumeLeft'] = (double.parse(
+                                                list[index]['volumeLeft']) -
+                                            double.parse(newValue) +
+                                            _volumeSold)
+                                        .toString();
+                                    // });
                                   },
                                 ),
                               ),
@@ -601,14 +608,32 @@ class _SheetWidgetState extends State<SheetWidget> {
                                   editable: false,
                                   controller: volumeLeftController,
                                   onChanged: (newValue) async {
-                                    setState(() {
-                                      list[index]['volumeLeft'] = newValue;
-                                      volumeLeftController.text = newValue;
-                                    });
+                                    // setState(() {
+                                    list[index]['volumeLeft'] = newValue;
+                                    volumeLeftController.text = newValue;
+                                    // });
                                     print(newValue);
                                   },
                                 ),
                               ),
+                              TouchableOpacity(
+                                  onTap: () {
+                                    setState(() {
+                                      list.removeWhere((element) =>
+                                          element['itemId'] ==
+                                          list[index]['itemId']);
+                                    });
+                                  },
+                                  child: SizedBox(
+                                    width: 8.w,
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.delete,
+                                        size: 18,
+                                        color: Color.fromRGBO(245, 75, 75, 1),
+                                      ),
+                                    ),
+                                  ))
                             ],
                           ),
                         );
@@ -812,32 +837,34 @@ class _MakeListTextFieldState extends State<MakeListTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      maxLines: null,
-      readOnly: !widget.editable,
-      textAlign: TextAlign.start,
-      style: const TextStyle(
-        color: Color(0xFF094B60),
-        fontSize: 14,
-        fontFamily: 'Product Sans',
-        fontWeight: FontWeight.w400,
-      ),
-      inputFormatters:
-          widget.isStringEntry ? [] : [FilteringTextInputFormatter.digitsOnly],
-      textInputAction: TextInputAction.done,
-      controller: widget.controller,
-      decoration: InputDecoration(
-        hintText: widget.hintText == '' ? null : widget.hintText,
-        hintStyle: TextStyle(
-          color: Color(0x66094B60),
-          fontSize: 13,
+        maxLines: null,
+        readOnly: !widget.editable,
+        textAlign: TextAlign.start,
+        style: const TextStyle(
+          color: Color(0xFF094B60),
+          fontSize: 14,
           fontFamily: 'Product Sans',
           fontWeight: FontWeight.w400,
-// height: 0.15,
         ),
-        contentPadding: EdgeInsets.zero,
-        border: InputBorder.none,
-      ),
-      onSubmitted: widget.onChanged,
-    );
+        inputFormatters: widget.isStringEntry
+            ? []
+            : [FilteringTextInputFormatter.digitsOnly],
+        textInputAction: TextInputAction.done,
+        controller: widget.controller,
+        decoration: InputDecoration(
+          hintText: widget.hintText == '' ? null : widget.hintText,
+          hintStyle: TextStyle(
+            color: Color(0x66094B60),
+            fontSize: 13,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.w400,
+// height: 0.15,
+          ),
+          contentPadding: EdgeInsets.zero,
+          border: InputBorder.none,
+        ),
+        onChanged: widget.hintText != '0' ? widget.onChanged : (newv) {},
+        onSubmitted: widget.hintText == '0' ? widget.onChanged : (newv) {},
+        cursorColor: Color(0xFFFA6E00));
   }
 }
