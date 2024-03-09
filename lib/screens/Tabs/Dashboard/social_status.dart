@@ -95,7 +95,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
               color: Colors.white,
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius.all(
-                    SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+                    SmoothRadius(cornerRadius: 15, cornerSmoothing: 1)),
               ),
             ),
             child: Column(
