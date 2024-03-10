@@ -108,7 +108,8 @@ class EditProfileWidget extends StatelessWidget {
                                 await Provider.of<Auth>(context, listen: false)
                                     .updateStoreName(_controller.text);
                             Navigator.of(context).pop();
-                            if (body['code'] == '200') {
+                            print(body);
+                            if (body['code'] == 200) {
                               TOastNotification().showSuccesToast(
                                   context, 'Store name updated');
                               Provider.of<Auth>(context, listen: false)
