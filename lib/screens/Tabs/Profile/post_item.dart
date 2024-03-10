@@ -507,7 +507,7 @@ class _PostItemState extends State<PostItem> {
               Row(
                 children: [
                   if (_likeData.length != 0 &&
-                      _likeData[0]['profile_photo'] != '')
+                      _likeData[0]['profile_photo'] != '' &&  _likeData[0]['profile_photo'] != null)
                     Container(
                       width: 17,
                       height: 17,

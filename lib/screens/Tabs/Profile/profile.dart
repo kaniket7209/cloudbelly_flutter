@@ -308,11 +308,11 @@ class _ProfileState extends State<Profile> {
                                               uriPrefix:
                                                   'https://api.cloudbelly.in',
                                               link: Uri.parse(
-                                                  'https://api.cloudbelly.in/profile/?id=${Provider.of<Auth>(context, listen: false).user_id}&type=profile'),
+                                                  'https://api.cloudbelly.in/jTpt?id=${Provider.of<Auth>(context, listen: false).user_id}&type=profile'),
                                               androidParameters:
                                                   AndroidParameters(
                                                 packageName:
-                                                    'com.example.cloudbelly_app',
+                                                    'com.example.CloudbellyApp',
                                               ),
                                               socialMetaTagParameters:
                                                   SocialMetaTagParameters(

@@ -1,87 +1,26 @@
 {
   "project_info": {
-    "project_number": "1016600015524",
-    "project_id": "cloudbelly-5b13e",
-    "storage_bucket": "cloudbelly-5b13e.appspot.com"
+    "project_number": "508708683425",
+    "project_id": "cloudbelly-d97a9",
+    "storage_bucket": "cloudbelly-d97a9.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1016600015524:android:c2b9e662f80fc3a8d8ac31",
+        "mobilesdk_app_id": "1:508708683425:android:f15456c8162f48bee9bae0",
         "android_client_info": {
-          "package_name": "com.example.cloudbelly_app"
+          "package_name": "com.example.CloudbellyApp"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "1016600015524-huo1jcr39gpq01hvr3fobo8au5ogql4v.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAecKQQqWGcOraG87msjUHrBl8kG72toIY"
+          "current_key": "AIzaSyBDthUWI9foVgRaibKl73SNcBK5beKQakQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1016600015524-huo1jcr39gpq01hvr3fobo8au5ogql4v.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "1016600015524-5hbhoi236fo5175ku1v0s9j7cq85hghq.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.cloudbellyProject"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1016600015524:android:3c0e6c8add39da36d8ac31",
-        "android_client_info": {
-          "package_name": "com.example.cloudbelly_project"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1016600015524-k69t8jsvmiunopfs1cp5lp0ieqdd77r4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.cloudbelly_project",
-            "certificate_hash": "7aeb6ce32af07f3770b5016f8c22f8e19bf85fba"
-          }
-        },
-        {
-          "client_id": "1016600015524-huo1jcr39gpq01hvr3fobo8au5ogql4v.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAecKQQqWGcOraG87msjUHrBl8kG72toIY"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1016600015524-huo1jcr39gpq01hvr3fobo8au5ogql4v.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "1016600015524-5hbhoi236fo5175ku1v0s9j7cq85hghq.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.cloudbellyProject"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
