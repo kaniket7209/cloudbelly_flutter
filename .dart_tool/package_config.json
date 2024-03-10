@@ -20,6 +20,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "archive",
+      "rootUri": "file:///Users/aniketkumarsingh/.pub-cache/hosted/pub.dev/archive-3.4.10",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "args",
       "rootUri": "file:///Users/aniketkumarsingh/.pub-cache/hosted/pub.dev/args-2.4.2",
       "packageUri": "lib/",
@@ -524,6 +530,12 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "lottie",
+      "rootUri": "file:///Users/aniketkumarsingh/.pub-cache/hosted/pub.dev/lottie-1.4.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
       "name": "matcher",
       "rootUri": "file:///Users/aniketkumarsingh/.pub-cache/hosted/pub.dev/matcher-0.12.16",
       "packageUri": "lib/",
@@ -956,7 +968,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-03-10T06:54:35.454596Z",
+  "generated": "2024-03-10T16:24:01.600824Z",
   "generator": "pub",
   "generatorVersion": "3.2.4"
 }

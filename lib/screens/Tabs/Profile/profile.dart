@@ -99,7 +99,7 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 Container(
-                                  width: 40.w,
+                                  // width: 40.w,
                                   padding: EdgeInsets.only(left: 10.w),
                                   child: const StoreNameAndLogoWidget(),
                                 ),

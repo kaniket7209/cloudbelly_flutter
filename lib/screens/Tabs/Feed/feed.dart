@@ -110,7 +110,7 @@ class _FeedState extends State<Feed> {
     return RefreshIndicator(
       onRefresh: _refreshFeed,
       child: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
 
         // primary: true, // Ensure vertical scroll works
         controller: _scrollController,
@@ -121,7 +121,7 @@ class _FeedState extends State<Feed> {
               Space(10.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: Text(
+                child: const Text(
                   'Cloudbelly',
                   style: TextStyle(
                     color: Color(0xFF094B60),
