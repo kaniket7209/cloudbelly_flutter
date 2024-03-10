@@ -899,7 +899,7 @@ class LowStocksWidget extends StatelessWidget {
                 fontSize: 14,
                 fontFamily: 'Product Sans',
                 fontWeight: FontWeight.w400,
-                height: 0.05,
+                // height: 0.05,
                 letterSpacing: 0.14,
               ),
             ),
@@ -954,7 +954,7 @@ class LowStocksWidget extends StatelessWidget {
                         : widhth * percentage,
               ),
               Positioned(
-                  left: 5,
+                  left: 10,
                   top: 5,
                   child: Text(
                     amountLeft,
@@ -976,7 +976,7 @@ class LowStocksWidget extends StatelessWidget {
                       color: Color(0xFF094B60),
                       fontSize: 8,
                       fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w700,
                       height: 0,
                       letterSpacing: 0.08,
                     ),

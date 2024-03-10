@@ -89,29 +89,23 @@ class _DashBoardState extends State<DashBoard>
                               //   width: 20, // Adjust width and height as needed
                               //   height: 20,
                               // ),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 40),
-                                child: CustomIconButton(
-                                  text: 'notification',
-                                  ic: Icons.notifications_outlined,
-                                  onTap: () {
-                                    Navigator.of(context).pushNamed('/map');
-                                  },
-                                ),
+                              CustomIconButton(
+                                text: 'notification',
+                                ic: Icons.notifications_outlined,
+                                onTap: () {
+                                  Navigator.of(context).pushNamed('/map');
+                                },
                               ),
-                              Container(
-                                  width: 40.w, child: StoreNameAndLogoWidget()),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 40),
-                                child: CustomIconButton(
-                                  ic: Icons.more_horiz,
-                                  onTap: () {},
-                                ),
+                              Container(width: 40.w, child: StoreLogoWidget()),
+                              CustomIconButton(
+                                ic: Icons.more_horiz,
+                                onTap: () {},
                               ),
                             ],
                           ),
                         ),
                       ),
+                      StoreNameWidget(),
                       Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(
@@ -292,8 +286,8 @@ class _DashBoardState extends State<DashBoard>
   }
 }
 
-class StoreNameAndLogoWidget extends StatelessWidget {
-  const StoreNameAndLogoWidget({
+class StoreLogoWidget extends StatelessWidget {
+  const StoreLogoWidget({
     super.key,
   });
 
@@ -356,35 +350,57 @@ class StoreNameAndLogoWidget extends StatelessWidget {
                     style: TextStyle(fontSize: 40),
                   ),
                 )),
-        Space(2.h),
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 1.2.h, horizontal: 3.5.w),
-          decoration: ShapeDecoration(
-            color: Colors.white,
-            shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius(
-              cornerRadius: 10,
-              cornerSmoothing: 1,
-            )),
-          ),
-          child: Center(
-            child: Text(
-              Provider.of<Auth>(context, listen: true).store_name,
-              maxLines: 2,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Color(0xFF094B60),
-                fontSize: 14,
-                fontFamily: 'Product Sans',
-                fontWeight: FontWeight.w700,
-                // height: 0.10,
-                letterSpacing: 0.42,
-              ),
-            ),
-          ),
-        )
       ],
+    );
+  }
+}
+
+class StoreNameWidget extends StatelessWidget {
+  const StoreNameWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Space(2.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding:
+                    EdgeInsets.symmetric(vertical: 1.2.h, horizontal: 3.5.w),
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                    cornerRadius: 10,
+                    cornerSmoothing: 1,
+                  )),
+                ),
+                child: Center(
+                  child: Text(
+                    Provider.of<Auth>(context, listen: true).store_name,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Color(0xFF094B60),
+                      fontSize: 14,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w700,
+                      // height: 0.10,
+                      letterSpacing: 0.42,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
@@ -886,7 +902,9 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
                     blurRadius: 10)
               ]
             : [],
-        color: isActive ? const Color.fromRGBO(250, 110, 0, 1) : Colors.white,
+        color: isActive
+            ? const Color.fromRGBO(250, 110, 0, 1)
+            : Colors.transparent,
         shape: SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius(
             cornerRadius: radius == 1 ? 10 : radius,

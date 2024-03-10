@@ -90,130 +90,123 @@ class _ProfileState extends State<Profile> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 40),
-                                  child: CustomIconButton(
-                                    text: 'back',
-                                    ic: Icons.arrow_back_ios_new_outlined,
-                                    onTap: () {},
-                                  ),
+                                CustomIconButton(
+                                  text: 'back',
+                                  ic: Icons.arrow_back_ios_new_outlined,
+                                  onTap: () {},
                                 ),
                                 Container(
-                                  width: 40.w,
+                                  // width: 40.w,
                                   padding: EdgeInsets.only(left: 10.w),
-                                  child: const StoreNameAndLogoWidget(),
+                                  child: const StoreLogoWidget(),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 40),
-                                  child: Row(
-                                    children: [
-                                      CustomIconButton(
-                                        boxColor: const Color.fromRGBO(
-                                            38, 115, 140, 1),
-                                        color: Colors.white,
-                                        ic: Icons.add,
-                                        onTap: () async {
-                                          AppWideLoadingBanner()
-                                              .loadingBanner(context);
+                                Row(
+                                  children: [
+                                    CustomIconButton(
+                                      boxColor:
+                                          const Color.fromRGBO(38, 115, 140, 1),
+                                      color: Colors.white,
+                                      ic: Icons.add,
+                                      onTap: () async {
+                                        AppWideLoadingBanner()
+                                            .loadingBanner(context);
 
-                                          List<String> url =
-                                              await Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .pickMultipleImagesAndUpoad();
-                                          Navigator.of(context).pop();
-                                          if (url.length == 0) {
-                                            TOastNotification().showErrorToast(
-                                                context,
-                                                'Error While Uploading Image');
-                                          } else if (url
-                                              .contains('file size very large'))
-                                            TOastNotification().showErrorToast(
-                                                context,
-                                                'file size very large');
-                                          else if (!url.contains('element')) {
-                                            CreateFeed()
-                                                .showModalSheetForNewPost(
-                                                    context, url)
-                                                .then((value) {
-                                              setState(() {});
-                                            });
-                                          } else {
-                                            TOastNotification().showErrorToast(
-                                                context,
-                                                'Error While Uploading Image');
-                                          }
-                                          setState(() {});
-                                        },
-                                      ),
-                                      Space(
-                                        3.w,
-                                        isHorizontal: true,
-                                      ),
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: ShapeDecoration(
-                                          shadows: [
-                                            const BoxShadow(
-                                              offset: Offset(0, 4),
-                                              color: Color.fromRGBO(
-                                                  31, 111, 109, 0.5),
-                                              blurRadius: 20,
-                                            )
-                                          ],
-                                          color: Colors.white,
-                                          shape: SmoothRectangleBorder(
-                                            borderRadius: SmoothBorderRadius(
-                                              cornerRadius: 10,
-                                              cornerSmoothing: 1,
-                                            ),
+                                        List<String> url =
+                                            await Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .pickMultipleImagesAndUpoad();
+                                        Navigator.of(context).pop();
+                                        if (url.length == 0) {
+                                          TOastNotification().showErrorToast(
+                                              context,
+                                              'Error While Uploading Image');
+                                        } else if (url
+                                            .contains('file size very large'))
+                                          TOastNotification().showErrorToast(
+                                              context, 'file size very large');
+                                        else if (!url.contains('element')) {
+                                          CreateFeed()
+                                              .showModalSheetForNewPost(
+                                                  context, url)
+                                              .then((value) {
+                                            setState(() {});
+                                          });
+                                        } else {
+                                          TOastNotification().showErrorToast(
+                                              context,
+                                              'Error While Uploading Image');
+                                        }
+                                        setState(() {});
+                                      },
+                                    ),
+                                    Space(
+                                      3.w,
+                                      isHorizontal: true,
+                                    ),
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: ShapeDecoration(
+                                        shadows: [
+                                          const BoxShadow(
+                                            offset: Offset(0, 4),
+                                            color: Color.fromRGBO(
+                                                31, 111, 109, 0.5),
+                                            blurRadius: 20,
+                                          )
+                                        ],
+                                        color: Colors.white,
+                                        shape: SmoothRectangleBorder(
+                                          borderRadius: SmoothBorderRadius(
+                                            cornerRadius: 10,
+                                            cornerSmoothing: 1,
                                           ),
                                         ),
-                                        child: PopupMenuButton<SampleItem>(
-                                          icon: const Icon(Icons.more_horiz),
-                                          initialValue: selectedMenu,
-                                          // Callback that sets the selected popup menu item.
-                                          onSelected: (SampleItem item) async {
-                                            AppWideLoadingBanner()
-                                                .loadingBanner(context);
-                                            final prefs =
-                                                await SharedPreferences
-                                                    .getInstance();
-                                            await prefs.remove('userData');
-                                            Navigator.of(context).pop();
-                                            Navigator.of(context)
-                                                .pushReplacementNamed(
-                                                    LoginScreen.routeName);
-                                            setState(() {
-                                              selectedMenu = item;
-                                            });
-                                          },
-                                          itemBuilder: (BuildContext context) =>
-                                              <PopupMenuEntry<SampleItem>>[
-                                            PopupMenuItem<SampleItem>(
-                                              value: SampleItem.itemOne,
-                                              child: Row(
-                                                children: [
-                                                  const Icon(Icons.logout),
-                                                  Space(
-                                                    3.w,
-                                                    isHorizontal: true,
-                                                  ),
-                                                  const Text('Logout'),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
                                       ),
-                                    ],
-                                  ),
+                                      child: PopupMenuButton<SampleItem>(
+                                        icon: const Icon(Icons.more_horiz),
+                                        initialValue: selectedMenu,
+                                        // Callback that sets the selected popup menu item.
+                                        onSelected: (SampleItem item) async {
+                                          AppWideLoadingBanner()
+                                              .loadingBanner(context);
+                                          final prefs = await SharedPreferences
+                                              .getInstance();
+                                          await prefs.remove('userData');
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context)
+                                              .pushReplacementNamed(
+                                                  LoginScreen.routeName);
+                                          setState(() {
+                                            selectedMenu = item;
+                                          });
+                                        },
+                                        itemBuilder: (BuildContext context) =>
+                                            <PopupMenuEntry<SampleItem>>[
+                                          PopupMenuItem<SampleItem>(
+                                            value: SampleItem.itemOne,
+                                            child: Row(
+                                              children: [
+                                                const Icon(Icons.logout),
+                                                Space(
+                                                  3.w,
+                                                  isHorizontal: true,
+                                                ),
+                                                const Text('Logout'),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 )
                               ],
                             ),
                           ),
                         ),
                       ),
+                      StoreNameWidget(),
                       Space(3.h),
                       Center(
                         child: ConstrainedBox(

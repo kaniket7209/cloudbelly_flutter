@@ -796,7 +796,7 @@ class _SheetWidgetState extends State<SheetWidget> {
                     fontSize: 24,
                     fontFamily: 'Jost',
                     fontWeight: FontWeight.w600,
-                    height: 0.03,
+                    // height: 0.03,
                     letterSpacing: 0.72,
                   ),
                 ),

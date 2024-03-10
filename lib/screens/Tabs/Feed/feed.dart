@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Feed extends StatefulWidget {
   const Feed({super.key});
@@ -24,23 +27,25 @@ class _FeedState extends State<Feed> {
   bool _isLoading = false;
   int _pageNumber = 1;
   Future<void> _refreshFeed() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      // _isLoading = true;
       _pageNumber = 1;
     });
     await Provider.of<Auth>(context, listen: false)
         .getGlobalFeed(_pageNumber)
         .then((newFeed) {
       setState(() {
-        // print('object');
         FeedList.clear();
-        // print(FeedList);
-        // print(newFeed);
         FeedList.addAll(newFeed);
-        // FeedList = FeedList.reversed.toList();
-        // print(FeedList);
+
         _isLoading = false;
       });
+      final feedData = json.encode(
+        {
+          'feed': newFeed,
+        },
+      );
+      prefs.setString('feedData', feedData);
     });
   }
 
@@ -72,18 +77,31 @@ class _FeedState extends State<Feed> {
       _isLoading = true;
       _pageNumber = 1;
     });
-
-    await Provider.of<Auth>(context, listen: false)
-        .getGlobalFeed(_pageNumber)
-        .then((newFeed) {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('feedData')) {
       setState(() {
-        // print('new: $newFeed');SW
-        FeedList.addAll(newFeed);
-        // FeedList = FeedList.reversed.toList();
-
+        final extractedUserData =
+            json.decode(prefs.getString('feedData')!) as Map<String, dynamic>;
+        print(extractedUserData);
+        FeedList.addAll(extractedUserData['feed'] as List<dynamic>);
         _isLoading = false;
       });
-    });
+    } else {
+      await Provider.of<Auth>(context, listen: false)
+          .getGlobalFeed(_pageNumber)
+          .then((newFeed) {
+        setState(() {
+          FeedList.addAll(newFeed);
+          _isLoading = false;
+        });
+        final feedData = json.encode(
+          {
+            'feed': newFeed,
+          },
+        );
+        prefs.setString('feedData', feedData);
+      });
+    }
   }
 
   Future<void> _fetchMoreFeed() async {
