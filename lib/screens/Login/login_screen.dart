@@ -507,7 +507,39 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ],
                                         ),
                                       ),
-                                      Space(4.h),
+                                      Space(0.2.h),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
+                                              final snackBar = SnackBar(
+                                                content:
+                                                    Text('Feature Pending'),
+                                                action: SnackBarAction(
+                                                  label: 'Close',
+                                                  onPressed: () {},
+                                                ),
+                                              );
+
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                            },
+                                            child: Text(
+                                              'Forgot Password?',
+                                              style: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    250, 110, 0, 1),
+                                                fontFamily: 'Product Sans',
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Space(1.4.h),
                                       AppWideButton(
                                         num: -1,
                                         txt: 'Login',

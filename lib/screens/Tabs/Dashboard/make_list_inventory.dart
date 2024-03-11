@@ -91,7 +91,7 @@ class _MakeListInventoryButtonState extends State<MakeListInventoryButton> {
                             padding: EdgeInsets.symmetric(
                                 vertical: 1.h, horizontal: 3.w),
                             width: 65,
-                            height: 9,
+                            height: 6,
                             decoration: ShapeDecoration(
                               color: const Color(0xFFFA6E00),
                               shape: RoundedRectangleBorder(
@@ -180,7 +180,7 @@ class _SheetWidgetState extends State<SheetWidget> {
     List<dynamic> list = widget.dataList;
     return Column(
       children: [
-        Space(3.h),
+        Space(2.h),
         Scrollbar(
           controller: _scrollController,
           trackVisibility: true,
@@ -365,7 +365,7 @@ class _SheetWidgetState extends State<SheetWidget> {
                                     SizedBox(
                                       width: 10.w,
                                       child: MakeListTextField(
-                                        hintText: "10",
+                                        hintText: "100",
                                         editable: list[index]['new'] != null,
                                         controller: volumePurchasedController,
                                         onChanged: (newValue) async {
@@ -767,6 +767,7 @@ class _SheetWidgetState extends State<SheetWidget> {
             },
             num: 1,
             txt: 'Update the list'),
+        Space(1.h)
       ],
     );
   }
@@ -839,16 +840,19 @@ class _MakeListTextFieldState extends State<MakeListTextField> {
     return TextField(
         maxLines: null,
         readOnly: !widget.editable,
-        textAlign: TextAlign.start,
+        textAlign:
+            widget.hintText == '100' ? TextAlign.center : TextAlign.start,
         style: const TextStyle(
           color: Color(0xFF094B60),
-          fontSize: 14,
+          fontSize: 13,
           fontFamily: 'Product Sans',
           fontWeight: FontWeight.w400,
         ),
         inputFormatters: widget.isStringEntry
             ? []
-            : [FilteringTextInputFormatter.digitsOnly],
+            : [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+              ],
         textInputAction: TextInputAction.done,
         controller: widget.controller,
         decoration: InputDecoration(

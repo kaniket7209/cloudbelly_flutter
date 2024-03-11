@@ -125,7 +125,7 @@ class _MenuItemState extends State<MenuItem> {
                     color: const Color.fromRGBO(239, 255, 254, 1),
                     shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(
-                        cornerRadius: 15,
+                        cornerRadius: 24,
                         cornerSmoothing: 1,
                       ),
                     ),
@@ -133,7 +133,7 @@ class _MenuItemState extends State<MenuItem> {
                   child: (widget.data['images'] as List<dynamic>).length != 0
                       ? ClipSmoothRect(
                           radius: SmoothBorderRadius(
-                            cornerRadius: 10,
+                            cornerRadius: 24,
                             cornerSmoothing: 1,
                           ),
                           child: Image.network(
@@ -148,8 +148,8 @@ class _MenuItemState extends State<MenuItem> {
                       : null,
                 ),
                 Positioned(
-                    right: 0,
-                    top: 2.h,
+                    right: 0.5.w,
+                    top: 2.2.h,
                     child: Container(
                       width: 10,
                       height: 10,

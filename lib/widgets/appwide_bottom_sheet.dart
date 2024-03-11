@@ -50,7 +50,7 @@ class AppWideBottomSheet {
                             padding: EdgeInsets.symmetric(
                                 vertical: 1.h, horizontal: 3.w),
                             width: 65,
-                            height: 9,
+                            height: 6,
                             decoration: ShapeDecoration(
                               color: const Color(0xFFFA6E00),
                               shape: RoundedRectangleBorder(

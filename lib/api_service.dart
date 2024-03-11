@@ -419,7 +419,7 @@ class Auth with ChangeNotifier {
         imagePath,
         minWidth: 1080, // Adjust the size according to your needs
         minHeight: 1920,
-        quality: 85, // Adjust quality parameter as needed
+        quality: 50, // Adjust quality parameter as needed
       );
 
       return result;
@@ -698,11 +698,13 @@ class Auth with ChangeNotifier {
 
     List<String> list = [];
     if (src == 'Gallery') {
-      list = await pickMultipleImagesAndUpoad();
+      final img = await pickImageAndUpoad(context);
+      list = img != '' ? [img] : [];
     } else {
       String temp = await pickImageAndUpoad(src: 'Camera', context);
       if (temp != '') list.add(temp);
     }
+    // print('llll${list[0]}gshgd');
     if (list.length != 0) {
       if (list.contains('file size very large')) {
         TOastNotification().showErrorToast(context, 'File size very Large');

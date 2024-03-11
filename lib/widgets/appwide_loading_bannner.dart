@@ -71,4 +71,25 @@ class AppWideLoadingBanner {
       ),
     );
   }
+
+  Future<void> featurePending(BuildContext context) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Pending Feature"),
+          content: Text("This feature is currently pending implementation."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

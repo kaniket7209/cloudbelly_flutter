@@ -111,7 +111,7 @@ class _PerformanceState extends State<Performance> {
                                   .ScanMenu('Camera');
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
-                              print(data);
+                              // print(data);
                               if (data == 'file size very large') {
                                 TOastNotification().showErrorToast(
                                     context, 'file size very large');
@@ -153,7 +153,11 @@ class _PerformanceState extends State<Performance> {
               onTap: () async {
                 final data =
                     await Provider.of<Auth>(context, listen: false).getMenu();
-                print(data);
+                (data as List<dynamic>).forEach(
+                  (element) {
+                    print(element);
+                  },
+                );
                 // Sc
                 ScannedMenuBottomSheet(context, data, false);
               },
@@ -253,7 +257,10 @@ class _PerformanceState extends State<Performance> {
 
     for (var item in data) {
       var newItem = Map<String, dynamic>.from(item);
-      newItem['VEG'] = true; // Adding VEG element with value true
+      isUpload
+          ? newItem['VEG'] = true
+          : newItem['VEG'] =
+              newItem['VEG']; // Adding VEG element with value true
       list.add(newItem);
 
       list.reversed;
@@ -305,7 +312,7 @@ class _PerformanceState extends State<Performance> {
                             padding: EdgeInsets.symmetric(
                                 vertical: 1.h, horizontal: 3.w),
                             width: 65,
-                            height: 9,
+                            height: 6,
                             decoration: ShapeDecoration(
                               color: const Color(0xFFFA6E00),
                               shape: RoundedRectangleBorder(
@@ -475,6 +482,7 @@ class _PerformanceState extends State<Performance> {
                       Column(
                         children: List.generate((list as List<dynamic>).length,
                             (index) {
+                          print(list[index]);
                           TextEditingController nameController =
                               TextEditingController(
                             text: list[index]['name'],
@@ -643,7 +651,7 @@ class _PerformanceState extends State<Performance> {
                       if (isUpload)
                         AppWideButton(
                           onTap: () async {
-                            print(list);
+                            // print(list);
                             AppWideLoadingBanner().loadingBanner(context);
                             final code =
                                 await Provider.of<Auth>(context, listen: false)

@@ -43,28 +43,73 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   int _activeButtonIndex = 1;
   SampleItem? selectedMenu;
-  Future<void> _refreshFeed() async {
-    bool _isAvailable = false;
+
+  Future<void> _refresh() async {
     final prefs = await SharedPreferences.getInstance();
-
-    final temp = await Provider.of<Auth>(context, listen: false).tryAutoLogin();
     setState(() {
-      _isAvailable = temp;
+      _isLoading = true;
     });
+    await Provider.of<Auth>(context, listen: false).getMenu().then((menu) {
+      setState(() {
+        menuList = [];
+        menuList.addAll(menu);
+        _isLoading = false;
+      });
+      final feedData = json.encode(
+        {
+          'menu': menu,
+        },
+      );
+      prefs.setString('menuData', feedData);
+    });
+  }
 
-    if (_isAvailable) {
-      final extractedUserData =
-          json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
+  List<dynamic> menuList = [];
 
-      String msg = await Provider.of<Auth>(context, listen: false)
-          .login(extractedUserData['email'], extractedUserData['password']);
+  bool _isLoading = false;
+
+  Future<void> _getMenu() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('menuData')) {
+      setState(() {
+        final extractedUserData =
+            json.decode(prefs.getString('menuData')!) as Map<String, dynamic>;
+        print(extractedUserData);
+        menuList = [];
+        menuList.addAll(extractedUserData['menu'] as List<dynamic>);
+        _isLoading = false;
+      });
+    } else {
+      await Provider.of<Auth>(context, listen: false).getMenu().then((menu) {
+        setState(() {
+          menuList = [];
+          menuList.addAll(menu);
+          _isLoading = false;
+        });
+        final feedData = json.encode(
+          {
+            'menu': menu,
+          },
+        );
+        prefs.setString('menuData', feedData);
+      });
     }
+  }
+
+  @override
+  void initState() {
+    _getMenu();
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: _refreshFeed,
+      onRefresh: _refresh,
       child: SingleChildScrollView(
         child: Container(
           constraints: const BoxConstraints(
@@ -323,7 +368,7 @@ class _ProfileState extends State<Profile> {
                                             // buildShortLink();
                                             final Uri shortUrl =
                                                 parameters.link;
-                                            print(shortUrl);
+                                            // print(shortUrl);
                                             Share.share("${shortUrl}");
                                           },
                                           child: ButtonWidgetHomeScreen(
@@ -451,7 +496,7 @@ class _ProfileState extends State<Profile> {
                                                   // print(snapshot.data);
                                                   List<dynamic> data = snapshot
                                                       .data as List<dynamic>;
-                                                  print(data);
+                                                  // print(data);
                                                   data = data.reversed.toList();
                                                   return GridView.builder(
                                                     physics:
@@ -501,58 +546,38 @@ class _ProfileState extends State<Profile> {
                                         if (_activeButtonIndex == 2)
                                           Container(
                                             width: 85.w,
-                                            child: FutureBuilder(
-                                              future: Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .getMenu(),
-                                              builder: (context, snapshot) {
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.done) {
-                                                  List<dynamic> data = snapshot
-                                                      .data as List<dynamic>;
-                                                  data = data.reversed.toList();
-                                                  print(data);
-                                                  return ListView.builder(
-                                                      padding: const EdgeInsets
-                                                          .only(),
-                                                      itemCount: (data as List<
-                                                              dynamic>)
-                                                          .length,
-                                                      physics:
-                                                          const NeverScrollableScrollPhysics(),
-                                                      shrinkWrap:
-                                                          true, // Allow the GridView to shrink-wrap its content
-                                                      addAutomaticKeepAlives:
-                                                          true,
-                                                      itemBuilder:
-                                                          (context, index) {
-                                                        data[index]['VEG'] ==
-                                                                null
-                                                            ? data[index]
-                                                                ['VEG'] = true
-                                                            : null;
-                                                        // data[index]['description'] =
-                                                        //     'Indian delicacies served with tasty gravy, all from your very own kitchen...';
+                                            child: _isLoading == true
+                                                ? Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  )
+                                                : ListView.builder(
+                                                    padding:
+                                                        const EdgeInsets.only(),
+                                                    itemCount: (menuList
+                                                            as List<dynamic>)
+                                                        .length,
+                                                    physics:
+                                                        const NeverScrollableScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    addAutomaticKeepAlives:
+                                                        true,
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      menuList[index]['VEG'] ==
+                                                              null
+                                                          ? menuList[index]
+                                                              ['VEG'] = true
+                                                          : null;
 
-                                                        return data[index]
-                                                                    ['VEG'] !=
-                                                                null
-                                                            ? MenuItem(
-                                                                data:
-                                                                    data[index])
-                                                            : SizedBox.shrink();
-                                                      });
-                                                } else
-                                                  return Center(
-                                                    child: Container(
-                                                      height: 20,
-                                                      width: 20,
-                                                      child:
-                                                          const CircularProgressIndicator(),
-                                                    ),
-                                                  );
-                                              },
-                                            ),
+                                                      return menuList[index]
+                                                                  ['VEG'] !=
+                                                              null
+                                                          ? MenuItem(
+                                                              data: menuList[
+                                                                  index])
+                                                          : SizedBox.shrink();
+                                                    }),
                                           ),
                                         if (_activeButtonIndex == 3)
                                           const Text('Feature Pending')

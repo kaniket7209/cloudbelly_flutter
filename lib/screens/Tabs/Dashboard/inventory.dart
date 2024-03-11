@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory_bottom_sheet.dart';
@@ -122,7 +123,7 @@ class _InventoryState extends State<Inventory> {
       }
     });
     // lowStockItems = lowStockItems.sublist(0, 4).toList();
-    print(lowStockItems);
+    // print(lowStockItems);.
     // print(lowStockItems);
   }
 
@@ -140,7 +141,7 @@ class _InventoryState extends State<Inventory> {
           element['volumeLeft'] == null ||
           element['purchaseDate'] == null ||
           element['volumePurchased'] == null) {
-        print(element);
+        // print(element);
         _somethingmissing = true;
       }
       // print('object: $_somethingmissing');
@@ -154,11 +155,11 @@ class _InventoryState extends State<Inventory> {
       }
     });
     // print('something');
-    if (_somethingmissing) {
-      // print(_somethingmissing);
-      TOastNotification()
-          .showErrorToast(context, 'Some fields are missing in Sheet data');
-    }
+    // if (_somethingmissing) {
+    //   // print(_somethingmissing);
+    //   TOastNotification()
+    //       .showErrorToast(context, 'Some fields are missing in Sheet data');
+    // }
     stocksYouMayNeed = temp;
 
     stocksYouMayNeed.sort((a, b) {
@@ -169,6 +170,7 @@ class _InventoryState extends State<Inventory> {
         return a['volumeLeft'].compareTo(b['volumeLeft']);
       }
     });
+    print(stocksYouMayNeed);
     allStocks.sort((a, b) {
       int runwayComparison = a['runway'].compareTo(b['runway']);
       if (runwayComparison != 0) {
@@ -342,51 +344,7 @@ class _InventoryState extends State<Inventory> {
             Spacer(),
             TouchableOpacity(
                 onTap: () {
-                  AppWideBottomSheet().showSheet(
-                      context,
-                      // Container(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 4.w),
-                            child: const BoldTextWidgetHomeScreen(
-                              txt: 'Stocks you may need',
-                            ),
-                          ),
-                          Space(2.h),
-                          SizedBox(
-                            width: double.infinity,
-                            child: GridView.builder(
-                              physics:
-                                  const NeverScrollableScrollPhysics(), // Disable scrolling
-                              shrinkWrap:
-                                  true, // Allow the GridView to shrink-wrap its content
-                              addAutomaticKeepAlives: true,
-
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0.8.h, horizontal: 3.w),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                childAspectRatio: 0.8,
-                                crossAxisCount: 4, // Number of items in a row
-                                crossAxisSpacing:
-                                    4.w, // Spacing between columns
-                                mainAxisSpacing: 1.5.h, // Spacing between rows
-                              ),
-                              itemCount:
-                                  allStocks.length, // Total number of items
-                              itemBuilder: (context, index) {
-                                // You can replace this container with your custom item widget
-                                return StocksMayBeNeedWidget(
-                                    txt: allStocks[index]['itemName'],
-                                    url: allStocks[index]['image_url'] ?? '');
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      60.h);
+                  return StockYouMayNeedSheet(context);
                 },
                 child: const SeeAllWidget()),
           ],
@@ -435,55 +393,7 @@ class _InventoryState extends State<Inventory> {
             Spacer(),
             TouchableOpacity(
                 onTap: () {
-                  AppWideBottomSheet().showSheet(
-                      context,
-                      // Container(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 3.w),
-                            child: BoldTextWidgetHomeScreen(
-                              txt: 'Low stocks',
-                            ),
-                          ),
-                          Space(2.h),
-                          Container(
-                            width: double.infinity,
-                            child: ListView.builder(
-                              physics:
-                                  const NeverScrollableScrollPhysics(), // Disable scrolling
-                              shrinkWrap:
-                                  true, // Allow the GridView to shrink-wrap its content
-                              addAutomaticKeepAlives: true,
-
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0.8.h, horizontal: 3.w),
-
-                              itemCount: allStocks.length,
-                              itemBuilder: (context, index) {
-                                // print('object');
-                                print(allStocks[index]);
-                                int runway = allStocks[index]['runway'];
-                                return LowStocksWidget(
-                                    isSheet: true,
-                                    amountLeft:
-                                        '${allStocks[index]['volumeLeft']}  ${allStocks[index]['unitType']} left',
-                                    item: allStocks[index]['itemName'],
-                                    percentage: double.parse(
-                                            allStocks[index]['volumeLeft']) /
-                                        double.parse(allStocks[index]
-                                            ['volumePurchased']),
-                                    text: runway < 0
-                                        ? 'Expired'
-                                        : '${runway} days runway',
-                                    url: allStocks[index]['image_url'] ?? '');
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      60.h);
+                  return LowStocksSheet(context);
                 },
                 child: SeeAllWidget()),
           ],
@@ -650,6 +560,332 @@ class _InventoryState extends State<Inventory> {
       ],
     );
   }
+
+  Future<dynamic> LowStocksSheet(BuildContext context) {
+    return showModalBottomSheet(
+      // useSafeArea: true,
+      context: context,
+      isScrollControlled: true,
+
+      builder: (BuildContext context) {
+        // print(data);
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+              child: Container(
+                decoration: const ShapeDecoration(
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                        topLeft:
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                        topRight:
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                  ),
+                ),
+                height: MediaQuery.of(context).size.height * 0.6,
+                width: double.infinity,
+                padding: EdgeInsets.only(
+                    left: 6.w,
+                    right: 6.w,
+                    top: 2.h,
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TouchableOpacity(
+                        onTap: () {
+                          return Navigator.of(context).pop();
+                        },
+                        child: Center(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 1.h, horizontal: 3.w),
+                            width: 65,
+                            height: 6,
+                            decoration: ShapeDecoration(
+                              color: const Color(0xFFFA6E00),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6)),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Space(2.h),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          BoldTextWidgetHomeScreen(
+                            txt: 'Low stocks',
+                          ),
+                          Space(1.h),
+                          Container(
+                            width: double.infinity,
+                            child: ListView.builder(
+                              physics:
+                                  const NeverScrollableScrollPhysics(), // Disable scrolling
+                              shrinkWrap:
+                                  true, // Allow the GridView to shrink-wrap its content
+                              addAutomaticKeepAlives: true,
+
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 0.8.h, horizontal: 0),
+
+                              itemCount: allStocks.length,
+                              itemBuilder: (context, index) {
+                                // print('object');
+                                // print(allStocks[index]);
+
+                                int runway = allStocks[index]['runway'];
+                                return LowStocksWidget(
+                                    isSheet: true,
+                                    amountLeft:
+                                        '${allStocks[index]['volumeLeft']}  ${allStocks[index]['unitType']} left',
+                                    item: allStocks[index]['itemName'],
+                                    percentage: double.parse(
+                                            allStocks[index]['volumeLeft']) /
+                                        double.parse(allStocks[index]
+                                            ['volumePurchased']),
+                                    text: runway < 0
+                                        ? 'Expired'
+                                        : '${runway} days runway',
+                                    url: allStocks[index]['image_url'] ?? '');
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<dynamic> StockYouMayNeedSheet(BuildContext context) {
+    return showModalBottomSheet(
+      // useSafeArea: true,
+      context: context,
+      isScrollControlled: true,
+
+      builder: (BuildContext context) {
+        // print(data);
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+              child: Container(
+                decoration: const ShapeDecoration(
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                        topLeft:
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                        topRight:
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                  ),
+                ),
+                height: MediaQuery.of(context).size.height * 0.6,
+                width: double.infinity,
+                padding: EdgeInsets.only(
+                    left: 6.w,
+                    right: 6.w,
+                    top: 2.h,
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TouchableOpacity(
+                        onTap: () {
+                          return Navigator.of(context).pop();
+                        },
+                        child: Center(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 1.h, horizontal: 3.w),
+                            width: 65,
+                            height: 6,
+                            decoration: ShapeDecoration(
+                              color: const Color(0xFFFA6E00),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6)),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Space(2.h),
+                      BoldTextWidgetHomeScreen(
+                        txt: 'Stocks you may need',
+                      ),
+                      Column(
+                        children: [
+                          for (int index = 0;
+                              index < stocksYouMayNeed.length;
+                              index++)
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                vertical: 15,
+                              ),
+                              child: Row(children: [
+                                ImageWidgetInventory(
+                                    height: 40,
+                                    radius: 12,
+                                    url: stocksYouMayNeed[index]['image_url'] ??
+                                        ''),
+                                Space(
+                                  14,
+                                  isHorizontal: true,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      stocksYouMayNeed[index]['itemName'],
+                                      style: TextStyle(
+                                        color: Color(0xFF094B60),
+                                        fontSize: 14,
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    Space(2),
+                                    Text(
+                                      '${stocksYouMayNeed[index]['volumeLeft']} ${stocksYouMayNeed[index]['unitType']} for next ${stocksYouMayNeed[index]['runway']} days',
+                                      style: TextStyle(
+                                        color: Color(0xFFFA6E00),
+                                        fontSize: 8,
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Spacer(),
+                                TouchableOpacity(
+                                  onTap: () {
+                                    AppWideLoadingBanner()
+                                        .featurePending(context);
+                                  },
+                                  child: Container(
+                                    width: 71,
+                                    height: 30,
+                                    decoration: GlobalVariables()
+                                        .ContainerDecoration(
+                                            offset: Offset(0, 4),
+                                            blurRadius: 4,
+                                            shadowColor:
+                                                Color.fromRGBO(0, 0, 0, 0.25),
+                                            boxColor:
+                                                Color.fromRGBO(84, 166, 193, 1),
+                                            cornerRadius: 10),
+                                    child: Center(
+                                      child: Text(
+                                        'Add',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontFamily: 'Product Sans',
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                            ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class ImageWidgetInventory extends StatelessWidget {
+  double height;
+  String url;
+  double radius;
+  ImageWidgetInventory({
+    super.key,
+    required this.height,
+    required this.url,
+    required this.radius,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    String newUrl = '';
+    if (url != '') {
+      String originalLink = url;
+      String fileId = originalLink.substring(
+          originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));
+      newUrl = 'https://drive.google.com/uc?export=view&id=$fileId';
+    }
+    return Container(
+      height: height,
+      width: height,
+      decoration: ShapeDecoration(
+        shadows: const [
+          BoxShadow(
+            offset: Offset(0, 4),
+            color: Color.fromRGBO(124, 193, 191, 0.3),
+            blurRadius: 20,
+          )
+        ],
+        color: const Color.fromRGBO(200, 233, 233, 1),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: radius,
+            cornerSmoothing: 1,
+          ),
+        ),
+      ),
+      child: url != ''
+          ? ClipSmoothRect(
+              radius: SmoothBorderRadius(
+                cornerRadius: radius,
+                cornerSmoothing: 1,
+              ),
+              child: Image(
+                fit: BoxFit.cover,
+                image: NetworkImage(newUrl),
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  );
+                },
+                errorBuilder: (BuildContext context, Object error,
+                    StackTrace? stackTrace) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Error loading image'),
+                  );
+                },
+              ),
+            )
+          : null,
+    );
+  }
 }
 
 class StocksNearExpiryWidget extends StatelessWidget {
@@ -665,13 +901,6 @@ class StocksNearExpiryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String newUrl = '';
-    if (url != '') {
-      String originalLink = url;
-      String fileId = originalLink.substring(
-          originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));
-      newUrl = 'https://drive.google.com/uc?export=view&id=$fileId';
-    }
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       height: 120,
@@ -695,57 +924,7 @@ class StocksNearExpiryWidget extends StatelessWidget {
       child:
           Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         const Space(3),
-        Container(
-          height: 75,
-          width: 73,
-          decoration: ShapeDecoration(
-            shadows: const [
-              BoxShadow(
-                offset: Offset(0, 4),
-                color: Color.fromRGBO(124, 193, 191, 0.3),
-                blurRadius: 15 + 5,
-              )
-            ],
-            color: const Color.fromRGBO(200, 233, 233, 1),
-            shape: SmoothRectangleBorder(
-              borderRadius: SmoothBorderRadius(
-                cornerRadius: 10,
-                cornerSmoothing: 1,
-              ),
-            ),
-          ),
-          child: newUrl != ''
-              ? ClipSmoothRect(
-                  radius: SmoothBorderRadius(
-                    cornerRadius: 10,
-                    cornerSmoothing: 1,
-                  ),
-                  child: Image(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(newUrl),
-                    loadingBuilder: (BuildContext context, Widget child,
-                        ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
-                    },
-                    errorBuilder: (BuildContext context, Object error,
-                        StackTrace? stackTrace) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Error loading image'),
-                      );
-                    },
-                  ),
-                )
-              : null,
-        ),
+        ImageWidgetInventory(height: 75, url: url, radius: 15),
         const Space(5),
         Text(
           name,
@@ -796,13 +975,6 @@ class LowStocksWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String newUrl = '';
-    if (url != '') {
-      String originalLink = url;
-      String fileId = originalLink.substring(
-          originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));
-      newUrl = 'https://drive.google.com/uc?export=view&id=$fileId';
-    }
     // print(newUrl);/
 
     double widhth = !isSheet ? 50.w : 40.w;
@@ -837,59 +1009,8 @@ class LowStocksWidget extends StatelessWidget {
       child: Row(
         children: [
           Space(isHorizontal: true, 3.w),
-          Container(
-            height: 35,
-            width: 35,
-            decoration: ShapeDecoration(
-              shadows: const [
-                BoxShadow(
-                  offset: Offset(0, 4),
-                  color: Color.fromRGBO(124, 193, 191, 0.3),
-                  blurRadius: 20,
-                )
-              ],
-              color: const Color.fromRGBO(200, 233, 233, 1),
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius(
-                  cornerRadius: 10,
-                  cornerSmoothing: 1,
-                ),
-              ),
-            ),
-            // child: Image.network(url),
-            child: newUrl != ''
-                ? ClipSmoothRect(
-                    radius: SmoothBorderRadius(
-                      cornerRadius: 10,
-                      cornerSmoothing: 1,
-                    ),
-                    child: Image(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(newUrl),
-                      loadingBuilder: (BuildContext context, Widget child,
-                          ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                          ),
-                        );
-                      },
-                      errorBuilder: (BuildContext context, Object error,
-                          StackTrace? stackTrace) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text('Error loading image'),
-                        );
-                      },
-                    ),
-                  )
-                : null,
-          ),
-          Space(isHorizontal: true, 3.w),
+          ImageWidgetInventory(height: 35, url: url, radius: 10),
+          Space(isHorizontal: true, 11),
           SizedBox(
             width: 20.w,
             child: Text(
@@ -904,9 +1025,7 @@ class LowStocksWidget extends StatelessWidget {
               ),
             ),
           ),
-          !isSheet
-              ? Space(isHorizontal: true, 3.w)
-              : Space(isHorizontal: true, 2.w),
+          Space(isHorizontal: true, 17),
           Stack(
             children: [
               Container(
