@@ -190,10 +190,10 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       textList[index],
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 9,
+                        fontSize: 8,
                         fontFamily: 'Product Sans',
                         fontWeight: FontWeight.w700,
-                        height: 0,
+                 
                         letterSpacing: 0.10,
                       ),
                     ),
