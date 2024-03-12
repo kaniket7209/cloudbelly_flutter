@@ -134,143 +134,147 @@ class _PostItemState extends State<PostItem> {
     return Container(
       // height: caption1 != '' ? 67.h : 63.h,
       margin: EdgeInsets.only(bottom: 2.7.h),
-      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
+      // padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Space(
-                10,
-                isHorizontal: true,
-              ),
-              (Provider.of<Auth>(context, listen: false).logo_url == '' &&
-                          widget.isProfilePost) ||
-                      ((widget.data['profile_photo'] == '' ||
-                              widget.data['profile_photo'] == null) &&
-                          !widget.isProfilePost)
-                  ? Container(
-                      height: 35,
-                      width: 35,
-                      decoration: ShapeDecoration(
-                        shadows: [
-                          BoxShadow(
-                            offset: Offset(0, 4),
-                            color: _isVendor
-                                ? Color.fromRGBO(31, 111, 109, 0.4)
-                                : Color.fromRGBO(130, 47, 130, 0.4),
-                            blurRadius: 20,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
+            child: Row(
+              children: [
+                Space(
+                  10,
+                  isHorizontal: true,
+                ),
+                (Provider.of<Auth>(context, listen: false).logo_url == '' &&
+                            widget.isProfilePost) ||
+                        ((widget.data['profile_photo'] == '' ||
+                                widget.data['profile_photo'] == null) &&
+                            !widget.isProfilePost)
+                    ? Container(
+                        height: 35,
+                        width: 35,
+                        decoration: ShapeDecoration(
+                          shadows: [
+                            BoxShadow(
+                              offset: Offset(0, 4),
+                              color: _isVendor
+                                  ? Color.fromRGBO(31, 111, 109, 0.4)
+                                  : Color.fromRGBO(130, 47, 130, 0.4),
+                              blurRadius: 20,
+                            ),
+                          ],
+                          color: Color.fromRGBO(31, 111, 109, 0.6),
+                          shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                            cornerRadius: 10,
+                            cornerSmoothing: 1,
+                          )),
+                        ),
+                        child: Center(
+                          child: Text(
+                            widget.isProfilePost
+                                ? Provider.of<Auth>(context, listen: true)
+                                    .store_name[0]
+                                    .toUpperCase()
+                                : widget.data['store_name'] == ''
+                                    ? 'U'
+                                    : widget.data['store_name'][0],
+                            style: TextStyle(fontSize: 20),
                           ),
-                        ],
-                        color: Color.fromRGBO(31, 111, 109, 0.6),
-                        shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                          cornerRadius: 10,
-                          cornerSmoothing: 1,
-                        )),
-                      ),
-                      child: Center(
-                        child: Text(
-                          widget.isProfilePost
-                              ? Provider.of<Auth>(context, listen: true)
-                                  .store_name[0]
-                                  .toUpperCase()
-                              : widget.data['user_name'] == ''
-                                  ? 'U'
-                                  : widget.data['user_name'][0],
-                          style: TextStyle(fontSize: 20),
+                        ))
+                    : Container(
+                        height: 35,
+                        width: 35,
+                        decoration: ShapeDecoration(
+                          shadows: [
+                            BoxShadow(
+                              offset: Offset(0, 4),
+                              color: _isVendor
+                                  ? Color.fromRGBO(31, 111, 109, 0.6)
+                                  : Color.fromRGBO(130, 47, 130, 0.7),
+                              blurRadius: 20,
+                            )
+                          ],
+                          shape: SmoothRectangleBorder(),
                         ),
-                      ))
-                  : Container(
-                      height: 35,
-                      width: 35,
-                      decoration: ShapeDecoration(
-                        shadows: [
-                          BoxShadow(
-                            offset: Offset(0, 4),
-                            color: _isVendor
-                                ? Color.fromRGBO(31, 111, 109, 0.6)
-                                : Color.fromRGBO(130, 47, 130, 0.7),
-                            blurRadius: 20,
-                          )
-                        ],
-                        shape: SmoothRectangleBorder(),
-                      ),
-                      child: ClipSmoothRect(
-                        radius: SmoothBorderRadius(
-                          cornerRadius: 10,
-                          cornerSmoothing: 1,
+                        child: ClipSmoothRect(
+                          radius: SmoothBorderRadius(
+                            cornerRadius: 10,
+                            cornerSmoothing: 1,
+                          ),
+                          child: Image.network(
+                            widget.isProfilePost
+                                ? Provider.of<Auth>(context, listen: false)
+                                    .logo_url
+                                : widget.data['profile_photo'],
+                            fit: BoxFit.cover,
+                            loadingBuilder:
+                                GlobalVariables().loadingBuilderForImage,
+                            errorBuilder:
+                                GlobalVariables().ErrorBuilderForImage,
+                          ),
                         ),
-                        child: Image.network(
-                          widget.isProfilePost
-                              ? Provider.of<Auth>(context, listen: false)
-                                  .logo_url
-                              : widget.data['profile_photo'],
-                          fit: BoxFit.cover,
-                          loadingBuilder:
-                              GlobalVariables().loadingBuilderForImage,
-                          errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                      ),
+                const Space(isHorizontal: true, 15),
+                Text(
+                  widget.isProfilePost
+                      ? Provider.of<Auth>(context, listen: false).store_name
+                      : widget.data['store_name'],
+                  style: TextStyle(
+                    color: _isVendor ? Color(0xFF094B60) : Color(0xFF2E0536),
+                    fontSize: 14,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w700,
+                    height: 0.10,
+                    letterSpacing: 0.42,
+                  ),
+                ),
+                const Spacer(),
+                if (!widget.isProfilePost)
+                  Container(
+                    width: 70,
+                    height: 25,
+                    decoration: ShapeDecoration(
+                      shadows: const [
+                        BoxShadow(
+                          offset: Offset(3, 6),
+                          color: Color.fromRGBO(116, 202, 199, 0.79),
+                          blurRadius: 20,
+                        ),
+                      ],
+                      color: _isVendor
+                          ? const Color.fromRGBO(124, 193, 191, 1)
+                          : Color(0xFFFA6E00),
+                      shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                        cornerRadius: 5,
+                        cornerSmoothing: 1,
+                      )),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Follow',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontFamily: 'Product Sans Medium',
+                          fontWeight: FontWeight.w500,
+                          height: 0.14,
+                          letterSpacing: 0.36,
                         ),
                       ),
                     ),
-              const Space(isHorizontal: true, 15),
-              Text(
-                widget.isProfilePost
-                    ? Provider.of<Auth>(context, listen: false).store_name
-                    : widget.data['user_name'],
-                style: TextStyle(
-                  color: _isVendor ? Color(0xFF094B60) : Color(0xFF2E0536),
-                  fontSize: 14,
-                  fontFamily: 'Product Sans',
-                  fontWeight: FontWeight.w700,
-                  height: 0.10,
-                  letterSpacing: 0.42,
-                ),
-              ),
-              const Spacer(),
-              if (!widget.isProfilePost)
-                Container(
-                  width: 70,
-                  height: 25,
-                  decoration: ShapeDecoration(
-                    shadows: const [
-                      BoxShadow(
-                        offset: Offset(3, 6),
-                        color: Color.fromRGBO(116, 202, 199, 0.79),
-                        blurRadius: 20,
-                      ),
-                    ],
-                    color: _isVendor
-                        ? const Color.fromRGBO(124, 193, 191, 1)
-                        : Color(0xFFFA6E00),
-                    shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius(
-                      cornerRadius: 5,
-                      cornerSmoothing: 1,
-                    )),
                   ),
-                  child: const Center(
-                    child: Text(
-                      'Follow',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontFamily: 'Product Sans Medium',
-                        fontWeight: FontWeight.w500,
-                        height: 0.14,
-                        letterSpacing: 0.36,
-                      ),
-                    ),
-                  ),
-                ),
-              IconButton(
-                  onPressed: () async {
-                    {
-                      return MoreSheetInPostItem(context);
-                    }
-                  },
-                  icon: Icon(Icons.more_vert)),
-            ],
+                IconButton(
+                    onPressed: () async {
+                      {
+                        return MoreSheetInPostItem(context);
+                      }
+                    },
+                    icon: Icon(Icons.more_vert)),
+              ],
+            ),
           ),
           Space(0.5.h),
           Stack(
@@ -282,6 +286,8 @@ class _PostItemState extends State<PostItem> {
                         child: AspectRatio(
                           aspectRatio: 1,
                           child: Container(
+                            margin: EdgeInsets.only(
+                                left: 5.w, bottom: 2.h, right: 5.w),
                             width: double.infinity,
                             decoration: ShapeDecoration(
                               shadows: [
@@ -395,346 +401,407 @@ class _PostItemState extends State<PostItem> {
                     ),
                   ),
                 ),
-            ],
-          ),
-          Space(5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              // Text('knknhkink'),
-              // SvgPicture.asset(
-              //   Assets.favourite_svg,
-              //   // color: Colors.red,
-              //   semanticsLabel: 'My SVG Picture',
-              //   width: 50, // adjust width as needed
-              //   height: 10, // adjust height as needed
-              // ),
-              //like button
-              IconButton(
-                padding: EdgeInsets.zero,
-                // pa
-                onPressed: () async {
-                  // print(widget.data['likes'] ?? []);
-                  String code = '';
-
-                  code = widget.isProfilePost
-                      ? await Provider.of<Auth>(context, listen: false)
-                          .likePost(widget.data['id'],
-                              Provider.of<Auth>(context, listen: false).user_id)
-                      : await Provider.of<Auth>(context, listen: false)
-                          .likePost(widget.data['id'], widget.data['user_id']);
-
-                  if (code == '200') {
-                    setState(() {
-                      _isLiked = !_isLiked;
-                      if (_isLiked) {
-                        setState(() {
-                          _likeData.add({
-                            'id': Provider.of<Auth>(context, listen: false)
-                                .user_id,
-                            'profile_photo':
-                                Provider.of<Auth>(context, listen: false)
-                                    .logo_url,
-                            'name': Provider.of<Auth>(context, listen: false)
-                                .store_name,
-                          });
-                        });
-                      } else {
-                        setState(() {
-                          _likeData.removeWhere(
-                            (element) =>
-                                element['id'] ==
-                                Provider.of<Auth>(context, listen: false)
-                                    .user_id,
-                          );
-                        });
-                      }
-                      if (_isLiked == true) _showLikeIcon = true;
-                    });
-                    Future.delayed(Duration(seconds: 2), () {
-                      setState(() {
-                        _showLikeIcon = false;
-                      });
-                    });
-                  } else {
-                    TOastNotification().showErrorToast(context, 'Error!');
-                  }
-                },
-                icon: AnimatedContainer(
-                  duration: Duration(milliseconds: 3000),
-                  curve: Curves.easeInOut,
-                  child: Icon(
-                    _isLiked ? Icons.favorite : Icons.favorite_border,
-                    color:
-                        _isLiked ? Colors.red : null, // Change color when liked
+              Positioned(
+                right: 20,
+                bottom: 0,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: ShapeDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Color.fromRGBO(250, 110, 0, 1),
+                        Color.fromRGBO(254, 209, 112, 1)
+                      ],
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        offset: Offset(0, 4),
+                        color: Color.fromRGBO(0, 0, 0, 0.25),
+                        blurRadius: 4,
+                      ),
+                    ],
+                    shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                      cornerRadius: 15,
+                      cornerSmoothing: 1,
+                    )),
                   ),
+                  child: Icon(Icons.search),
                 ),
               ),
-              //comment button
-              IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () async {
-                    AppWideLoadingBanner().loadingBanner(context);
-                    List<String> userIds = [];
-                    for (var item in widget.data['comments'] ?? []) {
-                      String userId = item['user_id'];
-                      userIds.add(userId);
-                    }
-                    final temp = await Provider.of<Auth>(context, listen: false)
-                        .getUserInfo(userIds);
-                    for (int i = 0;
-                        i < (widget.data['comments'] ?? []).length;
-                        i++) {
-                      widget.data['comments'][i]['store_name'] =
-                          temp[i]['store_name'];
-                      widget.data['comments'][i]['profile_photo'] =
-                          temp[i]['profile_photo'];
-                    }
-                    Navigator.of(context).pop();
-                    AppWideBottomSheet()
-                        .showSheet(
-                            context,
-                            CommentSheetContent(
-                              userData: temp,
-                              data: widget.data,
-                              isProfilePost: widget.isProfilePost,
-                            ),
-                            70.h)
-                        .then((value) {
-                      setState(() {});
-                    });
-                  },
-                  icon: const Icon(Icons.mode_comment_outlined)),
-              //share button
-              IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () async {
-                    final DynamicLinkParameters parameters =
-                        DynamicLinkParameters(
-                      uriPrefix: 'https://api.cloudbelly.in',
-                      link: Uri.parse(
-                          'https://api.cloudbelly.in/post/?id=${widget.data['id']}&type=post'),
-                      androidParameters: const AndroidParameters(
-                        packageName: 'com.example.cloudbelly_app',
-                      ),
-                    );
-
-                    final Uri shortUrl = parameters.link;
-                    // print(shortUrl);
-                    Share.share("${shortUrl}");
-                  },
-                  icon: const Icon(Icons.share))
             ],
           ),
-          Container(
-            padding: EdgeInsets.only(left: 3.w),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              // Space(14),
-              Row(
-                children: [
-                  if (_likeData.length != 0 &&
-                      _likeData[0]['profile_photo'] != '' &&
-                      _likeData[0]['profile_photo'] != null)
-                    Container(
-                      width: 17,
-                      height: 17,
-                      decoration: ShapeDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(_likeData[0]['profile_photo']),
-                          fit: BoxFit.fill,
-                        ),
-                        shape: OvalBorder(
-                          side: BorderSide(
-                            width: 2,
-                            strokeAlign: BorderSide.strokeAlignOutside,
-                            color: Color(0xFFEAF5F7),
-                          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    // Text('knknhkink'),
+                    // SvgPicture.asset(
+                    //   Assets.favourite_svg,
+                    //   // color: Colors.red,
+                    //   semanticsLabel: 'My SVG Picture',
+                    //   width: 50, // adjust width as needed
+                    //   height: 10, // adjust height as needed
+                    // ),
+                    //like button
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      // pa
+                      onPressed: () async {
+                        // print(widget.data['likes'] ?? []);
+                        String code = '';
+
+                        code = widget.isProfilePost
+                            ? await Provider.of<Auth>(context, listen: false)
+                                .likePost(
+                                    widget.data['id'],
+                                    Provider.of<Auth>(context, listen: false)
+                                        .user_id)
+                            : await Provider.of<Auth>(context, listen: false)
+                                .likePost(
+                                    widget.data['id'], widget.data['user_id']);
+
+                        if (code == '200') {
+                          setState(() {
+                            _isLiked = !_isLiked;
+                            if (_isLiked) {
+                              setState(() {
+                                _likeData.add({
+                                  'id':
+                                      Provider.of<Auth>(context, listen: false)
+                                          .user_id,
+                                  'profile_photo':
+                                      Provider.of<Auth>(context, listen: false)
+                                          .logo_url,
+                                  'name':
+                                      Provider.of<Auth>(context, listen: false)
+                                          .store_name,
+                                });
+                              });
+                            } else {
+                              setState(() {
+                                _likeData.removeWhere(
+                                  (element) =>
+                                      element['id'] ==
+                                      Provider.of<Auth>(context, listen: false)
+                                          .user_id,
+                                );
+                              });
+                            }
+                            if (_isLiked == true) _showLikeIcon = true;
+                          });
+                          Future.delayed(Duration(seconds: 2), () {
+                            setState(() {
+                              _showLikeIcon = false;
+                            });
+                          });
+                        } else {
+                          TOastNotification().showErrorToast(context, 'Error!');
+                        }
+                      },
+                      icon: AnimatedContainer(
+                        duration: Duration(milliseconds: 3000),
+                        curve: Curves.easeInOut,
+                        child: Icon(
+                          _isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: _isLiked
+                              ? Colors.red
+                              : null, // Change color when liked
                         ),
                       ),
                     ),
-                  if (_likeData.length > 1)
-                    for (int i = 0; (_likeData.length > 2 ? i < 2 : i < 1); i++)
-                      if (_likeData[i + 1]['profile_photo'] != '')
-                        Container(
-                          width: 17,
-                          height: 17,
-                          decoration: ShapeDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                  _likeData[i + 1]['profile_photo']),
-                              fit: BoxFit.fill,
+                    //comment button
+                    IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () async {
+                          AppWideLoadingBanner().loadingBanner(context);
+                          List<String> userIds = [];
+                          for (var item in widget.data['comments'] ?? []) {
+                            String userId = item['user_id'];
+                            userIds.add(userId);
+                          }
+                          final temp =
+                              await Provider.of<Auth>(context, listen: false)
+                                  .getUserInfo(userIds);
+                          for (int i = 0;
+                              i < (widget.data['comments'] ?? []).length;
+                              i++) {
+                            widget.data['comments'][i]['store_name'] =
+                                temp[i]['store_name'];
+                            widget.data['comments'][i]['profile_photo'] =
+                                temp[i]['profile_photo'];
+                          }
+                          Navigator.of(context).pop();
+                          AppWideBottomSheet()
+                              .showSheet(
+                                  context,
+                                  CommentSheetContent(
+                                    userData: temp,
+                                    data: widget.data,
+                                    isProfilePost: widget.isProfilePost,
+                                  ),
+                                  70.h)
+                              .then((value) {
+                            setState(() {});
+                          });
+                        },
+                        icon: const Icon(Icons.mode_comment_outlined)),
+                    //share button
+                    IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () async {
+                          final DynamicLinkParameters parameters =
+                              DynamicLinkParameters(
+                            uriPrefix: 'https://api.cloudbelly.in',
+                            link: Uri.parse(
+                                'https://api.cloudbelly.in/post/?id=${widget.data['id']}&type=post'),
+                            androidParameters: const AndroidParameters(
+                              packageName: 'com.example.cloudbelly_app',
                             ),
-                            shape: OvalBorder(
-                              side: BorderSide(
-                                width: 2,
-                                strokeAlign: BorderSide.strokeAlignOutside,
-                                color: Color(0xFFEAF5F7),
+                          );
+
+                          final Uri shortUrl = parameters.link;
+                          // print(shortUrl);
+                          Share.share("${shortUrl}");
+                        },
+                        icon: const Icon(Icons.share))
+                  ],
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 3.w),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Space(14),
+                        Row(
+                          children: [
+                            if (_likeData.length != 0 &&
+                                _likeData[0]['profile_photo'] != '' &&
+                                _likeData[0]['profile_photo'] != null)
+                              Container(
+                                width: 17,
+                                height: 17,
+                                decoration: ShapeDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        _likeData[0]['profile_photo']),
+                                    fit: BoxFit.fill,
+                                  ),
+                                  shape: OvalBorder(
+                                    side: BorderSide(
+                                      width: 2,
+                                      strokeAlign:
+                                          BorderSide.strokeAlignOutside,
+                                      color: Color(0xFFEAF5F7),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            if (_likeData.length > 1)
+                              for (int i = 0;
+                                  (_likeData.length > 2 ? i < 2 : i < 1);
+                                  i++)
+                                if (_likeData[i + 1]['profile_photo'] != '' &&
+                                    _likeData[i + 1]['profile_photo'] != null)
+                                  Container(
+                                    width: 17,
+                                    height: 17,
+                                    decoration: ShapeDecoration(
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                            _likeData[i + 1]['profile_photo']),
+                                        fit: BoxFit.fill,
+                                      ),
+                                      shape: OvalBorder(
+                                        side: BorderSide(
+                                          width: 2,
+                                          strokeAlign:
+                                              BorderSide.strokeAlignOutside,
+                                          color: Color(0xFFEAF5F7),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                            if (_likeData.length != 0 &&
+                                _likeData[0]['profile_photo'] != '')
+                              Space(
+                                7,
+                                isHorizontal: true,
+                              ),
+                            Text(
+                              'Liked by',
+                              style: TextStyle(
+                                color: _isVendor
+                                    ? Color(0xFF519896)
+                                    : Color(0xFFB232CB),
+                                fontSize: 12,
+                                fontFamily: 'Product Sans Medium',
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                                letterSpacing: 0.12,
                               ),
                             ),
-                          ),
-                        ),
-                  if (_likeData.length != 0 &&
-                      _likeData[0]['profile_photo'] != '')
-                    Space(
-                      7,
-                      isHorizontal: true,
-                    ),
-                  Text(
-                    'Liked by',
-                    style: TextStyle(
-                      color: _isVendor ? Color(0xFF519896) : Color(0xFFB232CB),
-                      fontSize: 12,
-                      fontFamily: 'Product Sans Medium',
-                      fontWeight: FontWeight.w500,
-                      height: 0,
-                      letterSpacing: 0.12,
-                    ),
-                  ),
-                  Space(isHorizontal: true, 5),
-                  Text(
-                    '${_likeData.length == 0 ? '0 people' : _likeData.length == 1 ? _likeData[0]['name'] : '${_likeData[0]['name']} and ${_likeData.length - 1} others'}',
-                    style: TextStyle(
-                      color: _isVendor ? Color(0xFF0A4C61) : Color(0xFF2E0536),
-                      fontSize: 12,
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.w700,
-                      height: 0,
-                      letterSpacing: 0.12,
-                    ),
-                  )
-                ],
-              ),
-              if (caption1 != '')
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Space(1.h),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.isProfilePost
-                              ? Provider.of<Auth>(context, listen: false)
-                                  .store_name
-                              : widget.data['user_name'],
-                          style: const TextStyle(
-                            color: Color(0xFFFA6E00),
-                            fontSize: 12,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.36,
-                          ),
-                        ),
-                        Space(isHorizontal: true, 9),
-                        Expanded(
-                          child: SizedBox(
-                            child: Text(
-                              caption1,
-                              overflow: TextOverflow.clip,
-                              maxLines: 1,
+                            Space(isHorizontal: true, 5),
+                            Text(
+                              '${_likeData.length == 0 ? '0 people' : _likeData.length == 1 ? _likeData[0]['name'] : '${_likeData[0]['name']} and ${_likeData.length - 1} others'}',
                               style: TextStyle(
                                 color: _isVendor
                                     ? Color(0xFF0A4C61)
                                     : Color(0xFF2E0536),
                                 fontSize: 12,
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.w700,
+                                height: 0,
+                                letterSpacing: 0.12,
+                              ),
+                            )
+                          ],
+                        ),
+                        if (caption1 != '')
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Space(1.h),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    widget.isProfilePost
+                                        ? Provider.of<Auth>(context,
+                                                listen: false)
+                                            .store_name
+                                        : widget.data['store_name'],
+                                    style: const TextStyle(
+                                      color: Color(0xFFFA6E00),
+                                      fontSize: 12,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.36,
+                                    ),
+                                  ),
+                                  Space(isHorizontal: true, 9),
+                                  Expanded(
+                                    child: SizedBox(
+                                      child: Text(
+                                        caption1,
+                                        overflow: TextOverflow.clip,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          color: _isVendor
+                                              ? Color(0xFF0A4C61)
+                                              : Color(0xFF2E0536),
+                                          fontSize: 12,
+                                          fontFamily: 'Product Sans Medium',
+                                          fontWeight: FontWeight.w500,
+                                          letterSpacing: 0.12,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              if (caption2.length > 0)
+                                SizedBox(
+                                  // height: 1.4.h,
+                                  child: Text(
+                                    caption2,
+                                    maxLines: null,
+                                    // overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: _isVendor
+                                          ? Color(0xFF0A4C61)
+                                          : Color(0xFF2E0536),
+                                      fontSize: 12,
+                                      fontFamily: 'Product Sans Medium',
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.12,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        TouchableOpacity(
+                          onTap: () async {
+                            AppWideLoadingBanner().loadingBanner(context);
+                            List<String> userIds = [];
+                            // print(widget.data['comments'].length);
+                            // if(widget.data['comments']==null)
+                            for (var item in widget.data['comments'] ?? []) {
+                              String userId = item['user_id'];
+                              userIds.add(userId);
+                            }
+                            final temp =
+                                await Provider.of<Auth>(context, listen: false)
+                                    .getUserInfo(userIds);
+
+                            for (int i = 0;
+                                i < (widget.data['comments'] ?? []).length;
+                                i++) {
+                              widget.data['comments'][i]['store_name'] =
+                                  temp[i]['store_name'];
+                              widget.data['comments'][i]['profile_photo'] =
+                                  temp[i]['profile_photo'];
+                            }
+                            Navigator.of(context).pop();
+
+                            AppWideBottomSheet()
+                                .showSheet(
+                                    context,
+                                    CommentSheetContent(
+                                      userData: temp,
+                                      data: widget.data,
+                                      isProfilePost: widget.isProfilePost,
+                                    ),
+                                    70.h)
+                                .then((value) {
+                              setState(() {});
+                            });
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 0.6.h,
+                            ),
+                            child: Text(
+                              (widget.data['comments'] ?? []).length > 0
+                                  ? 'View ${(widget.data['comments'] ?? []).length} comments'
+                                  : '${(widget.data['comments'] ?? []).length} comments',
+                              style: TextStyle(
+                                color: _isVendor
+                                    ? Color(0xFF519796)
+                                    : Color(0xFFB232CB),
+                                fontSize: 11,
                                 fontFamily: 'Product Sans Medium',
                                 fontWeight: FontWeight.w500,
-                                letterSpacing: 0.12,
+                                height: 0,
+                                letterSpacing: 0.11,
                               ),
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                    if (caption2.length > 0)
-                      SizedBox(
-                        // height: 1.4.h,
-                        child: Text(
-                          caption2,
-                          maxLines: null,
-                          // overflow: TextOverflow.ellipsis,
+                        ),
+                        Space(0.3.h),
+                        Text(
+                          '${formatTimeDifference(widget.data['created_at'])}',
                           style: TextStyle(
                             color: _isVendor
-                                ? Color(0xFF0A4C61)
-                                : Color(0xFF2E0536),
-                            fontSize: 12,
+                                ? Color(0xFF519796)
+                                : Color(0xFFB232CB),
+                            fontSize: 9,
                             fontFamily: 'Product Sans Medium',
                             fontWeight: FontWeight.w500,
-                            letterSpacing: 0.12,
+                            height: 0,
+                            letterSpacing: 0.09,
                           ),
-                        ),
-                      ),
-                  ],
-                ),
-              TouchableOpacity(
-                onTap: () async {
-                  AppWideLoadingBanner().loadingBanner(context);
-                  List<String> userIds = [];
-                  // print(widget.data['comments'].length);
-// if(widget.data['comments']==null)
-                  for (var item in widget.data['comments'] ?? []) {
-                    String userId = item['user_id'];
-                    userIds.add(userId);
-                  }
-                  final temp = await Provider.of<Auth>(context, listen: false)
-                      .getUserInfo(userIds);
-
-                  for (int i = 0;
-                      i < (widget.data['comments'] ?? []).length;
-                      i++) {
-                    widget.data['comments'][i]['store_name'] =
-                        temp[i]['store_name'];
-                    widget.data['comments'][i]['profile_photo'] =
-                        temp[i]['profile_photo'];
-                  }
-                  Navigator.of(context).pop();
-
-                  AppWideBottomSheet()
-                      .showSheet(
-                          context,
-                          CommentSheetContent(
-                            userData: temp,
-                            data: widget.data,
-                            isProfilePost: widget.isProfilePost,
-                          ),
-                          70.h)
-                      .then((value) {
-                    setState(() {});
-                  });
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 0.6.h,
-                  ),
-                  child: Text(
-                    (widget.data['comments'] ?? []).length > 0
-                        ? 'View ${(widget.data['comments'] ?? []).length} comments'
-                        : '${(widget.data['comments'] ?? []).length} comments',
-                    style: TextStyle(
-                      color: _isVendor ? Color(0xFF519796) : Color(0xFFB232CB),
-                      fontSize: 11,
-                      fontFamily: 'Product Sans Medium',
-                      fontWeight: FontWeight.w500,
-                      height: 0,
-                      letterSpacing: 0.11,
-                    ),
-                  ),
-                ),
-              ),
-              Space(0.3.h),
-              Text(
-                '${formatTimeDifference(widget.data['created_at'])}',
-                style: TextStyle(
-                  color: _isVendor ? Color(0xFF519796) : Color(0xFFB232CB),
-                  fontSize: 9,
-                  fontFamily: 'Product Sans Medium',
-                  fontWeight: FontWeight.w500,
-                  height: 0,
-                  letterSpacing: 0.09,
-                ),
-              )
-            ]),
+                        )
+                      ]),
+                )
+              ],
+            ),
           )
         ],
       ),
@@ -1281,7 +1348,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                         fillColor: Colors.white,
                         contentPadding: const EdgeInsets.only(left: 14),
                         hintText:
-                            ' Type your comment here for ${widget.isProfilePost ? Provider.of<Auth>(context, listen: false).store_name : widget.data['user_name']}...',
+                            ' Type your comment here for ${widget.isProfilePost ? Provider.of<Auth>(context, listen: false).store_name : widget.data['store_name']}...',
                         hintStyle: const TextStyle(
                           color: Color(0xFF519796),
                           fontSize: 12,
