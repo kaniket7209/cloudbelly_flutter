@@ -1207,7 +1207,9 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                             CommentItemWidget(
                               dateString: newData['comments'][index]
                                   ['created_at'],
-                              url: newData['comments'][index]['profile_photo'],
+                              url: newData['comments'][index]
+                                      ['profile_photo'] ??
+                                  "",
                               name: newData['comments'][index]['store_name'],
                               text: newData['comments'][index]['text'],
                             ),
@@ -1482,32 +1484,56 @@ class CommentItemWidget extends StatelessWidget {
       child: Row(
         children: [
           Space(isHorizontal: true, 2.w),
-          Container(
-            height: 40,
-            width: 40,
-            decoration: const ShapeDecoration(
-              shadows: [
-                BoxShadow(
-                  offset: Offset(0, 4),
-                  color: Color.fromRGBO(31, 111, 109, 0.6),
-                  blurRadius: 20,
-                )
-              ],
-              shape: SmoothRectangleBorder(),
-            ),
-            child: ClipSmoothRect(
-              radius: SmoothBorderRadius(
-                cornerRadius: 10,
-                cornerSmoothing: 1,
-              ),
-              child: Image.network(
-                url,
-                loadingBuilder: GlobalVariables().loadingBuilderForImage,
-                errorBuilder: GlobalVariables().ErrorBuilderForImage,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+          url == ''
+              ? Container(
+                  height: 35,
+                  width: 35,
+                  decoration: ShapeDecoration(
+                    shadows: [
+                      BoxShadow(
+                        offset: Offset(0, 4),
+                        color: Color.fromRGBO(31, 111, 109, 0.6),
+                        blurRadius: 20,
+                      )
+                    ],
+                    color: Color.fromRGBO(31, 111, 109, 0.6),
+                    shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                      cornerRadius: 10,
+                      cornerSmoothing: 1,
+                    )),
+                  ),
+                  child: Center(
+                    child: Text(
+                      name[0],
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ))
+              : Container(
+                  height: 40,
+                  width: 40,
+                  decoration: const ShapeDecoration(
+                    shadows: [
+                      BoxShadow(
+                        offset: Offset(0, 4),
+                        color: Color.fromRGBO(31, 111, 109, 0.6),
+                        blurRadius: 20,
+                      )
+                    ],
+                    shape: SmoothRectangleBorder(),
+                  ),
+                  child: ClipSmoothRect(
+                    radius: SmoothBorderRadius(
+                      cornerRadius: 10,
+                      cornerSmoothing: 1,
+                    ),
+                    child: Image.network(
+                      url,
+                      loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                      errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                      fit: BoxFit.cover,
+                    ),
+                  )),
           Space(isHorizontal: true, 4.w),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
