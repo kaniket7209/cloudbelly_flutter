@@ -92,8 +92,6 @@ class _InventoryState extends State<Inventory> {
     String iframeUrl =
         '$METABASE_SITE_URL/embed/dashboard/$token#bordered=true&titled=false';
 
-    // print('iframe: $iframeUrl');
-
     return iframeUrl;
   }
 
@@ -110,10 +108,10 @@ class _InventoryState extends State<Inventory> {
 
     final data =
         await Provider.of<Auth>(context, listen: false).getInventoryData();
-    // print(data);
+    // print('total: $data');
+
     lowStockItems = findLowStockItems(data['inventory_data']);
 
-    // print(lowStockItems);
     lowStockItems.sort((a, b) {
       int runwayComparison = a['runway'].compareTo(b['runway']);
       if (runwayComparison != 0) {
@@ -122,9 +120,6 @@ class _InventoryState extends State<Inventory> {
         return a['volumeLeft'].compareTo(b['volumeLeft']);
       }
     });
-    // lowStockItems = lowStockItems.sublist(0, 4).toList();
-    // print(lowStockItems);.
-    // print(lowStockItems);
   }
 
   Future<void> _getStocksYouMayNeed() async {
@@ -141,10 +136,9 @@ class _InventoryState extends State<Inventory> {
           element['volumeLeft'] == null ||
           element['purchaseDate'] == null ||
           element['volumePurchased'] == null) {
-        // print(element);
         _somethingmissing = true;
       }
-      // print('object: $_somethingmissing');
+
       if (element['shelf_life'] != null &&
           element['volumeLeft'] != null &&
           element['purchaseDate'] != null &&
@@ -154,9 +148,8 @@ class _InventoryState extends State<Inventory> {
         temp.add(element);
       }
     });
-    // print('something');
+
     // if (_somethingmissing) {
-    //   // print(_somethingmissing);
     //   TOastNotification()
     //       .showErrorToast(context, 'Some fields are missing in Sheet data');
     // }
@@ -170,7 +163,7 @@ class _InventoryState extends State<Inventory> {
         return a['volumeLeft'].compareTo(b['volumeLeft']);
       }
     });
-    print(stocksYouMayNeed);
+
     allStocks.sort((a, b) {
       int runwayComparison = a['runway'].compareTo(b['runway']);
       if (runwayComparison != 0) {
@@ -179,14 +172,13 @@ class _InventoryState extends State<Inventory> {
         return a['volumeLeft'].compareTo(b['volumeLeft']);
       }
     });
-    // print('all: $allStocks');
   }
 
   Future<void> _getNearExpiryStocks() async {
     nearExpiryItems = [];
     dynamic data =
         await Provider.of<Auth>(context, listen: false).getInventoryData();
-    // print(data);
+
     final int thresholdDays = 3;
     final currentDate = DateTime.now();
     final dateFormat = DateFormat('yyyy-MM-dd');
@@ -204,7 +196,7 @@ class _InventoryState extends State<Inventory> {
             currentDate.add(Duration(days: int.parse(item['shelf_life'])));
 
         daysUntilExpiry = expiryDate.difference(currentDate).inDays;
-        // print(daysUntilExpiry);
+
         if (daysUntilExpiry <= thresholdDays) {
           item['runway'] = calculateDaysUntilRunOut(
             item['purchaseDate'],
@@ -229,22 +221,20 @@ class _InventoryState extends State<Inventory> {
           item['volumeLeft'] != null &&
           item['purchaseDate'] != null &&
           item['volumePurchased'] != null) {
-        // print(item);
         double volumeLeft = double.parse(item['volumeLeft']);
+        double volumePurchased = double.parse(item['volumePurchased']);
         item['runway'] = calculateDaysUntilRunOut(
           item['purchaseDate'],
           int.parse(item['shelf_life']),
         );
 
-        if (volumeLeft / double.parse(item['volumePurchased']) <= 0.3) {}
-        lowstocks.add(item);
-
-        allStocks.add(item);
+        if ((volumeLeft / volumePurchased) <= 0.3) {
+          lowstocks.add(item);
+          allStocks.add(item);
+        }
       }
     }
-    // print(lowstocks);
-    // print('all');/
-    // print(allStocks);
+
     return lowstocks;
   }
 
@@ -261,28 +251,27 @@ class _InventoryState extends State<Inventory> {
 
   @override
   Widget build(BuildContext context) {
-    // print('iframeUrl: $iframeUrl');
-    // print(_iframeController);/
+    List<dynamic> dataList = [];
+    print('refresh');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Space(5.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            MakeListInventoryButton(),
-            // TouchableOpacity(
-            //   onTap: () async {
-            //     // AppWideLoadingBanner().loadingBanner(context);
-            //     // final newData = await Provider.of<Auth>(context, listen: false)
-            //     //     .SyncInventory();
-            //     // Navigator.of(context).pop();
-            //     // if (newData['data'] != null) {
-            //     //   TOastNotification().showSuccesToast(context, 'List Synced!');
-            //     // }
-            //   },
-            //   child: Icon(Icons.refresh),
-            // ),
+            Make_Update_ListWidget(
+              txt: 'Make List',
+              onTap: () async {
+                AppWideLoadingBanner().loadingBanner(context);
+                final _data = await Provider.of<Auth>(context, listen: false)
+                    .getInventoryData();
+                Navigator.of(context).pop();
+                dataList = _data['inventory_data'] ?? [];
+                makeListSheet().bottomSheet(context, dataList).then((value) {
+                  setState(() {});
+                });
+              },
+            ),
             _isUpdateLoading
                 ? SizedBox(
                     width: 30.w,
@@ -305,14 +294,13 @@ class _InventoryState extends State<Inventory> {
                       if ((data['inventory_data'] as List<dynamic>).length !=
                           0) {
                         List<dynamic> _dataList = data['inventory_data'];
-                        // print(_dataList);
+
                         _dataList
                             .sort((a, b) => a["itemId"].compareTo(b["itemId"]));
-                        // print('object: ${data['inventory_data']}');
+
                         InventoryBottomSheets()
                             .UpdateListBottomSheet(context, _dataList);
                       }
-                      // print(data);
                     },
                   ),
           ],
@@ -335,7 +323,6 @@ class _InventoryState extends State<Inventory> {
           ),
         ),
         Space(3.h),
-
         Row(
           children: [
             const BoldTextWidgetHomeScreen(
@@ -383,7 +370,6 @@ class _InventoryState extends State<Inventory> {
                 ),
               );
             }),
-
         Space(3.h),
         Row(
           children: [
@@ -403,7 +389,6 @@ class _InventoryState extends State<Inventory> {
           child: FutureBuilder(
             future: _getLowStockData(),
             builder: (context, snapshot) {
-              // print(lowStockItems.length == 0);
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(),
@@ -555,7 +540,6 @@ class _InventoryState extends State<Inventory> {
                 }
               }
             }),
-
         Space(3.h),
       ],
     );
@@ -568,7 +552,6 @@ class _InventoryState extends State<Inventory> {
       isScrollControlled: true,
 
       builder: (BuildContext context) {
-        // print(data);
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return SingleChildScrollView(
@@ -635,9 +618,6 @@ class _InventoryState extends State<Inventory> {
 
                               itemCount: allStocks.length,
                               itemBuilder: (context, index) {
-                                // print('object');
-                                // print(allStocks[index]);
-
                                 int runway = allStocks[index]['runway'];
                                 return LowStocksWidget(
                                     isSheet: true,
@@ -675,7 +655,6 @@ class _InventoryState extends State<Inventory> {
       isScrollControlled: true,
 
       builder: (BuildContext context) {
-        // print(data);
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return SingleChildScrollView(
@@ -975,8 +954,6 @@ class LowStocksWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print(newUrl);/
-
     double widhth = !isSheet ? 50.w : 40.w;
     Color color = percentage < 0.1
         ? const Color.fromRGBO(245, 75, 75, 1)

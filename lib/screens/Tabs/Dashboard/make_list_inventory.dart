@@ -18,31 +18,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class MakeListInventoryButton extends StatefulWidget {
-  const MakeListInventoryButton({super.key});
-
-  @override
-  State<MakeListInventoryButton> createState() =>
-      _MakeListInventoryButtonState();
-}
-
-class _MakeListInventoryButtonState extends State<MakeListInventoryButton> {
-  List<dynamic> dataList = [];
-  Widget build(BuildContext context) {
-    return Make_Update_ListWidget(
-      txt: 'Make List',
-      onTap: () async {
-        AppWideLoadingBanner().loadingBanner(context);
-        final _data =
-            await Provider.of<Auth>(context, listen: false).getInventoryData();
-        Navigator.of(context).pop();
-        dataList = _data['inventory_data'] ?? [];
-        _bottomSheet(context, dataList);
-      },
-    );
-  }
-
-  Future<dynamic> _bottomSheet(BuildContext context, List<dynamic> data) {
+class makeListSheet {
+  Future<dynamic> bottomSheet(BuildContext context, List<dynamic> data) {
     // bool isEditing = false;/
     // TextEditingController textEditingController = TextEditingController();
     // String text = 'Click me to edit';
@@ -168,8 +145,6 @@ class _SheetWidgetState extends State<SheetWidget> {
 
   @override
   void didChangeMetrics() {
-    // print("marrr");
-    // Called whenever system metrics change (e.g., keyboard visibility)
     setState(() {
       _isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
     });
@@ -581,22 +556,21 @@ class _SheetWidgetState extends State<SheetWidget> {
                                   editable: true,
                                   controller: volumeSoldController,
                                   onChanged: (newValue) {
-                                    // setState(() {
-                                    list[index]['volumeSold'] = newValue;
-                                    volumeSoldController.text = newValue;
-                                    // if (list[index]['sold'] == null) {
-                                    //   list[index]['sellingDate'] =
-                                    //       DateFormat('yyyy-MM-dd')
-                                    //           .format(DateTime.now())
-                                    //           .toString();
-                                    // }
-
-                                    list[index]['sold'] = true;
                                     list[index]['volumeLeft'] = (double.parse(
                                                 list[index]['volumeLeft']) -
                                             double.parse(newValue) +
-                                            _volumeSold)
+                                            _volumeSold +
+                                            ((list[index]['sold'] != null &&
+                                                    _volumeSold == 0)
+                                                ? double.parse(
+                                                    list[index]['volumeSold'])
+                                                : 0))
                                         .toString();
+                                    list[index]['volumeSold'] = newValue;
+                                    volumeSoldController.text = newValue;
+
+                                    list[index]['sold'] = true;
+
                                     // });
                                   },
                                 ),
@@ -612,7 +586,7 @@ class _SheetWidgetState extends State<SheetWidget> {
                                     list[index]['volumeLeft'] = newValue;
                                     volumeLeftController.text = newValue;
                                     // });
-                                    print(newValue);
+                                    // print(newValue);
                                   },
                                 ),
                               ),

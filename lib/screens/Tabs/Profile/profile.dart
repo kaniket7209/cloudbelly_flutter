@@ -251,7 +251,7 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                       ),
-                      StoreNameWidget(),
+                      const StoreNameWidget(),
                       Space(3.h),
                       Center(
                         child: ConstrainedBox(
@@ -348,7 +348,7 @@ class _ProfileState extends State<Profile> {
                                               link: Uri.parse(
                                                   'https://api.cloudbelly.in/jTpt?id=${Provider.of<Auth>(context, listen: false).user_id}&type=profile'),
                                               androidParameters:
-                                                  AndroidParameters(
+                                                  const AndroidParameters(
                                                 packageName:
                                                     'com.example.CloudbellyApp',
                                               ),
@@ -546,38 +546,150 @@ class _ProfileState extends State<Profile> {
                                         if (_activeButtonIndex == 2)
                                           Container(
                                             width: 85.w,
-                                            child: _isLoading == true
-                                                ? Center(
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  )
-                                                : ListView.builder(
-                                                    padding:
-                                                        const EdgeInsets.only(),
-                                                    itemCount: (menuList
-                                                            as List<dynamic>)
-                                                        .length,
-                                                    physics:
-                                                        const NeverScrollableScrollPhysics(),
-                                                    shrinkWrap: true,
-                                                    addAutomaticKeepAlives:
-                                                        true,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      menuList[index]['VEG'] ==
-                                                              null
-                                                          ? menuList[index]
-                                                              ['VEG'] = true
-                                                          : null;
+                                            child: Column(children: [
+                                              _isLoading == true
+                                                  ? const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    )
+                                                  : Column(
+                                                      children: [
+                                                        Container(
+                                                          width:
+                                                              double.infinity,
+                                                          height: 40,
+                                                          decoration: GlobalVariables()
+                                                              .ContainerDecoration(
+                                                                  offset: Offset(
+                                                                      0, 4),
+                                                                  blurRadius: 4,
+                                                                  shadowColor:
+                                                                      Color.fromRGBO(
+                                                                          0, 0, 0, 0.25),
+                                                                  boxColor: Color
+                                                                      .fromRGBO(
+                                                                          239,
+                                                                          255,
+                                                                          254,
+                                                                          1),
+                                                                  cornerRadius:
+                                                                      10),
+                                                          child: Row(children: [
+                                                            Space(
+                                                              12,
+                                                              isHorizontal:
+                                                                  true,
+                                                            ),
+                                                            Icon(
+                                                              Icons.search,
+                                                              color: Color(
+                                                                  0xFFFA6E00),
+                                                            ),
+                                                            Space(
+                                                              12,
+                                                              isHorizontal:
+                                                                  true,
+                                                            ),
+                                                            SizedBox(
+                                                              width: 60.w,
+                                                              child: TextField(
+                                                                  maxLines:
+                                                                      null,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: Color(
+                                                                        0xFF094B60),
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontFamily:
+                                                                        'Product Sans',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    height:
+                                                                        0.10,
+                                                                    letterSpacing:
+                                                                        0.42,
+                                                                  ),
+                                                                  textInputAction:
+                                                                      TextInputAction
+                                                                          .done,
+                                                                  decoration:
+                                                                      InputDecoration(
+                                                                    hintText:
+                                                                        'Search',
+                                                                    hintStyle:
+                                                                        TextStyle(
+                                                                      color: Color(
+                                                                          0xFF094B60),
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontFamily:
+                                                                          'Product Sans',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      height:
+                                                                          0.10,
+                                                                      letterSpacing:
+                                                                          0.42,
+                                                                    ),
+                                                                    contentPadding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    border:
+                                                                        InputBorder
+                                                                            .none,
+                                                                  ),
+                                                                  onChanged:
+                                                                      (newv) {},
+                                                                  onSubmitted:
+                                                                      (newv) {},
+                                                                  cursorColor:
+                                                                      Color(
+                                                                          0xFFFA6E00)),
+                                                            )
+                                                          ]),
+                                                        ),
+                                                        Space(1.h),
+                                                        ListView.builder(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(),
+                                                            itemCount: (menuList
+                                                                    as List<
+                                                                        dynamic>)
+                                                                .length,
+                                                            physics:
+                                                                const NeverScrollableScrollPhysics(),
+                                                            shrinkWrap: true,
+                                                            addAutomaticKeepAlives:
+                                                                true,
+                                                            itemBuilder:
+                                                                (context,
+                                                                    index) {
+                                                              menuList[index][
+                                                                          'VEG'] ==
+                                                                      null
+                                                                  ? menuList[
+                                                                          index]
+                                                                      [
+                                                                      'VEG'] = true
+                                                                  : null;
 
-                                                      return menuList[index]
-                                                                  ['VEG'] !=
-                                                              null
-                                                          ? MenuItem(
-                                                              data: menuList[
-                                                                  index])
-                                                          : SizedBox.shrink();
-                                                    }),
+                                                              return menuList[index]
+                                                                          [
+                                                                          'VEG'] !=
+                                                                      null
+                                                                  ? MenuItem(
+                                                                      data: menuList[
+                                                                          index])
+                                                                  : const SizedBox
+                                                                      .shrink();
+                                                            }),
+                                                      ],
+                                                    ),
+                                            ]),
                                           ),
                                         if (_activeButtonIndex == 3)
                                           const Text('Feature Pending')

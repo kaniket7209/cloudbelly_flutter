@@ -38,21 +38,7 @@ class _DashBoardState extends State<DashBoard>
   int _activeButtonIndex = 1;
 
   Future<void> _refreshFeed() async {
-    bool _isAvailable = false;
-    final prefs = await SharedPreferences.getInstance();
-
-    final temp = await Provider.of<Auth>(context, listen: false).tryAutoLogin();
-    setState(() {
-      _isAvailable = temp;
-    });
-
-    if (_isAvailable) {
-      final extractedUserData =
-          json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
-
-      String msg = await Provider.of<Auth>(context, listen: false)
-          .login(extractedUserData['email'], extractedUserData['password']);
-    }
+    setState(() {});
   }
 
   @override

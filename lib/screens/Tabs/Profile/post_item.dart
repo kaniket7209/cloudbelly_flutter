@@ -138,6 +138,10 @@ class _PostItemState extends State<PostItem> {
         children: [
           Row(
             children: [
+              Space(
+                10,
+                isHorizontal: true,
+              ),
               Provider.of<Auth>(context, listen: false).logo_url == '' ||
                       ((widget.data['profile_photo'] == '' ||
                               widget.data['profile_photo'] == null) &&
@@ -274,7 +278,7 @@ class _PostItemState extends State<PostItem> {
                               shadows: [
                                 BoxShadow(
                                   offset: Offset(0, 4),
-                                  color: Color.fromRGBO(124, 193, 191, 0.3),
+                                  color: Color.fromRGBO(124, 193, 191, 0.6),
                                   blurRadius: 20,
                                 )
                               ],
@@ -308,7 +312,7 @@ class _PostItemState extends State<PostItem> {
                             shadows: [
                               BoxShadow(
                                 offset: Offset(0, 4),
-                                color: Color.fromRGBO(124, 193, 191, 0.3),
+                                color: Color.fromRGBO(124, 193, 191, 0.6),
                                 blurRadius: 20,
                               )
                             ],
@@ -507,7 +511,8 @@ class _PostItemState extends State<PostItem> {
               Row(
                 children: [
                   if (_likeData.length != 0 &&
-                      _likeData[0]['profile_photo'] != '' &&  _likeData[0]['profile_photo'] != null)
+                      _likeData[0]['profile_photo'] != '' &&
+                      _likeData[0]['profile_photo'] != null)
                     Container(
                       width: 17,
                       height: 17,
