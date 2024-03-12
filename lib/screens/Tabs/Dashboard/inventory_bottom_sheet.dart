@@ -1,14 +1,11 @@
-import 'package:cloudbelly_app/api_service.dart';
+// ignore_for_file: must_be_immutable
+
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
-import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
-import 'package:cloudbelly_app/widgets/appwide_button.dart';
-import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class InventoryBottomSheets {

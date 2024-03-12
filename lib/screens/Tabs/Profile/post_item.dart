@@ -126,6 +126,8 @@ class _PostItemState extends State<PostItem> {
   List<dynamic> _likeData = [];
   @override
   Widget build(BuildContext context) {
+    bool _isVendor =
+        Provider.of<Auth>(context, listen: false).userType == 'Vendor';
     // print(widget.data);
     // final date_time = formatTimeDifference('created_at');
     CarouselController buttonCarouselController = CarouselController();
@@ -142,7 +144,8 @@ class _PostItemState extends State<PostItem> {
                 10,
                 isHorizontal: true,
               ),
-              Provider.of<Auth>(context, listen: false).logo_url == '' ||
+              (Provider.of<Auth>(context, listen: false).logo_url == '' &&
+                          widget.isProfilePost) ||
                       ((widget.data['profile_photo'] == '' ||
                               widget.data['profile_photo'] == null) &&
                           !widget.isProfilePost)
@@ -150,10 +153,12 @@ class _PostItemState extends State<PostItem> {
                       height: 35,
                       width: 35,
                       decoration: ShapeDecoration(
-                        shadows: const [
+                        shadows: [
                           BoxShadow(
                             offset: Offset(0, 4),
-                            color: Color.fromRGBO(31, 111, 109, 0.4),
+                            color: _isVendor
+                                ? Color.fromRGBO(31, 111, 109, 0.4)
+                                : Color.fromRGBO(130, 47, 130, 0.4),
                             blurRadius: 20,
                           ),
                         ],
@@ -181,9 +186,11 @@ class _PostItemState extends State<PostItem> {
                       width: 35,
                       decoration: ShapeDecoration(
                         shadows: [
-                          const BoxShadow(
+                          BoxShadow(
                             offset: Offset(0, 4),
-                            color: Color.fromRGBO(31, 111, 109, 0.6),
+                            color: _isVendor
+                                ? Color.fromRGBO(31, 111, 109, 0.6)
+                                : Color.fromRGBO(130, 47, 130, 0.7),
                             blurRadius: 20,
                           )
                         ],
@@ -211,8 +218,8 @@ class _PostItemState extends State<PostItem> {
                 widget.isProfilePost
                     ? Provider.of<Auth>(context, listen: false).store_name
                     : widget.data['user_name'],
-                style: const TextStyle(
-                  color: Color(0xFF094B60),
+                style: TextStyle(
+                  color: _isVendor ? Color(0xFF094B60) : Color(0xFF2E0536),
                   fontSize: 14,
                   fontFamily: 'Product Sans',
                   fontWeight: FontWeight.w700,
@@ -233,7 +240,9 @@ class _PostItemState extends State<PostItem> {
                         blurRadius: 20,
                       ),
                     ],
-                    color: const Color.fromRGBO(124, 193, 191, 1),
+                    color: _isVendor
+                        ? const Color.fromRGBO(124, 193, 191, 1)
+                        : Color(0xFFFA6E00),
                     shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(
                       cornerRadius: 5,
@@ -274,13 +283,21 @@ class _PostItemState extends State<PostItem> {
                           aspectRatio: 1,
                           child: Container(
                             width: double.infinity,
-                            decoration: const ShapeDecoration(
+                            decoration: ShapeDecoration(
                               shadows: [
-                                BoxShadow(
-                                  offset: Offset(0, 4),
-                                  color: Color.fromRGBO(124, 193, 191, 0.6),
-                                  blurRadius: 20,
-                                )
+                                _isVendor
+                                    ? BoxShadow(
+                                        offset: Offset(0, 4),
+                                        color:
+                                            Color.fromRGBO(124, 193, 191, 0.6),
+                                        blurRadius: 20,
+                                      )
+                                    : BoxShadow(
+                                        offset: Offset(3, 4),
+                                        color:
+                                            Color.fromRGBO(158, 116, 158, 0.5),
+                                        blurRadius: 15,
+                                      )
                               ],
                               shape: SmoothRectangleBorder(),
                             ),
@@ -308,13 +325,19 @@ class _PostItemState extends State<PostItem> {
                         return Container(
                           width: double
                               .infinity, // Take up full width of the screen
-                          decoration: const ShapeDecoration(
+                          decoration: ShapeDecoration(
                             shadows: [
-                              BoxShadow(
-                                offset: Offset(0, 4),
-                                color: Color.fromRGBO(124, 193, 191, 0.6),
-                                blurRadius: 20,
-                              )
+                              _isVendor
+                                  ? BoxShadow(
+                                      offset: Offset(0, 4),
+                                      color: Color.fromRGBO(124, 193, 191, 0.6),
+                                      blurRadius: 20,
+                                    )
+                                  : BoxShadow(
+                                      offset: Offset(3, 4),
+                                      color: Color.fromRGBO(158, 116, 158, 0.5),
+                                      blurRadius: 15,
+                                    )
                             ],
                             shape: SmoothRectangleBorder(),
                           ),
@@ -557,10 +580,10 @@ class _PostItemState extends State<PostItem> {
                       7,
                       isHorizontal: true,
                     ),
-                  const Text(
+                  Text(
                     'Liked by',
                     style: TextStyle(
-                      color: Color(0xFF519896),
+                      color: _isVendor ? Color(0xFF519896) : Color(0xFFB232CB),
                       fontSize: 12,
                       fontFamily: 'Product Sans Medium',
                       fontWeight: FontWeight.w500,
@@ -571,8 +594,8 @@ class _PostItemState extends State<PostItem> {
                   Space(isHorizontal: true, 5),
                   Text(
                     '${_likeData.length == 0 ? '0 people' : _likeData.length == 1 ? _likeData[0]['name'] : '${_likeData[0]['name']} and ${_likeData.length - 1} others'}',
-                    style: const TextStyle(
-                      color: Color(0xFF0A4C61),
+                    style: TextStyle(
+                      color: _isVendor ? Color(0xFF0A4C61) : Color(0xFF2E0536),
                       fontSize: 12,
                       fontFamily: 'Product Sans',
                       fontWeight: FontWeight.w700,
@@ -610,8 +633,10 @@ class _PostItemState extends State<PostItem> {
                               caption1,
                               overflow: TextOverflow.clip,
                               maxLines: 1,
-                              style: const TextStyle(
-                                color: Color(0xFF0A4C61),
+                              style: TextStyle(
+                                color: _isVendor
+                                    ? Color(0xFF0A4C61)
+                                    : Color(0xFF2E0536),
                                 fontSize: 12,
                                 fontFamily: 'Product Sans Medium',
                                 fontWeight: FontWeight.w500,
@@ -629,8 +654,10 @@ class _PostItemState extends State<PostItem> {
                           caption2,
                           maxLines: null,
                           // overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Color(0xFF0A4C61),
+                          style: TextStyle(
+                            color: _isVendor
+                                ? Color(0xFF0A4C61)
+                                : Color(0xFF2E0536),
                             fontSize: 12,
                             fontFamily: 'Product Sans Medium',
                             fontWeight: FontWeight.w500,
@@ -684,8 +711,8 @@ class _PostItemState extends State<PostItem> {
                     (widget.data['comments'] ?? []).length > 0
                         ? 'View ${(widget.data['comments'] ?? []).length} comments'
                         : '${(widget.data['comments'] ?? []).length} comments',
-                    style: const TextStyle(
-                      color: Color(0xFF519796),
+                    style: TextStyle(
+                      color: _isVendor ? Color(0xFF519796) : Color(0xFFB232CB),
                       fontSize: 11,
                       fontFamily: 'Product Sans Medium',
                       fontWeight: FontWeight.w500,
@@ -698,8 +725,8 @@ class _PostItemState extends State<PostItem> {
               Space(0.3.h),
               Text(
                 '${formatTimeDifference(widget.data['created_at'])}',
-                style: const TextStyle(
-                  color: Color(0xFF519796),
+                style: TextStyle(
+                  color: _isVendor ? Color(0xFF519796) : Color(0xFFB232CB),
                   fontSize: 9,
                   fontFamily: 'Product Sans Medium',
                   fontWeight: FontWeight.w500,

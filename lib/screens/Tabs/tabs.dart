@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_field
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:cloudbelly_app/api_service.dart';
@@ -14,7 +14,6 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 
 class Tabs extends StatefulWidget {
   static const routeName = '/tabs-screen';
@@ -193,7 +192,6 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                         fontSize: 8,
                         fontFamily: 'Product Sans',
                         fontWeight: FontWeight.w700,
-                 
                         letterSpacing: 0.10,
                       ),
                     ),

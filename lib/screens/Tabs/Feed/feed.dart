@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:convert';
 
 import 'package:cloudbelly_app/api_service.dart';
@@ -7,7 +9,6 @@ import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -133,6 +134,7 @@ class _FeedState extends State<Feed> {
         // primary: true, // Ensure vertical scroll works
         controller: _scrollController,
         child: Container(
+          // color: Color.fromRGBO(255, 248, 255, 1),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

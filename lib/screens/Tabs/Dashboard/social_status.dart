@@ -20,8 +20,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:unique_simple_bar_chart/data_models.dart';
-import 'package:unique_simple_bar_chart/simple_bar_chart.dart';
 
 class SocialStatusContent extends StatefulWidget {
   const SocialStatusContent({

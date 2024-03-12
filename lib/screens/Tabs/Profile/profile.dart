@@ -3,14 +3,11 @@
 import 'dart:convert';
 
 import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
-import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
-import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/customer_widgets_profile.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/edit_profile.dart';
-import 'package:cloudbelly_app/screens/Tabs/Profile/menu.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu_item.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
@@ -108,6 +105,8 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    bool _isVendor =
+        Provider.of<Auth>(context, listen: false).userType == 'Vendor';
     return RefreshIndicator(
       onRefresh: _refresh,
       child: SingleChildScrollView(
@@ -382,322 +381,359 @@ class _ProfileState extends State<Profile> {
                                 ),
                               )),
                               Space(3.h),
-                              Center(
-                                child: Container(
-                                  width: 90.w,
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 1.5.h, horizontal: 4.w),
-                                  decoration: ShapeDecoration(
-                                    shadows: const [
-                                      BoxShadow(
-                                        offset: Offset(0, 4),
-                                        color:
-                                            Color.fromRGBO(165, 200, 199, 0.6),
-                                        blurRadius: 25,
-                                      )
-                                    ],
-                                    color: Colors.white,
-                                    shape: SmoothRectangleBorder(
-                                      borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 20,
-                                        cornerSmoothing: 1,
-                                      ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: Container(
+                          width: _isVendor ? 90.w : 100.w,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 1.5.h, horizontal: 4.w),
+                          decoration: ShapeDecoration(
+                            shadows: const [
+                              BoxShadow(
+                                offset: Offset(0, 4),
+                                color: Color.fromRGBO(165, 200, 199, 0.6),
+                                blurRadius: 30,
+                              )
+                            ],
+                            color: Colors.white,
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 30,
+                                cornerSmoothing: 1,
+                              ),
+                            ),
+                          ),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                if (_isVendor)
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 1.h, horizontal: 3.w),
+                                    width: 55,
+                                    height: 6,
+                                    decoration: ShapeDecoration(
+                                      color: const Color(0xFFFA6E00),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6)),
                                     ),
                                   ),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 1.h, horizontal: 3.w),
-                                          width: 55,
-                                          height: 6,
-                                          decoration: ShapeDecoration(
-                                            color: const Color(0xFFFA6E00),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(6)),
-                                          ),
-                                        ),
-                                        Space(2.h),
-                                        Container(
-                                          height: 6.5.h,
-                                          width: 90.w,
-                                          decoration: ShapeDecoration(
-                                            shadows: const [
-                                              BoxShadow(
-                                                offset: Offset(0, 4),
-                                                color: Color.fromRGBO(
-                                                    165, 200, 199, 0.6),
-                                                blurRadius: 20,
-                                              )
-                                            ],
-                                            color: Colors.white,
-                                            shape: SmoothRectangleBorder(
-                                              borderRadius: SmoothBorderRadius(
-                                                cornerRadius: 15,
-                                                cornerSmoothing: 1,
-                                              ),
-                                            ),
-                                          ),
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                TouchableOpacity(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        _activeButtonIndex = 1;
-                                                      });
-                                                    },
-                                                    child: CommonButtonProfile(
+                                Space(2.h),
+                                !_isVendor
+                                    ? SizedBox(
+                                        width: 87.w,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            TouchableOpacity(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _activeButtonIndex = 1;
+                                                  });
+                                                },
+                                                child:
+                                                    CommomButtonProfileCustomer(
                                                         isActive:
                                                             _activeButtonIndex ==
                                                                 1,
-                                                        txt: 'Content')),
-                                                TouchableOpacity(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      _activeButtonIndex = 2;
-                                                    });
-                                                  },
-                                                  child: CommonButtonProfile(
-                                                      isActive:
-                                                          _activeButtonIndex ==
-                                                              2,
-                                                      txt: 'Menu'),
-                                                ),
-                                                TouchableOpacity(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      _activeButtonIndex = 3;
-                                                    });
-                                                  },
-                                                  child: CommonButtonProfile(
-                                                      isActive:
-                                                          _activeButtonIndex ==
-                                                              3,
-                                                      txt: 'Reviews'),
-                                                ),
-                                              ]),
+                                                        text: 'Content')),
+                                            TouchableOpacity(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _activeButtonIndex = 2;
+                                                  });
+                                                },
+                                                child:
+                                                    CommomButtonProfileCustomer(
+                                                        isActive:
+                                                            _activeButtonIndex ==
+                                                                2,
+                                                        text: 'Menu')),
+                                            TouchableOpacity(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _activeButtonIndex = 4;
+                                                  });
+                                                },
+                                                child:
+                                                    CommomButtonProfileCustomer(
+                                                        isActive:
+                                                            _activeButtonIndex ==
+                                                                4,
+                                                        text: 'About')),
+                                            TouchableOpacity(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _activeButtonIndex = 3;
+                                                  });
+                                                },
+                                                child:
+                                                    CommomButtonProfileCustomer(
+                                                        isActive:
+                                                            _activeButtonIndex ==
+                                                                3,
+                                                        text: 'Reviews')),
+                                          ],
                                         ),
-                                        Space(3.h),
-                                        if (_activeButtonIndex == 1)
-                                          Container(
-                                            width: 85.w,
-                                            child: FutureBuilder(
-                                              future: Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .getFeed(),
-                                              builder: (context, snapshot) {
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.done) {
-                                                  // print(snapshot.data);
-                                                  List<dynamic> data = snapshot
-                                                      .data as List<dynamic>;
-                                                  // print(data);
-                                                  data = data.reversed.toList();
-                                                  return GridView.builder(
-                                                    physics:
-                                                        const NeverScrollableScrollPhysics(), // Disable scrolling
-                                                    shrinkWrap:
-                                                        true, // Allow the GridView to shrink-wrap its content
-                                                    addAutomaticKeepAlives:
-                                                        true,
-
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 0.8.h,
-                                                            horizontal: 3.w),
-                                                    gridDelegate:
-                                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                                      childAspectRatio: 1,
-                                                      crossAxisCount:
-                                                          3, // Number of items in a row
-                                                      crossAxisSpacing: 2
-                                                          .w, // Spacing between columns
-                                                      mainAxisSpacing: 1
-                                                          .h, // Spacing between rows
-                                                    ),
-                                                    itemCount: data
-                                                        .length, // Total number of items
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      // You can replace this container with your custom item widget
-                                                      return FeedWidget(
-                                                          index: index,
-                                                          fulldata: data,
-                                                          data: data[index]);
-                                                    },
-                                                  );
-                                                } else
-                                                  return Center(
-                                                    child: Container(
-                                                      height: 20,
-                                                      width: 20,
-                                                      child:
-                                                          const CircularProgressIndicator(),
-                                                    ),
-                                                  );
-                                              },
+                                      )
+                                    : Container(
+                                        height: 6.5.h,
+                                        width: 90.w,
+                                        decoration: ShapeDecoration(
+                                          shadows: const [
+                                            BoxShadow(
+                                              offset: Offset(0, 4),
+                                              color: Color.fromRGBO(
+                                                  165, 200, 199, 0.6),
+                                              blurRadius: 20,
+                                            )
+                                          ],
+                                          color: Colors.white,
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                              cornerRadius: 15,
+                                              cornerSmoothing: 1,
                                             ),
                                           ),
-                                        if (_activeButtonIndex == 2)
-                                          Container(
-                                            width: 85.w,
-                                            child: Column(children: [
-                                              _isLoading == true
-                                                  ? const Center(
-                                                      child:
-                                                          CircularProgressIndicator(),
-                                                    )
-                                                  : Column(
-                                                      children: [
-                                                        Container(
-                                                          width:
-                                                              double.infinity,
-                                                          height: 40,
-                                                          decoration: GlobalVariables()
-                                                              .ContainerDecoration(
-                                                                  offset: Offset(
-                                                                      0, 4),
-                                                                  blurRadius: 4,
-                                                                  shadowColor:
-                                                                      Color.fromRGBO(
-                                                                          0, 0, 0, 0.25),
-                                                                  boxColor: Color
-                                                                      .fromRGBO(
-                                                                          239,
-                                                                          255,
-                                                                          254,
-                                                                          1),
-                                                                  cornerRadius:
-                                                                      10),
-                                                          child: Row(children: [
-                                                            Space(
-                                                              12,
-                                                              isHorizontal:
-                                                                  true,
-                                                            ),
-                                                            Icon(
-                                                              Icons.search,
-                                                              color: Color(
-                                                                  0xFFFA6E00),
-                                                            ),
-                                                            Space(
-                                                              12,
-                                                              isHorizontal:
-                                                                  true,
-                                                            ),
-                                                            SizedBox(
-                                                              width: 60.w,
-                                                              child: TextField(
-                                                                  maxLines:
-                                                                      null,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    color: Color(
-                                                                        0xFF094B60),
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontFamily:
-                                                                        'Product Sans',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    height:
-                                                                        0.10,
-                                                                    letterSpacing:
-                                                                        0.42,
-                                                                  ),
-                                                                  textInputAction:
-                                                                      TextInputAction
-                                                                          .done,
-                                                                  decoration:
-                                                                      InputDecoration(
-                                                                    hintText:
-                                                                        'Search',
-                                                                    hintStyle:
-                                                                        TextStyle(
-                                                                      color: Color(
-                                                                          0xFF094B60),
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontFamily:
-                                                                          'Product Sans',
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      height:
-                                                                          0.10,
-                                                                      letterSpacing:
-                                                                          0.42,
-                                                                    ),
-                                                                    contentPadding:
-                                                                        EdgeInsets
-                                                                            .zero,
-                                                                    border:
-                                                                        InputBorder
-                                                                            .none,
-                                                                  ),
-                                                                  onChanged:
-                                                                      (newv) {},
-                                                                  onSubmitted:
-                                                                      (newv) {},
-                                                                  cursorColor:
-                                                                      Color(
-                                                                          0xFFFA6E00)),
-                                                            )
-                                                          ]),
-                                                        ),
-                                                        Space(1.h),
-                                                        ListView.builder(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(),
-                                                            itemCount: (menuList
-                                                                    as List<
-                                                                        dynamic>)
-                                                                .length,
-                                                            physics:
-                                                                const NeverScrollableScrollPhysics(),
-                                                            shrinkWrap: true,
-                                                            addAutomaticKeepAlives:
-                                                                true,
-                                                            itemBuilder:
-                                                                (context,
-                                                                    index) {
-                                                              menuList[index][
-                                                                          'VEG'] ==
-                                                                      null
-                                                                  ? menuList[
-                                                                          index]
-                                                                      [
-                                                                      'VEG'] = true
-                                                                  : null;
-
-                                                              return menuList[index]
-                                                                          [
-                                                                          'VEG'] !=
-                                                                      null
-                                                                  ? MenuItem(
-                                                                      data: menuList[
-                                                                          index])
-                                                                  : const SizedBox
-                                                                      .shrink();
-                                                            }),
-                                                      ],
-                                                    ),
+                                        ),
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              TouchableOpacity(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _activeButtonIndex = 1;
+                                                    });
+                                                  },
+                                                  child: !_isVendor
+                                                      ? CommomButtonProfileCustomer(
+                                                          isActive:
+                                                              _activeButtonIndex ==
+                                                                  1,
+                                                          text: 'Content')
+                                                      : CommonButtonProfile(
+                                                          isActive:
+                                                              _activeButtonIndex ==
+                                                                  1,
+                                                          txt: 'Content')),
+                                              TouchableOpacity(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _activeButtonIndex = 2;
+                                                  });
+                                                },
+                                                child: CommonButtonProfile(
+                                                    isActive:
+                                                        _activeButtonIndex == 2,
+                                                    txt: 'Menu'),
+                                              ),
+                                              TouchableOpacity(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _activeButtonIndex = 3;
+                                                  });
+                                                },
+                                                child: CommonButtonProfile(
+                                                    isActive:
+                                                        _activeButtonIndex == 3,
+                                                    txt: 'Reviews'),
+                                              ),
                                             ]),
-                                          ),
-                                        if (_activeButtonIndex == 3)
-                                          const Text('Feature Pending')
-                                      ]),
-                                ),
-                              )
-                            ],
-                          ),
+                                      ),
+                                _isVendor ? Space(3.h) : Space(0.h),
+                                if (_activeButtonIndex == 1)
+                                  Center(
+                                    // width:
+                                    child: FutureBuilder(
+                                      future: Provider.of<Auth>(context,
+                                              listen: false)
+                                          .getFeed(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          // print(snapshot.data);
+                                          List<dynamic> data =
+                                              snapshot.data as List<dynamic>;
+                                          // print(data);
+                                          data = data.reversed.toList();
+                                          return GridView.builder(
+                                            physics:
+                                                const NeverScrollableScrollPhysics(), // Disable scrolling
+                                            shrinkWrap:
+                                                true, // Allow the GridView to shrink-wrap its content
+                                            addAutomaticKeepAlives: true,
+
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 0.8.h,
+                                                horizontal:
+                                                    _isVendor ? 3.w : 0),
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                              childAspectRatio: 1,
+                                              crossAxisCount:
+                                                  3, // Number of items in a row
+                                              crossAxisSpacing:
+                                                  _isVendor ? 2.w : 2.w,
+                                              mainAxisSpacing:
+                                                  1.h, // Spacing between rows
+                                            ),
+                                            itemCount: data
+                                                .length, // Total number of items
+                                            itemBuilder: (context, index) {
+                                              // You can replace this container with your custom item widget
+                                              return FeedWidget(
+                                                  index: index,
+                                                  fulldata: data,
+                                                  data: data[index]);
+                                            },
+                                          );
+                                        } else
+                                          return Center(
+                                            child: Container(
+                                              height: 20,
+                                              width: 20,
+                                              child:
+                                                  const CircularProgressIndicator(),
+                                            ),
+                                          );
+                                      },
+                                    ),
+                                  ),
+                                if (_activeButtonIndex == 2)
+                                  Container(
+                                    width: 85.w,
+                                    child: Column(children: [
+                                      _isLoading == true
+                                          ? const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            )
+                                          : Column(
+                                              children: [
+                                                Container(
+                                                  width: double.infinity,
+                                                  height: 40,
+                                                  decoration: GlobalVariables()
+                                                      .ContainerDecoration(
+                                                          offset: Offset(0, 4),
+                                                          blurRadius: 4,
+                                                          shadowColor:
+                                                              Color.fromRGBO(0,
+                                                                  0, 0, 0.25),
+                                                          boxColor:
+                                                              Color.fromRGBO(
+                                                                  239,
+                                                                  255,
+                                                                  254,
+                                                                  1),
+                                                          cornerRadius: 10),
+                                                  child: Row(children: [
+                                                    Space(
+                                                      12,
+                                                      isHorizontal: true,
+                                                    ),
+                                                    Icon(
+                                                      Icons.search,
+                                                      color: Color(0xFFFA6E00),
+                                                    ),
+                                                    Space(
+                                                      12,
+                                                      isHorizontal: true,
+                                                    ),
+                                                    SizedBox(
+                                                      width: 60.w,
+                                                      child: TextField(
+                                                          readOnly: true,
+                                                          maxLines: null,
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Color(
+                                                                0xFF094B60),
+                                                            fontSize: 14,
+                                                            fontFamily:
+                                                                'Product Sans',
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            height: 0.10,
+                                                            letterSpacing: 0.42,
+                                                          ),
+                                                          textInputAction:
+                                                              TextInputAction
+                                                                  .done,
+                                                          decoration:
+                                                              InputDecoration(
+                                                            hintText: 'Search',
+                                                            hintStyle:
+                                                                TextStyle(
+                                                              color: Color(
+                                                                  0xFF094B60),
+                                                              fontSize: 14,
+                                                              fontFamily:
+                                                                  'Product Sans',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              height: 0.10,
+                                                              letterSpacing:
+                                                                  0.42,
+                                                            ),
+                                                            contentPadding:
+                                                                EdgeInsets.zero,
+                                                            border: InputBorder
+                                                                .none,
+                                                          ),
+                                                          onChanged: (newv) {},
+                                                          onSubmitted:
+                                                              (newv) {},
+                                                          cursorColor: Color(
+                                                              0xFFFA6E00)),
+                                                    )
+                                                  ]),
+                                                ),
+                                                Space(1.h),
+                                                ListView.builder(
+                                                    padding:
+                                                        const EdgeInsets.only(),
+                                                    itemCount: (menuList
+                                                            as List<dynamic>)
+                                                        .length,
+                                                    physics:
+                                                        const NeverScrollableScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    addAutomaticKeepAlives:
+                                                        true,
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      menuList[index]['VEG'] ==
+                                                              null
+                                                          ? menuList[index]
+                                                              ['VEG'] = true
+                                                          : null;
+
+                                                      return menuList[index]
+                                                                  ['VEG'] !=
+                                                              null
+                                                          ? MenuItem(
+                                                              data: menuList[
+                                                                  index])
+                                                          : const SizedBox
+                                                              .shrink();
+                                                    }),
+                                              ],
+                                            ),
+                                    ]),
+                                  ),
+                                if (_activeButtonIndex == 3)
+                                  const Text('Feature Pending'),
+                                if (_activeButtonIndex == 4)
+                                  const Text('Feature Pending')
+                              ]),
                         ),
                       )
                     ],
@@ -727,6 +763,8 @@ class FeedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool _isVendor =
+        Provider.of<Auth>(context, listen: false).userType == 'Vendor';
     // bool _isMultiple =
     //     data['multiple_files'] != null && data['multiple_files'].length != 0;
     return TouchableOpacity(
@@ -741,8 +779,8 @@ class FeedWidget extends StatelessWidget {
           Hero(
             tag: data['id'],
             child: Container(
-              height: 100,
-              width: 100,
+              height: _isVendor ? 100 : 110,
+              width: _isVendor ? 100 : 110,
               decoration: const ShapeDecoration(
                 shadows: [
                   BoxShadow(

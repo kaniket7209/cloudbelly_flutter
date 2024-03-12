@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 // import 'dart:html';
@@ -30,6 +31,7 @@ class Auth with ChangeNotifier {
   String rating = '-';
   List<dynamic> followers = [];
   List<dynamic> followings = [];
+  String userType = '';
 
   // get user_logo_url {
   //   notifyListeners();
@@ -104,7 +106,7 @@ class Auth with ChangeNotifier {
       followings = DataMap['followings'] ?? [];
       cover_image = DataMap['cover_image'] ?? '';
       store_name = store_name == '' ? user_email.split('@')[0] : store_name;
-      // logo_url = logo_url == '' ? '' : logo_url;
+      userType = DataMap['user_type'] ?? 'Vendor';
       notifyListeners();
       final userData = json.encode(
         {'email': email, 'password': pass},
@@ -968,7 +970,7 @@ class Auth with ChangeNotifier {
         },
         body: jsonEncode(requestBody),
       );
-      // print('response: ${response.body}');
+      print('response: ${response.body}');
       // print(response.statusCode);
 
       return jsonDecode(response.body);
@@ -1000,6 +1002,7 @@ class Auth with ChangeNotifier {
         "volumeSold": data[i]['volumeSold'],
       });
     }
+    print('new: $_newList');
     Map<String, dynamic> requestBody = {
       'user_id': user_id,
       'data': _newList
