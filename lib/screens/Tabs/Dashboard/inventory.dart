@@ -214,28 +214,44 @@ class _InventoryState extends State<Inventory> {
   }
 
   List<dynamic> findLowStockItems(List<dynamic> inventoryData) {
-    List<dynamic> lowstocks = [];
-    allStocks = [];
+    List<dynamic> lowStocks = [];
+    List<dynamic> allStocks = [];
+    DateTime today = DateTime.now();
+
     for (var item in inventoryData) {
       if (item['shelf_life'] != null &&
           item['volumeLeft'] != null &&
           item['purchaseDate'] != null &&
-          item['volumePurchased'] != null) {
+          item['volumePurchased'] != null &&
+          item['salesRatePerDay'] != null) {
         double volumeLeft = double.parse(item['volumeLeft']);
         double volumePurchased = double.parse(item['volumePurchased']);
-        item['runway'] = calculateDaysUntilRunOut(
-          item['purchaseDate'],
-          int.parse(item['shelf_life']),
-        );
+        double salesRatePerDay = double.parse(item['salesRatePerDay']);
+        int shelfLife = int.parse(item['shelf_life']);
+        DateTime purchaseDate = DateTime.parse(item['purchaseDate']);
+        int daysSincePurchase = today.difference(purchaseDate).inDays;
+        double expectedVolumeSold = daysSincePurchase * salesRatePerDay;
+        double expectedVolumeLeft = volumePurchased - expectedVolumeSold;
 
-        if ((volumeLeft / volumePurchased) <= 0.3) {
-          lowstocks.add(item);
-          allStocks.add(item);
+        int runway = (volumeLeft / salesRatePerDay).ceil();
+        item['runway'] = runway;
+
+        double lowStockThreshold;
+        if (shelfLife > 30) {
+          lowStockThreshold = 0.3;
+        } else {
+          lowStockThreshold = 0.5;
         }
+
+        if (volumeLeft / volumePurchased < lowStockThreshold ||
+            expectedVolumeLeft < volumePurchased * lowStockThreshold) {
+          lowStocks.add(item);
+        }
+        allStocks.add(item);
       }
     }
 
-    return lowstocks;
+    return lowStocks;
   }
 
   int calculateDaysUntilRunOut(String purchaseDateStr, int shelfLife) {
@@ -482,7 +498,7 @@ class _InventoryState extends State<Inventory> {
                                   name: nearExpiryItems[index]['itemName'],
                                   volume: nearExpiryItems[index]['volumeLeft'] +
                                       ' ' +
-                                      nearExpiryItems[index]['PRODUCT TYPE'],
+                                      nearExpiryItems[index]['unitType'],
                                   url:
                                       nearExpiryItems[index]['image_url'] ?? '',
                                 );

@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -250,7 +252,7 @@ class Auth with ChangeNotifier {
       notifyListeners();
 
       print(jsonDecode(response.body));
-      int code = response.statusCode;
+      // int code = response.statusCode;
       // return code.toString();
       return jsonDecode(response.body);
     } catch (error) {
