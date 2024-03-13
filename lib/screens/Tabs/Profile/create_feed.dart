@@ -31,6 +31,7 @@ class CreateFeed {
           .split(',')
           .map((String s) => s.trim())
           .toList();
+
       String msg = await Provider.of<Auth>(context, listen: false)
           .createPost(imageUrlList, tags, caption);
       Navigator.of(context).pop();
