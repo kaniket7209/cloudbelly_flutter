@@ -46,9 +46,18 @@ class _InventoryState extends State<Inventory> {
   @override
   void initState() {
     String temp = _generateTokenAndLaunchDashboard();
+    nearExpiryItems = [];
     _setWebviewController(temp);
     // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    nearExpiryItems = [];
+
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
   }
 
   void _setWebviewController(String url) {
@@ -95,20 +104,11 @@ class _InventoryState extends State<Inventory> {
     return iframeUrl;
   }
 
-  // void _launchURL(String url) async {
-  //   Uri googleSheetUrl = Uri.parse(url);
-  //   if (!await launchUrl(googleSheetUrl, mode: LaunchMode.inAppBrowserView)) {
-  //     TOastNotification().showErrorToast(context, 'Error while opening Sheet');
-  //     throw Exception('Could not launch $url');
-  //   }
-  // }
-
   Future<void> _getLowStockData() async {
     lowStockItems = [];
 
     final data =
         await Provider.of<Auth>(context, listen: false).getInventoryData();
-    // print('total: $data');
 
     lowStockItems = findLowStockItems(data['inventory_data']);
 
@@ -149,10 +149,6 @@ class _InventoryState extends State<Inventory> {
       }
     });
 
-    // if (_somethingmissing) {
-    //   TOastNotification()
-    //       .showErrorToast(context, 'Some fields are missing in Sheet data');
-    // }
     stocksYouMayNeed = temp;
 
     stocksYouMayNeed.sort((a, b) {
@@ -176,6 +172,8 @@ class _InventoryState extends State<Inventory> {
 
   Future<void> _getNearExpiryStocks() async {
     nearExpiryItems = [];
+
+    print(nearExpiryItems);
     dynamic data =
         await Provider.of<Auth>(context, listen: false).getInventoryData();
 
@@ -202,7 +200,11 @@ class _InventoryState extends State<Inventory> {
             item['purchaseDate'],
             int.parse(item['shelf_life']),
           );
-          nearExpiryItems.add(item);
+          if (!nearExpiryItems
+              .any((element) => element['itemId'] == item['itemId'])) {
+            nearExpiryItems.add(item);
+          }
+          print('ye add kr riya h');
         }
       }
     });
@@ -211,6 +213,7 @@ class _InventoryState extends State<Inventory> {
       int runwayComparison = a['runway'].compareTo(b['runway']);
       return runwayComparison;
     });
+    print('near: $nearExpiryItems');
   }
 
   List<dynamic> findLowStockItems(List<dynamic> inventoryData) {
@@ -222,18 +225,17 @@ class _InventoryState extends State<Inventory> {
       if (item['shelf_life'] != null &&
           item['volumeLeft'] != null &&
           item['purchaseDate'] != null &&
-          item['volumePurchased'] != null &&
-          item['salesRatePerDay'] != null) {
+          item['volumePurchased'] != null) {
         double volumeLeft = double.parse(item['volumeLeft']);
         double volumePurchased = double.parse(item['volumePurchased']);
-        double salesRatePerDay = double.parse(item['salesRatePerDay']);
         int shelfLife = int.parse(item['shelf_life']);
         DateTime purchaseDate = DateTime.parse(item['purchaseDate']);
         int daysSincePurchase = today.difference(purchaseDate).inDays;
-        double expectedVolumeSold = daysSincePurchase * salesRatePerDay;
-        double expectedVolumeLeft = volumePurchased - expectedVolumeSold;
 
-        int runway = (volumeLeft / salesRatePerDay).ceil();
+        int runway = calculateDaysUntilRunOut(
+          item['purchaseDate'],
+          int.parse(item['shelf_life']),
+        );
         item['runway'] = runway;
 
         double lowStockThreshold;
@@ -243,8 +245,7 @@ class _InventoryState extends State<Inventory> {
           lowStockThreshold = 0.5;
         }
 
-        if (volumeLeft / volumePurchased < lowStockThreshold ||
-            expectedVolumeLeft < volumePurchased * lowStockThreshold) {
+        if (volumeLeft / volumePurchased < lowStockThreshold) {
           lowStocks.add(item);
         }
         allStocks.add(item);
@@ -458,56 +459,7 @@ class _InventoryState extends State<Inventory> {
             Spacer(),
             TouchableOpacity(
                 onTap: () {
-                  AppWideBottomSheet().showSheet(
-                      context,
-                      // Container(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 2.w),
-                            child: BoldTextWidgetHomeScreen(
-                              txt: 'Stocks near expiry',
-                            ),
-                          ),
-                          Space(2.h),
-                          Container(
-                            width: double.infinity,
-                            child: GridView.builder(
-                              physics:
-                                  const NeverScrollableScrollPhysics(), // Disable scrolling
-                              shrinkWrap:
-                                  true, // Allow the GridView to shrink-wrap its content
-                              addAutomaticKeepAlives: true,
-
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0.8.h, horizontal: 3.w),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                childAspectRatio: 0.7,
-                                crossAxisCount: 3, // Number of items in a row
-                                crossAxisSpacing:
-                                    4.w, // Spacing between columns
-                                mainAxisSpacing: 1.5.h, // Spacing between rows
-                              ),
-                              itemCount: nearExpiryItems
-                                  .length, // Total number of items
-                              itemBuilder: (context, index) {
-                                // You can replace this container with your custom item widget
-                                return StocksNearExpiryWidget(
-                                  name: nearExpiryItems[index]['itemName'],
-                                  volume: nearExpiryItems[index]['volumeLeft'] +
-                                      ' ' +
-                                      nearExpiryItems[index]['unitType'],
-                                  url:
-                                      nearExpiryItems[index]['image_url'] ?? '',
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      60.h);
+                  StockNearExpirySheet(context);
                 },
                 child: SeeAllWidget()),
           ],
@@ -559,6 +511,50 @@ class _InventoryState extends State<Inventory> {
         Space(3.h),
       ],
     );
+  }
+
+  Future<void> StockNearExpirySheet(BuildContext context) {
+    return AppWideBottomSheet().showSheet(
+        context,
+        // Container(),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 2.w),
+              child: BoldTextWidgetHomeScreen(
+                txt: 'Stocks near expiry',
+              ),
+            ),
+            Space(2.h),
+            Container(
+              width: double.infinity,
+              child: GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                addAutomaticKeepAlives: true,
+                padding: EdgeInsets.symmetric(vertical: 0.8.h, horizontal: 3.w),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 0.7,
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 4.w,
+                  mainAxisSpacing: 1.5.h,
+                ),
+                itemCount: nearExpiryItems.length,
+                itemBuilder: (context, index) {
+                  return StocksNearExpiryWidget(
+                    name: nearExpiryItems[index]['itemName'],
+                    volume: nearExpiryItems[index]['volumeLeft'] +
+                        ' ' +
+                        nearExpiryItems[index]['unitType'],
+                    url: nearExpiryItems[index]['image_url'] ?? '',
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        60.h);
   }
 
   Future<dynamic> LowStocksSheet(BuildContext context) {
