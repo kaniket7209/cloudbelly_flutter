@@ -188,11 +188,12 @@ class _FeedState extends State<Feed> {
                               bool _isMultiple =
                                   item['multiple_files'] != null &&
                                       item['multiple_files'].length != 0;
-                              return PostItem(
+
+                              return item["file_path"]!= null? PostItem(
                                 isProfilePost: false,
                                 isMultiple: _isMultiple,
                                 data: item,
-                              );
+                              ):const SizedBox.shrink();
                               // return SizedBox.shrink();
                             }).toList(),
                     ),
