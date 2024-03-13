@@ -562,7 +562,7 @@ class _PostItemState extends State<PostItem> {
                             link: Uri.parse(
                                 'https://api.cloudbelly.in/post/?id=${widget.data['id']}&type=post'),
                             androidParameters: const AndroidParameters(
-                              packageName: 'com.example.cloudbelly_app',
+                              packageName: 'com.app.cloudbelly_app',
                             ),
                           );
 
