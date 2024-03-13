@@ -349,7 +349,7 @@ class _ProfileState extends State<Profile> {
                                               androidParameters:
                                                   const AndroidParameters(
                                                 packageName:
-                                                    'com.example.CloudbellyApp',
+                                                    'com.app.CloudbellyApp',
                                               ),
                                               socialMetaTagParameters:
                                                   SocialMetaTagParameters(

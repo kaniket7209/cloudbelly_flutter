@@ -1,4 +1,4 @@
-package com.example.cloudbelly_app
+package com.app.cloudbelly_app
 
 import io.flutter.embedding.android.FlutterActivity
 
