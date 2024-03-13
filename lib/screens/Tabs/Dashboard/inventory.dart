@@ -1008,7 +1008,7 @@ class LowStocksWidget extends StatelessWidget {
                 color: Color(0xFF0A4C61),
                 fontSize: 14,
                 fontFamily: 'Product Sans',
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w600,
                 // height: 0.05,
                 letterSpacing: 0.14,
               ),
