@@ -1,0 +1,408 @@
+import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/widgets/space.dart';
+import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+
+class FeedBottomSheet {
+  Future<dynamic> ProductsInPostSheet(
+      BuildContext context, dynamic data, bool isLiked) {
+    return showModalBottomSheet(
+      // useSafeArea: true,
+      context: context,
+      isScrollControlled: true,
+
+      builder: (BuildContext context) {
+        bool _isVendor =
+            Provider.of<Auth>(context, listen: false).userType == 'Vendor';
+        // print(data);
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+              child: Container(
+                decoration: const ShapeDecoration(
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                        topLeft:
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                        topRight:
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                  ),
+                ),
+                height: MediaQuery.of(context).size.height * 0.6,
+                width: double.infinity,
+                padding: EdgeInsets.only(
+                    left: 6.w,
+                    right: 6.w,
+                    top: 2.h,
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TouchableOpacity(
+                        onTap: () {
+                          return Navigator.of(context).pop();
+                        },
+                        child: Center(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 1.h, horizontal: 3.w),
+                            width: 65,
+                            height: 6,
+                            decoration: ShapeDecoration(
+                              color: const Color(0xFFFA6E00),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6)),
+                            ),
+                          ),
+                        ),
+                      ),
+                      ProductInPostSheetWidget(
+                          isVendor: _isVendor, data: data, isLiked: isLiked)
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class ProductInPostSheetWidget extends StatefulWidget {
+  ProductInPostSheetWidget({
+    super.key,
+    required this.isVendor,
+    required this.data,
+    required this.isLiked,
+  });
+
+  bool isVendor;
+  dynamic data;
+  bool isLiked;
+
+  @override
+  State<ProductInPostSheetWidget> createState() =>
+      _ProductInPostSheetWidgetState();
+}
+
+class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
+  PageController _pageController = PageController(initialPage: 0);
+  int _currentPageIndex = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Space(4.h),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              height: 88,
+              width: 88,
+              decoration: ShapeDecoration(
+                shadows: [
+                  widget.isVendor
+                      ? BoxShadow(
+                          offset: Offset(0, 4),
+                          color: Color.fromRGBO(124, 193, 191, 0.6),
+                          blurRadius: 20,
+                        )
+                      : BoxShadow(
+                          offset: Offset(3, 4),
+                          color: Color.fromRGBO(158, 116, 158, 0.5),
+                          blurRadius: 15,
+                        )
+                ],
+                shape: SmoothRectangleBorder(),
+              ),
+              child: ClipSmoothRect(
+                radius: SmoothBorderRadius(
+                  cornerRadius: 25,
+                  cornerSmoothing: 1,
+                ),
+                child: Image.network(
+                  widget.data['file_path'],
+                  fit: BoxFit.cover,
+                  loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                  errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                ),
+              ),
+            ),
+            Space(
+              22,
+              isHorizontal: true,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Space(6),
+                Text(
+                  widget.data['store_name'],
+                  style: TextStyle(
+                    color:
+                        widget.isVendor ? Color(0xFF094B60) : Color(0xFF2E0536),
+                    fontSize: 14,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.42,
+                  ),
+                ),
+                Space(4),
+                SizedBox(
+                  width: 188,
+                  child: Text(
+                    widget.data['caption'],
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: widget.isVendor
+                          ? Color(0xFF0A4C61)
+                          : Color(0xFF2E0536),
+                      fontSize: 12,
+                      fontFamily: 'Product Sans Medium',
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.12,
+                    ),
+                  ),
+                ),
+                Space(10),
+                Row(
+                  children: [
+                    Icon(
+                      widget.isLiked ? Icons.favorite : Icons.favorite_border,
+                      size: 20,
+                    ),
+                    Space(isHorizontal: true, 2),
+                    Text(
+                      '${(widget.data['likes'] ?? []).length}',
+                      style: TextStyle(
+                        color: Color(0xFF9327A8),
+                        fontSize: 10,
+                        fontFamily: 'Product Sans Medium',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
+                        letterSpacing: 0.10,
+                      ),
+                    ),
+                    Space(isHorizontal: true, 11),
+                    Icon(
+                      Icons.mode_comment_outlined,
+                      size: 20,
+                    ),
+                    Space(isHorizontal: true, 2),
+                    Text(
+                      '231',
+                      style: TextStyle(
+                        color: Color(0xFF9327A8),
+                        fontSize: 10,
+                        fontFamily: 'Product Sans Medium',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
+                        letterSpacing: 0.10,
+                      ),
+                    ),
+                    Space(isHorizontal: true, 11),
+                    Icon(
+                      Icons.share,
+                      size: 20,
+                    )
+                  ],
+                )
+              ],
+            )
+          ],
+        ),
+        Space(27),
+        Text(
+          'Products in this post',
+          style: TextStyle(
+            color: widget.isVendor ? Color(0xFF0A4C61) : Color(0xFF2E0536),
+            fontSize: 22,
+            fontFamily: 'Jost',
+            fontWeight: FontWeight.w500,
+            height: 0,
+            letterSpacing: 0.22,
+          ),
+        ),
+        //https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1
+        Space(8),
+        Container(
+          height: 28.h,
+          width: double.infinity,
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (int index) {
+              setState(() {
+                _currentPageIndex = index;
+              });
+            },
+            children: [
+              Container(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ItemWidget(widget: widget),
+                  ItemWidget(widget: widget),
+                  ItemWidget(widget: widget)
+                ],
+              )),
+            ],
+          ),
+        ),
+        Space(1.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            2,
+            (index) => GestureDetector(
+              onTap: () {
+                _pageController.animateToPage(index,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut);
+              },
+              child: index == _currentPageIndex
+                  ? Container(
+                      height: 10.0,
+                      width: 30,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: _currentPageIndex == index
+                            ? const Color.fromRGBO(148, 40, 169, 1)
+                            : Color.fromRGBO(214, 175, 227, 1),
+                      ),
+                    )
+                  : Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                      width: 10.0,
+                      height: 10.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _currentPageIndex == index
+                            ? const Color.fromRGBO(148, 40, 169, 1)
+                            : Color.fromRGBO(214, 175, 227, 1),
+                      ),
+                    ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ItemWidget extends StatelessWidget {
+  const ItemWidget({
+    super.key,
+    required this.widget,
+  });
+
+  final ProductInPostSheetWidget widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 90,
+      margin: EdgeInsets.symmetric(
+        vertical: 1.h,
+      ),
+      child: Column(
+        children: [
+          Container(
+            height: 90,
+            width: 90,
+            decoration: ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                  offset: Offset(3, 6),
+                  color: Color.fromRGBO(158, 116, 158, 0.5),
+                  blurRadius: 20,
+                )
+              ],
+              shape: SmoothRectangleBorder(),
+            ),
+            child: ClipSmoothRect(
+              radius: SmoothBorderRadius(
+                cornerRadius: 25,
+                cornerSmoothing: 1,
+              ),
+              child: Image.network(
+                widget.data['file_path'],
+                fit: BoxFit.cover,
+                loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                errorBuilder: GlobalVariables().ErrorBuilderForImage,
+              ),
+            ),
+          ),
+          Space(8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.favorite_border,
+                size: 20,
+              ),
+              Space(isHorizontal: true, 10),
+              Text(
+                '${(widget.data['likes'] ?? []).length}',
+                style: TextStyle(
+                  color: Color(0xFF9327A8),
+                  fontSize: 10,
+                  fontFamily: 'Product Sans Medium',
+                  fontWeight: FontWeight.w500,
+                  height: 0,
+                  letterSpacing: 0.10,
+                ),
+              ),
+            ],
+          ),
+          Space(8),
+          Text(
+            'Panner Lababdar',
+            maxLines: null,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Color(0xFF2E0536),
+              fontSize: 14,
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.42,
+            ),
+          ),
+          Space(14),
+          Container(
+            width: 71,
+            height: 30,
+            decoration: GlobalVariables().ContainerDecoration(
+                offset: Offset(3, 6),
+                blurRadius: 20,
+                shadowColor: Color.fromRGBO(158, 116, 158, 0.5),
+                boxColor: Color.fromRGBO(250, 110, 0, 1),
+                cornerRadius: 10),
+            child: Center(
+                child: Text(
+              'Add',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.14,
+              ),
+            )),
+          ),
+        ],
+      ),
+    );
+  }
+}

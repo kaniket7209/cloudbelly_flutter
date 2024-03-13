@@ -2,6 +2,7 @@
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/screens/Tabs/Feed/feed_bottom_sheet.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -401,35 +402,42 @@ class _PostItemState extends State<PostItem> {
                     ),
                   ),
                 ),
+              //search menu items sheet icon
               Positioned(
                 right: 20,
                 bottom: 0,
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: ShapeDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color.fromRGBO(250, 110, 0, 1),
-                        Color.fromRGBO(254, 209, 112, 1)
-                      ],
-                    ),
-                    shadows: [
-                      BoxShadow(
-                        offset: Offset(0, 4),
-                        color: Color.fromRGBO(0, 0, 0, 0.25),
-                        blurRadius: 4,
+                child: TouchableOpacity(
+                  onTap: () async {
+                    return FeedBottomSheet()
+                        .ProductsInPostSheet(context, widget.data, _isLiked);
+                  },
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: ShapeDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Color.fromRGBO(250, 110, 0, 1),
+                          Color.fromRGBO(254, 209, 112, 1)
+                        ],
                       ),
-                    ],
-                    shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius(
-                      cornerRadius: 15,
-                      cornerSmoothing: 1,
-                    )),
+                      shadows: [
+                        BoxShadow(
+                          offset: Offset(0, 4),
+                          color: Color.fromRGBO(0, 0, 0, 0.25),
+                          blurRadius: 4,
+                        ),
+                      ],
+                      shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                        cornerRadius: 15,
+                        cornerSmoothing: 1,
+                      )),
+                    ),
+                    child: Icon(Icons.search),
                   ),
-                  child: Icon(Icons.search),
                 ),
               ),
             ],

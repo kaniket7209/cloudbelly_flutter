@@ -127,13 +127,21 @@ class Auth with ChangeNotifier {
     // print('auto');
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
-      // print('f');
       return false;
     } else {
       return true;
 
       // return true;
     }
+  }
+
+  //logout
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.remove('userData');
+    await prefs.remove('feedData');
+    await prefs.remove('menuData');
   }
 
   Future sendUserTypeRequest() async {

@@ -214,9 +214,9 @@ class _ProfileState extends State<Profile> {
                                         onSelected: (SampleItem item) async {
                                           AppWideLoadingBanner()
                                               .loadingBanner(context);
-                                          final prefs = await SharedPreferences
-                                              .getInstance();
-                                          await prefs.remove('userData');
+
+                                          await Provider.of<Auth>(context)
+                                              .logout();
                                           Navigator.of(context).pop();
                                           Navigator.of(context)
                                               .pushReplacementNamed(
