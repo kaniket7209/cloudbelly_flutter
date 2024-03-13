@@ -972,7 +972,7 @@ class Auth with ChangeNotifier {
         },
         body: jsonEncode(requestBody),
       );
-      print('response: ${response.body}');
+      // print('response: ${response.body}');
       // print(response.statusCode);
 
       return jsonDecode(response.body);

@@ -173,7 +173,6 @@ class _InventoryState extends State<Inventory> {
   Future<void> _getNearExpiryStocks() async {
     nearExpiryItems = [];
 
-    print(nearExpiryItems);
     dynamic data =
         await Provider.of<Auth>(context, listen: false).getInventoryData();
 
@@ -204,7 +203,6 @@ class _InventoryState extends State<Inventory> {
               .any((element) => element['itemId'] == item['itemId'])) {
             nearExpiryItems.add(item);
           }
-          print('ye add kr riya h');
         }
       }
     });
@@ -213,12 +211,11 @@ class _InventoryState extends State<Inventory> {
       int runwayComparison = a['runway'].compareTo(b['runway']);
       return runwayComparison;
     });
-    print('near: $nearExpiryItems');
   }
 
   List<dynamic> findLowStockItems(List<dynamic> inventoryData) {
     List<dynamic> lowStocks = [];
-    List<dynamic> allStocks = [];
+    allStocks = [];
     DateTime today = DateTime.now();
 
     for (var item in inventoryData) {
@@ -252,6 +249,8 @@ class _InventoryState extends State<Inventory> {
       }
     }
 
+    print(allStocks.length);
+
     return lowStocks;
   }
 
@@ -269,7 +268,7 @@ class _InventoryState extends State<Inventory> {
   @override
   Widget build(BuildContext context) {
     List<dynamic> dataList = [];
-    print('refresh');
+    print('all: $allStocks');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -396,6 +395,7 @@ class _InventoryState extends State<Inventory> {
             Spacer(),
             TouchableOpacity(
                 onTap: () {
+                  print(allStocks);
                   return LowStocksSheet(context);
                 },
                 child: SeeAllWidget()),
