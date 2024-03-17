@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = cloudbelly
+PRODUCT_NAME = cloudbelly_app
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = app.cloudbelly.in.cloudbelly
+PRODUCT_BUNDLE_IDENTIFIER = com.app.CloudbellyApp
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2024 app.cloudbelly.in. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2023 com.app. All rights reserved.

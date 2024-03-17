@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "app.cloudbelly.in" "\0"
-            VALUE "FileDescription", "cloudbelly" "\0"
+            VALUE "CompanyName", "com.app" "\0"
+            VALUE "FileDescription", "cloudbelly_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "cloudbelly" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 app.cloudbelly.in. All rights reserved." "\0"
-            VALUE "OriginalFilename", "cloudbelly.exe" "\0"
-            VALUE "ProductName", "cloudbelly" "\0"
+            VALUE "InternalName", "cloudbelly_app" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 com.app. All rights reserved." "\0"
+            VALUE "OriginalFilename", "cloudbelly_app.exe" "\0"
+            VALUE "ProductName", "cloudbelly_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "508708683425",
+    "project_id": "cloudbelly-d97a9",
+    "storage_bucket": "cloudbelly-d97a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:508708683425:android:f15456c8162f48bee9bae0",
+        "android_client_info": {
+          "package_name": "com.app.cloudbelly_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDthUWI9foVgRaibKl73SNcBK5beKQakQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
