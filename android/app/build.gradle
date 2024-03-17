@@ -69,7 +69,8 @@ android {
    }
    buildTypes {
        release {
-           signingConfig signingConfigs.release
+        // change this to release when building appp bundle
+           signingConfig signingConfigs.debug
        }
    }
 
