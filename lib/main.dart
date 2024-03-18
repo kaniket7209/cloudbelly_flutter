@@ -1,5 +1,6 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Login/map.dart';
+import 'package:cloudbelly_app/screens/Tabs/Cart/view_cart.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
@@ -92,6 +93,7 @@ class MyApp extends StatelessWidget {
               Tabs.routeName: (context) => Tabs(),
               PostsScreen.routeName: (context) => PostsScreen(),
               GraphsScreen.routeName: (context) => GraphsScreen(),
+              ViewCart.routeName: (context) => ViewCart(),
             },
           ),
         ),

@@ -298,6 +298,8 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                   List<String> url =
                       await Provider.of<Auth>(context, listen: false)
                           .pickMultipleImagesAndUpoad();
+                  List<dynamic> menuList =
+                      await Provider.of<Auth>(context, listen: false).getMenu();
                   Navigator.of(context).pop();
                   if (url.length == 0) {
                     TOastNotification()
@@ -306,7 +308,8 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                     TOastNotification()
                         .showErrorToast(context, 'file size very large');
                   else if (!url.contains('element'))
-                    CreateFeed().showModalSheetForNewPost(context, url);
+                    CreateFeed()
+                        .showModalSheetForNewPost(context, url, menuList);
                   else {
                     TOastNotification()
                         .showErrorToast(context, 'Error While Uploading Image');
@@ -320,6 +323,8 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                   List<String> url = [];
                   url.add(await Provider.of<Auth>(context, listen: false)
                       .pickImageAndUpoad(src: 'Camera', context));
+                  List<dynamic> menuList =
+                      await Provider.of<Auth>(context, listen: false).getMenu();
                   print('object');
                   print(url[0]);
                   Navigator.of(context).pop();
@@ -330,7 +335,8 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                     TOastNotification()
                         .showErrorToast(context, 'file size very large');
                   else if (!url.contains('element') && url[0] != '')
-                    CreateFeed().showModalSheetForNewPost(context, url);
+                    CreateFeed()
+                        .showModalSheetForNewPost(context, url, menuList);
                   else {
                     TOastNotification()
                         .showErrorToast(context, 'Error While Uploading Image');

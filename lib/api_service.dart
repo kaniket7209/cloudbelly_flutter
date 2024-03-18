@@ -560,10 +560,14 @@ class Auth with ChangeNotifier {
   //   }
   // }
 
-  Future<String> createPost(
-      List<String> list, List<String> tags, String caption) async {
+  Future<String> createPost(List<String> list, List<String> tags,
+      String caption, List<dynamic> selectedMenuList) async {
     final String url = 'https://app.cloudbelly.in/metadata/feed';
+    List<String> idList = [];
 
+    for (var item in selectedMenuList) {
+      idList.add(item["_id"]);
+    }
     final Map<String, dynamic> requestBody = list.length == 1
         ? {
             'user_id': user_id,
@@ -571,6 +575,7 @@ class Auth with ChangeNotifier {
             "file_url": list[0],
             "caption": caption,
             "multiple_files": [],
+            'menu_items': idList,
           }
         : {
             'user_id': user_id,
@@ -578,6 +583,7 @@ class Auth with ChangeNotifier {
             'file_url': list[0],
             "multiple_files": list,
             "caption": caption,
+            'menu_items': idList,
           };
 
     try {

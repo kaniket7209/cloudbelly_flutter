@@ -125,6 +125,8 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           AppWideLoadingBanner().loadingBanner(context);
           List<String> url = await Provider.of<Auth>(context, listen: false)
               .pickMultipleImagesAndUpoad();
+          List<dynamic> menuList =
+              await Provider.of<Auth>(context, listen: false).getMenu();
           Navigator.of(context).pop();
           if (url.length == 0) {
             TOastNotification()
@@ -132,7 +134,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           } else if (url.contains('file size very large'))
             TOastNotification().showErrorToast(context, 'file size very large');
           else if (!url.contains('element'))
-            CreateFeed().showModalSheetForNewPost(context, url);
+            CreateFeed().showModalSheetForNewPost(context, url, menuList);
           else {
             TOastNotification()
                 .showErrorToast(context, 'Error While Uploading Image');

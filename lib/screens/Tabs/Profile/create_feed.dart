@@ -12,39 +12,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class CreateFeed {
   Future<dynamic> showModalSheetForNewPost(
-      BuildContext context, List<String> imageUrlList) {
-    TextEditingController _textFieldController = TextEditingController();
-    String caption = '';
-    List<String> _hasTagList = [
-      '#chicken',
-      '#tandoori',
-      '#boneless',
-      '#For2',
-      '#chicken',
-      '#eggless',
-      '#tranding',
-    ];
-
-    Future<void> _shareButton() async {
-      AppWideLoadingBanner().loadingBanner(context);
-      List<String> tags = _textFieldController.text
-          .split(',')
-          .map((String s) => s.trim())
-          .toList();
-
-      String msg = await Provider.of<Auth>(context, listen: false)
-          .createPost(imageUrlList, tags, caption);
-      Navigator.of(context).pop();
-      if (msg == "Post metadata updated successfully") {
-        TOastNotification()
-            .showSuccesToast(context, 'Post Created successfully!');
-
-        Navigator.of(context).pop();
-      } else {
-        TOastNotification().showErrorToast(context, 'Error!');
-      }
-    }
-
+      BuildContext context, List<String> imageUrlList, List<dynamic> menuList) {
     CarouselController buttonCarouselController = CarouselController();
     return showModalBottomSheet(
       // useSafeArea: true,
@@ -192,168 +160,309 @@ class CreateFeed {
                           ),
                         ),
                       ),
-                Space(3.h),
-                TextField(
-                  onChanged: (value) {
-                    caption = value.toString();
-                  },
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 3.w),
-                    hintText: 'Write a caption...',
-                    hintStyle: const TextStyle(
-                      color: Color(0xFF094B60),
-                      fontSize: 12,
-                      fontFamily: 'Product Sans Medium',
-                      fontWeight: FontWeight.w500,
-                      height: 0.14,
-                      letterSpacing: 0.36,
-                    ),
-                    border: InputBorder.none,
-                  ),
-                ),
-                Center(
-                  child: Container(
-                    width: 85.w,
-                    height: 2,
-                    decoration: const BoxDecoration(color: Color(0xFFFA6E00)),
-                  ),
-                ),
-                Space(5.h),
-                const Text(
-                  'Give hashtags',
-                  style: TextStyle(
-                    color: Color(0xFF0A4C61),
-                    fontSize: 14,
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                    letterSpacing: 0.14,
-                  ),
-                ),
-                Space(2.h),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 2.w),
-                  // rgba(165, 200, 199, 1),
-                  decoration: const ShapeDecoration(
-                    shadows: [
-                      BoxShadow(
-                        offset: Offset(0, 4),
-                        color: Color.fromRGBO(165, 200, 199, 0.6),
-                        blurRadius: 20,
-                      )
-                    ],
-                    color: Colors.white,
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius.all(
-                          SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
-                    ),
-                  ),
-                  height: 6.h,
-                  child: TextField(
-                    controller: _textFieldController,
-                    decoration: const InputDecoration(
-                      fillColor: Colors.white,
-                      contentPadding: EdgeInsets.only(left: 14),
-                      hintText: 'Link your post with your menu by #tags',
-                      hintStyle: TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF0A4C61),
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w400),
-                      border: InputBorder.none,
-                    ),
-                    onChanged: (value) {},
-                  ),
-                ),
-                Space(2.h),
-                SizedBox(
-                  height: 10.h,
-                  child: GridView.builder(
-                    physics:
-                        const NeverScrollableScrollPhysics(), // Disable scrolling
-                    shrinkWrap:
-                        true, // Allow the GridView to shrink-wrap its content
-                    addAutomaticKeepAlives: true,
-
-                    padding:
-                        EdgeInsets.symmetric(vertical: 0.8.h, horizontal: 3.w),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      childAspectRatio: 2.1,
-                      crossAxisCount: 4, // Number of items in a row
-                      crossAxisSpacing: 3.w, // Spacing between columns
-                      mainAxisSpacing: 1.5.h, // Spacing between rows
-                    ),
-                    itemCount: _hasTagList.length,
-                    itemBuilder: (context, index) {
-                      return TouchableOpacity(
-                          onTap: () {
-                            _textFieldController.text =
-                                _textFieldController.text == ''
-                                    ? _textFieldController.text +
-                                        '${_hasTagList[index]}'
-                                    : _textFieldController.text +
-                                        ', ${_hasTagList[index]}';
-                          },
-                          child: Container(
-                              decoration: const ShapeDecoration(
-                                color: Color.fromRGBO(239, 255, 254, 1),
-                                shape: SmoothRectangleBorder(
-                                  borderRadius: SmoothBorderRadius.all(
-                                      SmoothRadius(
-                                          cornerRadius: 10,
-                                          cornerSmoothing: 1)),
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  _hasTagList[index],
-                                  style: const TextStyle(
-                                    color: Color(0xFF0A4C61),
-                                    fontSize: 12,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.w400,
-                                    height: 0,
-                                    letterSpacing: 0.12,
-                                  ),
-                                ),
-                              )));
-                    },
-                  ),
-                ),
-                Space(10.h),
-                TouchableOpacity(
-                  onTap: () {
-                    _shareButton();
-                  },
-                  child: Container(
-                      height: 6.h,
-                      decoration: const ShapeDecoration(
-                        color: Color.fromRGBO(250, 110, 0, 1),
-                        shape: SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius.all(SmoothRadius(
-                              cornerRadius: 10, cornerSmoothing: 1)),
-                        ),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'Share',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w700,
-                            height: 0,
-                            letterSpacing: 0.16,
-                          ),
-                        ),
-                      )),
-                ),
-                Space(15.h),
+                menuSuggestionWIdget(
+                    imageUrlList: imageUrlList, menuList: menuList),
               ],
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class menuSuggestionWIdget extends StatefulWidget {
+  menuSuggestionWIdget({
+    super.key,
+    required this.menuList,
+    required this.imageUrlList,
+  });
+
+  final List<dynamic> menuList;
+  List<String> imageUrlList;
+  @override
+  State<menuSuggestionWIdget> createState() => _menuSuggestionWIdgetState();
+}
+
+class _menuSuggestionWIdgetState extends State<menuSuggestionWIdget> {
+  String check = '';
+  String caption = '';
+  List<String> _hasTagList = [
+    '#chicken',
+    '#tandoori',
+    '#boneless',
+    '#For2',
+    '#chicken',
+    '#eggless',
+    '#tranding',
+  ];
+  List<dynamic> selectedMenuItems = [];
+
+  TextEditingController _textFieldController = TextEditingController();
+  final TextEditingController _textEditingController = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Space(3.h),
+        TextField(
+          onChanged: (value) {
+            caption = value.toString();
+          },
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(horizontal: 3.w),
+            hintText: 'Write a caption...',
+            hintStyle: const TextStyle(
+              color: Color(0xFF094B60),
+              fontSize: 12,
+              fontFamily: 'Product Sans Medium',
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.36,
+            ),
+            border: InputBorder.none,
+          ),
+        ),
+        Center(
+          child: Container(
+            width: 85.w,
+            height: 2,
+            decoration: const BoxDecoration(color: Color(0xFFFA6E00)),
+          ),
+        ),
+        Space(5.h),
+        const Text(
+          'Link Menu Items',
+          style: TextStyle(
+            color: Color(0xFF0A4C61),
+            fontSize: 14,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.w700,
+            height: 0,
+            letterSpacing: 0.14,
+          ),
+        ),
+        TextField(
+          controller: _textEditingController,
+          onChanged: (value) {
+            setState(() {
+              check = value;
+            });
+          },
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(horizontal: 3.w),
+            hintText: 'Type something',
+            hintStyle: const TextStyle(
+              color: Color(0xFF094B60),
+              fontSize: 12,
+              fontFamily: 'Product Sans Medium',
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.36,
+            ),
+            border: InputBorder.none,
+          ),
+        ),
+        Center(
+          child: Container(
+            width: 85.w,
+            height: 2,
+            decoration: const BoxDecoration(color: Color(0xFFFA6E00)),
+          ),
+        ),
+        SizedBox(height: 10),
+        if (check != '')
+          SizedBox(
+            height: 10.h,
+            child: ListView.builder(
+              itemCount: widget.menuList.length,
+              itemBuilder: (context, index) {
+                if (_textEditingController.text.isEmpty ||
+                    widget.menuList[index]['name']
+                        .toLowerCase()
+                        .contains(_textEditingController.text.toLowerCase())) {
+                  return ListTile(
+                    title: Text(widget.menuList[index]['name']),
+                    onTap: () {
+                      String idToFind =
+                          widget.menuList[index]['_id']; // Example ID to find
+                      bool isPresent = false;
+                      for (var item in selectedMenuItems) {
+                        if (item["_id"] == idToFind) {
+                          isPresent = true;
+                          break;
+                        }
+                      }
+                      setState(() {
+                        if (!isPresent)
+                          selectedMenuItems.add(widget.menuList[index]);
+                        _textEditingController.clear();
+                      });
+                    },
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
+            ),
+          ),
+        SizedBox(height: 10),
+        if ((selectedMenuItems).length != 0) Text('Selected Suggestions:'),
+        SizedBox(height: 5),
+        Wrap(
+          children: selectedMenuItems
+              .map((suggestion) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                    child: Chip(
+                      label: Text(suggestion['name']),
+                      onDeleted: () {
+                        setState(() {
+                          selectedMenuItems.remove(suggestion);
+                        });
+                      },
+                    ),
+                  ))
+              .toList(),
+        ),
+        const Text(
+          'Give hashtags',
+          style: TextStyle(
+            color: Color(0xFF0A4C61),
+            fontSize: 14,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.w700,
+            height: 0,
+            letterSpacing: 0.14,
+          ),
+        ),
+        Space(2.h),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 2.w),
+          // rgba(165, 200, 199, 1),
+          decoration: const ShapeDecoration(
+            shadows: [
+              BoxShadow(
+                offset: Offset(0, 4),
+                color: Color.fromRGBO(165, 200, 199, 0.6),
+                blurRadius: 20,
+              )
+            ],
+            color: Colors.white,
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.all(
+                  SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+            ),
+          ),
+          height: 6.h,
+          child: TextField(
+            controller: _textFieldController,
+            decoration: const InputDecoration(
+              fillColor: Colors.white,
+              contentPadding: EdgeInsets.only(left: 14),
+              hintText: 'Link your post with your menu by #tags',
+              hintStyle: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF0A4C61),
+                  fontFamily: 'Product Sans',
+                  fontWeight: FontWeight.w400),
+              border: InputBorder.none,
+            ),
+            onChanged: (value) {},
+          ),
+        ),
+        Space(2.h),
+        SizedBox(
+          height: 10.h,
+          child: GridView.builder(
+            physics: const NeverScrollableScrollPhysics(), // Disable scrolling
+            shrinkWrap: true, // Allow the GridView to shrink-wrap its content
+            addAutomaticKeepAlives: true,
+
+            padding: EdgeInsets.symmetric(vertical: 0.8.h, horizontal: 3.w),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              childAspectRatio: 2.1,
+              crossAxisCount: 4, // Number of items in a row
+              crossAxisSpacing: 3.w, // Spacing between columns
+              mainAxisSpacing: 1.5.h, // Spacing between rows
+            ),
+            itemCount: _hasTagList.length,
+            itemBuilder: (context, index) {
+              return TouchableOpacity(
+                  onTap: () {
+                    _textFieldController.text = _textFieldController.text == ''
+                        ? _textFieldController.text + '${_hasTagList[index]}'
+                        : _textFieldController.text + ', ${_hasTagList[index]}';
+                  },
+                  child: Container(
+                      decoration: const ShapeDecoration(
+                        color: Color.fromRGBO(239, 255, 254, 1),
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius.all(SmoothRadius(
+                              cornerRadius: 10, cornerSmoothing: 1)),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          _hasTagList[index],
+                          style: const TextStyle(
+                            color: Color(0xFF0A4C61),
+                            fontSize: 12,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w400,
+                            height: 0,
+                            letterSpacing: 0.12,
+                          ),
+                        ),
+                      )));
+            },
+          ),
+        ),
+        Space(10.h),
+        TouchableOpacity(
+          onTap: () async {
+            AppWideLoadingBanner().loadingBanner(context);
+            List<String> tags = _textFieldController.text
+                .split(',')
+                .map((String s) => s.trim())
+                .toList();
+
+            String msg = await Provider.of<Auth>(context, listen: false)
+                .createPost(
+                    widget.imageUrlList, tags, caption, selectedMenuItems);
+            Navigator.of(context).pop();
+            if (msg == "Post metadata updated successfully") {
+              TOastNotification()
+                  .showSuccesToast(context, 'Post Created successfully!');
+
+              Navigator.of(context).pop();
+            } else {
+              TOastNotification().showErrorToast(context, 'Error!');
+            }
+          },
+          child: Container(
+              height: 6.h,
+              decoration: const ShapeDecoration(
+                color: Color.fromRGBO(250, 110, 0, 1),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.all(
+                      SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+                ),
+              ),
+              child: const Center(
+                child: Text(
+                  'Share',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: 0.16,
+                  ),
+                ),
+              )),
+        ),
+        Space(15.h),
+      ],
     );
   }
 }

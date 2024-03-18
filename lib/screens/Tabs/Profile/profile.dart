@@ -171,7 +171,7 @@ class _ProfileState extends State<Profile> {
                                         else if (!url.contains('element')) {
                                           CreateFeed()
                                               .showModalSheetForNewPost(
-                                                  context, url)
+                                                  context, url, menuList)
                                               .then((value) {
                                             setState(() {});
                                           });
@@ -614,119 +614,140 @@ class _ProfileState extends State<Profile> {
                                               child:
                                                   CircularProgressIndicator(),
                                             )
-                                          : Column(
-                                              children: [
-                                                Container(
-                                                  width: double.infinity,
-                                                  height: 40,
-                                                  decoration: GlobalVariables()
-                                                      .ContainerDecoration(
-                                                          offset: Offset(0, 4),
-                                                          blurRadius: 4,
-                                                          shadowColor:
-                                                              Color.fromRGBO(0,
-                                                                  0, 0, 0.25),
-                                                          boxColor:
-                                                              Color.fromRGBO(
-                                                                  239,
-                                                                  255,
-                                                                  254,
-                                                                  1),
-                                                          cornerRadius: 10),
-                                                  child: Row(children: [
-                                                    Space(
-                                                      12,
-                                                      isHorizontal: true,
+                                          : menuList.length == 0
+                                              ? Container(
+                                                  height: 10.h,
+                                                  child: Center(
+                                                      child: Text(
+                                                          'No items in Menu')),
+                                                )
+                                              : Column(
+                                                  children: [
+                                                    Container(
+                                                      width: double.infinity,
+                                                      height: 40,
+                                                      decoration: GlobalVariables()
+                                                          .ContainerDecoration(
+                                                              offset:
+                                                                  Offset(0, 4),
+                                                              blurRadius: 4,
+                                                              shadowColor: Color
+                                                                  .fromRGBO(
+                                                                      0,
+                                                                      0,
+                                                                      0,
+                                                                      0.25),
+                                                              boxColor: Color
+                                                                  .fromRGBO(
+                                                                      239,
+                                                                      255,
+                                                                      254,
+                                                                      1),
+                                                              cornerRadius: 10),
+                                                      child: Row(children: [
+                                                        Space(
+                                                          12,
+                                                          isHorizontal: true,
+                                                        ),
+                                                        Icon(
+                                                          Icons.search,
+                                                          color:
+                                                              Color(0xFFFA6E00),
+                                                        ),
+                                                        Space(
+                                                          12,
+                                                          isHorizontal: true,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 60.w,
+                                                          child: TextField(
+                                                              readOnly: true,
+                                                              maxLines: null,
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Color(
+                                                                    0xFF094B60),
+                                                                fontSize: 14,
+                                                                fontFamily:
+                                                                    'Product Sans',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                height: 0.10,
+                                                                letterSpacing:
+                                                                    0.42,
+                                                              ),
+                                                              textInputAction:
+                                                                  TextInputAction
+                                                                      .done,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                hintText:
+                                                                    'Search',
+                                                                hintStyle:
+                                                                    TextStyle(
+                                                                  color: Color(
+                                                                      0xFF094B60),
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      'Product Sans',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  height: 0.10,
+                                                                  letterSpacing:
+                                                                      0.42,
+                                                                ),
+                                                                contentPadding:
+                                                                    EdgeInsets
+                                                                        .zero,
+                                                                border:
+                                                                    InputBorder
+                                                                        .none,
+                                                              ),
+                                                              onChanged:
+                                                                  (newv) {},
+                                                              onSubmitted:
+                                                                  (newv) {},
+                                                              cursorColor: Color(
+                                                                  0xFFFA6E00)),
+                                                        )
+                                                      ]),
                                                     ),
-                                                    Icon(
-                                                      Icons.search,
-                                                      color: Color(0xFFFA6E00),
-                                                    ),
-                                                    Space(
-                                                      12,
-                                                      isHorizontal: true,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 60.w,
-                                                      child: TextField(
-                                                          readOnly: true,
-                                                          maxLines: null,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Color(
-                                                                0xFF094B60),
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                                'Product Sans',
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            height: 0.10,
-                                                            letterSpacing: 0.42,
-                                                          ),
-                                                          textInputAction:
-                                                              TextInputAction
-                                                                  .done,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintText: 'Search',
-                                                            hintStyle:
-                                                                TextStyle(
-                                                              color: Color(
-                                                                  0xFF094B60),
-                                                              fontSize: 14,
-                                                              fontFamily:
-                                                                  'Product Sans',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              height: 0.10,
-                                                              letterSpacing:
-                                                                  0.42,
-                                                            ),
-                                                            contentPadding:
-                                                                EdgeInsets.zero,
-                                                            border: InputBorder
-                                                                .none,
-                                                          ),
-                                                          onChanged: (newv) {},
-                                                          onSubmitted:
-                                                              (newv) {},
-                                                          cursorColor: Color(
-                                                              0xFFFA6E00)),
-                                                    )
-                                                  ]),
-                                                ),
-                                                Space(1.h),
-                                                ListView.builder(
-                                                    padding:
-                                                        const EdgeInsets.only(),
-                                                    itemCount: (menuList
-                                                            as List<dynamic>)
-                                                        .length,
-                                                    physics:
-                                                        const NeverScrollableScrollPhysics(),
-                                                    shrinkWrap: true,
-                                                    addAutomaticKeepAlives:
-                                                        true,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      menuList[index]['VEG'] ==
-                                                              null
-                                                          ? menuList[index]
-                                                              ['VEG'] = true
-                                                          : null;
+                                                    Space(1.h),
+                                                    ListView.builder(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(),
+                                                        itemCount: (menuList
+                                                                as List<
+                                                                    dynamic>)
+                                                            .length,
+                                                        physics:
+                                                            const NeverScrollableScrollPhysics(),
+                                                        shrinkWrap: true,
+                                                        addAutomaticKeepAlives:
+                                                            true,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          menuList[index]
+                                                                      ['VEG'] ==
+                                                                  null
+                                                              ? menuList[index]
+                                                                  ['VEG'] = true
+                                                              : null;
 
-                                                      return menuList[index]
-                                                                  ['VEG'] !=
-                                                              null
-                                                          ? MenuItem(
-                                                              data: menuList[
-                                                                  index])
-                                                          : const SizedBox
-                                                              .shrink();
-                                                    }),
-                                              ],
-                                            ),
+                                                          return menuList[index]
+                                                                      ['VEG'] !=
+                                                                  null
+                                                              ? MenuItem(
+                                                                  data: menuList[
+                                                                      index])
+                                                              : const SizedBox
+                                                                  .shrink();
+                                                        }),
+                                                  ],
+                                                ),
                                     ]),
                                   ),
                                 if (_activeButtonIndex == 3)

@@ -1,5 +1,6 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/screens/Tabs/Cart/view_cart.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -36,10 +37,7 @@ class FeedBottomSheet {
                 height: MediaQuery.of(context).size.height * 0.6,
                 width: double.infinity,
                 padding: EdgeInsets.only(
-                    left: 6.w,
-                    right: 6.w,
-                    top: 2.h,
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                    top: 2.h, bottom: MediaQuery.of(context).viewInsets.bottom),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -98,176 +96,196 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
   PageController _pageController = PageController(initialPage: 0);
   bool _isfocused = false;
   int _currentPageIndex = 0;
+
   @override
   Widget build(BuildContext context) {
+    int menuItemsCount = widget.data['menu_items'].length;
+    int pageCount = menuItemsCount % 3 == 0
+        ? (menuItemsCount / 3) as int
+        : (((menuItemsCount / 3).toInt()) + 1);
+    print(pageCount);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Space(4.h),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (_isfocused)
-              TouchableOpacity(
-                onTap: () {
-                  print('object');
-                  setState(() {
-                    _isfocused = false;
-                  });
-                },
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(right: 10, top: 10, bottom: 10),
-                  child: SizedBox(
-                    width: 25,
-                    child: Text(
-                      '<<',
-                      style: TextStyle(
-                        color: Color(0xFFFA6E00),
-                        fontSize: 22,
-                        fontFamily: 'Kavoon',
-                        fontWeight: FontWeight.w400,
-                        height: 0.04,
-                        letterSpacing: 0.66,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 7.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Space(4.h),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (_isfocused)
+                    TouchableOpacity(
+                      onTap: () {
+                        setState(() {
+                          _isfocused = false;
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            right: 10, top: 10, bottom: 10),
+                        child: SizedBox(
+                          width: 25,
+                          child: Text(
+                            '<<',
+                            style: TextStyle(
+                              color: Color(0xFFFA6E00),
+                              fontSize: 22,
+                              fontFamily: 'Kavoon',
+                              fontWeight: FontWeight.w400,
+                              height: 0.04,
+                              letterSpacing: 0.66,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-            Container(
-              height: _isfocused ? 50 : 88,
-              width: _isfocused ? 50 : 88,
-              decoration: ShapeDecoration(
-                shadows: [
-                  widget.isVendor
-                      ? BoxShadow(
-                          offset: Offset(0, 4),
-                          color: Color.fromRGBO(124, 193, 191, 0.6),
-                          blurRadius: 20,
-                        )
-                      : BoxShadow(
+                  Container(
+                    height: _isfocused ? 50 : 88,
+                    width: _isfocused ? 50 : 88,
+                    decoration: ShapeDecoration(
+                      shadows: [
+                        // widget.isVendor
+                        //     ? BoxShadow(
+                        //         offset: Offset(0, 4),
+                        //         color: Color.fromRGBO(124, 193, 191, 0.6),
+                        //         blurRadius: 20,
+                        //       )
+                        //     :
+                        BoxShadow(
                           offset: Offset(3, 4),
                           color: Color.fromRGBO(158, 116, 158, 0.5),
                           blurRadius: 15,
                         )
-                ],
-                shape: SmoothRectangleBorder(),
-              ),
-              child: ClipSmoothRect(
-                radius: SmoothBorderRadius(
-                  cornerRadius: _isfocused ? 15 : 25,
-                  cornerSmoothing: 1,
-                ),
-                child: Image.network(
-                  widget.data['file_path'],
-                  fit: BoxFit.cover,
-                  loadingBuilder: GlobalVariables().loadingBuilderForImage,
-                  errorBuilder: GlobalVariables().ErrorBuilderForImage,
-                ),
-              ),
-            ),
-            Space(
-              22,
-              isHorizontal: true,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Space(6),
-                Text(
-                  widget.data['store_name'],
-                  style: TextStyle(
-                    color:
-                        widget.isVendor ? Color(0xFF094B60) : Color(0xFF2E0536),
-                    fontSize: 14,
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.42,
-                  ),
-                ),
-                Space(4),
-                SizedBox(
-                  width: 188,
-                  child: Text(
-                    widget.data['caption'],
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: widget.isVendor
-                          ? Color(0xFF0A4C61)
-                          : Color(0xFF2E0536),
-                      fontSize: 12,
-                      fontFamily: 'Product Sans Medium',
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.12,
+                      ],
+                      shape: SmoothRectangleBorder(),
+                    ),
+                    child: ClipSmoothRect(
+                      radius: SmoothBorderRadius(
+                        cornerRadius: _isfocused ? 15 : 25,
+                        cornerSmoothing: 1,
+                      ),
+                      child: Image.network(
+                        widget.data['file_path'],
+                        fit: BoxFit.cover,
+                        loadingBuilder:
+                            GlobalVariables().loadingBuilderForImage,
+                        errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                      ),
                     ),
                   ),
-                ),
-                if (!_isfocused) Space(10),
-                if (!_isfocused)
-                  Row(
+                  Space(
+                    22,
+                    isHorizontal: true,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        widget.isLiked ? Icons.favorite : Icons.favorite_border,
-                        size: 20,
-                      ),
-                      Space(isHorizontal: true, 2),
+                      Space(6),
                       Text(
-                        '${(widget.data['likes'] ?? []).length}',
+                        widget.data['store_name'],
                         style: TextStyle(
-                          color: Color(0xFF9327A8),
-                          fontSize: 10,
-                          fontFamily: 'Product Sans Medium',
-                          fontWeight: FontWeight.w500,
-                          height: 0,
-                          letterSpacing: 0.10,
+                          color: widget.isVendor
+                              ? Color(0xFF094B60)
+                              : Color(0xFF2E0536),
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.42,
                         ),
                       ),
-                      Space(isHorizontal: true, 11),
-                      Icon(
-                        Icons.mode_comment_outlined,
-                        size: 20,
-                      ),
-                      Space(isHorizontal: true, 2),
-                      Text(
-                        '231',
-                        style: TextStyle(
-                          color: Color(0xFF9327A8),
-                          fontSize: 10,
-                          fontFamily: 'Product Sans Medium',
-                          fontWeight: FontWeight.w500,
-                          height: 0,
-                          letterSpacing: 0.10,
+                      Space(4),
+                      SizedBox(
+                        width: 188,
+                        child: Text(
+                          widget.data['caption'],
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: widget.isVendor
+                                ? Color(0xFF0A4C61)
+                                : Color(0xFF2E0536),
+                            fontSize: 12,
+                            fontFamily: 'Product Sans Medium',
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.12,
+                          ),
                         ),
                       ),
-                      Space(isHorizontal: true, 11),
-                      Icon(
-                        Icons.share,
-                        size: 20,
-                      )
+                      if (!_isfocused) Space(10),
+                      if (!_isfocused)
+                        Row(
+                          children: [
+                            Icon(
+                              widget.isLiked
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              size: 20,
+                            ),
+                            Space(isHorizontal: true, 2),
+                            Text(
+                              '${(widget.data['likes'] ?? []).length}',
+                              style: TextStyle(
+                                color: Color(0xFF9327A8),
+                                fontSize: 10,
+                                fontFamily: 'Product Sans Medium',
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                                letterSpacing: 0.10,
+                              ),
+                            ),
+                            Space(isHorizontal: true, 11),
+                            Icon(
+                              Icons.mode_comment_outlined,
+                              size: 20,
+                            ),
+                            Space(isHorizontal: true, 2),
+                            Text(
+                              '231',
+                              style: TextStyle(
+                                color: Color(0xFF9327A8),
+                                fontSize: 10,
+                                fontFamily: 'Product Sans Medium',
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                                letterSpacing: 0.10,
+                              ),
+                            ),
+                            Space(isHorizontal: true, 11),
+                            Icon(
+                              Icons.share,
+                              size: 20,
+                            )
+                          ],
+                        )
                     ],
                   )
-              ],
-            )
-          ],
-        ),
-        Space(27),
-        Text(
-          'Products in this post',
-          style: TextStyle(
-            color: widget.isVendor ? Color(0xFF0A4C61) : Color(0xFF2E0536),
-            fontSize: 22,
-            fontFamily: 'Jost',
-            fontWeight: FontWeight.w500,
-            height: 0,
-            letterSpacing: 0.22,
+                ],
+              ),
+              Space(27),
+              Text(
+                'Products in this post',
+                style: TextStyle(
+                  color:
+                      widget.isVendor ? Color(0xFF0A4C61) : Color(0xFF2E0536),
+                  fontSize: 22,
+                  fontFamily: 'Jost',
+                  fontWeight: FontWeight.w500,
+                  height: 0,
+                  letterSpacing: 0.22,
+                ),
+              ),
+            ],
           ),
         ),
         //https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1
         Space(_isfocused ? 13 : 8),
         _isfocused
             ? Container(
+                margin: EdgeInsets.only(left: 7.w),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -456,36 +474,40 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                     });
                   },
                   children: [
-                    Container(
-                        child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    Column(
                       children: [
-                        ItemWidget(
-                          widget: widget,
-                          onTap: () {
-                            setState(() {
-                              _isfocused = true;
-                            });
-                          },
+                        Space(0.7.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ItemWidget(
+                              widget: widget,
+                              onTap: () {
+                                setState(() {
+                                  _isfocused = true;
+                                });
+                              },
+                            ),
+                            ItemWidget(
+                              widget: widget,
+                              onTap: () {
+                                setState(() {
+                                  _isfocused = true;
+                                });
+                              },
+                            ),
+                            ItemWidget(
+                              widget: widget,
+                              onTap: () {
+                                setState(() {
+                                  _isfocused = true;
+                                });
+                              },
+                            )
+                          ],
                         ),
-                        ItemWidget(
-                          widget: widget,
-                          onTap: () {
-                            setState(() {
-                              _isfocused = true;
-                            });
-                          },
-                        ),
-                        ItemWidget(
-                          widget: widget,
-                          onTap: () {
-                            setState(() {
-                              _isfocused = true;
-                            });
-                          },
-                        )
                       ],
-                    )),
+                    )
                   ],
                 ),
               ),
@@ -494,7 +516,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
-              2,
+              pageCount,
               (index) => GestureDetector(
                 onTap: () {
                   _pageController.animateToPage(index,
@@ -526,6 +548,79 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
               ),
             ),
           ),
+        Space(1.h),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 7.w),
+          width: double.infinity,
+          height: 75,
+          decoration: GlobalVariables().ContainerDecoration(
+              offset: Offset(3, 6),
+              blurRadius: 20,
+              shadowColor: Color.fromRGBO(179, 108, 179, 0.5),
+              boxColor: Color.fromRGBO(123, 53, 141, 1),
+              cornerRadius: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '3 Items   |   Rs 840',
+                    style: TextStyle(
+                      color: Color(0xFFF7F7F7),
+                      fontSize: 16,
+                      fontFamily: 'Jost',
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    'Extra chrges may apply',
+                    style: TextStyle(
+                      color: Color(0xFFF7F7F7),
+                      fontSize: 12,
+                      fontFamily: 'Jost',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  )
+                ],
+              ),
+              TouchableOpacity(
+                onTap: () {
+                  Navigator.of(context).pushNamed(ViewCart.routeName);
+                },
+                child: Container(
+                  height: 41,
+                  width: 113,
+                  decoration: ShapeDecoration(
+                    color: Color.fromRGBO(84, 166, 193, 1),
+                    shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                      cornerRadius: 12,
+                      cornerSmoothing: 1,
+                    )),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'View Cart',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w700,
+                        height: 0,
+                        letterSpacing: 0.14,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        Space(2.h),
       ],
     );
   }

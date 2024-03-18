@@ -180,7 +180,9 @@ class _PostItemState extends State<PostItem> {
                                     .toUpperCase()
                                 : widget.data['store_name'] == ''
                                     ? 'U'
-                                    : widget.data['store_name'][0],
+                                    : widget.data['store_name'][0]
+                                        .toString()
+                                        .toUpperCase(),
                             style: TextStyle(fontSize: 20),
                           ),
                         ))
@@ -218,17 +220,21 @@ class _PostItemState extends State<PostItem> {
                         ),
                       ),
                 const Space(isHorizontal: true, 15),
-                Text(
-                  widget.isProfilePost
-                      ? Provider.of<Auth>(context, listen: false).store_name
-                      : widget.data['store_name'],
-                  style: TextStyle(
-                    color: _isVendor ? Color(0xFF094B60) : Color(0xFF2E0536),
-                    fontSize: 14,
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.w700,
-                    height: 0.10,
-                    letterSpacing: 0.42,
+                SizedBox(
+                  width: 37.w,
+                  child: Text(
+                    widget.isProfilePost
+                        ? Provider.of<Auth>(context, listen: false).store_name
+                        : widget.data['store_name'],
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: _isVendor ? Color(0xFF094B60) : Color(0xFF2E0536),
+                      fontSize: 14,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.42,
+                    ),
                   ),
                 ),
                 const Spacer(),
@@ -403,43 +409,45 @@ class _PostItemState extends State<PostItem> {
                   ),
                 ),
               //search menu items sheet icon
-              Positioned(
-                right: 20,
-                bottom: 0,
-                child: TouchableOpacity(
-                  onTap: () async {
-                    return FeedBottomSheet()
-                        .ProductsInPostSheet(context, widget.data, _isLiked);
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: ShapeDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [
-                          Color.fromRGBO(250, 110, 0, 1),
-                          Color.fromRGBO(254, 209, 112, 1)
-                        ],
-                      ),
-                      shadows: [
-                        BoxShadow(
-                          offset: Offset(0, 4),
-                          color: Color.fromRGBO(0, 0, 0, 0.25),
-                          blurRadius: 4,
+              if (widget.data['menu_items'] != null &&
+                  (widget.data['menu_items'] as List<dynamic>).length != 0)
+                Positioned(
+                  right: 35,
+                  bottom: 5,
+                  child: TouchableOpacity(
+                    onTap: () async {
+                      return FeedBottomSheet()
+                          .ProductsInPostSheet(context, widget.data, _isLiked);
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: ShapeDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Color.fromRGBO(250, 110, 0, 1),
+                            Color.fromRGBO(254, 209, 112, 1)
+                          ],
                         ),
-                      ],
-                      shape: SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius(
-                        cornerRadius: 15,
-                        cornerSmoothing: 1,
-                      )),
+                        shadows: [
+                          BoxShadow(
+                            offset: Offset(0, 4),
+                            color: Color.fromRGBO(0, 0, 0, 0.25),
+                            blurRadius: 4,
+                          ),
+                        ],
+                        shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                          cornerRadius: 15,
+                          cornerSmoothing: 1,
+                        )),
+                      ),
+                      child: Icon(Icons.search, size: 29),
                     ),
-                    child: Icon(Icons.search),
                   ),
                 ),
-              ),
             ],
           ),
           Padding(
@@ -947,9 +955,13 @@ class _PostItemState extends State<PostItem> {
                         isHorizontal: true,
                       ),
                       PostMoreButtonRowWidget(
-                        icon: Icon(Icons.bookmark),
-                        text: 'Save',
+                        icon: Icon(Icons.error_outline),
+                        text: 'Report',
                       ),
+                      // PostMoreButtonRowWidget(
+                      //   icon: Icon(Icons.bookmark),
+                      //   text: 'Save',
+                      // ),
                       Space(
                         12.w,
                         isHorizontal: true,
@@ -960,27 +972,27 @@ class _PostItemState extends State<PostItem> {
                       ),
                     ],
                   ),
-                  Space(4.h),
-                  Row(
-                    children: [
-                      Space(
-                        11.w,
-                        isHorizontal: true,
-                      ),
-                      PostMoreButtonRowWidget(
-                        icon: Icon(Icons.visibility_off),
-                        text: 'Hide',
-                      ),
-                      Space(
-                        13.5.w,
-                        isHorizontal: true,
-                      ),
-                      PostMoreButtonRowWidget(
-                        icon: Icon(Icons.error_outline),
-                        text: 'Report',
-                      ),
-                    ],
-                  ),
+                  // Space(4.h),
+                  // Row(
+                  //   children: [
+                  //     Space(
+                  //       11.w,
+                  //       isHorizontal: true,
+                  //     ),
+                  //     PostMoreButtonRowWidget(
+                  //       icon: Icon(Icons.visibility_off),
+                  //       text: 'Hide',
+                  //     ),
+                  //     Space(
+                  //       13.5.w,
+                  //       isHorizontal: true,
+                  //     ),
+                  //     PostMoreButtonRowWidget(
+                  //       icon: Icon(Icons.error_outline),
+                  //       text: 'Report',
+                  //     ),
+                  //   ],
+                  // ),
                   Space(5.h),
                   TouchableOpacity(
                     onTap: () async {
@@ -1030,7 +1042,7 @@ class _PostItemState extends State<PostItem> {
                   )
                 ],
               ),
-        widget.isProfilePost ? 60.h : 40.h);
+        widget.isProfilePost ? 60.h : 30.h);
   }
 }
 
