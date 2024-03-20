@@ -272,7 +272,7 @@ class _menuSuggestionWIdgetState extends State<menuSuggestionWIdget> {
         SizedBox(height: 10),
         if (check != '')
           SizedBox(
-            height: 10.h,
+            height: 15.h,
             child: ListView.builder(
               itemCount: widget.menuList.length,
               itemBuilder: (context, index) {
@@ -306,7 +306,7 @@ class _menuSuggestionWIdgetState extends State<menuSuggestionWIdget> {
             ),
           ),
         SizedBox(height: 10),
-        if ((selectedMenuItems).length != 0) Text('Selected Suggestions:'),
+        if ((selectedMenuItems).length != 0) Text('Selected Menu items:'),
         SizedBox(height: 5),
         Wrap(
           children: selectedMenuItems

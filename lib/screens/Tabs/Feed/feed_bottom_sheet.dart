@@ -188,9 +188,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                       Text(
                         widget.data['store_name'],
                         style: TextStyle(
-                          color: widget.isVendor
-                              ? Color(0xFF094B60)
-                              : Color(0xFF2E0536),
+                          color: Color(0xFF2E0435),
                           fontSize: 14,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w700,
@@ -205,9 +203,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: widget.isVendor
-                                ? Color(0xFF0A4C61)
-                                : Color(0xFF2E0536),
+                            color: Color(0xFF2E0536),
                             fontSize: 12,
                             fontFamily: 'Product Sans Medium',
                             fontWeight: FontWeight.w500,
@@ -269,8 +265,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
               Text(
                 'Products in this post',
                 style: TextStyle(
-                  color:
-                      widget.isVendor ? Color(0xFF0A4C61) : Color(0xFF2E0536),
+                  color: Color(0xFF2E0536),
                   fontSize: 22,
                   fontFamily: 'Jost',
                   fontWeight: FontWeight.w500,
@@ -714,38 +709,45 @@ class ItemWidget extends StatelessWidget {
             ),
           ),
           Space(8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.favorite_border,
-                size: 20,
-              ),
-              Space(isHorizontal: true, 10),
-              Text(
-                '${(widget.data['likes'] ?? []).length}',
-                style: TextStyle(
-                  color: Color(0xFF9327A8),
-                  fontSize: 10,
-                  fontFamily: 'Product Sans Medium',
-                  fontWeight: FontWeight.w500,
-                  height: 0,
-                  letterSpacing: 0.10,
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.favorite_border,
+                      size: 20,
+                    ),
+                    Space(isHorizontal: true, 10),
+                    Text(
+                      '${(widget.data['likes'] ?? []).length}',
+                      style: TextStyle(
+                        color: Color(0xFF9327A8),
+                        fontSize: 12,
+                        fontFamily: 'Product Sans Medium',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
+                        letterSpacing: 0.12,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          Space(8),
-          Text(
-            'Panner Lababdar',
-            maxLines: null,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Color(0xFF2E0536),
-              fontSize: 14,
-              fontFamily: 'Product Sans',
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.42,
+                Space(8),
+                Text(
+                  'Panner Lababdar',
+                  maxLines: null,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: Color(0xFF2E0536),
+                    fontSize: 14,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.42,
+                  ),
+                ),
+              ],
             ),
           ),
           Space(14),
@@ -757,7 +759,7 @@ class ItemWidget extends StatelessWidget {
                 blurRadius: 20,
                 shadowColor: Color.fromRGBO(158, 116, 158, 0.5),
                 boxColor: Color.fromRGBO(250, 110, 0, 1),
-                cornerRadius: 10),
+                cornerRadius: 8),
             child: Center(
                 child: Text(
               'Add',
