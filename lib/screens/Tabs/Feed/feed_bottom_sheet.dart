@@ -108,7 +108,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 7.w),
+          padding: const EdgeInsets.symmetric(horizontal: 44),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -227,7 +227,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                               style: TextStyle(
                                 color: Color(0xFF9327A8),
                                 fontSize: 10,
-                                fontFamily: 'Product Sans Medium',
+                                fontFamily: 'Product Sans',
                                 fontWeight: FontWeight.w500,
                                 height: 0,
                                 letterSpacing: 0.10,
@@ -262,15 +262,16 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                 ],
               ),
               Space(27),
-              Text(
+              const Text(
                 'Products in this post',
                 style: TextStyle(
                   color: Color(0xFF2E0536),
                   fontSize: 22,
+                  
                   fontFamily: 'Jost',
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   height: 0,
-                  letterSpacing: 0.22,
+                  letterSpacing: 0.32,
                 ),
               ),
             ],
@@ -460,6 +461,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
               )
             : Container(
                 height: 28.h,
+                margin: const EdgeInsets.symmetric(horizontal: 44),
                 width: double.infinity,
                 child: PageView(
                   controller: _pageController,
@@ -473,7 +475,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                       children: [
                         Space(0.7.h),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             ItemWidget(
                               widget: widget,

@@ -42,6 +42,7 @@ class _ProfileState extends State<Profile> {
   SampleItem? selectedMenu;
 
   Future<void> _refresh() async {
+    print("refreshing");
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _isLoading = true;
@@ -59,6 +60,7 @@ class _ProfileState extends State<Profile> {
       );
       prefs.setString('menuData', feedData);
     });
+  
   }
 
   List<dynamic> menuList = [];
@@ -215,7 +217,7 @@ class _ProfileState extends State<Profile> {
                                           AppWideLoadingBanner()
                                               .loadingBanner(context);
 
-                                          await Provider.of<Auth>(context)
+                                          await Provider.of<Auth>(context,listen: false)
                                               .logout();
                                           Navigator.of(context).pop();
                                           Navigator.of(context)
