@@ -23,6 +23,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_plus/share_plus.dart';
@@ -40,9 +41,10 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   int _activeButtonIndex = 1;
   SampleItem? selectedMenu;
-
+  List<dynamic> menuList = [];
+  List<dynamic> feedList = [];
   Future<void> _refresh() async {
-    print("refreshing");
+    print('refrsh');
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _isLoading = true;
@@ -60,13 +62,17 @@ class _ProfileState extends State<Profile> {
       );
       prefs.setString('menuData', feedData);
     });
-  
+    await Provider.of<Auth>(context, listen: false).getFeed().then((feed) {
+      setState(() {
+        feedList = [];
+        feedList.addAll(feed);
+        _isLoading = false;
+      });
+    });
   }
 
-  List<dynamic> menuList = [];
-
   bool _isLoading = false;
-
+  List<String> categories = [];
   Future<void> _getMenu() async {
     setState(() {
       _isLoading = true;
@@ -88,19 +94,41 @@ class _ProfileState extends State<Profile> {
           menuList.addAll(menu);
           _isLoading = false;
         });
-        final feedData = json.encode(
+        final menuData = json.encode(
           {
             'menu': menu,
           },
         );
-        prefs.setString('menuData', feedData);
+        prefs.setString('menuData', menuData);
       });
     }
+    for (var item in menuList) {
+      if (item.containsKey('category')) {
+        String category = item['category'];
+        if (!categories.contains(category)) {
+          categories.add(category);
+        }
+      }
+    }
+  }
+
+  Future<void> _getfeed() async {
+    setState(() {
+      _isLoading = true;
+    });
+    await Provider.of<Auth>(context, listen: false).getFeed().then((feed) {
+      setState(() {
+        feedList = [];
+        feedList.addAll(feed);
+        _isLoading = false;
+      });
+    });
   }
 
   @override
   void initState() {
     _getMenu();
+    _getfeed();
     // TODO: implement initState
     super.initState();
   }
@@ -217,7 +245,8 @@ class _ProfileState extends State<Profile> {
                                           AppWideLoadingBanner()
                                               .loadingBanner(context);
 
-                                          await Provider.of<Auth>(context,listen: false)
+                                          await Provider.of<Auth>(context,
+                                                  listen: false)
                                               .logout();
                                           Navigator.of(context).pop();
                                           Navigator.of(context)
@@ -389,7 +418,7 @@ class _ProfileState extends State<Profile> {
                       ),
                       Center(
                         child: Container(
-                          width: _isVendor ? 90.w : 100.w,
+                          width: 100.w,
                           padding: EdgeInsets.symmetric(
                               vertical: 1.5.h, horizontal: 4.w),
                           decoration: ShapeDecoration(
@@ -485,7 +514,7 @@ class _ProfileState extends State<Profile> {
                                       )
                                     : Container(
                                         height: 6.5.h,
-                                        width: 90.w,
+                                        width: 95.w,
                                         decoration: ShapeDecoration(
                                           shadows: const [
                                             BoxShadow(
@@ -551,206 +580,48 @@ class _ProfileState extends State<Profile> {
                                 _isVendor ? Space(3.h) : Space(0.h),
                                 if (_activeButtonIndex == 1)
                                   Center(
-                                    // width:
-                                    child: FutureBuilder(
-                                      future: Provider.of<Auth>(context,
-                                              listen: false)
-                                          .getFeed(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.done) {
-                                          // print(snapshot.data);
-                                          List<dynamic> data =
-                                              snapshot.data as List<dynamic>;
-                                          // print(data);
-                                          data = data.reversed.toList();
-                                          return GridView.builder(
-                                            physics:
-                                                const NeverScrollableScrollPhysics(), // Disable scrolling
-                                            shrinkWrap:
-                                                true, // Allow the GridView to shrink-wrap its content
-                                            addAutomaticKeepAlives: true,
-
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 0.8.h,
-                                                horizontal:
-                                                    _isVendor ? 3.w : 0),
-                                            gridDelegate:
-                                                SliverGridDelegateWithFixedCrossAxisCount(
-                                              childAspectRatio: 1,
-                                              crossAxisCount:
-                                                  3, // Number of items in a row
-                                              crossAxisSpacing:
-                                                  _isVendor ? 2.w : 2.w,
-                                              mainAxisSpacing:
-                                                  1.h, // Spacing between rows
-                                            ),
-                                            itemCount: data
-                                                .length, // Total number of items
-                                            itemBuilder: (context, index) {
-                                              // You can replace this container with your custom item widget
-                                              return FeedWidget(
-                                                  index: index,
-                                                  fulldata: data,
-                                                  data: data[index]);
-                                            },
-                                          );
-                                        } else
-                                          return Center(
-                                            child: Container(
-                                              height: 20,
-                                              width: 20,
-                                              child:
-                                                  const CircularProgressIndicator(),
-                                            ),
-                                          );
-                                      },
-                                    ),
-                                  ),
-                                if (_activeButtonIndex == 2)
-                                  Container(
-                                    width: 85.w,
-                                    child: Column(children: [
-                                      _isLoading == true
-                                          ? const Center(
+                                      // width:
+                                      child: _isLoading
+                                          ? Center(
                                               child:
                                                   CircularProgressIndicator(),
                                             )
-                                          : menuList.length == 0
-                                              ? Container(
-                                                  height: 10.h,
-                                                  child: Center(
-                                                      child: Text(
-                                                          'No items in Menu')),
-                                                )
-                                              : Column(
-                                                  children: [
-                                                    Container(
-                                                      width: double.infinity,
-                                                      height: 40,
-                                                      decoration: GlobalVariables()
-                                                          .ContainerDecoration(
-                                                              offset:
-                                                                  Offset(0, 4),
-                                                              blurRadius: 4,
-                                                              shadowColor: Color
-                                                                  .fromRGBO(
-                                                                      0,
-                                                                      0,
-                                                                      0,
-                                                                      0.25),
-                                                              boxColor: Color
-                                                                  .fromRGBO(
-                                                                      239,
-                                                                      255,
-                                                                      254,
-                                                                      1),
-                                                              cornerRadius: 10),
-                                                      child: Row(children: [
-                                                        Space(
-                                                          12,
-                                                          isHorizontal: true,
-                                                        ),
-                                                        Icon(
-                                                          Icons.search,
-                                                          color:
-                                                              Color(0xFFFA6E00),
-                                                        ),
-                                                        Space(
-                                                          12,
-                                                          isHorizontal: true,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 60.w,
-                                                          child: TextField(
-                                                              readOnly: true,
-                                                              maxLines: null,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Color(
-                                                                    0xFF094B60),
-                                                                fontSize: 14,
-                                                                fontFamily:
-                                                                    'Product Sans',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                height: 0.10,
-                                                                letterSpacing:
-                                                                    0.42,
-                                                              ),
-                                                              textInputAction:
-                                                                  TextInputAction
-                                                                      .done,
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                hintText:
-                                                                    'Search',
-                                                                hintStyle:
-                                                                    TextStyle(
-                                                                  color: Color(
-                                                                      0xFF094B60),
-                                                                  fontSize: 14,
-                                                                  fontFamily:
-                                                                      'Product Sans',
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  height: 0.10,
-                                                                  letterSpacing:
-                                                                      0.42,
-                                                                ),
-                                                                contentPadding:
-                                                                    EdgeInsets
-                                                                        .zero,
-                                                                border:
-                                                                    InputBorder
-                                                                        .none,
-                                                              ),
-                                                              onChanged:
-                                                                  (newv) {},
-                                                              onSubmitted:
-                                                                  (newv) {},
-                                                              cursorColor: Color(
-                                                                  0xFFFA6E00)),
-                                                        )
-                                                      ]),
-                                                    ),
-                                                    Space(1.h),
-                                                    ListView.builder(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(),
-                                                        itemCount: (menuList
-                                                                as List<
-                                                                    dynamic>)
-                                                            .length,
-                                                        physics:
-                                                            const NeverScrollableScrollPhysics(),
-                                                        shrinkWrap: true,
-                                                        addAutomaticKeepAlives:
-                                                            true,
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          menuList[index]
-                                                                      ['VEG'] ==
-                                                                  null
-                                                              ? menuList[index]
-                                                                  ['VEG'] = true
-                                                              : null;
+                                          : GridView.builder(
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(), // Disable scrolling
+                                              shrinkWrap:
+                                                  true, // Allow the GridView to shrink-wrap its content
+                                              addAutomaticKeepAlives: true,
 
-                                                          return menuList[index]
-                                                                      ['VEG'] !=
-                                                                  null
-                                                              ? MenuItem(
-                                                                  data: menuList[
-                                                                      index])
-                                                              : const SizedBox
-                                                                  .shrink();
-                                                        }),
-                                                  ],
-                                                ),
-                                    ]),
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 0.8.h,
+                                                  horizontal:
+                                                      _isVendor ? 1.w : 0),
+                                              gridDelegate:
+                                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                                childAspectRatio: 1,
+                                                crossAxisCount:
+                                                    3, // Number of items in a row
+                                                crossAxisSpacing:
+                                                    _isVendor ? 2.w : 2.w,
+                                                mainAxisSpacing:
+                                                    1.h, // Spacing between rows
+                                              ),
+                                              itemCount: feedList
+                                                  .length, // Total number of items
+                                              itemBuilder: (context, index) {
+                                                // You can replace this container with your custom item widget
+                                                return FeedWidget(
+                                                    index: index,
+                                                    fulldata: feedList,
+                                                    data: feedList[index]);
+                                              },
+                                            )),
+                                if (_activeButtonIndex == 2)
+                                  Menu(
+                                    isLoading: _isLoading,
+                                    menuList: menuList,
+                                    categories: categories,
                                   ),
                                 if (_activeButtonIndex == 3)
                                   const Text('Feature Pending'),
@@ -767,6 +638,197 @@ class _ProfileState extends State<Profile> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class Menu extends StatefulWidget {
+  Menu({
+    super.key,
+    required bool isLoading,
+    required this.menuList,
+    required this.categories,
+  }) : _isLoading = isLoading;
+
+  final bool _isLoading;
+  final List menuList;
+  final List<String> categories;
+
+  @override
+  State<Menu> createState() => _MenuState();
+}
+
+class _MenuState extends State<Menu> {
+  TextEditingController _controller = TextEditingController();
+
+  bool _iscategorySearch = false;
+  bool _searchOn = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 90.w,
+      child: Column(children: [
+        widget._isLoading == true
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : widget.menuList.length == 0
+                ? Container(
+                    height: 10.h,
+                    child: const Center(child: Text('No items in Menu')),
+                  )
+                : Column(
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            for (int i = 0; i < widget.categories.length; i++)
+                              TouchableOpacity(
+                                onTap: () {
+                                  setState(() {
+                                    _iscategorySearch = true;
+                                    _searchOn = true;
+                                    _controller.text = widget.categories[i];
+                                  });
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(right: 5.w),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 1.h, horizontal: 5.w),
+                                  decoration: GlobalVariables()
+                                      .ContainerDecoration(
+                                          offset: const Offset(0, 4),
+                                          blurRadius: 4,
+                                          shadowColor: const Color.fromRGBO(
+                                              0, 0, 0, 0.25),
+                                          boxColor: const Color.fromRGBO(
+                                              112, 186, 210, 1),
+                                          cornerRadius: 10),
+                                  child: Center(
+                                    child: Text(
+                                      widget.categories[i],
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.w700,
+                                        height: 0,
+                                        letterSpacing: 0.14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const Space(22),
+                      Container(
+                        width: double.infinity,
+                        height: 40,
+                        decoration: GlobalVariables().ContainerDecoration(
+                            offset: const Offset(0, 4),
+                            blurRadius: 4,
+                            shadowColor: const Color.fromRGBO(0, 0, 0, 0.25),
+                            boxColor: const Color.fromRGBO(239, 255, 254, 1),
+                            cornerRadius: 10),
+                        child: Row(children: [
+                          const Space(12, isHorizontal: true),
+                          const Icon(
+                            Icons.search,
+                            color: Color(0xFFFA6E00),
+                          ),
+                          const Space(12, isHorizontal: true),
+                          SizedBox(
+                            width: 60.w,
+                            child: TextField(
+                                controller: _controller,
+                                readOnly: false,
+                                maxLines: null,
+                                style: const TextStyle(
+                                  color: Color(0xFF094B60),
+                                  fontSize: 14,
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.w400,
+                                  height: 0.10,
+                                  letterSpacing: 0.42,
+                                ),
+                                textInputAction: TextInputAction.done,
+                                decoration: const InputDecoration(
+                                  hintText: 'Search',
+                                  hintStyle: TextStyle(
+                                    color: Color(0xFF094B60),
+                                    fontSize: 14,
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0.10,
+                                    letterSpacing: 0.42,
+                                  ),
+                                  contentPadding: EdgeInsets.zero,
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: (newv) {
+                                  setState(() {
+                                    _iscategorySearch = false;
+                                    _searchOn = true;
+                                  });
+                                  if (newv == '')
+                                    setState(() {
+                                      _searchOn = false;
+                                    });
+                                  print(_iscategorySearch);
+                                },
+                                cursorColor: const Color(0xFFFA6E00)),
+                          ),
+                          Space(
+                            30,
+                            isHorizontal: true,
+                          ),
+                          TouchableOpacity(
+                            onTap: () {
+                              setState(() {
+                                _searchOn = false;
+                                _controller.clear();
+                              });
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 1.w),
+                              child: Icon(
+                                Icons.cancel,
+                                color: Color.fromARGB(255, 162, 64, 57),
+                              ),
+                            ),
+                          )
+                        ]),
+                      ),
+                      Space(1.h),
+                      if (_iscategorySearch && _searchOn)
+                        for (int index = 0;
+                            index < widget.menuList.length;
+                            index++)
+                          if (widget.menuList[index]['category']
+                              .toString()
+                              .contains(_controller.text))
+                            MenuItem(data: widget.menuList[index]),
+                      if (!_iscategorySearch && _searchOn)
+                        for (int index = 0;
+                            index < widget.menuList.length;
+                            index++)
+                          if (widget.menuList[index]['name']
+                              .toString()
+                              .toLowerCase()
+                              .contains(_controller.text.toLowerCase()))
+                            MenuItem(data: widget.menuList[index]),
+                      if (!_searchOn)
+                        for (int index = 0;
+                            index < widget.menuList.length;
+                            index++)
+                          MenuItem(data: widget.menuList[index]),
+                    ],
+                  ),
+      ]),
     );
   }
 }

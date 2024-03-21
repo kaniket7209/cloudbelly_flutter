@@ -123,9 +123,9 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                           _isfocused = false;
                         });
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            right: 10, top: 10, bottom: 10),
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.only(right: 10, top: 10, bottom: 10),
                         child: SizedBox(
                           width: 25,
                           child: Text(
@@ -145,7 +145,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                   Container(
                     height: _isfocused ? 50 : 88,
                     width: _isfocused ? 50 : 88,
-                    decoration: ShapeDecoration(
+                    decoration: const ShapeDecoration(
                       shadows: [
                         // widget.isVendor
                         //     ? BoxShadow(
@@ -176,7 +176,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                       ),
                     ),
                   ),
-                  Space(
+                  const Space(
                     22,
                     isHorizontal: true,
                   ),
@@ -184,10 +184,10 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Space(6),
+                      const Space(6),
                       Text(
                         widget.data['store_name'],
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF2E0435),
                           fontSize: 14,
                           fontFamily: 'Product Sans',
@@ -195,14 +195,14 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                           letterSpacing: 0.42,
                         ),
                       ),
-                      Space(4),
+                      const Space(4),
                       SizedBox(
                         width: 188,
                         child: Text(
                           widget.data['caption'],
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Color(0xFF2E0536),
                             fontSize: 12,
                             fontFamily: 'Product Sans Medium',
@@ -211,7 +211,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                           ),
                         ),
                       ),
-                      if (!_isfocused) Space(10),
+                      if (!_isfocused) const Space(10),
                       if (!_isfocused)
                         Row(
                           children: [
@@ -221,10 +221,10 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                   : Icons.favorite_border,
                               size: 20,
                             ),
-                            Space(isHorizontal: true, 2),
+                            const Space(isHorizontal: true, 2),
                             Text(
                               '${(widget.data['likes'] ?? []).length}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color(0xFF9327A8),
                                 fontSize: 10,
                                 fontFamily: 'Product Sans',
@@ -233,13 +233,13 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                 letterSpacing: 0.10,
                               ),
                             ),
-                            Space(isHorizontal: true, 11),
-                            Icon(
+                            const Space(isHorizontal: true, 11),
+                            const Icon(
                               Icons.mode_comment_outlined,
                               size: 20,
                             ),
-                            Space(isHorizontal: true, 2),
-                            Text(
+                            const Space(isHorizontal: true, 2),
+                            const Text(
                               '231',
                               style: TextStyle(
                                 color: Color(0xFF9327A8),
@@ -250,8 +250,8 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                 letterSpacing: 0.10,
                               ),
                             ),
-                            Space(isHorizontal: true, 11),
-                            Icon(
+                            const Space(isHorizontal: true, 11),
+                            const Icon(
                               Icons.share,
                               size: 20,
                             )
@@ -261,13 +261,12 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                   )
                 ],
               ),
-              Space(27),
+              const Space(27),
               const Text(
                 'Products in this post',
                 style: TextStyle(
                   color: Color(0xFF2E0536),
                   fontSize: 22,
-                  
                   fontFamily: 'Jost',
                   fontWeight: FontWeight.w600,
                   height: 0,
@@ -290,7 +289,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                           Container(
                             height: 202,
                             width: 202,
-                            decoration: ShapeDecoration(
+                            decoration: const ShapeDecoration(
                               shadows: [
                                 BoxShadow(
                                   offset: Offset(3, 6),
@@ -315,7 +314,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                               ),
                             ),
                           ),
-                          Space(36, isHorizontal: true),
+                          const Space(36, isHorizontal: true),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -329,17 +328,17 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                           )
                         ],
                       ),
-                      Space(15),
+                      const Space(15),
                       Row(
                         children: [
-                          Space(
+                          const Space(
                             15,
                             isHorizontal: true,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 'Panner Lababdar',
                                 style: TextStyle(
                                   color: Color(0xFF2E0536),
@@ -349,18 +348,18 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                   letterSpacing: 0.42,
                                 ),
                               ),
-                              Space(4),
+                              const Space(4),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.favorite_border,
                                     size: 20,
                                   ),
-                                  Space(isHorizontal: true, 10),
+                                  const Space(isHorizontal: true, 10),
                                   Text(
                                     '${(widget.data['likes'] ?? []).length}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Color(0xFF9327A8),
                                       fontSize: 10,
                                       fontFamily: 'Product Sans Medium',
@@ -371,8 +370,8 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                   ),
                                 ],
                               ),
-                              Space(6),
-                              SizedBox(
+                              const Space(6),
+                              const SizedBox(
                                 width: 188,
                                 child: Text(
                                   'This is by far the best biryani we ever made, come and enjoy the taste of North  Bengal.',
@@ -390,7 +389,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                               )
                             ],
                           ),
-                          Space(
+                          const Space(
                             10,
                             isHorizontal: true,
                           ),
@@ -403,7 +402,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                     width: 113,
                                     decoration: ShapeDecoration(
                                       shape: SmoothRectangleBorder(
-                                          side: BorderSide(
+                                          side: const BorderSide(
                                             color: Colors.black, // Border color
                                             width: 2.0, // Border width
                                           ),
@@ -412,7 +411,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                             cornerSmoothing: 1,
                                           )),
                                     ),
-                                    child: Center(
+                                    child: const Center(
                                         child: Text(
                                       'Rs 256',
                                       style: TextStyle(
@@ -425,19 +424,19 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                       ),
                                     )),
                                   ),
-                                  Space(11),
+                                  const Space(11),
                                   Container(
                                     height: 41,
                                     width: 113,
                                     decoration: ShapeDecoration(
-                                      color: Color(0xFFFA6E00),
+                                      color: const Color(0xFFFA6E00),
                                       shape: SmoothRectangleBorder(
                                           borderRadius: SmoothBorderRadius(
                                         cornerRadius: 12,
                                         cornerSmoothing: 1,
                                       )),
                                     ),
-                                    child: Center(
+                                    child: const Center(
                                       child: Text(
                                         'Add to Cart',
                                         style: TextStyle(
@@ -461,7 +460,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
               )
             : Container(
                 height: 28.h,
-                margin: const EdgeInsets.symmetric(horizontal: 44),
+                padding: const EdgeInsets.symmetric(horizontal: 44),
                 width: double.infinity,
                 child: PageView(
                   controller: _pageController,
@@ -528,7 +527,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                           borderRadius: BorderRadius.circular(10),
                           color: _currentPageIndex == index
                               ? const Color.fromRGBO(148, 40, 169, 1)
-                              : Color.fromRGBO(214, 175, 227, 1),
+                              : const Color.fromRGBO(214, 175, 227, 1),
                         ),
                       )
                     : Container(
@@ -539,7 +538,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                           shape: BoxShape.circle,
                           color: _currentPageIndex == index
                               ? const Color.fromRGBO(148, 40, 169, 1)
-                              : Color.fromRGBO(214, 175, 227, 1),
+                              : const Color.fromRGBO(214, 175, 227, 1),
                         ),
                       ),
               ),
@@ -551,16 +550,16 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
           width: double.infinity,
           height: 75,
           decoration: GlobalVariables().ContainerDecoration(
-              offset: Offset(3, 6),
+              offset: const Offset(3, 6),
               blurRadius: 20,
-              shadowColor: Color.fromRGBO(179, 108, 179, 0.5),
-              boxColor: Color.fromRGBO(123, 53, 141, 1),
+              shadowColor: const Color.fromRGBO(179, 108, 179, 0.5),
+              boxColor: const Color.fromRGBO(123, 53, 141, 1),
               cornerRadius: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Column(
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -592,14 +591,14 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                   height: 41,
                   width: 113,
                   decoration: ShapeDecoration(
-                    color: Color.fromRGBO(84, 166, 193, 1),
+                    color: const Color.fromRGBO(84, 166, 193, 1),
                     shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(
                       cornerRadius: 12,
                       cornerSmoothing: 1,
                     )),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'View Cart',
                       style: TextStyle(
@@ -639,7 +638,7 @@ class CaloriesColumnWidget extends StatelessWidget {
       children: [
         Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color(0xFF9327A8),
             fontSize: 12,
             fontFamily: 'Product Sans Medium',
@@ -649,7 +648,7 @@ class CaloriesColumnWidget extends StatelessWidget {
         ),
         Text(
           data,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color(0xFF2E0536),
             fontSize: 18,
             fontFamily: 'Product Sans',
@@ -686,7 +685,7 @@ class ItemWidget extends StatelessWidget {
             child: Container(
               height: 90,
               width: 90,
-              decoration: ShapeDecoration(
+              decoration: const ShapeDecoration(
                 shadows: [
                   BoxShadow(
                     offset: Offset(3, 6),
@@ -710,7 +709,7 @@ class ItemWidget extends StatelessWidget {
               ),
             ),
           ),
-          Space(8),
+          const Space(8),
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Column(
@@ -718,14 +717,14 @@ class ItemWidget extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.favorite_border,
                       size: 20,
                     ),
-                    Space(isHorizontal: true, 10),
+                    const Space(isHorizontal: true, 10),
                     Text(
                       '${(widget.data['likes'] ?? []).length}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Color(0xFF9327A8),
                         fontSize: 12,
                         fontFamily: 'Product Sans Medium',
@@ -736,8 +735,8 @@ class ItemWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                Space(8),
-                Text(
+                const Space(8),
+                const Text(
                   'Panner Lababdar',
                   maxLines: null,
                   textAlign: TextAlign.left,
@@ -752,17 +751,17 @@ class ItemWidget extends StatelessWidget {
               ],
             ),
           ),
-          Space(14),
+          const Space(14),
           Container(
             width: 71,
             height: 30,
             decoration: GlobalVariables().ContainerDecoration(
-                offset: Offset(3, 6),
+                offset: const Offset(3, 6),
                 blurRadius: 20,
-                shadowColor: Color.fromRGBO(158, 116, 158, 0.5),
-                boxColor: Color.fromRGBO(250, 110, 0, 1),
+                shadowColor: const Color.fromRGBO(158, 116, 158, 0.5),
+                boxColor: const Color.fromRGBO(250, 110, 0, 1),
                 cornerRadius: 8),
-            child: Center(
+            child: const Center(
                 child: Text(
               'Add',
               style: TextStyle(

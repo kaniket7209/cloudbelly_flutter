@@ -34,6 +34,7 @@ class Auth with ChangeNotifier {
   List<dynamic> followers = [];
   List<dynamic> followings = [];
   String userType = '';
+  List<dynamic> menuList = [];
 
   // get user_logo_url {
   //   notifyListeners();
@@ -79,6 +80,7 @@ class Auth with ChangeNotifier {
 
   Future<String> login(email, pass) async {
     final prefs = await SharedPreferences.getInstance();
+    print('nknbnkjbn');
     final String url = 'https://app.cloudbelly.in/login';
 
     final Map<String, dynamic> requestBody = {
@@ -95,6 +97,7 @@ class Auth with ChangeNotifier {
       );
 
       final DataMap = jsonDecode(response.body);
+      print('jhj');
       print('user data:${DataMap}');
       user_id = DataMap['user_id'];
       user_email = DataMap['email'];
@@ -704,6 +707,56 @@ class Auth with ChangeNotifier {
       );
 
       return jsonDecode((response.body));
+    } catch (error) {
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
+  Future<dynamic> follow(String id) async {
+    final String url = 'https://app.cloudbelly.in/follow';
+
+    final Map<String, dynamic> requestBody = {
+      "current_user_id": user_id,
+      "profile_user_id": id,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+      return {
+        'body': jsonDecode((response.body)),
+        'code': response.statusCode,
+      };
+    } catch (error) {
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
+  Future<dynamic> unfollow(String id) async {
+    final String url = 'https://app.cloudbelly.in/unfollow';
+
+    final Map<String, dynamic> requestBody = {
+      "current_user_id": user_id,
+      "profile_user_id": id,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+      return {
+        'body': jsonDecode((response.body)),
+        'code': response.statusCode,
+      };
     } catch (error) {
       // Handle exceptions
       return '-1';

@@ -47,6 +47,7 @@ class _PostItemState extends State<PostItem> {
   @override
   void didChangeDependencies() {
     if (_didUpdate) {
+      checkFollow();
       discription = widget.data['caption'] ?? '';
 
       caption1 = getFittedText(discription, context)[0];
@@ -125,8 +126,22 @@ class _PostItemState extends State<PostItem> {
   SampleItem? selectedMenu;
   bool _showLikeIcon = false;
   List<dynamic> _likeData = [];
+  bool _isFollowing = false;
+  bool checkFollow() {
+    String id = widget.data['user_id'];
+    List<dynamic> temp = Provider.of<Auth>(context, listen: false).followings;
+    for (var user in temp) {
+      if (user['user_id'] == id) {
+        _isFollowing = true;
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool _isFollowing = checkFollow();
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userType == 'Vendor';
     // print(widget.data);
@@ -238,37 +253,81 @@ class _PostItemState extends State<PostItem> {
                   ),
                 ),
                 const Spacer(),
-                if (!widget.isProfilePost)
-                  Container(
-                    width: 70,
-                    height: 25,
-                    decoration: ShapeDecoration(
-                      shadows: const [
-                        BoxShadow(
-                          offset: Offset(3, 6),
-                          color: Color.fromRGBO(116, 202, 199, 0.79),
-                          blurRadius: 20,
-                        ),
-                      ],
-                      color: _isVendor
-                          ? const Color.fromRGBO(124, 193, 191, 1)
-                          : Color(0xFFFA6E00),
-                      shape: SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius(
-                        cornerRadius: 5,
-                        cornerSmoothing: 1,
-                      )),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Follow',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontFamily: 'Product Sans Medium',
-                          fontWeight: FontWeight.w500,
-                          height: 0.14,
-                          letterSpacing: 0.36,
+                if (!widget.isProfilePost &&
+                    !(Provider.of<Auth>(context, listen: false).user_id ==
+                        widget.data['user_id']))
+                  TouchableOpacity(
+                    onTap: () async {
+                      if (!_isFollowing) {
+                        final dynamic response =
+                            await Provider.of<Auth>(context, listen: false)
+                                .follow(widget.data['user_id']);
+                        if (response['code'] == 200) {
+                          TOastNotification().showSuccesToast(
+                              context, response['body']['message']);
+                          Provider.of<Auth>(context, listen: false)
+                              .followings
+                              .add({'user_id': widget.data['user_id']});
+                          setState(() {
+                            _isFollowing = true;
+                          });
+                        } else {
+                          TOastNotification().showErrorToast(
+                              context, response['body']['message']);
+                        }
+                      } else {
+                        final dynamic response =
+                            await Provider.of<Auth>(context, listen: false)
+                                .unfollow(widget.data['user_id']);
+                        if (response['code'] == 200) {
+                          TOastNotification().showSuccesToast(
+                              context, response['body']['message']);
+                          Provider.of<Auth>(context, listen: false)
+                              .followings
+                              .removeWhere((element) =>
+                                  element['user_id'] == widget.data['user_id']);
+                          setState(() {
+                            _isFollowing = false;
+                          });
+                        } else {
+                          TOastNotification().showErrorToast(
+                              context, response['body']['message']);
+                        }
+                      }
+                      print(
+                          Provider.of<Auth>(context, listen: false).followings);
+                    },
+                    child: Container(
+                      width: 70,
+                      height: 25,
+                      decoration: ShapeDecoration(
+                        shadows: const [
+                          BoxShadow(
+                            offset: Offset(3, 6),
+                            color: Color.fromRGBO(116, 202, 199, 0.79),
+                            blurRadius: 20,
+                          ),
+                        ],
+                        color: _isVendor
+                            ? const Color.fromRGBO(124, 193, 191, 1)
+                            : Color(0xFFFA6E00),
+                        shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                          cornerRadius: 5,
+                          cornerSmoothing: 1,
+                        )),
+                      ),
+                      child: Center(
+                        child: Text(
+                          _isFollowing ? 'Unfollow' : 'Follow',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontFamily: 'Product Sans Medium',
+                            fontWeight: FontWeight.w500,
+                            height: 0.14,
+                            letterSpacing: 0.36,
+                          ),
                         ),
                       ),
                     ),
@@ -276,7 +335,9 @@ class _PostItemState extends State<PostItem> {
                 IconButton(
                     onPressed: () async {
                       {
-                        return MoreSheetInPostItem(context);
+                        return MoreSheetInPostItem(context).then((value) {
+                          setState(() {});
+                        });
                       }
                     },
                     icon: Icon(Icons.more_vert)),
@@ -994,55 +1055,108 @@ class _PostItemState extends State<PostItem> {
                   //   ],
                   // ),
                   Space(5.h),
-                  TouchableOpacity(
-                    onTap: () async {
-                      AppWideLoadingBanner().loadingBanner(context);
-                      final code =
-                          await Provider.of<Auth>(context, listen: false)
-                              .deletePost(widget.data['id']);
-
-                      if (code == '200') {
-                        TOastNotification()
-                            .showSuccesToast(context, 'Post deleted');
-                        final Data =
-                            await Provider.of<Auth>(context, listen: false)
-                                .getFeed() as List<dynamic>;
-                        Navigator.of(context).pop();
-
-                        Navigator.of(context).pushReplacementNamed(
-                            PostsScreen.routeName,
-                            arguments: {'data': Data, 'index': 0});
-                      } else {
-                        Navigator.of(context).pop();
-                        TOastNotification().showErrorToast(context, 'Error!');
-                      }
-                    },
-                    child: Container(
-                        decoration: GlobalVariables().ContainerDecoration(
-                            offset: Offset(0, 8),
-                            blurRadius: 20,
-                            boxColor: Color.fromRGBO(84, 166, 193, 1),
-                            cornerRadius: 10,
-                            shadowColor: Color.fromRGBO(152, 202, 201, 0.8)),
-                        width: double.infinity,
-                        height: 6.h,
-                        child: Center(
-                          child: Text(
-                            'Unfollow',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                              letterSpacing: 0.16,
-                            ),
-                          ),
-                        )),
-                  )
+                  FollowButtonInSHeet(data: widget.data),
                 ],
               ),
         widget.isProfilePost ? 60.h : 30.h);
+  }
+}
+
+class FollowButtonInSHeet extends StatefulWidget {
+  FollowButtonInSHeet({
+    super.key,
+    required this.data,
+  });
+  dynamic data;
+
+  @override
+  State<FollowButtonInSHeet> createState() => _FollowButtonInSHeetState();
+}
+
+class _FollowButtonInSHeetState extends State<FollowButtonInSHeet> {
+  @override
+  void initState() {
+    checkFollow();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  bool _isFollowing = false;
+  bool checkFollow() {
+    String id = widget.data['user_id'];
+    List<dynamic> temp = Provider.of<Auth>(context, listen: false).followings;
+    for (var user in temp) {
+      if (user['user_id'] == id) {
+        _isFollowing = true;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TouchableOpacity(
+      onTap: () async {
+        if (!_isFollowing) {
+          final dynamic response =
+              await Provider.of<Auth>(context, listen: false)
+                  .follow(widget.data['user_id']);
+          if (response['code'] == 200) {
+            TOastNotification()
+                .showSuccesToast(context, response['body']['message']);
+            Provider.of<Auth>(context, listen: false)
+                .followings
+                .add({'user_id': widget.data['user_id']});
+            setState(() {
+              _isFollowing = true;
+            });
+          } else {
+            TOastNotification()
+                .showErrorToast(context, response['body']['message']);
+          }
+        } else {
+          final dynamic response =
+              await Provider.of<Auth>(context, listen: false)
+                  .unfollow(widget.data['user_id']);
+          if (response['code'] == 200) {
+            TOastNotification()
+                .showSuccesToast(context, response['body']['message']);
+            Provider.of<Auth>(context, listen: false).followings.removeWhere(
+                (element) => element['user_id'] == widget.data['user_id']);
+            setState(() {
+              _isFollowing = false;
+            });
+          } else {
+            TOastNotification()
+                .showErrorToast(context, response['body']['message']);
+          }
+        }
+        print(Provider.of<Auth>(context, listen: false).followings);
+      },
+      child: Container(
+          decoration: GlobalVariables().ContainerDecoration(
+              offset: Offset(0, 8),
+              blurRadius: 20,
+              boxColor: Color.fromRGBO(84, 166, 193, 1),
+              cornerRadius: 10,
+              shadowColor: Color.fromRGBO(152, 202, 201, 0.8)),
+          width: double.infinity,
+          height: 6.h,
+          child: Center(
+            child: Text(
+              _isFollowing ? 'Unfollow' : 'Follow',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w700,
+                height: 0,
+                letterSpacing: 0.16,
+              ),
+            ),
+          )),
+    );
   }
 }
 

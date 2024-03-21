@@ -83,6 +83,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromRGBO(234, 245, 247, 1),
 
       body: _pages[_selectedIndex],
@@ -110,18 +111,9 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               width: 25,
               height: 25,
             ),
-            // child: Text(
-            //   '+',
-            //   textAlign: TextAlign.start,
-            //   style: TextStyle(color: Colors.white, fontSize: 35),
-            // ),
           ),
-          // Adjust padding as needed
         ),
         onPressed: () async {
-          // awa
-          // await Provider.of<Auth>(context, listen: false)
-          //     .postalCodeCheck('332030');
           AppWideLoadingBanner().loadingBanner(context);
           List<String> url = await Provider.of<Auth>(context, listen: false)
               .pickMultipleImagesAndUpoad();
