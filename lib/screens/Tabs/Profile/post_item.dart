@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Feed/feed_bottom_sheet.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
@@ -14,6 +15,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -519,80 +521,79 @@ class _PostItemState extends State<PostItem> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     // Text('knknhkink'),
-                    // SvgPicture.asset(
-                    //   Assets.favourite_svg,
-                    //   // color: Colors.red,
-                    //   semanticsLabel: 'My SVG Picture',
-                    //   width: 50, // adjust width as needed
-                    //   height: 10, // adjust height as needed
-                    // ),
-                    //like button
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      // pa
-                      onPressed: () async {
-                        // print(widget.data['likes'] ?? []);
-                        String code = '';
-
-                        code = widget.isProfilePost
-                            ? await Provider.of<Auth>(context, listen: false)
-                                .likePost(
-                                    widget.data['id'],
-                                    Provider.of<Auth>(context, listen: false)
-                                        .user_id)
-                            : await Provider.of<Auth>(context, listen: false)
-                                .likePost(
-                                    widget.data['id'], widget.data['user_id']);
-
-                        if (code == '200') {
-                          setState(() {
-                            _isLiked = !_isLiked;
-                            if (_isLiked) {
-                              setState(() {
-                                _likeData.add({
-                                  'id':
-                                      Provider.of<Auth>(context, listen: false)
-                                          .user_id,
-                                  'profile_photo':
-                                      Provider.of<Auth>(context, listen: false)
-                                          .logo_url,
-                                  'name':
-                                      Provider.of<Auth>(context, listen: false)
-                                          .store_name,
-                                });
-                              });
-                            } else {
-                              setState(() {
-                                _likeData.removeWhere(
-                                  (element) =>
-                                      element['id'] ==
-                                      Provider.of<Auth>(context, listen: false)
-                                          .user_id,
-                                );
-                              });
-                            }
-                            if (_isLiked == true) _showLikeIcon = true;
-                          });
-                          Future.delayed(Duration(seconds: 2), () {
-                            setState(() {
-                              _showLikeIcon = false;
-                            });
-                          });
-                        } else {
-                          TOastNotification().showErrorToast(context, 'Error!');
-                        }
-                      },
-                      icon: AnimatedContainer(
-                        duration: Duration(milliseconds: 3000),
-                        curve: Curves.easeInOut,
-                        child: Icon(
-                          _isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: _isLiked
-                              ? Colors.red
-                              : null, // Change color when liked
-                        ),
-                      ),
+                    SvgPicture.asset(
+                      'assets/icons/Favorite.svg',
+                      color: Colors.red,
+                      allowDrawingOutsideViewBox: true,
+                      width: 100,
                     ),
+                    //like button
+                    // IconButton(
+                    //   padding: EdgeInsets.zero,
+                    //   // pa
+                    //   onPressed: () async {
+                    //     // print(widget.data['likes'] ?? []);
+                    //     String code = '';
+
+                    //     code = widget.isProfilePost
+                    //         ? await Provider.of<Auth>(context, listen: false)
+                    //             .likePost(
+                    //                 widget.data['id'],
+                    //                 Provider.of<Auth>(context, listen: false)
+                    //                     .user_id)
+                    //         : await Provider.of<Auth>(context, listen: false)
+                    //             .likePost(
+                    //                 widget.data['id'], widget.data['user_id']);
+
+                    //     if (code == '200') {
+                    //       setState(() {
+                    //         _isLiked = !_isLiked;
+                    //         if (_isLiked) {
+                    //           setState(() {
+                    //             _likeData.add({
+                    //               'id':
+                    //                   Provider.of<Auth>(context, listen: false)
+                    //                       .user_id,
+                    //               'profile_photo':
+                    //                   Provider.of<Auth>(context, listen: false)
+                    //                       .logo_url,
+                    //               'name':
+                    //                   Provider.of<Auth>(context, listen: false)
+                    //                       .store_name,
+                    //             });
+                    //           });
+                    //         } else {
+                    //           setState(() {
+                    //             _likeData.removeWhere(
+                    //               (element) =>
+                    //                   element['id'] ==
+                    //                   Provider.of<Auth>(context, listen: false)
+                    //                       .user_id,
+                    //             );
+                    //           });
+                    //         }
+                    //         if (_isLiked == true) _showLikeIcon = true;
+                    //       });
+                    //       Future.delayed(Duration(seconds: 2), () {
+                    //         setState(() {
+                    //           _showLikeIcon = false;
+                    //         });
+                    //       });
+                    //     } else {
+                    //       TOastNotification().showErrorToast(context, 'Error!');
+                    //     }
+                    //   },
+                    //   icon: AnimatedContainer(
+                    //     duration: Duration(milliseconds: 3000),
+                    //     curve: Curves.easeInOut,
+                    //     child: Icon(
+                    //       _isLiked ? Icons.favorite : Icons.favorite_border,
+                    //       color: _isLiked
+                    //           ? Colors.red
+                    //           : null, // Change color when liked
+                    //     ),
+                    //   ),
+                    // ),
                     //comment button
                     IconButton(
                         padding: EdgeInsets.zero,

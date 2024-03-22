@@ -699,8 +699,8 @@ class _MenuState extends State<Menu> {
                                       vertical: 1.h, horizontal: 5.w),
                                   decoration: GlobalVariables()
                                       .ContainerDecoration(
-                                          offset: const Offset(0, 4),
-                                          blurRadius: 4,
+                                          offset: const Offset(0, 8),
+                                          blurRadius: 20,
                                           shadowColor: const Color.fromRGBO(
                                               0, 0, 0, 0.25),
                                           boxColor: const Color.fromRGBO(
@@ -729,79 +729,83 @@ class _MenuState extends State<Menu> {
                         width: double.infinity,
                         height: 40,
                         decoration: GlobalVariables().ContainerDecoration(
-                            offset: const Offset(0, 4),
-                            blurRadius: 4,
-                            shadowColor: const Color.fromRGBO(0, 0, 0, 0.25),
-                            boxColor: const Color.fromRGBO(239, 255, 254, 1),
-                            cornerRadius: 10),
-                        child: Row(children: [
-                          const Space(12, isHorizontal: true),
-                          const Icon(
-                            Icons.search,
-                            color: Color(0xFFFA6E00),
-                          ),
-                          const Space(12, isHorizontal: true),
-                          SizedBox(
-                            width: 60.w,
-                            child: TextField(
-                                controller: _controller,
-                                readOnly: false,
-                                maxLines: null,
-                                style: const TextStyle(
-                                  color: Color(0xFF094B60),
-                                  fontSize: 14,
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0.10,
-                                  letterSpacing: 0.42,
-                                ),
-                                textInputAction: TextInputAction.done,
-                                decoration: const InputDecoration(
-                                  hintText: 'Search',
-                                  hintStyle: TextStyle(
-                                    color: Color(0xFF094B60),
-                                    fontSize: 14,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.w400,
-                                    height: 0.10,
-                                    letterSpacing: 0.42,
-                                  ),
-                                  contentPadding: EdgeInsets.zero,
-                                  border: InputBorder.none,
-                                ),
-                                onChanged: (newv) {
-                                  setState(() {
-                                    _iscategorySearch = false;
-                                    _searchOn = true;
-                                  });
-                                  if (newv == '')
-                                    setState(() {
-                                      _searchOn = false;
-                                    });
-                                  print(_iscategorySearch);
-                                },
-                                cursorColor: const Color(0xFFFA6E00)),
-                          ),
-                          Space(
-                            30,
-                            isHorizontal: true,
-                          ),
-                          TouchableOpacity(
-                            onTap: () {
-                              setState(() {
-                                _searchOn = false;
-                                _controller.clear();
-                              });
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 1.w),
-                              child: Icon(
-                                Icons.cancel,
-                                color: Color.fromARGB(255, 162, 64, 57),
+                          offset: const Offset(0, 4),
+                          blurRadius: 0,
+                          shadowColor: Colors.white,
+                          boxColor: const Color.fromRGBO(239, 255, 254, 1),
+                          cornerRadius: 10,
+                        ),
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Space(12, isHorizontal: true),
+                              const Icon(
+                                Icons.search,
+                                color: Color(0xFFFA6E00),
                               ),
-                            ),
-                          )
-                        ]),
+                              const Space(12, isHorizontal: true),
+                              Center(
+                                child: Container(
+                                  width: 60.w,
+                                  child: TextField(
+                                      controller: _controller,
+                                      readOnly: false,
+                                      maxLines: null,
+                                      style: const TextStyle(
+                                        color: Color(0xFF094B60),
+                                        fontSize: 14,
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.w400,
+                                        letterSpacing: 0.42,
+                                      ),
+                                      textInputAction: TextInputAction.done,
+                                      decoration: const InputDecoration(
+                                        hintText: 'Search',
+                                        hintStyle: TextStyle(
+                                          color: Color(0xFF094B60),
+                                          fontSize: 14,
+                                          fontFamily: 'Product Sans',
+                                          fontWeight: FontWeight.w400,
+                                          letterSpacing: 0.42,
+                                        ),
+                                        contentPadding:
+                                            EdgeInsets.only(bottom: 10),
+                                        border: InputBorder.none,
+                                      ),
+                                      onChanged: (newv) {
+                                        setState(() {
+                                          _iscategorySearch = false;
+                                          _searchOn = true;
+                                        });
+                                        if (newv == '')
+                                          setState(() {
+                                            _searchOn = false;
+                                          });
+                                      },
+                                      cursorColor: const Color(0xFFFA6E00)),
+                                ),
+                              ),
+                              Space(
+                                30,
+                                isHorizontal: true,
+                              ),
+                              TouchableOpacity(
+                                onTap: () {
+                                  setState(() {
+                                    _searchOn = false;
+                                    _controller.clear();
+                                  });
+                                },
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 1.w),
+                                  child: Icon(
+                                    Icons.cancel,
+                                    color: Color(0xFFFA6E00),
+                                  ),
+                                ),
+                              )
+                            ]),
                       ),
                       Space(1.h),
                       if (_iscategorySearch && _searchOn)
