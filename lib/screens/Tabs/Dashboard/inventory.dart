@@ -321,23 +321,23 @@ class _InventoryState extends State<Inventory> {
                   ),
           ],
         ),
-        Space(3.h),
-        Center(
-          child: Make_Update_ListWidget(
-            txt: 'KPI',
-            onTap: () async {
-              if (allStocks.length == 0) {
-                TOastNotification()
-                    .showErrorToast(context, 'No Item in inventory for KIP');
-              } else {
-                Navigator.of(context)
-                    .pushNamed(GraphsScreen.routeName, arguments: {
-                  'items': allStocks,
-                });
-              }
-            },
-          ),
-        ),
+        // Space(3.h),
+        // Center(
+        //   child: Make_Update_ListWidget(
+        //     txt: 'KPI',
+        //     onTap: () async {
+        //       if (allStocks.length == 0) {
+        //         TOastNotification()
+        //             .showErrorToast(context, 'No Item in inventory for KIP');
+        //       } else {
+        //         Navigator.of(context)
+        //             .pushNamed(GraphsScreen.routeName, arguments: {
+        //           'items': allStocks,
+        //         });
+        //       }
+        //     },
+        //   ),
+        // ),
         Space(3.h),
         Row(
           children: [
@@ -820,6 +820,7 @@ class ImageWidgetInventory extends StatelessWidget {
   Widget build(BuildContext context) {
     String newUrl = '';
     if (url != '') {
+      print(url);
       String originalLink = url;
       String fileId = originalLink.substring(
           originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));

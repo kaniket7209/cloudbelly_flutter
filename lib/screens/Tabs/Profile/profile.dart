@@ -23,7 +23,6 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_plus/share_plus.dart';
@@ -44,7 +43,6 @@ class _ProfileState extends State<Profile> {
   List<dynamic> menuList = [];
   List<dynamic> feedList = [];
   Future<void> _refresh() async {
-    print('refrsh');
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _isLoading = true;
@@ -582,7 +580,7 @@ class _ProfileState extends State<Profile> {
                                   Center(
                                       // width:
                                       child: _isLoading
-                                          ? Center(
+                                          ? const Center(
                                               child:
                                                   CircularProgressIndicator(),
                                             )
@@ -709,7 +707,7 @@ class _MenuState extends State<Menu> {
                                   child: Center(
                                     child: Text(
                                       widget.categories[i],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 14,
                                         fontFamily: 'Product Sans',
@@ -785,7 +783,7 @@ class _MenuState extends State<Menu> {
                                       cursorColor: const Color(0xFFFA6E00)),
                                 ),
                               ),
-                              Space(
+                              const Space(
                                 30,
                                 isHorizontal: true,
                               ),
@@ -799,7 +797,7 @@ class _MenuState extends State<Menu> {
                                 child: Padding(
                                   padding:
                                       EdgeInsets.symmetric(horizontal: 1.w),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.cancel,
                                     color: Color(0xFFFA6E00),
                                   ),

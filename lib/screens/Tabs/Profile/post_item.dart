@@ -130,7 +130,7 @@ class _PostItemState extends State<PostItem> {
   List<dynamic> _likeData = [];
   bool _isFollowing = false;
   bool checkFollow() {
-    String id = widget.data['user_id'];
+    String id = widget.isProfilePost ? "" : widget.data['user_id'];
     List<dynamic> temp = Provider.of<Auth>(context, listen: false).followings;
     for (var user in temp) {
       if (user['user_id'] == id) {
@@ -521,79 +521,79 @@ class _PostItemState extends State<PostItem> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     // Text('knknhkink'),
-                    SvgPicture.asset(
-                      'assets/icons/Favorite.svg',
-                      color: Colors.red,
-                      allowDrawingOutsideViewBox: true,
-                      width: 100,
-                    ),
-                    //like button
-                    // IconButton(
-                    //   padding: EdgeInsets.zero,
-                    //   // pa
-                    //   onPressed: () async {
-                    //     // print(widget.data['likes'] ?? []);
-                    //     String code = '';
-
-                    //     code = widget.isProfilePost
-                    //         ? await Provider.of<Auth>(context, listen: false)
-                    //             .likePost(
-                    //                 widget.data['id'],
-                    //                 Provider.of<Auth>(context, listen: false)
-                    //                     .user_id)
-                    //         : await Provider.of<Auth>(context, listen: false)
-                    //             .likePost(
-                    //                 widget.data['id'], widget.data['user_id']);
-
-                    //     if (code == '200') {
-                    //       setState(() {
-                    //         _isLiked = !_isLiked;
-                    //         if (_isLiked) {
-                    //           setState(() {
-                    //             _likeData.add({
-                    //               'id':
-                    //                   Provider.of<Auth>(context, listen: false)
-                    //                       .user_id,
-                    //               'profile_photo':
-                    //                   Provider.of<Auth>(context, listen: false)
-                    //                       .logo_url,
-                    //               'name':
-                    //                   Provider.of<Auth>(context, listen: false)
-                    //                       .store_name,
-                    //             });
-                    //           });
-                    //         } else {
-                    //           setState(() {
-                    //             _likeData.removeWhere(
-                    //               (element) =>
-                    //                   element['id'] ==
-                    //                   Provider.of<Auth>(context, listen: false)
-                    //                       .user_id,
-                    //             );
-                    //           });
-                    //         }
-                    //         if (_isLiked == true) _showLikeIcon = true;
-                    //       });
-                    //       Future.delayed(Duration(seconds: 2), () {
-                    //         setState(() {
-                    //           _showLikeIcon = false;
-                    //         });
-                    //       });
-                    //     } else {
-                    //       TOastNotification().showErrorToast(context, 'Error!');
-                    //     }
-                    //   },
-                    //   icon: AnimatedContainer(
-                    //     duration: Duration(milliseconds: 3000),
-                    //     curve: Curves.easeInOut,
-                    //     child: Icon(
-                    //       _isLiked ? Icons.favorite : Icons.favorite_border,
-                    //       color: _isLiked
-                    //           ? Colors.red
-                    //           : null, // Change color when liked
-                    //     ),
-                    //   ),
+                    // SvgPicture.asset(
+                    //   'assets/icons/Favorite.svg',
+                    //   color: Colors.red,
+                    //   allowDrawingOutsideViewBox: true,
+                    //   width: 100,
                     // ),
+                    //like button
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      // pa
+                      onPressed: () async {
+                        // print(widget.data['likes'] ?? []);
+                        String code = '';
+
+                        code = widget.isProfilePost
+                            ? await Provider.of<Auth>(context, listen: false)
+                                .likePost(
+                                    widget.data['id'],
+                                    Provider.of<Auth>(context, listen: false)
+                                        .user_id)
+                            : await Provider.of<Auth>(context, listen: false)
+                                .likePost(
+                                    widget.data['id'], widget.data['user_id']);
+
+                        if (code == '200') {
+                          setState(() {
+                            _isLiked = !_isLiked;
+                            if (_isLiked) {
+                              setState(() {
+                                _likeData.add({
+                                  'id':
+                                      Provider.of<Auth>(context, listen: false)
+                                          .user_id,
+                                  'profile_photo':
+                                      Provider.of<Auth>(context, listen: false)
+                                          .logo_url,
+                                  'name':
+                                      Provider.of<Auth>(context, listen: false)
+                                          .store_name,
+                                });
+                              });
+                            } else {
+                              setState(() {
+                                _likeData.removeWhere(
+                                  (element) =>
+                                      element['id'] ==
+                                      Provider.of<Auth>(context, listen: false)
+                                          .user_id,
+                                );
+                              });
+                            }
+                            if (_isLiked == true) _showLikeIcon = true;
+                          });
+                          Future.delayed(Duration(seconds: 2), () {
+                            setState(() {
+                              _showLikeIcon = false;
+                            });
+                          });
+                        } else {
+                          TOastNotification().showErrorToast(context, 'Error!');
+                        }
+                      },
+                      icon: AnimatedContainer(
+                        duration: Duration(milliseconds: 3000),
+                        curve: Curves.easeInOut,
+                        child: Icon(
+                          _isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: _isLiked
+                              ? Colors.red
+                              : null, // Change color when liked
+                        ),
+                      ),
+                    ),
                     //comment button
                     IconButton(
                         padding: EdgeInsets.zero,
