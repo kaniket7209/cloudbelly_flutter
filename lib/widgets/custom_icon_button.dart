@@ -71,3 +71,69 @@ class CustomIconButton extends StatelessWidget {
     );
   }
 }
+
+class ZoomIconButton extends StatefulWidget {
+  final bool IsLiked;
+  final Function setLikeToFeed;
+
+  ZoomIconButton({required this.IsLiked, required this.setLikeToFeed});
+
+  @override
+  _ZoomIconButtonState createState() => _ZoomIconButtonState();
+}
+
+class _ZoomIconButtonState extends State<ZoomIconButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _liked = false;
+
+  @override
+  void initState() {
+    print(widget.IsLiked);
+    super.initState();
+    setState(() {
+      _liked = widget.IsLiked;
+    });
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 250));
+    _animation = Tween<double>(begin: 1, end: 2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+    _controller.addListener(() {
+      setState(() {});
+    });
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _controller.reverse();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _toggleLike() {
+    widget.setLikeToFeed(!_liked);
+    _controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _toggleLike,
+      child: Transform.scale(
+        scale: _animation.value,
+        child: Icon(
+          _liked ? Icons.favorite : Icons.favorite_border,
+          color: _liked ? Colors.red : Color.fromRGBO(177, 217, 216, 1),
+          // fill: ,
+          // size: 40,
+        ),
+      ),
+    );
+  }
+}

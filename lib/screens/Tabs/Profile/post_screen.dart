@@ -116,6 +116,7 @@ class _PostsScreenState extends State<PostsScreen> {
                   return PostItem(
                     isMultiple: _isMultiple,
                     data: item,
+                    // setShowModalButtonSheet: ,
                   );
                 }).toList(),
               )

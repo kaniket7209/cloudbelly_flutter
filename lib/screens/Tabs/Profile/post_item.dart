@@ -24,6 +24,7 @@ enum SampleItem { itemOne }
 class PostItem extends StatefulWidget {
   PostItem({
     super.key,
+    // required this.setShowModalButtonSheet,
     required bool isMultiple,
     required this.data,
     this.isProfilePost = true,
@@ -32,6 +33,7 @@ class PostItem extends StatefulWidget {
   final bool _isMultiple;
   bool isProfilePost;
   final data;
+  // final Function setShowModalButtonSheet;
 
   @override
   State<PostItem> createState() => _PostItemState();
@@ -408,6 +410,7 @@ class _PostItemState extends State<PostItem> {
                 bottom: 0,
                 child: TouchableOpacity(
                   onTap: () async {
+                    context.read<TransitionEffect>().setBlurSigma(5.0);
                     return FeedBottomSheet()
                         .ProductsInPostSheet(context, widget.data, _isLiked);
                   },

@@ -49,6 +49,7 @@ class Auth with ChangeNotifier {
     'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
     'Content-Type': 'application/json',
   };
+
   // Auth._internal();
 
   Future<String> signUp(email, pass, phone, type) async {
@@ -1059,5 +1060,23 @@ class Auth with ChangeNotifier {
       // Handle exceptions
       return {'Error': error};
     }
+  }
+}
+
+class TransitionEffect with ChangeNotifier {
+  bool _isModalButtomSheetActive = false;
+  double _blurSigma = 0;
+
+  bool get isModalButtomSheetActive => _isModalButtomSheetActive;
+
+  double get blurSigma => _blurSigma;
+
+  void setBlurSigma(blurSigma) {
+    if (blurSigma < 2) {
+      _blurSigma = 0;
+    } else {
+      _blurSigma = blurSigma;
+    }
+    notifyListeners();
   }
 }

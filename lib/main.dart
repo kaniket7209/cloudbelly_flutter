@@ -56,7 +56,25 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     home: Scaffold(
+  //       body: SafeArea(
+  //         child: Center(
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               Text('SVG icons'),
+  //
+  //               // IconButton(Icons.favorite_border_outlined, onPressed: () {})
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -68,6 +86,9 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(
             create: (ctx) => Auth(),
+          ),
+          ChangeNotifierProvider(
+            create: (ctx) => TransitionEffect(),
           ),
         ],
         child: Consumer<Auth>(

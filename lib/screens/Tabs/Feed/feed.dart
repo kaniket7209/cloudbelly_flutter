@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
@@ -126,6 +127,8 @@ class _FeedState extends State<Feed> {
   @override
   Widget build(BuildContext context) {
     // FeedList = FeedList.reversed.toList();
+    bool IsModalButtomSheetActive =
+        context.watch<TransitionEffect>().isModalButtomSheetActive;
     return RefreshIndicator(
       onRefresh: _refreshFeed,
       child: SingleChildScrollView(
@@ -133,85 +136,95 @@ class _FeedState extends State<Feed> {
 
         // primary: true, // Ensure vertical scroll works
         controller: _scrollController,
-        child: Container(
-          // color: Color.fromRGBO(255, 248, 255, 1),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Space(10.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: const Text(
-                  'Cloudbelly',
-                  style: TextStyle(
-                    color: Color(0xFF094B60),
-                    fontSize: 24,
-                    fontFamily: 'Jost',
-                    fontWeight: FontWeight.w500,
-                    height: 0.04,
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Space(10.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: const Text(
+                    'Cloudbelly',
+                    style: TextStyle(
+                      color: Color(0xFF094B60),
+                      fontSize: 24,
+                      fontFamily: 'Jost',
+                      fontWeight: FontWeight.w500,
+                      height: 0.04,
+                    ),
                   ),
                 ),
-              ),
-              Space(3.h),
-              // SingleChildScrollView(
-              //   scrollDirection: Axis.horizontal,
-              //   child: Padding(
-              //     padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 4.w),
-              //     child: Row(
-              //       children: [
-              //         StoryItemWidget(
-              //           url: Provider.of<Auth>(context, listen: true).logo_url,
-              //           name:
-              //               Provider.of<Auth>(context, listen: true).store_name,
-              //           isYours: true,
-              //         ),
-              //         for (int index = 0; index < 10; index++)
-              //           StoryItemWidget(
-              //             url:
-              //                 'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
-              //             name: 'Raj',
-              //           ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-              _isLoading == true
-                  ? Center(
-                      child: AppWideLoadingBanner().LoadingCircle(context),
-                    )
-                  : Column(
-                      children: FeedList == []
-                          ? []
-                          : FeedList.map<Widget>((item) {
-                              // if (item['user_id'] ==
-                              //     Provider.of<Auth>(context).user_id) print(item);
-                              bool _isMultiple =
-                                  item['multiple_files'] != null &&
-                                      item['multiple_files'].length != 0;
+                Space(3.h),
+                // SingleChildScrollView(
+                //   scrollDirection: Axis.horizontal,
+                //   child: Padding(
+                //     padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 4.w),
+                //     child: Row(
+                //       children: [
+                //         StoryItemWidget(
+                //           url: Provider.of<Auth>(context, listen: true).logo_url,
+                //           name:
+                //               Provider.of<Auth>(context, listen: true).store_name,
+                //           isYours: true,
+                //         ),
+                //         for (int index = 0; index < 10; index++)
+                //           StoryItemWidget(
+                //             url:
+                //                 'https://yt3.googleusercontent.com/MANvrSkn-NMy7yTy-dErFKIS0ML4F6rMl-aE4b6P_lYN-StnCIEQfEH8H6fudTC3p0Oof3Pd=s176-c-k-c0x00ffffff-no-rj',
+                //             name: 'Raj',
+                //           ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                _isLoading == true
+                    ? Center(
+                        child: AppWideLoadingBanner().LoadingCircle(context),
+                      )
+                    : Column(
+                        children: FeedList == []
+                            ? []
+                            : FeedList.map<Widget>((item) {
+                                // if (item['user_id'] ==
+                                //     Provider.of<Auth>(context).user_id) print(item);
+                                bool _isMultiple =
+                                    item['multiple_files'] != null &&
+                                        item['multiple_files'].length != 0;
 
-                              return PostItem(
-                                isProfilePost: false,
-                                isMultiple: _isMultiple,
-                                data: item,
-                              );
-                              // return SizedBox.shrink();
-                            }).toList(),
-                    ),
-              _isLoadingMore == true
-                  ? Padding(
-                      padding: EdgeInsets.only(bottom: 2.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AppWideLoadingBanner().LoadingCircle(context),
-                          Space(isHorizontal: true, 7),
-                          Text('Loading more feed...')
-                        ],
+                                return PostItem(
+                                  isProfilePost: false,
+                                  isMultiple: _isMultiple,
+                                  data: item,
+                                );
+                                // return SizedBox.shrink();
+                              }).toList(),
                       ),
-                    )
-                  : SizedBox(height: 0, width: 0)
-            ],
-          ),
+                _isLoadingMore == true
+                    ? Padding(
+                        padding: EdgeInsets.only(bottom: 2.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AppWideLoadingBanner().LoadingCircle(context),
+                            Space(isHorizontal: true, 7),
+                            Text('Loading more feed...')
+                          ],
+                        ),
+                      )
+                    : SizedBox(height: 0, width: 0)
+              ],
+            ),
+            // Blur Background when Modal Bottom Sheet is open
+            BackdropFilter(
+              filter: ImageFilter.blur(
+                  sigmaX: context.watch<TransitionEffect>().blurSigma,
+                  sigmaY: context.watch<TransitionEffect>().blurSigma),
+              child: Container(
+                color: Colors.transparent, // Transparent color
+              ),
+            )
+          ],
         ),
       ),
     );
