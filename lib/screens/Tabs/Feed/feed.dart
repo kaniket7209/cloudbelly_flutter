@@ -9,6 +9,7 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -216,14 +217,25 @@ class _FeedState extends State<Feed> {
               ],
             ),
             // Blur Background when Modal Bottom Sheet is open
-            BackdropFilter(
-              filter: ImageFilter.blur(
+            GestureDetector(
+              onTap: () {
+                // Handle tap on the area around the BackdropFilter
+                print('Tapped outside of the modal bottom sheet');
+                // You can add any logic here, such as dismissing the modal bottom sheet
+                // For example:
+                // Navigator.of(context).pop();
+              },
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
                   sigmaX: context.watch<TransitionEffect>().blurSigma,
-                  sigmaY: context.watch<TransitionEffect>().blurSigma),
-              child: Container(
-                color: Colors.transparent, // Transparent color
+                  sigmaY: context.watch<TransitionEffect>().blurSigma,
+                ),
+                child: Container(
+                  color: Colors.transparent, // Transparent color
+                ),
               ),
             )
+
           ],
         ),
       ),

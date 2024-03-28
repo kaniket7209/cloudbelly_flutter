@@ -15,12 +15,17 @@ class FeedBottomSheet {
         Provider.of<Auth>(context, listen: false).userType == 'Vendor';
     return showModalBottomSheet(
       context: context,
+      enableDrag: true,
       isScrollControlled: true,
+      isDismissible: false,
       builder: (BuildContext context) {
         return DraggableScrollableSheet(
-          // initialChildSize: 0.0, // Adjust as needed
-          minChildSize: 0, // Adjust as needed
-          // maxChildSize: 0.0, // Adjust as needed
+          initialChildSize: 0.55,
+          // Adjust as needed
+          minChildSize: 0.3,
+          // Adjust as needed
+          maxChildSize: 0.55,
+          // Adjust as needed
           expand: false,
           builder: (BuildContext context, ScrollController scrollController) {
             return StatefulBuilder(
@@ -562,6 +567,8 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
               ),
             ),
           ),
+
+        Space(2.h)
       ],
     );
   }

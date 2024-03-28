@@ -190,14 +190,12 @@ class _PostItemState extends State<PostItem> {
                         height: 35,
                         width: 35,
                         decoration: ShapeDecoration(
-                          shadows: [
+                          shadows:const [
                             BoxShadow(
-                              offset: Offset(0, 4),
-                              color: _isVendor
-                                  ? Color.fromRGBO(31, 111, 109, 0.6)
-                                  : Color.fromRGBO(130, 47, 130, 0.7),
+                              offset: Offset(3, 6),
+                              color: Color.fromRGBO(116, 202, 199, 0.79),
                               blurRadius: 20,
-                            )
+                            ),
                           ],
                           shape: SmoothRectangleBorder(),
                         ),

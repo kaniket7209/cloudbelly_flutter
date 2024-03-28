@@ -1072,7 +1072,7 @@ class TransitionEffect with ChangeNotifier {
   double get blurSigma => _blurSigma;
 
   void setBlurSigma(blurSigma) {
-    if (blurSigma < 2) {
+    if (blurSigma < 4) {
       _blurSigma = 0;
     } else {
       _blurSigma = blurSigma;
