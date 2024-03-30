@@ -118,24 +118,20 @@ class InventoryBottomSheets {
                       color: Color(0xFFFA6E00),
                     ),
                     Space(2.h),
-                    Container(
-                      height: 70.h,
-                      // ma: EdgeInsets.symmetric(vertical: 6.h),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: (data as List<dynamic>).length,
-                        itemBuilder: (context, index) {
-                          return BottomSheetRowWidget(
-                              sellPrice: data[index]['sellingPrice'] == ""
-                                  ? '-'
-                                  : data[index]['sellingPrice'],
-                              name: data[index]['itemName'],
-                              price: data[index]['pricePerUnit'] ?? '-',
-                              volume: data[index]['volumeLeft'] ?? '-',
-                              type: data[index]['unitType']);
-                        },
-                      ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: (data as List<dynamic>).length,
+                      itemBuilder: (context, index) {
+                        return BottomSheetRowWidget(
+                            sellPrice: data[index]['sellingPrice'] == ""
+                                ? '-'
+                                : data[index]['sellingPrice'],
+                            name: data[index]['itemName'],
+                            price: data[index]['pricePerUnit'] ?? '-',
+                            volume: data[index]['volumeLeft'] ?? '-',
+                            type: data[index]['unitType']);
+                      },
                     ),
                     Space(2.h),
                     // AppWideButton(

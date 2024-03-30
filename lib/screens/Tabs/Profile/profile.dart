@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
@@ -26,8 +27,8 @@ import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';    import 'package:pull_to_refresh/pull_to_refresh.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 enum SampleItem { itemOne }
 
@@ -43,13 +44,16 @@ class _ProfileState extends State<Profile> {
   SampleItem? selectedMenu;
   List<dynamic> menuList = [];
   List<dynamic> feedList = [];
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
-  void _onRefresh() async{
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
+
   Future<void> _loading() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -61,7 +65,6 @@ class _ProfileState extends State<Profile> {
         feedList.addAll(feed);
         _isLoading = false;
         _refreshController.refreshCompleted();
-
       });
     });
     await Provider.of<Auth>(context, listen: false).getMenu().then((menu) {
@@ -70,7 +73,6 @@ class _ProfileState extends State<Profile> {
         menuList.addAll(menu);
         _isLoading = false;
         _refreshController.refreshCompleted();
-
       });
       final feedData = json.encode(
         {
@@ -79,11 +81,11 @@ class _ProfileState extends State<Profile> {
       );
       prefs.setString('menuData', feedData);
     });
-
   }
 
   bool _isLoading = false;
   List<String> categories = [];
+  String userType = "";
 
   Future<void> _getMenu() async {
     setState(() {
@@ -141,6 +143,7 @@ class _ProfileState extends State<Profile> {
   void initState() {
     _getFeed();
     _getMenu();
+    userType = Provider.of<Auth>(context, listen: false).userType;
     // TODO: implement initState
     super.initState();
   }
@@ -456,7 +459,7 @@ class _ProfileState extends State<Profile> {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                               /* if (_isVendor)
+                                /* if (_isVendor)
                                   Container(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 1.h, horizontal: 3.w),
@@ -470,7 +473,7 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),*/
                                 Space(2.h),
-                                !_isVendor
+                                userType == UserType.Supplier.name
                                     ? SizedBox(
                                         width: 87.w,
                                         child: Row(
@@ -528,10 +531,11 @@ class _ProfileState extends State<Profile> {
                                           ],
                                         ),
                                       )
-                                    : Container(
-                                       // height: 6.5.h,
-                                        width: 95.w,
-                                        /* decoration: ShapeDecoration(
+                                    : userType == UserType.Customer.name
+                                        ? Container(
+                                            // height: 6.5.h,
+                                            width: 95.w,
+                                            /* decoration: ShapeDecoration(
                                           shadows: const [
                                             BoxShadow(
                                               offset: Offset(0, 4),
@@ -548,58 +552,117 @@ class _ProfileState extends State<Profile> {
                                             ),
                                           ),
                                         ),*/
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              TouchableOpacity(
-                                                onTap: () {
-                                                  setState(() {
-                                                    _activeButtonIndex = 1;
-                                                  });
-                                                },
-                                                child: !_isVendor
-                                                    ? CommomButtonProfileCustomer(
-                                                        isActive:
-                                                            _activeButtonIndex ==
-                                                                1,
-                                                        text: 'Content')
-                                                    : CommonButtonProfile(
-                                                        isActive:
-                                                            _activeButtonIndex ==
-                                                                1,
-                                                        txt: 'Content',
-                                                   width: 52,
-                                                ),
-                                              ),
-                                              TouchableOpacity(
-                                                onTap: () {
-                                                  setState(() {
-                                                    _activeButtonIndex = 2;
-                                                  });
-                                                },
-                                                child: CommonButtonProfile(
-                                                    isActive:
-                                                        _activeButtonIndex == 2,
-                                                    txt: 'Menu',
-                                                  width: 40,
-                                                ),
-                                              ),
-                                              TouchableOpacity(
-                                                onTap: () {
-                                                  setState(() {
-                                                    _activeButtonIndex = 3;
-                                                  });
-                                                },
-                                                child: CommonButtonProfile(
-                                                    isActive:
-                                                        _activeButtonIndex == 3,
-                                                    txt: 'Reviews',
-                                                  width: 52,),
-                                              ),
-                                            ]),
-                                      ),
-                              //  _isVendor ? Space(1.h) : Space(0.h),
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  TouchableOpacity(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        _activeButtonIndex = 1;
+                                                      });
+                                                    },
+                                                    child: CommonButtonProfile(
+                                                      isActive:
+                                                          _activeButtonIndex ==
+                                                              1,
+                                                      txt: 'Content',
+                                                      width: 52,
+                                                    ),
+                                                  ),
+                                                  TouchableOpacity(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        _activeButtonIndex = 3;
+                                                      });
+                                                    },
+                                                    child: CommonButtonProfile(
+                                                      isActive:
+                                                          _activeButtonIndex ==
+                                                              3,
+                                                      txt: 'Reviews',
+                                                      width: 52,
+                                                    ),
+                                                  ),
+                                                ]),
+                                          )
+                                        : Container(
+                                            // height: 6.5.h,
+                                            width: 95.w,
+                                            /* decoration: ShapeDecoration(
+                                          shadows: const [
+                                            BoxShadow(
+                                              offset: Offset(0, 4),
+                                              color: Color.fromRGBO(
+                                                  165, 200, 199, 0.6),
+                                              blurRadius: 20,
+                                            )
+                                          ],
+                                          color: Colors.white,
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                              cornerRadius: 15,
+                                              cornerSmoothing: 1,
+                                            ),
+                                          ),
+                                        ),*/
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  TouchableOpacity(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        _activeButtonIndex = 1;
+                                                      });
+                                                    },
+                                                    child: !_isVendor
+                                                        ? CommomButtonProfileCustomer(
+                                                            isActive:
+                                                                _activeButtonIndex ==
+                                                                    1,
+                                                            text: 'Content')
+                                                        : CommonButtonProfile(
+                                                            isActive:
+                                                                _activeButtonIndex ==
+                                                                    1,
+                                                            txt: 'Content',
+                                                            width: 52,
+                                                          ),
+                                                  ),
+                                                  TouchableOpacity(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        _activeButtonIndex = 2;
+                                                      });
+                                                    },
+                                                    child: CommonButtonProfile(
+                                                      isActive:
+                                                          _activeButtonIndex ==
+                                                              2,
+                                                      txt: 'Menu',
+                                                      width: 40,
+                                                    ),
+                                                  ),
+                                                  TouchableOpacity(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        _activeButtonIndex = 3;
+                                                      });
+                                                    },
+                                                    child: CommonButtonProfile(
+                                                      isActive:
+                                                          _activeButtonIndex ==
+                                                              3,
+                                                      txt: 'Reviews',
+                                                      width: 52,
+                                                    ),
+                                                  ),
+                                                ]),
+                                          ),
+                                //  _isVendor ? Space(1.h) : Space(0.h),
                                 Space(20),
                                 if (_activeButtonIndex == 1)
                                   Center(
@@ -720,7 +783,9 @@ class _MenuState extends State<Menu> {
                             padding: const EdgeInsets.only(bottom: 8),
                             child: Row(
                               children: [
-                                for (int i = 0; i < widget.categories.length; i++)
+                                for (int i = 0;
+                                    i < widget.categories.length;
+                                    i++)
                                   TouchableOpacity(
                                     onTap: () {
                                       setState(() {
@@ -734,17 +799,19 @@ class _MenuState extends State<Menu> {
                                       padding: EdgeInsets.symmetric(
                                           vertical: 1.h, horizontal: 5.w),
                                       decoration: BoxDecoration(
-                                        color: const Color.fromRGBO(112, 186, 210, 1),
+                                        color: const Color.fromRGBO(
+                                            112, 186, 210, 1),
                                         borderRadius: BorderRadius.circular(10),
                                         boxShadow: [
                                           BoxShadow(
                                               offset: Offset(6, 6),
-                                             // spreadRadius: 0.5,
-                                              color: Color(0xFF70BAD2).withOpacity(0.8),
+                                              // spreadRadius: 0.5,
+                                              color: Color(0xFF70BAD2)
+                                                  .withOpacity(0.6),
                                               blurRadius: 10)
                                         ],
                                       ),
-                                     /* decoration: GlobalVariables()
+                                      /* decoration: GlobalVariables()
                                           .ContainerDecoration(
                                               offset: const Offset(5, 6),
                                               blurRadius: 10,
@@ -908,57 +975,57 @@ class FeedWidget extends StatelessWidget {
     // bool _isMultiple =
     //     data['multiple_files'] != null && data['multiple_files'].length != 0;
     return TouchableOpacity(
-            onTap: () async {
-              final Data = await Provider.of<Auth>(context, listen: false)
-                  .getFeed() as List<dynamic>;
-              Navigator.of(context).pushNamed(PostsScreen.routeName,arguments: {'data': Data, 'index': index});
-            //  print("data:: $fulldata");
-            },
-            child: Stack(
-              children: [
-                Hero(
-                  tag: data['id'],
-                  child: Container(
-                    height: _isVendor ? 100 : 110,
-                    width: _isVendor ? 100 : 110,
-                    decoration: const ShapeDecoration(
-                      shadows: [
-                        BoxShadow(
-                          offset: Offset(3, 4),
-                          color: Color.fromRGBO(10, 76, 97, 0.31),
-                          blurRadius: 9,
-                        )
-                      ],
-                      shape: SmoothRectangleBorder(),
-                    ),
-                    child: ClipSmoothRect(
-                      radius: SmoothBorderRadius(
-                        cornerRadius: 17,
-                        cornerSmoothing: 1,
-                      ),
-                      child: Image.network(
-                        data['file_path'],
-                        fit: BoxFit.cover,
-                        loadingBuilder:
-                            GlobalVariables().loadingBuilderForImage,
-                        errorBuilder: GlobalVariables().ErrorBuilderForImage,
-                      ),
-                    ),
-                  ),
+      onTap: () async {
+        final Data = await Provider.of<Auth>(context, listen: false).getFeed()
+            as List<dynamic>;
+        Navigator.of(context).pushNamed(PostsScreen.routeName,
+            arguments: {'data': Data, 'index': index});
+        //  print("data:: $fulldata");
+      },
+      child: Stack(
+        children: [
+          Hero(
+            tag: data['id'],
+            child: Container(
+              height: _isVendor ? 100 : 110,
+              width: _isVendor ? 100 : 110,
+              decoration: const ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    offset: Offset(3, 4),
+                    color: Color.fromRGBO(10, 76, 97, 0.31),
+                    blurRadius: 9,
+                  )
+                ],
+                shape: SmoothRectangleBorder(),
+              ),
+              child: ClipSmoothRect(
+                radius: SmoothBorderRadius(
+                  cornerRadius: 17,
+                  cornerSmoothing: 1,
                 ),
-                if (data['multiple_files'] != null &&
-                    data['multiple_files'].length != 0)
-                  const Positioned(
-                    top: 05,
-                    right: 05,
-                    child: Icon(
-                      Icons.add_to_photos,
-                      color: Colors.black, // Change the color as needed
-                    ),
-                  ),
-              ],
+                child: Image.network(
+                  data['file_path'],
+                  fit: BoxFit.cover,
+                  loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                  errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                ),
+              ),
             ),
-          );
+          ),
+          if (data['multiple_files'] != null &&
+              data['multiple_files'].length != 0)
+            const Positioned(
+              top: 05,
+              right: 05,
+              child: Icon(
+                Icons.add_to_photos,
+                color: Colors.black, // Change the color as needed
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
 
@@ -977,11 +1044,11 @@ class CommonButtonProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-       // height: 4.4.h,
-       // width: 25.w,
-      //  padding: EdgeInsets.all(08),
+        // height: 4.4.h,
+        // width: 25.w,
+        //  padding: EdgeInsets.all(08),
 
-       /* decoration: isActive
+        /* decoration: isActive
             ? ShapeDecoration(
                 shadows: const [
                   BoxShadow(
@@ -1000,45 +1067,44 @@ class CommonButtonProfile extends StatelessWidget {
               )
             : const ShapeDecoration(shape: SmoothRectangleBorder()),*/
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(0.0),
-            child: Row(
+      child: Padding(
+        padding: const EdgeInsets.all(0.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 13.0),
-                      child: Text(
-                        txt,
-                        style: const TextStyle(
-                          color: /*isActive ? Colors.white :*/ Color(0xFF094B60),
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w700,
-                          height: 0.10,
-                          letterSpacing: 0.42,
-                        ),
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 13.0),
+                  child: Text(
+                    txt,
+                    style: const TextStyle(
+                      color: /*isActive ? Colors.white :*/ Color(0xFF094B60),
+                      fontSize: 14,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w700,
+                      height: 0.10,
+                      letterSpacing: 0.42,
                     ),
-
-                    Container(
-                    //  padding: EdgeInsets.only(top: 7),
-                      width: width,
-                      height: 5,
-                      decoration: ShapeDecoration(
-                        color: !isActive ? Colors.white : const Color(0xFFFA6E00),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6)),
-                      ),
-                    ),
-                  ],
+                  ),
+                ),
+                Container(
+                  //  padding: EdgeInsets.only(top: 7),
+                  width: width,
+                  height: 5,
+                  decoration: ShapeDecoration(
+                    color: !isActive ? Colors.white : const Color(0xFFFA6E00),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6)),
+                  ),
                 ),
               ],
             ),
-          ),
-        ));
+          ],
+        ),
+      ),
+    ));
   }
 }

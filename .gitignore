@@ -43,6 +43,11 @@
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.*
 **/android/key.properties
+.gradle
+/.idea/workspace.xml
+/.idea/libraries
+/build
+/captures
 
 # iOS related
 **/ios/**/*.generated.xcconfig
