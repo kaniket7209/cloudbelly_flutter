@@ -66,6 +66,7 @@ dependencies:
   unique_simple_bar_chart: ^0.0.4
   fine_bar_chart: ^0.0.3
   flutter_svg_image: ^1.0.0
+  firebase_core: ^2.27.2
   # multiple_images_picker: ^1.0.1
 
 dev_dependencies:

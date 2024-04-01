@@ -334,6 +334,9 @@ class _PostItemState extends State<PostItem> {
                       ),
                     ),
                   ),
+                if (!widget.isProfilePost &&
+                    !(Provider.of<Auth>(context, listen: false).user_id ==
+                        widget.data['user_id']))
                 IconButton(
                     onPressed: () async {
                       {
