@@ -8,6 +8,7 @@
 .buildlog/
 .history
 .svn/
+migrate_working_dir/
 
 # IntelliJ related
 *.iml
@@ -15,11 +16,14 @@
 *.iws
 .idea/
 
-# VS Code related
-.vscode/
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
+**/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
@@ -28,47 +32,13 @@
 .pub/
 /build/
 
-# OS related
-**/.DS_Store
-**/Thumbs.db
-**/.directory
-**/*.swp
+# Symbolication related
+app.*.symbols
 
-# Android related
-**/android/**/*.gradle
-**/android/.gradle
-**/android/captures/
-**/android/gradlew
-**/android/gradlew.bat
-**/android/local.properties
-**/android/**/GeneratedPluginRegistrant.*
-**/android/key.properties
-.gradle
-/.idea/workspace.xml
-/.idea/libraries
-/build
-/captures
+# Obfuscation related
+app.*.map.json
 
-# iOS related
-**/ios/**/*.generated.xcconfig
-**/ios/Flutter/Flutter.framework
-**/ios/Flutter/Flutter.podspec
-**/ios/.generated/
-**/ios/Flutter/Generated.xcconfig
-**/ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata
-**/ios/Runner.xcworkspace/contents.xcworkspacedata
-**/ios/Runner.xcodeproj/project.xcworkspace/
-**/ios/Runner.xcodeproj/xcshareddata/
-**/ios/Runner.xcworkspace/xcshareddata/
-
-# Web related
-lib/generated_plugin_registrant.dart
-
-# macOS related
-**/macos/Flutter/ephemeral/
-**/macos/Flutter/flutter_export_environment.sh
-**/macos/Flutter/GeneratedPluginRegistrant.swift
-**/macos/Flutter/podhelper.rb
-**/macos/Runner/GeneratedPluginRegistrant.swift
-**/macos/Flutter/Flutter-Debug.xcconfig
-**/macos/Flutter/Flutter-Release.xcconfig
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release

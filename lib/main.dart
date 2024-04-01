@@ -18,8 +18,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
-  await Firebase.initializeApp(
-  );
+  await Firebase.initializeApp();
   //await Firebase.initializeApp(
 
   //     // options: DefaultFirebaseOptions.currentPlatform,

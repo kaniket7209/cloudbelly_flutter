@@ -100,8 +100,8 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
   @override
   Widget build(BuildContext context) {
     int menuItemsCount = widget.data['menu_items'].length;
-    int pageCount = menuItemsCount % 3 == 0
-        ? (menuItemsCount / 3) as int
+    double pageCount = menuItemsCount % 3 == 0
+        ? (menuItemsCount / 3) as double
         : (((menuItemsCount / 3).toInt()) + 1);
     print(pageCount);
     return Column(
@@ -371,10 +371,10 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                 ],
                               ),
                               const Space(6),
-                              const SizedBox(
+                              SizedBox(
                                 width: 188,
                                 child: Text(
-                                  'This is by far the best biryani we ever made, come and enjoy the taste of North  Bengal.',
+                                  widget.data['caption'],
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -425,27 +425,32 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                     )),
                                   ),
                                   const Space(11),
-                                  Container(
-                                    height: 41,
-                                    width: 113,
-                                    decoration: ShapeDecoration(
-                                      color: const Color(0xFFFA6E00),
-                                      shape: SmoothRectangleBorder(
-                                          borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 12,
-                                        cornerSmoothing: 1,
-                                      )),
-                                    ),
-                                    child: const Center(
-                                      child: Text(
-                                        'Add to Cart',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontFamily: 'Product Sans',
-                                          fontWeight: FontWeight.w700,
-                                          height: 0,
-                                          letterSpacing: 0.14,
+                                  InkWell(
+                                    onTap: () {
+                                      print("data:: ${widget.data}");
+                                    },
+                                    child: Container(
+                                      height: 41,
+                                      width: 113,
+                                      decoration: ShapeDecoration(
+                                        color: const Color(0xFFFA6E00),
+                                        shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                          cornerRadius: 12,
+                                          cornerSmoothing: 1,
+                                        )),
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          'Add to Cart',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontFamily: 'Product Sans',
+                                            fontWeight: FontWeight.w700,
+                                            height: 0,
+                                            letterSpacing: 0.14,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -512,7 +517,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
-              pageCount,
+              pageCount.toInt(),
               (index) => GestureDetector(
                 onTap: () {
                   _pageController.animateToPage(index,
