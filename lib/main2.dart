@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'dart:ui'; // Import this to use ImageFilter
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:ui' as ui;
 
 void main() {
   runApp(MyApp());
@@ -9,83 +13,115 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomePage(),
+      home: MapSample(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class MapSample extends StatefulWidget {
+  @override
+  State<MapSample> createState() => MapSampleState();
+}
+
+class MapSampleState extends State<MapSample> {
+  Completer<GoogleMapController> _controller = Completer();
+  static final CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(37.422, -122.084),
+    zoom: 14.0,
+  );
+
+  late Uint8List markerIcon;
+  late bool _isLoading = true;
+  final Set<Polyline> _polyline = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _addPolyline();
+    setCustomMarker();
+  }
+
+  Future<void> setCustomMarker() async {
+    try {
+      Uint8List iconData =
+          await getBytesFromAsset('assets/images/placeholder.png', 100);
+      setState(() {
+        markerIcon = iconData;
+        _isLoading = false;
+      });
+    } catch (error) {
+      print('Error loading custom marker: $error');
+    }
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: width,
+    );
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
+  void _addPolyline() {
+    List<LatLng> polylineCoordinates = [
+      LatLng(37.422, -122.084),
+      LatLng(37.427, -122.079),
+    ];
+
+    setState(() {
+      _polyline.add(
+        Polyline(
+          polylineId: PolylineId('path'),
+          points: polylineCoordinates,
+          color: Colors.blue,
+          width: 5,
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Modal Bottom Sheet Example'),
+        title: Text('Google Maps Custom Marker'),
+        backgroundColor: Colors.green[700],
       ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              builder: (BuildContext context) {
-                return MyBottomSheetContent();
-              },
-            );
-          },
-          child: Text('Open Modal Bottom Sheet'),
-        ),
-      ),
-    );
-  }
-}
-
-class MyBottomSheetContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return NotificationListener<ScrollNotification>(
-      onNotification: (scrollNotification) {
-        if (scrollNotification is ScrollUpdateNotification) {}
-        return true;
-      },
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Main Content
-          Container(
-            color: Colors.blue, // Example background color
-          ),
-          // Blur Background
-          BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: MyBottomSheetContent.blurSigma,
-              sigmaY: MyBottomSheetContent.blurSigma,
-            ),
-            child: Container(
-              color: Colors.transparent, // Transparent color
-            ),
-          ),
-          // Bottom Sheet Content
-          SingleChildScrollView(
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.6,
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: List.generate(
-                  4,
-                  (index) => ListTile(
-                    title: Text('Item $index'),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : GoogleMap(
+              polylines: _polyline,
+              mapType: MapType.normal,
+              initialCameraPosition: _kGooglePlex,
+              markers: {
+                Marker(
+                  anchor: Offset(0.5, 0.5),
+                  markerId: MarkerId('marker1'),
+                  position: LatLng(37.422, -122.084),
+                  icon: BitmapDescriptor.fromBytes(markerIcon),
+                  infoWindow: InfoWindow(
+                    title: 'Custom Marker 1',
+                    snippet: 'Googleplex',
                   ),
                 ),
-              ),
+                Marker(
+                  markerId: MarkerId('marker2'),
+                  position: LatLng(37.427, -122.079),
+                  icon: BitmapDescriptor.fromBytes(markerIcon),
+                  infoWindow: InfoWindow(
+                    title: 'Custom Marker 2',
+                    snippet: 'Some other location',
+                  ),
+                ),
+              },
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
+              },
             ),
-          ),
-        ],
-      ),
     );
   }
-
-  // Static variable to hold blur sigma value
-  static double blurSigma = 0.0;
 }

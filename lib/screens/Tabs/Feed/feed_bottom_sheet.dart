@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+
+
 class FeedBottomSheet {
   Future<dynamic> ProductsInPostSheet(
       BuildContext context, dynamic data, bool isLiked) {
@@ -19,87 +21,94 @@ class FeedBottomSheet {
       isScrollControlled: true,
       isDismissible: false,
       builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.55,
-          // Adjust as needed
-          minChildSize: 0.3,
-          // Adjust as needed
-          maxChildSize: 0.55,
-          // Adjust as needed
-          expand: false,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              double extent = 10; // Initial extent value
-              return NotificationListener<DraggableScrollableNotification>(
-                onNotification: (notification) {
-                  if (notification.extent != extent) {
-                    extent = notification.extent;
-                    // print('Extent: $extent');
-                    context.read<TransitionEffect>().setBlurSigma(
-                        notification.extent * 10); // Print extent value
-                  }
-                  return false;
-                },
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: Container(
-                    decoration: const ShapeDecoration(
-                      color: Colors.white,
-                      shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius.only(
-                          topLeft: SmoothRadius(
-                            cornerRadius: 35,
-                            cornerSmoothing: 1,
-                          ),
-                          topRight: SmoothRadius(
-                            cornerRadius: 35,
-                            cornerSmoothing: 1,
+        return WillPopScope(
+          onWillPop: () async{
+            context.read<TransitionEffect>().setBlurSigma(
+                0);
+            return true;
+          },
+          child: DraggableScrollableSheet(
+            initialChildSize: 0.55,
+            // Adjust as needed
+            minChildSize: 0.3,
+            // Adjust as needed
+            maxChildSize: 0.55,
+            // Adjust as needed
+            expand: false,
+            builder: (BuildContext context, ScrollController scrollController) {
+              return StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                double extent = 10; // Initial extent value
+                return NotificationListener<DraggableScrollableNotification>(
+                  onNotification: (notification) {
+                    if (notification.extent != extent) {
+                      extent = notification.extent;
+                      // print('Extent: $extent');
+                      context.read<TransitionEffect>().setBlurSigma(
+                          notification.extent * 10); // Print extent value
+                    }
+                    return false;
+                  },
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Container(
+                      decoration: const ShapeDecoration(
+                        color: Colors.white,
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius.only(
+                            topLeft: SmoothRadius(
+                              cornerRadius: 35,
+                              cornerSmoothing: 1,
+                            ),
+                            topRight: SmoothRadius(
+                              cornerRadius: 35,
+                              cornerSmoothing: 1,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    padding: EdgeInsets.only(
-                      top: 2.h,
-                      bottom: MediaQuery.of(context).viewInsets.bottom,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TouchableOpacity(
-                          onTap: () {
-                            return Navigator.of(context).pop();
-                          },
-                          child: Center(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 1.h,
-                                horizontal: 3.w,
-                              ),
-                              width: 65,
-                              height: 6,
-                              decoration: ShapeDecoration(
-                                color: const Color(0xFFFA6E00),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
+                      padding: EdgeInsets.only(
+                        top: 2.h,
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TouchableOpacity(
+                            onTap: () {
+                              return Navigator.of(context).pop();
+                            },
+                            child: Center(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 1.h,
+                                  horizontal: 3.w,
+                                ),
+                                width: 65,
+                                height: 6,
+                                decoration: ShapeDecoration(
+                                  color: const Color(0xFFFA6E00),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        ProductInPostSheetWidget(
-                          isVendor: _isVendor,
-                          data: data,
-                          isLiked: isLiked,
-                        ),
-                      ],
+                          ProductInPostSheetWidget(
+                            isVendor: _isVendor,
+                            data: data,
+                            isLiked: isLiked,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            });
-          },
+                );
+              });
+            },
+          ),
         );
       },
     );
