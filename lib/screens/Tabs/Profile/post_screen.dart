@@ -18,16 +18,20 @@ class PostsScreen extends StatefulWidget {
 class _PostsScreenState extends State<PostsScreen> {
   bool _didChanged = true;
   List<dynamic> data = [];
-  int index = 1;
+  int? index;
+
   @override
   void didChangeDependencies() {
     if (_didChanged) {
       final Map<String, dynamic> arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       data = arguments['data'] as List<dynamic>;
-     // data = data.reversed.toList();
+      // data = data.reversed.toList();
       index = arguments['index'] as int;
-
+      print("index:: $index");
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToPost();
+      });
       _didChanged = false;
     }
     // TODO: implement didChangeDependencies
@@ -39,13 +43,15 @@ class _PostsScreenState extends State<PostsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    print("math:: ${55.h + 65.0.h * (index ?? 0)}");
+
+    /*WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.animateTo(
         55.h + 65.h * (index - 1),
         duration: Duration(milliseconds: 500),
         curve: Curves.ease,
       );
-    });
+    });*/
   }
 
   Future<void> _refreshFeed() async {
@@ -54,6 +60,18 @@ class _PostsScreenState extends State<PostsScreen> {
 
     Navigator.of(context).pushReplacementNamed(PostsScreen.routeName,
         arguments: {'data': Data, 'index': 0});
+  }
+
+  void _scrollToPost() {
+    double itemPosition =
+        _scrollController.position.viewportDimension * (index ?? 0);
+    print("itemPosition:: ${_scrollController.position.viewportDimension}");
+    _scrollController.animateTo(
+      55.h + 65.h * (index  ?? 0),
+      //360.0 * (index ?? 0),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.ease,
+    );
   }
 
   @override

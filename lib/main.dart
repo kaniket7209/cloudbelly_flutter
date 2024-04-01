@@ -18,10 +18,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
 
-  // await Firebase.initializeApp(
+  //await Firebase.initializeApp(
 
   //     // options: DefaultFirebaseOptions.currentPlatform,
-  //     );
+    //   );
   // initDynamicLinks();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => Auth()),
