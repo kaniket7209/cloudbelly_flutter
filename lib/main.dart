@@ -6,6 +6,7 @@ import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Login/welcome_screen.dart';
+import 'package:cloudbelly_app/screens/supplier/supplier_tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -111,6 +112,7 @@ class MyApp extends StatelessWidget {
               '/map': (context) => MapScreen(),
               WelcomeScreen.routeName: (context) => WelcomeScreen(),
               Tabs.routeName: (context) => Tabs(),
+              SupplierTabs.routeName:(context)=>SupplierTabs(),
               PostsScreen.routeName: (context) => PostsScreen(),
               GraphsScreen.routeName: (context) => GraphsScreen(),
             },

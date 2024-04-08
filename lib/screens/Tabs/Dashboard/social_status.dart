@@ -953,7 +953,7 @@ class CustomerReviewWidget extends StatelessWidget {
                     cornerSmoothing: 1,
                   ),
                   child: Image.network(
-                    'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=600',
+                    ' ',
                     fit: BoxFit.cover,
                     loadingBuilder: GlobalVariables().loadingBuilderForImage,
                     errorBuilder: GlobalVariables().ErrorBuilderForImage,

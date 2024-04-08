@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
@@ -34,6 +35,8 @@ class Auth with ChangeNotifier {
   List<dynamic> followers = [];
   List<dynamic> followings = [];
   String userType = '';
+
+  String get _userType=> userType;
 
   // get user_logo_url {
   //   notifyListeners();
@@ -110,11 +113,14 @@ class Auth with ChangeNotifier {
       cover_image = DataMap['cover_image'] ?? '';
       store_name = store_name == '' ? user_email.split('@')[0] : store_name;
       userType = DataMap['user_type'] ?? 'Vendor';
+
       notifyListeners();
       final userData = json.encode(
         {'email': email, 'password': pass},
       );
       prefs.setString('userData', userData);
+
+      print(userData);
       return DataMap['message'];
     } catch (error) {
       notifyListeners();
@@ -125,7 +131,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<bool> tryAutoLogin() async {
-    // print('auto');
+    print('auto');
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
       return false;
@@ -981,9 +987,14 @@ class Auth with ChangeNotifier {
         },
         body: jsonEncode(requestBody),
       );
-      // print('response: ${response.body}');
+      print('response: ${response.body}');
       // print(response.statusCode);
 
+      if(userType=='Supplier')
+        {
+          // Map<dynamic>
+          // return
+        }
       return jsonDecode(response.body);
     } catch (error) {
       // Handle exceptions

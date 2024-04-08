@@ -1,127 +1,126 @@
-import 'dart:async';
-import 'dart:typed_data';
+import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/screens/Login/map.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
+import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
+
+import 'package:cloudbelly_app/screens/Login/login_screen.dart';
+import 'package:cloudbelly_app/screens/Login/welcome_screen.dart';
+import 'package:cloudbelly_app/screens/supplier/supplier_dashboard.dart';
+import 'package:cloudbelly_app/screens/supplier/supplier_tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'dart:ui' as ui;
+import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp(
+
+  //     // options: DefaultFirebaseOptions.currentPlatform,
+  //     );
+  // initDynamicLinks();
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => Auth()),
+  ], child: const MyApp()));
 }
+
+// void initDynamicLinks() async {
+//   FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+//     _handleDeepLink(dynamicLinkData.link);
+//   }).onError((error) {
+//     // Handle errors
+//     print('Dynamic Link Failed: $error');
+//   });
+
+//   final data = await FirebaseDynamicLinks.instance.getInitialLink();
+//   final Uri deepLink = data!.link;
+//   _handleDeepLink(deepLink);
+// }
+
+// void _handleDeepLink(Uri deepLink) {
+//   if (deepLink != null) {
+//     // if (deepLink.pathSegments.contains('userProfile')) {
+//     final String? userId = deepLink.queryParameters['id'];
+//     if (userId != null) {
+//       // Use navigatorKey to navigate without context
+//       navigatorKey.currentState!.push(MaterialPageRoute(
+//         builder: (context) {
+//           return Profile();
+//         },
+//       ));
+//     }
+//     // }
+//   }
+// }
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     home: Scaffold(
+  //       body: SafeArea(
+  //         child: Center(
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               Text('SVG icons'),
+  //
+  //               // IconButton(Icons.favorite_border_outlined, onPressed: () {})
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MapSample(),
-    );
-  }
-}
-
-class MapSample extends StatefulWidget {
-  @override
-  State<MapSample> createState() => MapSampleState();
-}
-
-class MapSampleState extends State<MapSample> {
-  Completer<GoogleMapController> _controller = Completer();
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.422, -122.084),
-    zoom: 14.0,
-  );
-
-  late Uint8List markerIcon;
-  late bool _isLoading = true;
-  final Set<Polyline> _polyline = {};
-
-  @override
-  void initState() {
-    super.initState();
-    _addPolyline();
-    setCustomMarker();
-  }
-
-  Future<void> setCustomMarker() async {
-    try {
-      Uint8List iconData =
-          await getBytesFromAsset('assets/images/placeholder.png', 100);
-      setState(() {
-        markerIcon = iconData;
-        _isLoading = false;
-      });
-    } catch (error) {
-      print('Error loading custom marker: $error');
-    }
-  }
-
-  Future<Uint8List> getBytesFromAsset(String path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(
-      data.buffer.asUint8List(),
-      targetWidth: width,
-    );
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
-  }
-
-  void _addPolyline() {
-    List<LatLng> polylineCoordinates = [
-      LatLng(37.422, -122.084),
-      LatLng(37.427, -122.079),
-    ];
-
-    setState(() {
-      _polyline.add(
-        Polyline(
-          polylineId: PolylineId('path'),
-          points: polylineCoordinates,
-          color: Colors.blue,
-          width: 5,
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    return ResponsiveSizer(builder: (context, orientation, screenType) {
+      return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (ctx) => Auth(),
+          ),
+          ChangeNotifierProvider(
+            create: (ctx) => TransitionEffect(),
+          ),
+        ],
+        child: Consumer<Auth>(
+          builder: (ctx, auth, _) => MaterialApp(
+            navigatorKey: navigatorKey,
+            debugShowCheckedModeBanner: false,
+            title: 'CloudBelly',
+            theme: ThemeData(
+              scrollbarTheme: ScrollbarThemeData(
+                thumbColor: MaterialStateProperty.all<Color>(Color(0xFFFA6E00)),
+                trackColor: MaterialStateProperty.all<Color>(
+                    Color.fromRGBO(177, 217, 216, 1)),
+              ),
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
+              useMaterial3: true,
+            ),
+            initialRoute: '/', // Use '/' as the initial route
+            routes: {
+              '/': (context) => SupplierTabs(), // Use SupplierTabs as the initial route
+              LoginScreen.routeName: (context) => LoginScreen(),
+              '/map': (context) => MapScreen(),
+              // SupplierDashboard.routeName: (context) => SupplierDashboard(),
+              Tabs.routeName: (context) => Tabs(),
+              PostsScreen.routeName: (context) => PostsScreen(),
+              GraphsScreen.routeName: (context) => GraphsScreen(),
+            },
+          ),
         ),
       );
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Google Maps Custom Marker'),
-        backgroundColor: Colors.green[700],
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : GoogleMap(
-              polylines: _polyline,
-              mapType: MapType.normal,
-              initialCameraPosition: _kGooglePlex,
-              markers: {
-                Marker(
-                  anchor: Offset(0.5, 0.5),
-                  markerId: MarkerId('marker1'),
-                  position: LatLng(37.422, -122.084),
-                  icon: BitmapDescriptor.fromBytes(markerIcon),
-                  infoWindow: InfoWindow(
-                    title: 'Custom Marker 1',
-                    snippet: 'Googleplex',
-                  ),
-                ),
-                Marker(
-                  markerId: MarkerId('marker2'),
-                  position: LatLng(37.427, -122.079),
-                  icon: BitmapDescriptor.fromBytes(markerIcon),
-                  infoWindow: InfoWindow(
-                    title: 'Custom Marker 2',
-                    snippet: 'Some other location',
-                  ),
-                ),
-              },
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
-            ),
-    );
   }
 }
