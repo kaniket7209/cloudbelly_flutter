@@ -5,6 +5,7 @@ import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/performance.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
+import 'package:cloudbelly_app/screens/supplier/components/constants.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -29,6 +30,112 @@ class _SupplierDashboardState extends State<SupplierDashboard>
 
   Future<void> _refreshFeed() async {
     setState(() {});
+  }
+
+  Widget _profileSummary() {
+    return Column(
+      children: [
+        Space(3.h),
+        // Adjusted the width of buttons based on screen width
+        _activeButtonIndex == 1
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ColumnWidgetHomeScreen(
+                    data: 8.toString(),
+                    txt: 'Stock Health',
+                  ),
+                  ColumnWidgetHomeScreen(
+                    data: '23%',
+                    txt: 'Waste %aGE',
+                  ),
+                  ColumnWidgetHomeScreen(
+                    data: '4.3x',
+                    txt: 'Avg turnaround',
+                  )
+                ],
+              )
+            : _activeButtonIndex == 2
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ColumnWidgetHomeScreen(
+                        data: '10',
+                        txt: 'Stock health',
+                      ),
+                      ColumnWidgetHomeScreen(
+                        data: '23%',
+                        txt: 'Waste %age',
+                      ),
+                      ColumnWidgetHomeScreen(
+                        data: '5.6',
+                        txt: 'Avg turnaround',
+                      )
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ColumnWidgetHomeScreen(
+                        data: '10',
+                        txt: 'Total Customers',
+                      ),
+                      ColumnWidgetHomeScreen(
+                        data: '32',
+                        txt: 'Total orders',
+                      ),
+                      ColumnWidgetHomeScreen(
+                        data: '5',
+                        txt: 'Repeat Customers',
+                      )
+                    ],
+                  ),
+
+        Space(3.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TouchableOpacity(
+              onTap: () {
+                setState(() {
+                  _activeButtonIndex = 1;
+                });
+              },
+              child: ButtonWidgetHomeScreen(
+                width: 27.w,
+                txt: 'Social Status',
+                isActive: _activeButtonIndex == 1,
+              ),
+            ),
+            TouchableOpacity(
+              onTap: () {
+                setState(() {
+                  _activeButtonIndex = 2;
+                });
+              },
+              child: ButtonWidgetHomeScreen(
+                width: 27.w,
+                txt: 'Inventory',
+                isActive: _activeButtonIndex == 2,
+              ),
+            ),
+            TouchableOpacity(
+              onTap: () {
+                setState(() {
+                  _activeButtonIndex = 3;
+                });
+              },
+              child: ButtonWidgetHomeScreen(
+                width: 28.w,
+                txt: 'Performance',
+                isActive: _activeButtonIndex == 3,
+              ),
+            ),
+          ],
+        ),
+        Space(2.h)
+      ],
+    );
   }
 
   @override
@@ -92,143 +199,8 @@ class _SupplierDashboardState extends State<SupplierDashboard>
                             child: Column(
                               children: [
                                 Space(3.h),
-                                Center(
-                                  child: Container(
-                                    height: 20.h,
-                                    decoration: ShapeDecoration(
-                                      shadows: const [
-                                        BoxShadow(
-                                          offset: Offset(0, 4),
-                                          color: Color.fromRGBO(
-                                              198, 239, 161, 0.6),
-                                          // rgba
-                                          blurRadius: 25,
-                                        )
-                                      ],
-                                      color: Colors.white,
-                                      shape: SmoothRectangleBorder(
-                                        borderRadius: SmoothBorderRadius(
-                                          cornerRadius: 15,
-                                          cornerSmoothing: 1,
-                                        ),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Space(3.h),
-                                        // Adjusted the width of buttons based on screen width
-                                        _activeButtonIndex == 1
-                                            ? Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  ColumnWidgetHomeScreen(
-                                                    data: 8.toString(),
-                                                    txt: 'Stock Health',
-                                                  ),
-                                                  ColumnWidgetHomeScreen(
-                                                    data: '23%',
-                                                    txt: 'Waste %aGE',
-                                                  ),
-                                                  ColumnWidgetHomeScreen(
-                                                    data: '4.3x',
-                                                    txt: 'Avg turnaround',
-                                                  )
-                                                ],
-                                              )
-                                            : _activeButtonIndex == 2
-                                                ? Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      ColumnWidgetHomeScreen(
-                                                        data: '10',
-                                                        txt: 'Stock health',
-                                                      ),
-                                                      ColumnWidgetHomeScreen(
-                                                        data: '23%',
-                                                        txt: 'Waste %age',
-                                                      ),
-                                                      ColumnWidgetHomeScreen(
-                                                        data: '5.6',
-                                                        txt: 'Avg turnaround',
-                                                      )
-                                                    ],
-                                                  )
-                                                : Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      ColumnWidgetHomeScreen(
-                                                        data: '10',
-                                                        txt: 'Total Customers',
-                                                      ),
-                                                      ColumnWidgetHomeScreen(
-                                                        data: '32',
-                                                        txt: 'Total orders',
-                                                      ),
-                                                      ColumnWidgetHomeScreen(
-                                                        data: '5',
-                                                        txt: 'Repeat Customers',
-                                                      )
-                                                    ],
-                                                  ),
-
-                                        Space(3.h),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            TouchableOpacity(
-                                              onTap: () {
-                                                setState(() {
-                                                  _activeButtonIndex = 1;
-                                                });
-                                              },
-                                              child: ButtonWidgetHomeScreen(
-                                                width: 27.w,
-                                                txt: 'Social Status',
-                                                isActive:
-                                                    _activeButtonIndex == 1,
-                                              ),
-                                            ),
-                                            TouchableOpacity(
-                                              onTap: () {
-                                                setState(() {
-                                                  _activeButtonIndex = 2;
-                                                });
-                                              },
-                                              child: ButtonWidgetHomeScreen(
-                                                width: 27.w,
-                                                txt: 'Inventory',
-                                                isActive:
-                                                    _activeButtonIndex == 2,
-                                              ),
-                                            ),
-                                            TouchableOpacity(
-                                              onTap: () {
-                                                setState(() {
-                                                  _activeButtonIndex = 3;
-                                                });
-                                              },
-                                              child: ButtonWidgetHomeScreen(
-                                                width: 28.w,
-                                                txt: 'Performance',
-                                                isActive:
-                                                    _activeButtonIndex == 3,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                whiteCardSection(_profileSummary()),
                                 Space(3.h),
-
                                 if (_activeButtonIndex == 1)
                                   SocialStatusContent(),
                                 if (_activeButtonIndex == 2)
@@ -901,5 +873,3 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
     );
   }
 }
-
-

@@ -1,5 +1,6 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/screens/supplier/components/constants.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -272,6 +273,177 @@ class _SupplierInventoryState extends State<SupplierInventory> {
     return daysUntilRunOut + 1;
   }
 
+  Widget _bulkOrderSection(){
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical:1.h, horizontal: 1.h),
+      child: Column(
+        crossAxisAlignment:
+        CrossAxisAlignment.start,
+        mainAxisAlignment:
+        MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment:
+              MainAxisAlignment.spaceBetween,
+              crossAxisAlignment:
+              CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment:
+                  CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'New Bulk Order',
+                      style: const TextStyle(
+                        color: Color(0xFF094B60),
+                        fontSize: 25,
+                        fontFamily: 'Jost',
+                        fontWeight:
+                        FontWeight.w500,
+                        // height: 0.06,
+                        letterSpacing: 0.54,
+                      ),
+                    ),
+                    Text(
+                      'To deliver by -24th May, 2024 by 12PM',
+                      style: const TextStyle(
+                        color: Color(0xFF094B60),
+                        fontSize: 11,
+                        fontFamily:
+                        'Product Sans',
+                        fontWeight:
+                        FontWeight.w200,
+                        // height: 0.06,
+                        letterSpacing: 0.54,
+                      ),
+                    ),
+                  ],
+                ),
+                // Spacer(),
+                TouchableOpacity(
+                    onTap: () {
+                      // return SupplierStockYouMayNeedSheet(context);
+                    },
+                    child: Padding(
+                      padding:
+                      const EdgeInsets.only(
+                          top: 8.0),
+                      child: Row(
+                        children: [
+                          const Text(
+                            'See all',
+                            style: TextStyle(
+                              color: Color(
+                                  0xFF094B60),
+                              fontSize: 12,
+                              fontFamily:
+                              'Product Sans',
+                              fontWeight:
+                              FontWeight.w700,
+                              // height: 0.14,
+                              letterSpacing: 0.36,
+                            ),
+                          ),
+                          Space(
+                              isHorizontal: true,
+                              2.w),
+                          const Icon(
+                            Icons
+                                .arrow_forward_ios,
+                            size: 13,
+                            color:
+                            Color(0xFFFA6E00),
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
+            ),
+          ),
+          Space(2.h),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              BulkOrderItem(
+                itemData: {
+                  'itemName': 'Green Cabbage',
+                  'volume': '120',
+                  'imageUrl':
+                  'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg'
+                },
+              ),
+              BulkOrderItem(
+                itemData: {
+                  'itemName': 'Tomato',
+                  'volume': '120',
+                  'imageUrl':
+                  'https://media.istockphoto.com/id/1450576005/photo/tomato-isolated-tomato-on-white-background-perfect-retouched-tomatoe-side-view-with-clipping.jpg?s=612x612&w=0&k=20&c=lkQa_rpaKpc-ELRRGobYVJH-eMJ0ew9BckCqavkSTA0='
+                },
+              ),
+              BulkOrderItem(
+                itemData: {
+                  'itemName': 'Red Cabbage',
+                  'volume': '120',
+                  'imageUrl':
+                  'https://media.istockphoto.com/id/175433477/photo/red-cabbage-leaves.jpg?s=612x612&w=0&k=20&c=CVC-6nTaKtQ0Gw5l8Nk5aGb8oA47Ce6eba2qSYYauq0='
+                },
+              ),
+              BulkOrderItem(
+                itemData: {
+                  'itemName': 'Potato',
+                  'volume': '120',
+                  'imageUrl':
+                  'https://dukaan.b-cdn.net/700x700/webp/upload_file_service/asg/7e813d1d-0eac-456f-ba82-4a6b81efa130/Potato.png'
+                },
+              ),
+            ],
+          ),
+          Space(2.h),
+          Center(
+              child:Container(
+                height: 45,
+                margin: EdgeInsets.symmetric(horizontal: 1.h),
+                decoration: ShapeDecoration(
+                  shadows: [
+                    BoxShadow(
+                        offset: Offset(5, 6),
+                        spreadRadius: 0.1,
+                        color: Color.fromRGBO(232, 128, 55, 0.5),
+                        blurRadius: 10)
+                  ],
+                  color:const Color.fromRGBO(250, 110, 0, 1),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 10,
+                      cornerSmoothing: 1,
+                    ),
+                  ),
+                ),
+                child: Center(
+                    child: Text(
+                      'Place your bid',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w700,
+                        height: 0,
+                        letterSpacing: 0.30,
+                      ),
+                    )),
+              )
+          ),
+          Space(1.h)
+        ],
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     List<dynamic> dataList = [];
@@ -279,194 +451,7 @@ class _SupplierInventoryState extends State<SupplierInventory> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Center(
-          child: Container(
-            constraints: BoxConstraints(minWidth: 500),
-            padding:
-            EdgeInsets.symmetric(horizontal: 4.w),
-            decoration: ShapeDecoration(
-              shadows: const [
-                BoxShadow(
-                  offset: Offset(0, 4),
-                  color: Color.fromRGBO(
-                      198, 239, 161, 0.6),
-                  // rgba
-                  blurRadius: 25,
-                )
-              ],
-              color: Colors.white,
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius(
-                  cornerRadius: 15,
-                  cornerSmoothing: 1,
-                ),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  vertical: 8.0),
-              child: Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
-                mainAxisAlignment:
-                MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment:
-                    CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'New Bulk Order',
-                            style: const TextStyle(
-                              color: Color(0xFF094B60),
-                              fontSize: 25,
-                              fontFamily: 'Jost',
-                              fontWeight:
-                              FontWeight.w500,
-                              // height: 0.06,
-                              letterSpacing: 0.54,
-                            ),
-                          ),
-                          Text(
-                            'To deliver by -24th May, 2024 by 12PM',
-                            style: const TextStyle(
-                              color: Color(0xFF094B60),
-                              fontSize: 11,
-                              fontFamily:
-                              'Product Sans',
-                              fontWeight:
-                              FontWeight.w200,
-                              // height: 0.06,
-                              letterSpacing: 0.54,
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Spacer(),
-                      TouchableOpacity(
-                          onTap: () {
-                            // return SupplierStockYouMayNeedSheet(context);
-                          },
-                          child: Padding(
-                            padding:
-                            const EdgeInsets.only(
-                                top: 8.0),
-                            child: Row(
-                              children: [
-                                const Text(
-                                  'See all',
-                                  style: TextStyle(
-                                    color: Color(
-                                        0xFF094B60),
-                                    fontSize: 12,
-                                    fontFamily:
-                                    'Product Sans',
-                                    fontWeight:
-                                    FontWeight.w700,
-                                    // height: 0.14,
-                                    letterSpacing: 0.36,
-                                  ),
-                                ),
-                                Space(
-                                    isHorizontal: true,
-                                    2.w),
-                                const Icon(
-                                  Icons
-                                      .arrow_forward_ios,
-                                  size: 13,
-                                  color:
-                                  Color(0xFFFA6E00),
-                                ),
-                              ],
-                            ),
-                          )),
-                    ],
-                  ),
-                  Space(2.h),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      BulkOrderItem(
-                        itemData: {
-                          'itemName': 'Green Cabbage',
-                          'volume': '120',
-                          'imageUrl':
-                          'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg'
-                        },
-                      ),
-                      BulkOrderItem(
-                        itemData: {
-                          'itemName': 'Tomato',
-                          'volume': '120',
-                          'imageUrl':
-                          'https://media.istockphoto.com/id/1450576005/photo/tomato-isolated-tomato-on-white-background-perfect-retouched-tomatoe-side-view-with-clipping.jpg?s=612x612&w=0&k=20&c=lkQa_rpaKpc-ELRRGobYVJH-eMJ0ew9BckCqavkSTA0='
-                        },
-                      ),
-                      BulkOrderItem(
-                        itemData: {
-                          'itemName': 'Red Cabbage',
-                          'volume': '120',
-                          'imageUrl':
-                          'https://media.istockphoto.com/id/175433477/photo/red-cabbage-leaves.jpg?s=612x612&w=0&k=20&c=CVC-6nTaKtQ0Gw5l8Nk5aGb8oA47Ce6eba2qSYYauq0='
-                        },
-                      ),
-                      BulkOrderItem(
-                        itemData: {
-                          'itemName': 'Potato',
-                          'volume': '120',
-                          'imageUrl':
-                          'https://dukaan.b-cdn.net/700x700/webp/upload_file_service/asg/7e813d1d-0eac-456f-ba82-4a6b81efa130/Potato.png'
-                        },
-                      ),
-                    ],
-                  ),
-                  Space(2.h),
-                  Center(
-                      child:Container(
-                        height: 45,
-                        decoration: ShapeDecoration(
-                          shadows: [
-                            BoxShadow(
-                                offset: Offset(5, 6),
-                                spreadRadius: 0.1,
-                                color: Color.fromRGBO(232, 128, 55, 0.5),
-                                blurRadius: 10)
-                          ],
-                          color:const Color.fromRGBO(250, 110, 0, 1),
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                              cornerRadius: 10,
-                              cornerSmoothing: 1,
-                            ),
-                          ),
-                        ),
-                        child: Center(
-                            child: Text(
-                              'Place your bid',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.w700,
-                                height: 0,
-                                letterSpacing: 0.30,
-                              ),
-                            )),
-                      )
-                  ),
-                  Space(1.h)
-                ],
-              ),
-            ),
-          ),
-        ),
+        whiteCardSection(_bulkOrderSection()),
         Space(2.h),
         Center(child: Text(
           'Manage your inventory',
