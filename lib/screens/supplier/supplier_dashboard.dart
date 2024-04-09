@@ -1,11 +1,14 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:ui';
+
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/performance.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
 import 'package:cloudbelly_app/screens/supplier/components/constants.dart';
+import 'package:cloudbelly_app/screens/supplier/supplier_inventory.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -138,6 +141,7 @@ class _SupplierDashboardState extends State<SupplierDashboard>
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -213,6 +217,24 @@ class _SupplierDashboardState extends State<SupplierDashboard>
                         ),
                       ),
                     ],
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      // Handle tap on the area around the BackdropFilter
+                      print('Tapped outside of the modal bottom sheet');
+                      // You can add any logic here, such as dismissing the modal bottom sheet
+                      // For example:
+                      // Navigator.of(context).pop();
+                    },
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(
+                        sigmaX: context.watch<TransitionEffect>().blurSigma,
+                        sigmaY: context.watch<TransitionEffect>().blurSigma,
+                      ),
+                      child: Container(
+                        color: Colors.transparent, // Transparent color
+                      ),
+                    ),
                   )
                 ],
               ),
