@@ -1,7 +1,10 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class AppwideTextField extends StatelessWidget {
@@ -9,7 +12,7 @@ class AppwideTextField extends StatelessWidget {
   final Function(String) onChanged;
   Function(String)? onSubmitted;
   TextEditingController? controller;
-
+  final FormFieldValidator<String>? validator;
   double height;
 
   AppwideTextField({
@@ -18,30 +21,38 @@ class AppwideTextField extends StatelessWidget {
     this.height = 1.1,
     this.onSubmitted,
     this.controller,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       // rgba(165, 200, 199, 1),
-      decoration: const ShapeDecoration(
+      decoration: ShapeDecoration(
         shadows: [
           BoxShadow(
-            offset: Offset(0, 4),
-            color: Color.fromRGBO(165, 200, 199, 0.6),
-            blurRadius: 20,
+            offset: const Offset(0, 4),
+            color: Provider.of<Auth>(context, listen: false).userType ==
+                    UserType.Vendor.name
+                ? const Color.fromRGBO(165, 200, 199, 0.6)
+                : const Color(0xFFBC73BC),
+            blurRadius: Provider.of<Auth>(context, listen: false).userType ==
+                    UserType.Vendor.name
+                ? 20
+                : 15,
           )
         ],
         color: Colors.white,
-        shape: SmoothRectangleBorder(
+        shape: const SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius.all(
               SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
         ),
       ),
       height: height == 1.1 ? 6.h : height,
       child: Center(
-        child: TextField(
+        child: TextFormField(
           controller: controller,
+          validator: validator,
           decoration: InputDecoration(
             fillColor: Colors.white,
             contentPadding: const EdgeInsets.only(left: 14),
@@ -54,7 +65,7 @@ class AppwideTextField extends StatelessWidget {
             border: InputBorder.none,
           ),
           onChanged: onChanged,
-          onSubmitted: onSubmitted,
+          onFieldSubmitted: onSubmitted,
         ),
       ),
     );

@@ -404,17 +404,19 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
 
 class TextWidgetStoreSetup extends StatelessWidget {
   String label;
+  Color? color;
   TextWidgetStoreSetup({
     super.key,
     required this.label,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       label,
-      style: const TextStyle(
-        color: Color(0xFF0A4C61),
+      style:  TextStyle(
+        color: color ?? const Color(0xFF0A4C61),
         fontSize: 14,
         fontFamily: 'Product Sans',
         fontWeight: FontWeight.w700,

@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 // import 'dart:html';
 
@@ -12,6 +13,8 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'models/model.dart';
 
 class Auth with ChangeNotifier {
   // static final Auth _instance = Auth._internal();
@@ -35,6 +38,7 @@ class Auth with ChangeNotifier {
   List<dynamic> followings = [];
   String userType = '';
   List<dynamic> menuList = [];
+  String baseUrl = "https://app.cloudbelly.in/";
 
   // get user_logo_url {
   //   notifyListeners();
@@ -1012,6 +1016,131 @@ class Auth with ChangeNotifier {
     }
   }
 
+  Future<List<ProductDetails>> getProductDetails(List<dynamic> list) async {
+    print("list:: $list");
+    final String url = '${baseUrl}get_products';
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {
+      "item_ids": list,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      // print(response.body);
+      // print(response.statusCode);
+
+
+        // Parse the response body
+        List<dynamic> jsonResponse = jsonDecode(response.body);
+
+        List<ProductDetails> productList = jsonResponse
+            .map((json) => ProductDetails.fromJson(json))
+            .toList();
+      notifyListeners();
+        return productList;
+
+    } catch (error) {
+      // Handle exceptions
+      print("error:$error");
+      notifyListeners();
+      return <ProductDetails>[];
+    }
+  }
+  Future<DeliveryAddressModel> getAddressList() async {
+
+    final String url = '${baseUrl}get-delivery-addresses';
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {
+      "user_id": user_id,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      // print(response.body);
+      // print(response.statusCode);
+
+
+      // Parse the response body
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+       log("jsonData:: $responseData");
+      notifyListeners();
+      return DeliveryAddressModel.fromJson(responseData);
+
+    } catch (error) {
+      // Handle exceptions
+      print("error:$error");
+      notifyListeners();
+      return DeliveryAddressModel();
+    }
+  }
+  Future<dynamic> createProductOrder(List<dynamic> list,AddressModel? addressModel) async {
+    print("list:: $list");
+    final String url = '${baseUrl}order/create';
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {
+      "user_id": user_id,
+      "items": list,
+      "location":addressModel,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      // print(response.body);
+      // print(response.statusCode);
+
+
+      // Parse the response body
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+      notifyListeners();
+      return jsonResponse;
+
+    } catch (error) {
+      // Handle exceptions
+      print("error:$error");
+      notifyListeners();
+      return null;
+    }
+  }
+  Future<String> addAddress(AddressModel addressModel) async {
+    final prefs = await SharedPreferences.getInstance();
+    print('nknbnkjbn');
+    final String url = '${baseUrl}update-delivery-address';
+
+    final Map<String, dynamic> requestBody = {
+      "user_id": user_id,
+      "address":addressModel,
+    };
+    // Login successful
+    print("resquestbody:: $requestBody");
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      print("response:: ${response.body}");
+      final DataMap = jsonDecode(response.body);
+      return DataMap['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return "-1";
+    }
+  }
   Future<dynamic> getInventoryData() async {
     print(user_id);
     // id = '65e31e9f0bf98389f417cf71';

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Login/map.dart';
+import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/view_cart.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
@@ -12,17 +13,48 @@ import 'package:cloudbelly_app/screens/Login/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey:
+          "AIzaSyB3UySbCaiXjC_bh2h9JAjTKvbeUVA1OmQ", // paste your api key here
+      appId:
+          "1:508708683425:android:fcfeda59f64fd186e9bae0", //paste your app id here
+      messagingSenderId: "508708683425", //paste your messagingSenderId here
+      projectId: "cloudbelly-d97a9", //paste your project id here
+    ),
+  );
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  _firebaseMessaging.getToken().then((token) {
+    print('Firebase Token: $token');
+  });
+  const InitializationSettings initializationSettings =
+  InitializationSettings(
+    android: AndroidInitializationSettings('assets/images/logo.png'),
+  );
+  flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+  );
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Received message in foreground: ${message.notification!.title}');
+  });
+
+  // Handle notifications when the app is terminated or in the background
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    print('Received message in background: ${message.notification!.title}');
+  });
   //await Firebase.initializeApp(
 
   //     // options: DefaultFirebaseOptions.currentPlatform,
-    //   );
+  //   );
   // initDynamicLinks();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => Auth()),
@@ -75,6 +107,10 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
             create: (ctx) => Auth(),
           ),
+
+          ChangeNotifierProvider(
+            create: (ctx) => ViewCartProvider(),
+          ),
         ],
         child: Consumer<Auth>(
           builder: (ctx, auth, _) => MaterialApp(
@@ -107,10 +143,11 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHttpOverrides extends HttpOverrides{
+class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext? context){
+  HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }

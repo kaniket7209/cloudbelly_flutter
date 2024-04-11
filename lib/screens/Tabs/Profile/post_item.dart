@@ -3,6 +3,7 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/screens/Tabs/Feed/feed_bottom_sheet.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
@@ -46,6 +47,7 @@ class _PostItemState extends State<PostItem> {
 
   String caption1 = '';
   String caption2 = '';
+  List<ProductDetails> productDetails = [];
   @override
   void didChangeDependencies() {
     if (_didUpdate) {
@@ -56,6 +58,7 @@ class _PostItemState extends State<PostItem> {
 
       caption2 = getFittedText(discription, context)[1];
       _getLikeData();
+      //getProductDetails();
 
       _didUpdate = false;
     }
@@ -75,7 +78,18 @@ class _PostItemState extends State<PostItem> {
       return [text1, text2];
     }
   }
+  void getProductDetails(BuildContext context) async {
+    AppWideLoadingBanner().loadingBanner(context);
+    List<dynamic> productIds = widget.data['menu_items'];
+    productDetails = await Provider.of<Auth>(context,listen: false).getProductDetails(productIds).then((value) {
+      print("details:: $value");
+      Navigator.of(context).pop();
+      FeedBottomSheet().ProductsInPostSheet(context, widget.data, _isLiked,value);
+      return [];
+    });
 
+    setState(() {});
+  }
   bool _isLiked = false;
   // List<dynamic> likePorfileUrlList = [];
   void _getLikeData() async {
@@ -482,8 +496,8 @@ class _PostItemState extends State<PostItem> {
                   bottom: 5,
                   child: TouchableOpacity(
                     onTap: () async {
-                      return FeedBottomSheet()
-                          .ProductsInPostSheet(context, widget.data, _isLiked);
+                      getProductDetails(context);
+                      //return FeedBottomSheet().ProductsInPostSheet(context, widget.data, _isLiked);
                     },
                     child: Container(
                       width: 40,
