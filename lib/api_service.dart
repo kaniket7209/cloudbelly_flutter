@@ -1114,9 +1114,9 @@ class Auth with ChangeNotifier {
       return null;
     }
   }
-  Future<String> addAddress(AddressModel addressModel) async {
+  Future<String> addAddress(/*AddressModel addressModel*/ Map<String, dynamic> addressModel) async {
     final prefs = await SharedPreferences.getInstance();
-    print('nknbnkjbn');
+    print('addressModel:: ${jsonEncode(addressModel)}');
     final String url = '${baseUrl}update-delivery-address';
 
     final Map<String, dynamic> requestBody = {

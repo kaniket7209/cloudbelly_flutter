@@ -109,16 +109,26 @@ class _AddAddressViewState extends State<AddAddressView> {
   TextEditingController flatNoController = TextEditingController();
   TextEditingController pinCodeController = TextEditingController();
   TextEditingController landMarkController = TextEditingController();
-
+  Map<String, dynamic> address = {};
   void addAddress(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       if (type == "") {
         TOastNotification().showErrorToast(context, "Please Select Type");
       } else {
         AppWideLoadingBanner().loadingBanner(context);
+        address = {
+          "location": locationController.text.trim(),
+          "latitude": widget.latitude.toString(),
+          "longitude": widget.longitude.toString(),
+          "hno": flatNoController.text.trim(),
+          "pincode": pinCodeController.text.trim(),
+          "landmark": landMarkController.text.trim(),
+          "type": type,
+        };
         String response =
             await Provider.of<Auth>(context, listen: false).addAddress(
-          AddressModel(
+              address,
+         /* AddressModel(
             location: locationController.text.trim(),
             latitude: widget.latitude.toString(),
             longitude: widget.longitude.toString(),
@@ -126,7 +136,7 @@ class _AddAddressViewState extends State<AddAddressView> {
             pincode: pinCodeController.text.trim(),
             landmark: landMarkController.text.trim(),
             type: type,
-          ),
+          ),*/
         );
         Navigator.pop(context);
         if (response == "Delivery details updated successfully") {

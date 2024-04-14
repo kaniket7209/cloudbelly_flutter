@@ -116,9 +116,8 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
   bool isAddToCart = false;
   int? allProductPrice;
   List<ProductDetails> tempList = [];
-  List<int> intList = [
-    1,2,3,4,5,6,7,8,9
-  ];
+  List<int> intList = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
   void updateTotalPrice(ProductDetails product) {
     final double price = double.tryParse(product.price ?? "0.0") ?? 0.0;
 
@@ -136,15 +135,15 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
       // Perform any necessary UI updates here
     });
   }
- void abc() {
+
+  void abc() {
     intList.forEach((element) {
-      int value = element+= element;
+      int value = element += element;
       print(value);
     });
-    setState(() {
+    setState(() {});
+  }
 
-    });
- }
   void tempPriceCalculation(ProductDetails product) {
     if (product.isAddToCart == false) {
       // Check if product.totalPrice is null or empty
@@ -164,6 +163,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
       // Perform any necessary UI updates here
     });
   }
+
   @override
   Widget build(BuildContext context) {
     int menuItemsCount = widget.data['menu_items'].length;
@@ -271,10 +271,10 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
           const Space(18),
           SizedBox(
             //  fit: BoxFit.cover,
-            height: widget.productList.first.macros?.fats != ""
+            height:/* widget.productList.first.macros?.fats != ""
                 ? MediaQuery.of(context).size.height * 0.8
-                : MediaQuery.of(context).size.height *
-                    0.6, // Adjust the multiplier as needed
+                :*/ MediaQuery.of(context).size.height *
+                    0.7, // Adjust the multiplier as needed
             child: PageView.builder(
                 reverse: false,
                 padEnds: true,
@@ -290,7 +290,8 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                 },*/
                 itemBuilder: (context, index) {
                   final product = widget.productList[index];
-                  product.totalPrice ??= widget.productList[index].price ?? "0.0";
+                  product.totalPrice ??=
+                      widget.productList[index].price ?? "0.0";
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 44),
                     child: Column(
@@ -302,10 +303,10 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                 decoration: const ShapeDecoration(
                                   shadows: [
                                     BoxShadow(
-                                      offset: Offset(3, 6),
+                                      offset: Offset(3, 4),
                                       color:
-                                          Color.fromRGBO(158, 116, 158, 10.5),
-                                      blurRadius: 20,
+                                      Color.fromRGBO(158, 116, 158, 0.5),
+                                      blurRadius: 15,
                                     )
                                   ],
                                   shape: SmoothRectangleBorder(),
@@ -318,7 +319,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                   child: Image.network(
                                     widget.productList[index].images?.first ??
                                         "",
-                                    fit: BoxFit.fitWidth,
+                                    fit: BoxFit.cover,
                                     loadingBuilder: GlobalVariables()
                                         .loadingBuilderForImage,
                                     errorBuilder:
@@ -334,14 +335,17 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                               ),
                         const Space(26),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
                                     widget.productList[index].name ?? "",
+                                    textAlign: TextAlign.start,
                                     style: const TextStyle(
                                       color: Color(0xFF2E0536),
                                       fontSize: 14,
@@ -364,7 +368,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                         "0",
                                         style: TextStyle(
                                           color: Color(0xFF9327A8),
-                                          fontSize: 10,
+                                          fontSize: 12,
                                           fontFamily: 'Product Sans Medium',
                                           fontWeight: FontWeight.w500,
                                           height: 0,
@@ -396,7 +400,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                               ),
                             ),
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
                                   height: 41,
@@ -404,7 +408,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                   decoration: ShapeDecoration(
                                     shape: SmoothRectangleBorder(
                                         side: const BorderSide(
-                                          color: Colors.black, // Border color
+                                          color: Color(0xFF000000), // Border color
                                           width: 2.0, // Border width
                                         ),
                                         borderRadius: SmoothBorderRadius(
@@ -415,7 +419,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                   child: Center(
                                       child: Text(
                                     // widget.productList[index].totalPrice != 0 ?'Rs ${widget.productList[index].price ?? ""}' :"Rs ${widget.productList[index].totalPrice}",
-                                   "Rs ${widget.productList[index].totalPrice.toString()}",
+                                    "Rs ${widget.productList[index].totalPrice.toString()}",
                                     style: const TextStyle(
                                       color: Color(0xFF2E0536),
                                       fontSize: 18,
@@ -455,10 +459,11 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                                       price.toInt();*/
                                                   print(
                                                       "price:: ${product.totalPrice}, ${product.quantity}");
-                                                }else {
+                                                } else {
                                                   widget.productList[index]
                                                       .isAddToCart = false;
-                                                  tempList.remove(widget.productList[index]);
+                                                  tempList.remove(widget
+                                                      .productList[index]);
                                                   tempPriceCalculation(product);
                                                 }
                                               });
@@ -513,7 +518,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                           InkWell(
                                             onTap: () {
                                               setState(() {
-                                                if(product.quantity! < 10){
+                                                if (product.quantity! < 10) {
                                                   product.quantity =
                                                       product.quantity! + 1;
                                                   updateTotalPrice(product);
@@ -526,7 +531,8 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                                           product.price ?? "");
                                                   product.totalPrice =
                                                       price.toInt();*/
-                                                  print("price:: ${product.totalPrice}");
+                                                  print(
+                                                      "price:: ${product.totalPrice}");
                                                 }
 
                                                 // print((product.quantity ?? 0) * double.parse(product.price ?? ""));
@@ -570,7 +576,8 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                               .productList[index].isAddToCart;
                                           widget.productList[index].quantity =
                                               1;
-                                          tempList.add(widget.productList[index]);
+                                          tempList
+                                              .add(widget.productList[index]);
                                           setState(() {});
                                           print("data:: ${widget.data}");
                                         },
@@ -605,35 +612,36 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                             )
                           ],
                         ),
-                        if (widget.productList[index].macros?.calories != "" ||
+                        const Space(34),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CaloriesColumnWidget(
+                                text: 'Calories',
+                                data:
+                                '${widget.productList[index].macros?.calories} kcal'),
+                            CaloriesColumnWidget(
+                                text: 'Protein',
+                                data:
+                                '${widget.productList[index].macros?.proteins} g'),
+                            CaloriesColumnWidget(
+                                text: 'Carbs',
+                                data:
+                                '${widget.productList[index].macros?.carbohydrates} g'),
+                            CaloriesColumnWidget(
+                                text: 'Fats',
+                                data:
+                                '${widget.productList[index].macros?.fats} g'),
+                          ],
+                        ),
+                        /*if (widget.productList[index].macros?.calories != "" ||
                             widget.productList[index].macros?.proteins != "" ||
                             widget.productList[index].macros?.carbohydrates !=
                                 "" ||
                             widget.productList[index].macros?.fats != "") ...[
-                          const Space(34),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CaloriesColumnWidget(
-                                  text: 'Calories',
-                                  data:
-                                      '${widget.productList[index].macros?.calories} kcal'),
-                              CaloriesColumnWidget(
-                                  text: 'Protein',
-                                  data:
-                                      '${widget.productList[index].macros?.proteins} g'),
-                              CaloriesColumnWidget(
-                                  text: 'Carbs',
-                                  data:
-                                      '${widget.productList[index].macros?.carbohydrates} g'),
-                              CaloriesColumnWidget(
-                                  text: 'Fats',
-                                  data:
-                                      '${widget.productList[index].macros?.fats} g'),
-                            ],
-                          ),
-                        ],
+
+                        ],*/
                       ],
                     ),
                   );
@@ -692,7 +700,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                   Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -718,9 +726,11 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                   ),
                   TouchableOpacity(
                     onTap: () {
-                      Provider.of<ViewCartProvider>(context, listen: false).getProductList(tempList);
-                      Navigator.push(context,MaterialPageRoute(builder: (context) => ViewCart()));
-                     /* Navigator.of(context).pushNamed(ViewCart.routeName,arguments: {
+                      Provider.of<ViewCartProvider>(context, listen: false)
+                          .getProductList(tempList);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => ViewCart()));
+                      /* Navigator.of(context).pushNamed(ViewCart.routeName,arguments: {
                         tempList,
                       });*/
                     },

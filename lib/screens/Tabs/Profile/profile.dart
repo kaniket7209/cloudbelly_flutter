@@ -103,11 +103,12 @@ class _ProfileState extends State<Profile> {
       });
     } else {
       await Provider.of<Auth>(context, listen: false).getMenu().then((menu) {
-        setState(() {
-          menuList = [];
-          menuList.addAll(menu);
-          _isLoading = false;
-        });
+        menuList = [];
+        menuList.addAll(menu);
+        _isLoading = false;
+       /* setState(() {
+
+        });*/
         final menuData = json.encode(
           {
             'menu': menu,
@@ -314,10 +315,10 @@ class _ProfileState extends State<Profile> {
                                 height: 20.h,
                                 width: 90.w,
                                 decoration: ShapeDecoration(
-                                  shadows: const [
+                                  shadows:  [
                                     BoxShadow(
                                       offset: Offset(0, 4),
-                                      color: Color.fromRGBO(165, 200, 199, 0.6),
+                                      color: Provider.of<Auth>(context, listen: false).userType == UserType.Vendor.name ? const Color.fromRGBO(165, 200, 199, 0.6) : const Color.fromRGBO(188, 115, 188, 0.6) ,
                                       blurRadius: 25,
                                     )
                                   ],
@@ -441,10 +442,10 @@ class _ProfileState extends State<Profile> {
                           padding: EdgeInsets.symmetric(
                               vertical: 1.5.h, horizontal: 4.w),
                           decoration: ShapeDecoration(
-                            shadows: const [
+                            shadows:  [
                               BoxShadow(
-                                offset: Offset(0, 4),
-                                color: Color.fromRGBO(165, 200, 199, 0.6),
+                                offset: const Offset(0, 4),
+                                color: Provider.of<Auth>(context, listen: false).userType == UserType.Vendor.name ? const Color.fromRGBO(165, 200, 199, 0.6) : const Color.fromRGBO(188, 115, 188, 0.6) ,
                                 blurRadius: 30,
                               )
                             ],
@@ -459,7 +460,7 @@ class _ProfileState extends State<Profile> {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                /* if (_isVendor)
+                                 if (_isVendor)
                                   Container(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 1.h, horizontal: 3.w),
@@ -471,7 +472,7 @@ class _ProfileState extends State<Profile> {
                                           borderRadius:
                                               BorderRadius.circular(6)),
                                     ),
-                                  ),*/
+                                  ),
                                 Space(2.h),
                                 userType == UserType.Supplier.name
                                     ? SizedBox(
@@ -590,7 +591,7 @@ class _ProfileState extends State<Profile> {
                                         : Container(
                                             // height: 6.5.h,
                                             width: 95.w,
-                                            /* decoration: ShapeDecoration(
+                                             /*decoration: ShapeDecoration(
                                           shadows: const [
                                             BoxShadow(
                                               offset: Offset(0, 4),
@@ -724,7 +725,7 @@ class _ProfileState extends State<Profile> {
                                   const Text('Feature Pending')
                               ]),
                         ),
-                      )
+                      ),
                     ],
                   )
                 ],
@@ -902,10 +903,11 @@ class _MenuState extends State<Menu> {
                                       cursorColor: const Color(0xFFFA6E00)),
                                 ),
                               ),
-                              const Space(
+                              const Spacer(),
+                              /*const Space(
                                 30,
                                 isHorizontal: true,
-                              ),
+                              ),*/
                               TouchableOpacity(
                                 onTap: () {
                                   setState(() {

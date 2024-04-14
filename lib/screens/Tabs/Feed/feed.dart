@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -27,6 +28,7 @@ class _FeedState extends State<Feed> {
   int index = 1;
   bool _isLoading = false;
   int _pageNumber = 1;
+
   Future<void> _refreshFeed() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -91,10 +93,9 @@ class _FeedState extends State<Feed> {
       await Provider.of<Auth>(context, listen: false)
           .getGlobalFeed(_pageNumber)
           .then((newFeed) {
-        setState(() {
-          FeedList.addAll(newFeed);
-          _isLoading = false;
-        });
+        FeedList.addAll(newFeed);
+        _isLoading = false;
+
         final feedData = json.encode(
           {
             'feed': newFeed,
@@ -222,6 +223,7 @@ class StoryItemWidget extends StatelessWidget {
   String url;
   String name;
   bool isYours;
+
   StoryItemWidget({
     super.key,
     this.isYours = false,

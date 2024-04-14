@@ -32,10 +32,10 @@ class AppwideTextField extends StatelessWidget {
         shadows: [
           BoxShadow(
             offset: const Offset(0, 4),
-            color: Provider.of<Auth>(context, listen: false).userType ==
+            color: /*Provider.of<Auth>(context, listen: false).userType ==
                     UserType.Vendor.name
-                ? const Color.fromRGBO(165, 200, 199, 0.6)
-                : const Color(0xFFBC73BC),
+                ?*/ const Color.fromRGBO(165, 200, 199, 0.6),
+                /*: const Color(0xFFBC73BC),*/
             blurRadius: Provider.of<Auth>(context, listen: false).userType ==
                     UserType.Vendor.name
                 ? 20

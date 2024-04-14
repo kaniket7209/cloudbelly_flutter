@@ -1,4 +1,5 @@
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 
@@ -98,7 +99,20 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Stack(
                   children: [
-                    AppwideBanner(),
+                    //AppwideBanner(),
+                    Container(
+                        width: 100.w,
+                        height: 30.h ,
+                        decoration: const ShapeDecoration(
+                          color:  Color(0xFFB1D9D8),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius.only(
+                                bottomLeft:
+                                SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                                bottomRight:
+                                SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
+                          ),
+                        )),
                     Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(

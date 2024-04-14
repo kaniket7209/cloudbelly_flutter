@@ -1,4 +1,5 @@
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class _AppwideBannerState extends State<AppwideBanner>
   Widget build(BuildContext context) {
     return Center(
       child: ConstrainedBox(
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
           maxWidth: 800, // Set the maximum width to 800
         ),
         child: Provider.of<Auth>(context, listen: true).cover_image == ''
@@ -29,8 +30,8 @@ class _AppwideBannerState extends State<AppwideBanner>
                 width: 100.w,
                 height: widget.height == 300 ? 30.h : widget.height,
                 decoration: ShapeDecoration(
-                  color: Color(0xFFB1D9D8),
-                  shape: SmoothRectangleBorder(
+                  color: Provider.of<Auth>(context, listen: false).userType == UserType.Vendor.name ? const Color(0xFFB1D9D8) : const Color(0xFFFFE2FF),
+                  shape: const SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.only(
                         bottomLeft:
                             SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
@@ -41,7 +42,7 @@ class _AppwideBannerState extends State<AppwideBanner>
             : Container(
                 width: 100.w,
                 height: widget.height == 300 ? 30.h : widget.height,
-                decoration: ShapeDecoration(
+                decoration: const ShapeDecoration(
                   color: Color(0xFFB1D9D8),
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.only(
@@ -52,7 +53,7 @@ class _AppwideBannerState extends State<AppwideBanner>
                   ),
                 ),
                 child: ClipSmoothRect(
-                  radius: SmoothBorderRadius.only(
+                  radius: const SmoothBorderRadius.only(
                       bottomLeft:
                           SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
                       bottomRight:

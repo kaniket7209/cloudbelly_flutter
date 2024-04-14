@@ -3,8 +3,10 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
+import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/cart.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
+import 'package:cloudbelly_app/screens/Tabs/Search/search_view.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
@@ -12,20 +14,49 @@ import 'package:cloudbelly_app/screens/Tabs/Feed/feed.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Tabs extends StatefulWidget {
   static const routeName = '/tabs-screen';
+
   @override
   State<Tabs> createState() => _TabsState();
 }
 
 class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   late AnimationController _hideBottomBarAnimationController;
+  String? userType = "";
+  late  List<IconData> iconList;
+  late List<String> textList = [];
+  late List<Widget> pages = [];
 
   @override
   void initState() {
+    userType = Provider.of<Auth>(context, listen: false).userType;
+    iconList = <IconData>[
+      Icons.home,
+      userType == UserType.Vendor.name ? Icons.laptop : Icons.search,
+      Icons.shopping_cart_outlined,
+      Icons.person,
+      // Icons.brightness_1,
+    ];
+    textList = <String>[
+      'Feed',
+      userType == UserType.Vendor.name ? 'Dashboard' : 'Search',
+      'Cart',
+      'Profile',
+      // 'Account',
+    ];
+    pages = [
+      const Feed(),
+      userType == UserType.Vendor.name ? const DashBoard() : const SearchView(),
+
+      // UploadPage(),
+      const Cart(),
+      const Profile(),
+    ];
     _hideBottomBarAnimationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
     // TODO: implement initState
@@ -40,14 +71,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   int _selectedIndex = 0;
   final PageController _pageController = PageController(initialPage: 0);
-  final List<Widget> _pages = [
-    const Feed(),
-    const DashBoard(),
 
-    // UploadPage(),
-    const Cart(),
-    const Profile(),
-  ];
 
   Widget buildColorFilteredIcon(Icon ic, bool isFiltered) {
     // applies the color filter when the icon is selected
@@ -65,28 +89,13 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   //       duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   // }
 
-  final iconList = <IconData>[
-    Icons.home,
-    Icons.laptop,
-    Icons.shopping_cart_outlined,
-    Icons.person,
-    // Icons.brightness_1,
-  ];
-  final textList = <String>[
-    'Feed',
-    'Dahboard',
-    'Cart',
-    'Profile',
-    // 'Account',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // resizeToAvoidBottomInset: false,
-      backgroundColor: const Color.fromRGBO(234, 245, 247, 1),
+      backgroundColor: Provider.of<Auth>(context, listen: false).userType == UserType.Vendor.name ?const Color.fromRGBO(234, 245, 247, 1) : const Color.fromRGBO(255, 248, 255, 1) ,
 
-      body: _pages[_selectedIndex],
+      body: pages[_selectedIndex],
       floatingActionButton: FloatingActionButton(
         shape: const SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius.all(
@@ -145,7 +154,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           // _pages[_selectedIndex]
         },
         activeIndex: _selectedIndex,
-        itemCount: _pages.length,
+        itemCount: pages.length,
 
         tabBuilder: (int index, bool isActive) {
           if (_selectedIndex == index) {
@@ -156,16 +165,17 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
               width: 100,
               height: 30,
-              decoration: const ShapeDecoration(
-                shadows: [
+              decoration:  ShapeDecoration(
+                shadows: const [
                   BoxShadow(
                     offset: Offset(0, 8),
                     color: Color.fromRGBO(152, 202, 201, 0.8),
                     blurRadius: 20,
                   )
                 ],
-                color: Color.fromRGBO(84, 166, 193, 1),
-                shape: SmoothRectangleBorder(
+              //  color: Color.fromRGBO(84, 166, 193, 1),
+                color: Provider.of<Auth>(context, listen: false).userType == UserType.Vendor.name ? const Color.fromRGBO(84, 166, 193, 1) :const Color(0xFFFA6E00),
+                shape: const SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.all(
                       SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
                 ),
@@ -179,14 +189,17 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       color: Colors.white,
                     ),
                     const Space(isHorizontal: true, 2),
-                    Text(
-                      textList[index],
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 8,
-                        fontFamily: 'Product Sans',
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.10,
+                    Expanded(
+                      child: Text(
+                        textList[index],
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.10,
+                        ),
                       ),
                     ),
                   ],

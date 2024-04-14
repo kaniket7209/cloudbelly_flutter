@@ -158,6 +158,7 @@ class _ViewCartState extends State<ViewCart> {
                 children: [
                   Space(5.5.h),
                   Row(
+                   mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       TouchableOpacity(
                         onTap: () {
@@ -167,7 +168,7 @@ class _ViewCartState extends State<ViewCart> {
                           padding:
                               EdgeInsets.only(right: 10, top: 10, bottom: 10),
                           child: SizedBox(
-                            width: 25,
+                            //width: 25,
                             child: Text(
                               '<<',
                               style: TextStyle(
@@ -413,7 +414,8 @@ class _ViewCartState extends State<ViewCart> {
                                           child: Text(
                                             notifiyer.productList[index].name ??
                                                 "",
-                                            overflow: TextOverflow.ellipsis,
+                                           overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
                                             style: const TextStyle(
                                               color: Color(0xFF4C4C4C),
                                               fontSize: 14,
@@ -496,6 +498,7 @@ class _ViewCartState extends State<ViewCart> {
             ],
           ),*/
                                   //  Space(1, isHorizontal: true),
+                                // Spacer(),
                                   IconButton(
                                     icon: Icon(
                                       Icons.keyboard_arrow_down_sharp,
