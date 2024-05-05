@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:cloudbelly_app/constants/assets.dart';
+import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart'; // Import Lottie
 import 'package:provider/provider.dart';
@@ -22,11 +24,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   bool _isAvailable = false;
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
-    Future.delayed(Duration(seconds: 5), () {
-      _getUserData();
+    Future.delayed(const Duration(microseconds: 1000), () {
+      UserPreferences().isLogin == true
+          ? Navigator.of(context).pushReplacementNamed(Tabs.routeName)
+          : Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+      //_getUserData();
     });
+  }
+
+  Future<void> moveToNextPage() async {
+    UserPreferences().isLogin == true
+        ? Navigator.of(context).pushReplacementNamed(Tabs.routeName)
+        : Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
   }
 
   Future<void> _getUserData() async {
@@ -62,35 +73,34 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        // Wrap with SingleChildScrollView for scrolling
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Space(10.h),
-              TweenAnimationBuilder(
-                tween: Tween<double>(begin: 0, end: 1),
-                duration: Duration(seconds: 3),
-                builder: (context, double value, child) {
-                  return Opacity(opacity: value, child: child);
-                },
-                child: Image.asset('assets/images/cloudbelly_logo.png',
-                    width: 200, height: 200),
-              ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(child: Image.asset(Assets.appIcon)),
+            /*Space(10.h),
+            TweenAnimationBuilder(
+              tween: Tween<double>(begin: 0, end: 1),
+              duration: Duration(seconds: 3),
+              builder: (context, double value, child) {
+                return Opacity(opacity: value, child: child);
+              },
+              child: Image.asset('assets/images/cloudbelly_logo.png',
+                  width: 200, height: 200),
+            ),
 
-              Lottie.asset('assets/Animation - 1710085539831.json',
-                  width: 500, height: 500), // Lottie animation
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: Text("Loading.....".toUpperCase(),
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600)),
-              ),
-            ],
-          ),
+            Lottie.asset('assets/Animation - 1710085539831.json',
+                width: 500, height: 500), // Lottie animation
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Text("Loading.....".toUpperCase(),
+                  style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600)),
+            ),*/
+          ],
         ),
       ),
     );

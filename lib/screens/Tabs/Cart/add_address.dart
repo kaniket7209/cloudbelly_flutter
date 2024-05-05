@@ -3,6 +3,7 @@ import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/appwide_textfield.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -16,7 +17,7 @@ import 'package:cloudbelly_app/screens/Tabs/Cart/view_cart.dart';
 
 class AddAddressBottomSheet {
   Future<dynamic> AddAddressSheet(BuildContext context, final double latitude,
-      final double longitude, final String location) {
+      final double longitude, final String location, final String type) {
     return showModalBottomSheet(
       // useSafeArea: true,
 
@@ -25,60 +26,69 @@ class AddAddressBottomSheet {
 
       builder: (BuildContext context) {
         bool _isVendor =
-            Provider.of<Auth>(context, listen: false).userType == 'Vendor';
+            Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+                'Vendor';
         // print(data);
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return SingleChildScrollView(
-              child: Container(
-                decoration: const ShapeDecoration(
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.only(
-                        topLeft:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                        topRight:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+        return WillPopScope(
+          onWillPop: () async {
+            context.read<TransitionEffect>().setBlurSigma(0);
+            return true;
+          },
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                child: Container(
+                  decoration: const ShapeDecoration(
+                    color: Colors.white,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.only(
+                          topLeft: SmoothRadius(
+                              cornerRadius: 35, cornerSmoothing: 1),
+                          topRight: SmoothRadius(
+                              cornerRadius: 35, cornerSmoothing: 1)),
+                    ),
                   ),
-                ),
-                //height: MediaQuery.of(context).size.height * 0.4,
-                width: double.infinity,
-                padding: EdgeInsets.only(
-                    top: 2.h, bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TouchableOpacity(
-                        onTap: () {
-                          return Navigator.of(context).pop();
-                        },
-                        child: Center(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 1.h, horizontal: 3.w),
-                            width: 55,
-                            height: 5,
-                            decoration: ShapeDecoration(
-                              color: const Color(0xFFFA6E00),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6)),
+                  //height: MediaQuery.of(context).size.height * 0.4,
+                  width: double.infinity,
+                  padding: EdgeInsets.only(
+                      top: 2.h,
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TouchableOpacity(
+                          onTap: () {
+                            return Navigator.of(context).pop();
+                          },
+                          child: Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 1.h, horizontal: 3.w),
+                              width: 55,
+                              height: 5,
+                              decoration: ShapeDecoration(
+                                color: const Color(0xFFFA6E00),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6)),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      AddAddressView(
-                        latitude: latitude,
-                        longitude: longitude,
-                        location: location,
-                      ),
-                    ],
+                        AddAddressView(
+                          latitude: latitude,
+                          longitude: longitude,
+                          location: location,
+                          type: type,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );
@@ -86,15 +96,18 @@ class AddAddressBottomSheet {
 }
 
 class AddAddressView extends StatefulWidget {
-  const AddAddressView(
-      {super.key,
-      required this.latitude,
-      required this.longitude,
-      required this.location});
+  const AddAddressView({
+    super.key,
+    required this.latitude,
+    required this.longitude,
+    required this.location,
+    required this.type,
+  });
 
   final double latitude;
   final double longitude;
   final String location;
+  final String type;
 
   @override
   State<AddAddressView> createState() => _AddAddressViewState();
@@ -110,6 +123,7 @@ class _AddAddressViewState extends State<AddAddressView> {
   TextEditingController pinCodeController = TextEditingController();
   TextEditingController landMarkController = TextEditingController();
   Map<String, dynamic> address = {};
+
   void addAddress(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       if (type == "") {
@@ -125,10 +139,11 @@ class _AddAddressViewState extends State<AddAddressView> {
           "landmark": landMarkController.text.trim(),
           "type": type,
         };
-        String response =
-            await Provider.of<Auth>(context, listen: false).addAddress(
-              address,
-         /* AddressModel(
+        if(widget.type == "cart") {
+          String response =
+          await Provider.of<Auth>(context, listen: false).addAddress(
+            address,
+            /* AddressModel(
             location: locationController.text.trim(),
             latitude: widget.latitude.toString(),
             longitude: widget.longitude.toString(),
@@ -137,14 +152,36 @@ class _AddAddressViewState extends State<AddAddressView> {
             landmark: landMarkController.text.trim(),
             type: type,
           ),*/
-        );
-        Navigator.pop(context);
-        if (response == "Delivery details updated successfully") {
+          );
           Navigator.pop(context);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ViewCart()));
-        }else {
-          TOastNotification().showErrorToast(context, response);
+          if (response == "Delivery details updated successfully") {
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => ViewCart()));
+          } else {
+            TOastNotification().showErrorToast(context, response);
+          }
         }
+        else {
+          String msg = await Provider.of<Auth>(context, listen: false)
+              .addressUpdate(address);
+          if (msg == 'User information updated successfully.') {
+            Provider.of<Auth>(context, listen: false)
+                .userData?['address'] ==
+                address;
+            //  print('pin: ${pan_number}');
+            TOastNotification()
+                .showSuccesToast(context, 'StoreAvailability update successfully');
+            Navigator.of(context).pop();
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => const ProfileSettingView()));
+            // prefs.setInt('counter', 3);
+          } else {
+            TOastNotification().showErrorToast(context, msg);
+            Navigator.of(context).pop();
+          }
+        }
+
       }
     }
   }
@@ -169,7 +206,10 @@ class _AddAddressViewState extends State<AddAddressView> {
               ),
             ),
             const Space(28),
-            TextWidgetStoreSetup(label: 'Your location',color: const Color(0xFF494949),),
+            TextWidgetStoreSetup(
+              label: 'Your location',
+              color: const Color(0xFF494949),
+            ),
             Space(1.h),
             AppwideTextField(
               hintText: 'Type your location here',
@@ -188,7 +228,10 @@ class _AddAddressViewState extends State<AddAddressView> {
             Space(
               3.h,
             ),
-            TextWidgetStoreSetup(label: 'House/flat/block no.',color: const Color(0xFF494949),),
+            TextWidgetStoreSetup(
+              label: 'House/flat/block no.',
+              color: const Color(0xFF494949),
+            ),
             Space(1.h),
             AppwideTextField(
               hintText: 'Type your House/flat/block no. here',
@@ -207,7 +250,10 @@ class _AddAddressViewState extends State<AddAddressView> {
             Space(
               3.h,
             ),
-            TextWidgetStoreSetup(label: 'Pin code',color: const Color(0xFF494949),),
+            TextWidgetStoreSetup(
+              label: 'Pin code',
+              color: const Color(0xFF494949),
+            ),
             Space(1.h),
             AppwideTextField(
               controller: pinCodeController,
@@ -226,7 +272,10 @@ class _AddAddressViewState extends State<AddAddressView> {
             Space(
               3.h,
             ),
-            TextWidgetStoreSetup(label: 'Landmark',color: const Color(0xFF494949),),
+            TextWidgetStoreSetup(
+              label: 'Landmark',
+              color: const Color(0xFF494949),
+            ),
             Space(1.h),
             AppwideTextField(
               controller: landMarkController,

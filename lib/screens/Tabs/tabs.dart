@@ -7,6 +7,7 @@ import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/cart.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/screens/Tabs/Search/search_view.dart';
+import 'package:cloudbelly_app/screens/Tabs/supplier/supplier_dashboard.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
@@ -28,30 +29,42 @@ class Tabs extends StatefulWidget {
 class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   late AnimationController _hideBottomBarAnimationController;
   String? userType = "";
-  late  List<IconData> iconList;
+  late List<IconData> iconList;
   late List<String> textList = [];
   late List<Widget> pages = [];
 
   @override
   void initState() {
-    userType = Provider.of<Auth>(context, listen: false).userType;
+    userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
     iconList = <IconData>[
       Icons.home,
-      userType == UserType.Vendor.name ? Icons.laptop : Icons.search,
+      userType == UserType.Vendor.name
+          ? Icons.laptop
+          : userType == UserType.Supplier.name
+              ? Icons.laptop
+              : Icons.search,
       Icons.shopping_cart_outlined,
       Icons.person,
       // Icons.brightness_1,
     ];
     textList = <String>[
       'Feed',
-      userType == UserType.Vendor.name ? 'Dashboard' : 'Search',
+      userType == UserType.Vendor.name
+          ? 'Dashboard'
+          : userType == UserType.Supplier.name
+              ? 'Dashboard'
+              : 'Search',
       'Cart',
       'Profile',
       // 'Account',
     ];
     pages = [
       const Feed(),
-      userType == UserType.Vendor.name ? const DashBoard() : const SearchView(),
+      userType == UserType.Vendor.name
+          ? const DashBoard()
+          : userType == UserType.Supplier.name
+              ? const SupplierDashboard()
+              : const SearchView(),
 
       // UploadPage(),
       const Cart(),
@@ -71,7 +84,6 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   int _selectedIndex = 0;
   final PageController _pageController = PageController(initialPage: 0);
-
 
   Widget buildColorFilteredIcon(Icon ic, bool isFiltered) {
     // applies the color filter when the icon is selected
@@ -93,7 +105,12 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       // resizeToAvoidBottomInset: false,
-      backgroundColor: Provider.of<Auth>(context, listen: false).userType == UserType.Vendor.name ?const Color.fromRGBO(234, 245, 247, 1) : const Color.fromRGBO(255, 248, 255, 1) ,
+      backgroundColor: Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+              UserType.Vendor.name
+          ? const Color.fromRGBO(234, 245, 247, 1)
+          : userType == UserType.Supplier.name
+              ? const Color(0xFFF6FFEE)
+              : const Color.fromRGBO(255, 248, 255, 1),
 
       body: pages[_selectedIndex],
       floatingActionButton: FloatingActionButton(
@@ -127,7 +144,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           List<String> url = await Provider.of<Auth>(context, listen: false)
               .pickMultipleImagesAndUpoad();
           List<dynamic> menuList =
-              await Provider.of<Auth>(context, listen: false).getMenu();
+              await Provider.of<Auth>(context, listen: false).getMenu(Provider.of<Auth>(context, listen: false).userData?['user_id']);
           Navigator.of(context).pop();
           if (url.length == 0) {
             TOastNotification()
@@ -165,7 +182,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
               width: 100,
               height: 30,
-              decoration:  ShapeDecoration(
+              decoration: ShapeDecoration(
                 shadows: const [
                   BoxShadow(
                     offset: Offset(0, 8),
@@ -173,8 +190,13 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     blurRadius: 20,
                   )
                 ],
-              //  color: Color.fromRGBO(84, 166, 193, 1),
-                color: Provider.of<Auth>(context, listen: false).userType == UserType.Vendor.name ? const Color.fromRGBO(84, 166, 193, 1) :const Color(0xFFFA6E00),
+                //  color: Color.fromRGBO(84, 166, 193, 1),
+                color: Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+                        UserType.Vendor.name
+                    ? const Color.fromRGBO(84, 166, 193, 1)
+                    : userType == UserType.Supplier.name
+                        ? const Color(0xFF4DBF4A)
+                        : const Color(0xFFFA6E00),
                 shape: const SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.all(
                       SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),

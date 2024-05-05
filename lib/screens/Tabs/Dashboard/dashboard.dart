@@ -93,8 +93,8 @@ class _DashBoardState extends State<DashBoard>
                                     shadows: const [
                                       BoxShadow(
                                         offset: Offset(0, 4),
-                                        color: Color.fromRGBO(
-                                            165, 200, 199, 0.6),
+                                        color:
+                                            Color.fromRGBO(165, 200, 199, 0.6),
                                         blurRadius: 25,
                                       )
                                     ],
@@ -113,21 +113,20 @@ class _DashBoardState extends State<DashBoard>
                                       _activeButtonIndex == 1
                                           ? Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceEvenly,
+                                                  MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 ColumnWidgetHomeScreen(
                                                   data: Provider.of<Auth>(
                                                           context,
                                                           listen: false)
-                                                      .rating,
+                                                      .userData?['rating'],
                                                   txt: 'Rating',
                                                 ),
                                                 ColumnWidgetHomeScreen(
                                                   data: (Provider.of<Auth>(
                                                               context,
                                                               listen: false)
-                                                          .followers)
+                                                          .userData?['followers'])
                                                       .length
                                                       .toString(),
                                                   txt: 'Followers',
@@ -136,7 +135,7 @@ class _DashBoardState extends State<DashBoard>
                                                   data: (Provider.of<Auth>(
                                                               context,
                                                               listen: false)
-                                                          .followings)
+                                                          .userData?['followings'])
                                                       .length
                                                       .toString(),
                                                   txt: 'Following',
@@ -197,8 +196,7 @@ class _DashBoardState extends State<DashBoard>
                                             child: ButtonWidgetHomeScreen(
                                               width: 27.w,
                                               txt: 'Social Status',
-                                              isActive:
-                                                  _activeButtonIndex == 1,
+                                              isActive: _activeButtonIndex == 1,
                                             ),
                                           ),
                                           TouchableOpacity(
@@ -210,8 +208,7 @@ class _DashBoardState extends State<DashBoard>
                                             child: ButtonWidgetHomeScreen(
                                               width: 27.w,
                                               txt: 'Inventory',
-                                              isActive:
-                                                  _activeButtonIndex == 2,
+                                              isActive: _activeButtonIndex == 2,
                                             ),
                                           ),
                                           TouchableOpacity(
@@ -223,8 +220,7 @@ class _DashBoardState extends State<DashBoard>
                                             child: ButtonWidgetHomeScreen(
                                               width: 28.w,
                                               txt: 'Performance',
-                                              isActive:
-                                                  _activeButtonIndex == 3,
+                                              isActive: _activeButtonIndex == 3,
                                             ),
                                           )
                                         ],
@@ -237,8 +233,7 @@ class _DashBoardState extends State<DashBoard>
                               if (_activeButtonIndex == 1)
                                 SocialStatusContent(),
                               if (_activeButtonIndex == 2) const Inventory(),
-                              if (_activeButtonIndex == 3)
-                                const Performance(),
+                              if (_activeButtonIndex == 3) const Performance(),
                             ],
                           ),
                         ),
@@ -314,7 +309,7 @@ class StoreLogoWidget extends StatelessWidget {
                 child: Center(
                   child: Text(
                     Provider.of<Auth>(context, listen: true)
-                        .store_name[0]
+                        .userData?['store_name'][0]
                         .toUpperCase(),
                     style: TextStyle(fontSize: 40),
                   ),
@@ -325,8 +320,11 @@ class StoreLogoWidget extends StatelessWidget {
 }
 
 class StoreNameWidget extends StatelessWidget {
-  const StoreNameWidget({
+  String? name;
+
+  StoreNameWidget({
     super.key,
+    this.name,
   });
 
   @override
@@ -351,7 +349,7 @@ class StoreNameWidget extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    Provider.of<Auth>(context, listen: true).store_name,
+                    name ?? Provider.of<Auth>(context, listen: true).userData?['store_name'],
                     maxLines: 2,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
@@ -376,6 +374,7 @@ class StoreNameWidget extends StatelessWidget {
 
 class InventoryForcastingWidget extends StatelessWidget {
   bool isBuy;
+
   InventoryForcastingWidget({
     super.key,
     required this.isBuy,
@@ -436,8 +435,8 @@ class InventoryForcastingWidget extends StatelessWidget {
                     shadows: const [
                       BoxShadow(
                         color: Color.fromRGBO(124, 193, 191, 0.3),
-                        offset: Offset(0,
-                            4), // Adjust the Y offset to control the shadow on the bottom
+                        offset: Offset(0, 4),
+                        // Adjust the Y offset to control the shadow on the bottom
                         blurRadius: 20,
                         spreadRadius: 0,
                       )
@@ -460,8 +459,8 @@ class InventoryForcastingWidget extends StatelessWidget {
                 shadows: const [
                   BoxShadow(
                     color: Color.fromRGBO(232, 128, 55, 0.5),
-                    offset: Offset(5,
-                        6), // Adjust the Y offset to control the shadow on the bottom
+                    offset: Offset(5, 6),
+                    // Adjust the Y offset to control the shadow on the bottom
                     blurRadius: 30,
                     spreadRadius: 0,
                   )
@@ -559,6 +558,7 @@ class InventoryFocastRowWidget extends StatelessWidget {
 
 class InventotyForcastingBoldTextWidget extends StatelessWidget {
   String txt;
+
   InventotyForcastingBoldTextWidget({
     super.key,
     required this.txt,
@@ -586,6 +586,7 @@ class InventotyForcastingBoldTextWidget extends StatelessWidget {
 
 class InvetoryBasedReciepeWidget extends StatelessWidget {
   bool isResell;
+
   InvetoryBasedReciepeWidget({
     super.key,
     this.isResell = false,
@@ -702,6 +703,7 @@ class InvetoryBasedReciepeWidget extends StatelessWidget {
 
 class ReciepeTextWidgetHomeScreen extends StatelessWidget {
   final String txt;
+
   const ReciepeTextWidgetHomeScreen({
     super.key,
     required this.txt,
@@ -723,6 +725,7 @@ class ReciepeTextWidgetHomeScreen extends StatelessWidget {
 
 class BoldTextWidgetHomeScreen extends StatelessWidget {
   final txt;
+
   const BoldTextWidgetHomeScreen({
     super.key,
     this.txt,
@@ -747,6 +750,7 @@ class BoldTextWidgetHomeScreen extends StatelessWidget {
 class ToolsButtonWidgetHomeSCreen extends StatelessWidget {
   double width;
   final String txt;
+
   ToolsButtonWidgetHomeSCreen({
     required this.txt,
     required this.width,
@@ -847,6 +851,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
   double height;
   double width;
   double radius;
+
   ButtonWidgetHomeScreen({
     super.key,
     this.txt,

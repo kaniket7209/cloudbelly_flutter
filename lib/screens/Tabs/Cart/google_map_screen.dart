@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/add_address.dart';
@@ -16,9 +17,11 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class GoogleMapScreen extends StatefulWidget {
-  const GoogleMapScreen({super.key});
+  final String type;
+  const GoogleMapScreen({super.key,required this.type});
 
   @override
   State<GoogleMapScreen> createState() => _GoogleMapScreenState();
@@ -324,7 +327,8 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                   height: 48,
                   child: TouchableOpacity(
                     onTap: () {
-                      AddAddressBottomSheet().AddAddressSheet(context,_currentPosition?.latitude ?? 0.0,_currentPosition?.longitude ?? 0.0,address ??" ");
+                      context.read<TransitionEffect>().setBlurSigma(5.0);
+                      AddAddressBottomSheet().AddAddressSheet(context,_currentPosition?.latitude ?? 0.0,_currentPosition?.longitude ?? 0.0,address ??" ",widget.type);
                     },
                     child: ButtonWidgetHomeScreen(
                       txt: 'Confirm Location',
@@ -333,6 +337,24 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                   ),
                 ),
               ),
+              GestureDetector(
+                onTap: () {
+                  // Handle tap on the area around the BackdropFilter
+                  print('Tapped outside of the modal bottom sheet');
+                  // You can add any logic here, such as dismissing the modal bottom sheet
+                  // For example:
+                  // Navigator.of(context).pop();
+                },
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: context.watch<TransitionEffect>().blurSigma,
+                    sigmaY: context.watch<TransitionEffect>().blurSigma,
+                  ),
+                  child: Container(
+                    color: Colors.transparent, // Transparent color
+                  ),
+                ),
+              )
               /*  Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 27.0),
                 child: TouchableOpacity(

@@ -66,11 +66,11 @@ class _SocialStatusContentState extends State<SocialStatusContent>
   List<String> bottomBarName = ["Mon", "Tue", "Wed", "Thu", "Sat", "Sun"];
   @override
   Widget build(BuildContext context) {
-    final counter = Provider.of<Auth>(context, listen: true).pincode == ''
+    final counter = Provider.of<Auth>(context, listen: true).userData?['pincode'] == ''
         ? 1
-        : Provider.of<Auth>(context, listen: true).pan_number == ''
+        : Provider.of<Auth>(context, listen: true).userData?['pan_number'] == ''
             ? 2
-            : Provider.of<Auth>(context, listen: true).bank_name == ''
+            : Provider.of<Auth>(context, listen: true).userData?['bank_name'] == ''
                 ? 3
                 : 4;
 
@@ -300,7 +300,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                       await Provider.of<Auth>(context, listen: false)
                           .pickMultipleImagesAndUpoad();
                   List<dynamic> menuList =
-                      await Provider.of<Auth>(context, listen: false).getMenu();
+                      await Provider.of<Auth>(context, listen: false).getMenu(Provider.of<Auth>(context, listen: false).userData?['user_id']);
                   Navigator.of(context).pop();
                   if (url.length == 0) {
                     TOastNotification()
@@ -325,7 +325,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                   url.add(await Provider.of<Auth>(context, listen: false)
                       .pickImageAndUpoad(src: 'Camera', context));
                   List<dynamic> menuList =
-                      await Provider.of<Auth>(context, listen: false).getMenu();
+                      await Provider.of<Auth>(context, listen: false).getMenu(Provider.of<Auth>(context, listen: false).userData?['user_id']);
                   print('object');
                   print(url[0]);
                   Navigator.of(context).pop();
@@ -1222,7 +1222,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
                 if (isLogo) {
                   Provider.of<Auth>(context, listen: false).logo_url = _url;
                 } else {
-                  Provider.of<Auth>(context, listen: false).cover_image = _url;
+                  Provider.of<Auth>(context, listen: false).userData?['cover_image'] = _url;
                 }
                 TOastNotification().showSuccesToast(context,
                     '${isLogo ? 'Store logo' : 'Cover Image'}  updated');
@@ -1278,7 +1278,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
                 if (isLogo) {
                   Provider.of<Auth>(context, listen: false).logo_url = _url;
                 } else {
-                  Provider.of<Auth>(context, listen: false).cover_image = _url;
+                  Provider.of<Auth>(context, listen: false).userData?['cover_image'] = _url;
                 }
                 TOastNotification().showSuccesToast(context,
                     '${isLogo ? 'Store logo' : 'Cover Image'}  updated');

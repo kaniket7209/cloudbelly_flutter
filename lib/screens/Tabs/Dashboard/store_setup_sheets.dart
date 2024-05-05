@@ -97,7 +97,7 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
                 latitude, longitude, store_name, max_order_capacity);
 
         if (msg == 'User information updated successfully.') {
-          Provider.of<Auth>(context, listen: false).pincode = pincode;
+          Provider.of<Auth>(context, listen: false).userData?['pincode'] = pincode;
           Provider.of<Auth>(context, listen: false).logo_url = profile_photo;
           // print(Provider.of<Auth>(context, listen: false).pincode);
           TOastNotification().showSuccesToast(context, 'User Details Updated');
@@ -450,7 +450,7 @@ class _Sheet2State extends State<Sheet2> with SingleTickerProviderStateMixin {
           .storeSetup2(pan_number, aadhar_number, fssai_licence_document);
 
       if (msg == 'User information updated successfully.') {
-        Provider.of<Auth>(context, listen: false).pan_number == pan_number;
+        Provider.of<Auth>(context, listen: false).userData?['pan_number'] == pan_number;
         print('pin: ${pan_number}');
         TOastNotification().showSuccesToast(context, 'KYC details updated');
         if (num == 2) Navigator.of(context).pop();
@@ -577,19 +577,19 @@ class _Sheet2State extends State<Sheet2> with SingleTickerProviderStateMixin {
                         // print(user_name);
                       },
                     ),
-                    Space(
-                      3.h,
-                    ),
-                    TextWidgetStoreSetup(label: 'Aadhar card'),
-                    Space(1.h),
-                    AppwideTextField(
-                      hintText: 'Type your aadhar card number here',
-                      onChanged: (p0) {
-                        aadhar_number = p0.toString();
-                        // user_name = p0.toString();
-                        // print(user_name);
-                      },
-                    ),
+                      Space(
+                        3.h,
+                      ),
+                      TextWidgetStoreSetup(label: 'Aadhar card'),
+                      Space(1.h),
+                      AppwideTextField(
+                        hintText: 'Type your aadhar card number here',
+                        onChanged: (p0) {
+                          aadhar_number = p0.toString();
+                          // user_name = p0.toString();
+                          // print(user_name);
+                        },
+                      ),
                     Space(
                       3.h,
                     ),
@@ -810,7 +810,7 @@ class _Sheet3State extends State<Sheet3> with SingleTickerProviderStateMixin {
             .storeSetup3(bank_name, account_number, ifsc_code, upi_id);
 
         if (msg == 'User information updated successfully.') {
-          Provider.of<Auth>(context, listen: false).bank_name = bank_name;
+          Provider.of<Auth>(context, listen: false).userData?['bank_name'] = bank_name;
           TOastNotification()
               .showSuccesToast(context, 'Payment details updated');
           Navigator.of(context).pop();

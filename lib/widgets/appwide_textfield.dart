@@ -14,6 +14,7 @@ class AppwideTextField extends StatelessWidget {
   TextEditingController? controller;
   final FormFieldValidator<String>? validator;
   double height;
+  final Widget? prefixIcon;
 
   AppwideTextField({
     required this.hintText,
@@ -22,6 +23,7 @@ class AppwideTextField extends StatelessWidget {
     this.onSubmitted,
     this.controller,
     this.validator,
+    this.prefixIcon,
   });
 
   @override
@@ -36,7 +38,7 @@ class AppwideTextField extends StatelessWidget {
                     UserType.Vendor.name
                 ?*/ const Color.fromRGBO(165, 200, 199, 0.6),
                 /*: const Color(0xFFBC73BC),*/
-            blurRadius: Provider.of<Auth>(context, listen: false).userType ==
+            blurRadius: Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
                     UserType.Vendor.name
                 ? 20
                 : 15,
@@ -53,10 +55,14 @@ class AppwideTextField extends StatelessWidget {
         child: TextFormField(
           controller: controller,
           validator: validator,
+          style: const TextStyle(
+            color: Color(0xFF094B60),
+          ),
           decoration: InputDecoration(
             fillColor: Colors.white,
             contentPadding: const EdgeInsets.only(left: 14),
             hintText: hintText,
+          //  suffixIcon: prefixIcon,
             hintStyle: const TextStyle(
                 fontSize: 12,
                 color: Color(0xFF0A4C61),

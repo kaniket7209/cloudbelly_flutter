@@ -55,8 +55,7 @@ class _PostsScreenState extends State<PostsScreen> {
   }
 
   Future<void> _refreshFeed() async {
-    final Data = await Provider.of<Auth>(context, listen: false).getFeed()
-        as List<dynamic>;
+    final Data = await Provider.of<Auth>(context, listen: false).getFeed(Provider.of<Auth>(context, listen: false).userData?['user_id']) as List<dynamic>;
 
     Navigator.of(context).pushReplacementNamed(PostsScreen.routeName,
         arguments: {'data': Data, 'index': 0});
@@ -131,9 +130,11 @@ class _PostsScreenState extends State<PostsScreen> {
                   // print(item);
                   bool _isMultiple = item['multiple_files'] != null &&
                       item['multiple_files'].length != 0;
+                  print("item:: $item");
                   return PostItem(
                     isMultiple: _isMultiple,
                     data: item,
+                    isProfilePost: true,
                   );
                 }).toList(),
               )

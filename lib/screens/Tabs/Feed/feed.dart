@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
@@ -40,7 +41,6 @@ class _FeedState extends State<Feed> {
       setState(() {
         FeedList.clear();
         FeedList.addAll(newFeed);
-
         _isLoading = false;
       });
       final feedData = json.encode(
@@ -59,6 +59,7 @@ class _FeedState extends State<Feed> {
     super.initState();
     _scrollController.addListener(_onScroll);
     _fetchFeed();
+    print("feedList:: ${FeedList}");
   }
 
   @override
@@ -93,8 +94,10 @@ class _FeedState extends State<Feed> {
       await Provider.of<Auth>(context, listen: false)
           .getGlobalFeed(_pageNumber)
           .then((newFeed) {
-        FeedList.addAll(newFeed);
-        _isLoading = false;
+        setState(() {
+          FeedList.addAll(newFeed);
+          _isLoading = false;
+        });
 
         final feedData = json.encode(
           {
@@ -189,7 +192,7 @@ class _FeedState extends State<Feed> {
                               bool _isMultiple =
                                   item['multiple_files'] != null &&
                                       item['multiple_files'].length != 0;
-
+                              log("FeedPost:: $item");
                               return PostItem(
                                 isProfilePost: false,
                                 isMultiple: _isMultiple,

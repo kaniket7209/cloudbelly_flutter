@@ -4,3 +4,5 @@ enum UserType {
   Supplier,
 
 }
+
+enum SampleItem { itemOne }

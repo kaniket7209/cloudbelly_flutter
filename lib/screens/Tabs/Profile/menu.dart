@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class Menu extends StatefulWidget {
-  const Menu({super.key});
-
+  Menu({super.key,this.id});
+  String? id;
   @override
   State<Menu> createState() => _MenuState();
 }
@@ -17,7 +17,7 @@ class _MenuState extends State<Menu> {
     return Container(
       width: 85.w,
       child: FutureBuilder(
-        future: Provider.of<Auth>(context, listen: false).getMenu(),
+        future: Provider.of<Auth>(context, listen: false).getMenu(widget.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             List<dynamic> data = snapshot.data as List<dynamic>;

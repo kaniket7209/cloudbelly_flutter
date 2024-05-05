@@ -78,7 +78,7 @@ class _GraphsScreenState extends State<GraphsScreen> {
     final payload = JWT({
       "resource": {"dashboard": 8},
       "params": {
-        'email': Provider.of<Auth>(context, listen: false).user_email,
+        'email': Provider.of<Auth>(context, listen: false).userData?['user_email'],
         'item_id': _selectedId,
       },
       // "exp": (DateTime.now().millisecondsSinceEpoch ~/ 1000) +

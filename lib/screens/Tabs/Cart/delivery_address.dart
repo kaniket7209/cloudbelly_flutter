@@ -20,64 +20,72 @@ class AddressBottomSheet {
       BuildContext context, List<AddressModel>? deliveryAddressList) {
     return showModalBottomSheet(
       // useSafeArea: true,
-
+      backgroundColor: Colors.white,
       context: context,
+      enableDrag: false,
       isScrollControlled: true,
+      isDismissible: true,
 
       builder: (BuildContext context) {
         bool _isVendor =
-            Provider.of<Auth>(context, listen: false).userType == 'Vendor';
+            Provider.of<Auth>(context, listen: false).userData?['user_type'] == 'Vendor';
         // print(data);
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return SingleChildScrollView(
-              child: Container(
-                decoration: const ShapeDecoration(
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.only(
-                        topLeft:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                        topRight:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+        return WillPopScope(
+          onWillPop: () async {
+            context.read<TransitionEffect>().setBlurSigma(0);
+            return true;
+          },
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                child: Container(
+                  decoration: const ShapeDecoration(
+                    color: Colors.white,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.only(
+                          topLeft:
+                              SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                          topRight:
+                              SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                    ),
                   ),
-                ),
-                //height: MediaQuery.of(context).size.height * 0.4,
-                width: double.infinity,
-                padding: EdgeInsets.only(
-                    top: 2.h, bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TouchableOpacity(
-                        onTap: () {
-                          return Navigator.of(context).pop();
-                        },
-                        child: Center(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 1.h, horizontal: 3.w),
-                            width: 55,
-                            height: 5,
-                            decoration: ShapeDecoration(
-                              color: const Color(0xFFFA6E00),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6)),
+                  //height: MediaQuery.of(context).size.height * 0.4,
+                  width: double.infinity,
+                  padding: EdgeInsets.only(
+                      top: 2.h, bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TouchableOpacity(
+                          onTap: () {
+                            return Navigator.of(context).pop();
+                          },
+                          child: Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 1.h, horizontal: 3.w),
+                              width: 55,
+                              height: 5,
+                              decoration: ShapeDecoration(
+                                color: const Color(0xFFFA6E00),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6)),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      AddressList(
-                        deliveryAddressList: deliveryAddressList ?? [],
-                      ),
-                    ],
+                        AddressList(
+                          deliveryAddressList: deliveryAddressList ?? [],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );
@@ -233,9 +241,10 @@ class _AddressListState extends State<AddressList> {
                     child: IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: () {
-                        Navigator.of(context).push(
+                        context.read<TransitionEffect>().setBlurSigma(0);
+                        Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                            builder: (context) => const GoogleMapScreen(),
+                            builder: (context) => const GoogleMapScreen(type: "cart",),
                           ),
                         );
                       },
@@ -250,7 +259,7 @@ class _AddressListState extends State<AddressList> {
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const GoogleMapScreen()));
+                        builder: (context) => const GoogleMapScreen(type: "cart",)));
                   },
                   child: const Text(
                     "Add new Address",

@@ -1,11 +1,18 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
+import 'dart:math';
+import 'dart:ui';
+
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
+import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/screens/Tabs/Feed/feed_bottom_sheet.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
+import 'package:cloudbelly_app/screens/Tabs/supplier/components/constants.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -48,6 +55,7 @@ class _PostItemState extends State<PostItem> {
   String caption1 = '';
   String caption2 = '';
   List<ProductDetails> productDetails = [];
+
   @override
   void didChangeDependencies() {
     if (_didUpdate) {
@@ -78,19 +86,26 @@ class _PostItemState extends State<PostItem> {
       return [text1, text2];
     }
   }
-  void getProductDetails(BuildContext context) async {
+
+  void getProductDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
     List<dynamic> productIds = widget.data['menu_items'];
-    productDetails = await Provider.of<Auth>(context,listen: false).getProductDetails(productIds).then((value) {
+    productDetails = await Provider.of<Auth>(context, listen: false)
+        .getProductDetails(productIds)
+        .then((value) {
       print("details:: $value");
       Navigator.of(context).pop();
-      FeedBottomSheet().ProductsInPostSheet(context, widget.data, _isLiked,value);
+      context.read<TransitionEffect>().setBlurSigma(5.0);
+      FeedBottomSheet()
+          .ProductsInPostSheet(context, widget.data, _isLiked, value);
       return [];
     });
 
     setState(() {});
   }
+
   bool _isLiked = false;
+
   // List<dynamic> likePorfileUrlList = [];
   void _getLikeData() async {
     List<dynamic> likeIds = widget.data['likes'] ?? [];
@@ -102,14 +117,17 @@ class _PostItemState extends State<PostItem> {
           'name': element['store_name'] ?? 'default_name',
           'profile_photo': element['profile_photo'] ?? 'default_photo'
         });
+        itemsToShow = min(_likeData.length, 2);
       } else {
         print("Unexpected data type: $element");
       }
+      setState(() {});
+
     });
     // print(_likeData);
 
-    _isLiked = (widget.data['likes'] ?? [])
-        .contains(Provider.of<Auth>(context, listen: false).user_id);
+    _isLiked = (widget.data['likes'] ?? []).contains(
+        Provider.of<Auth>(context, listen: false).userData?['user_id']);
   }
 
   String formatTimeDifference(String timestampString) {
@@ -142,10 +160,13 @@ class _PostItemState extends State<PostItem> {
   SampleItem? selectedMenu;
   bool _showLikeIcon = false;
   List<dynamic> _likeData = [];
+  List<String> userId = [];
+  int itemsToShow = 0;
   bool _isFollowing = false;
+
   bool checkFollow() {
     String id = widget.isProfilePost ? "" : widget.data['user_id'];
-    List<dynamic> temp = Provider.of<Auth>(context, listen: false).followings;
+    List<dynamic> temp = Provider.of<Auth>(context, listen: false).userData?['followings'] ?? [];
     for (var user in temp) {
       if (user['user_id'] == id) {
         _isFollowing = true;
@@ -157,9 +178,15 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
+    print("who is user:: ${widget.isProfilePost}");
+    bool shouldShowIcon = widget.isProfilePost ||
+        (!widget.isProfilePost &&
+            Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
+                widget.data['user_id']);
     bool _isFollowing = checkFollow();
     bool _isVendor =
-        Provider.of<Auth>(context, listen: false).userType == 'Vendor';
+        Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+            'Vendor';
     // print(widget.data);
     // final date_time = formatTimeDifference('created_at');
     CarouselController buttonCarouselController = CarouselController();
@@ -183,70 +210,128 @@ class _PostItemState extends State<PostItem> {
                         ((widget.data['profile_photo'] == '' ||
                                 widget.data['profile_photo'] == null) &&
                             !widget.isProfilePost)
-                    ? Container(
-                        height: 35,
-                        width: 35,
-                        decoration: ShapeDecoration(
-                          shadows: [
-                            BoxShadow(
-                              offset: const Offset(0, 4),
-                              color: _isVendor
-                                  ? const Color.fromRGBO(31, 111, 109, 0.4)
-                                  : const Color.fromRGBO(130, 47, 130, 0.4),
-                              blurRadius: 20,
+                    ? InkWell(
+                        onTap: () {
+                          print("data:: ${widget.data}");
+                          setState(() {
+                            userId.add(widget.data['user_id']);
+                          });
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfileView(
+                                        userIdList: userId,
+                                      ))).then((value) {
+                            userId.clear();
+                          });
+                        },
+                        child: Container(
+                            height: 35,
+                            width: 35,
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  offset: const Offset(0, 4),
+                                  color: _isVendor
+                                      ? const Color.fromRGBO(31, 111, 109, 0.4)
+                                      : Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Supplier.name
+                                          ? const Color.fromRGBO(
+                                              198, 239, 161, 0.6)
+                                          : const Color.fromRGBO(
+                                              130, 47, 130, 0.6),
+                                  blurRadius: 20,
+                                ),
+                              ],
+                              color: const Color.fromRGBO(31, 111, 109, 0.6),
+                              shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                cornerRadius: 10,
+                                cornerSmoothing: 1,
+                              )),
                             ),
-                          ],
-                          color: const Color.fromRGBO(31, 111, 109, 0.6),
-                          shape: SmoothRectangleBorder(
-                              borderRadius: SmoothBorderRadius(
-                            cornerRadius: 10,
-                            cornerSmoothing: 1,
-                          )),
-                        ),
-                        child: Center(
-                          child: Text(
-                            widget.isProfilePost
-                                ? Provider.of<Auth>(context, listen: true)
-                                    .store_name[0]
+                            child: Center(
+                              child: Text(
+                                widget.isProfilePost
+                                    ? Provider.of<Auth>(context, listen: true)
+                                                .userData !=
+                                            null
+                                        ? Provider.of<Auth>(context,
+                                                    listen: true)
+                                                .userData!['store_name']
+                                                .isNotEmpty
+                                            ? Provider.of<Auth>(context,
+                                                    listen: true)
+                                                .userData!['store_name'][0]
+                                                .toUpperCase()
+                                            : Provider.of<Auth>(context,
+                                    listen: true)
+                                    .userData!['store_name'][0]
                                     .toUpperCase()
-                                : widget.data['store_name'] == ''
-                                    ? 'U'
+                                        : widget.data['store_name'] != null &&
+                                                widget.data['store_name']
+                                                    .isNotEmpty
+                                            ? widget.data['store_name'][0]
+                                                .toUpperCase()
+                                            : widget.data['store_name'][0]
+                                    .toUpperCase()
                                     : widget.data['store_name'][0]
-                                        .toString()
-                                        .toUpperCase(),
-                            style: const TextStyle(fontSize: 20),
+                                    .toUpperCase(),
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            )),
+                      )
+                    : InkWell(
+                        onTap: () {
+                          setState(() {
+                            userId.add(widget.data['user_id']);
+                          });
+                          print("userId:: $userId");
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfileView(
+                                        userIdList: userId,
+                                      )));
+                        },
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: ShapeDecoration(
+                            shadows: [
+                              BoxShadow(
+                                offset: const Offset(0, 4),
+                                color: _isVendor
+                                    ? const Color.fromRGBO(31, 111, 109, 0.6)
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Supplier.name
+                                        ? const Color.fromRGBO(77, 191, 74, 0.5)
+                                        : const Color.fromRGBO(
+                                            130, 47, 130, 0.7),
+                                blurRadius: 20,
+                              )
+                            ],
+                            shape: const SmoothRectangleBorder(),
                           ),
-                        ))
-                    : Container(
-                        height: 35,
-                        width: 35,
-                        decoration: ShapeDecoration(
-                          shadows: [
-                            BoxShadow(
-                              offset: const Offset(0, 4),
-                              color: _isVendor
-                                  ? const Color.fromRGBO(31, 111, 109, 0.6)
-                                  : const Color.fromRGBO(130, 47, 130, 0.7),
-                              blurRadius: 20,
-                            )
-                          ],
-                          shape: const SmoothRectangleBorder(),
-                        ),
-                        child: ClipSmoothRect(
-                          radius: SmoothBorderRadius(
-                            cornerRadius: 10,
-                            cornerSmoothing: 1,
-                          ),
-                          child: Image.network(
-                            widget.isProfilePost
-                                ? Provider.of<Auth>(context, listen: false)
-                                    .logo_url
-                                : widget.data['profile_photo'],
-                            fit: BoxFit.cover,
-                            loadingBuilder:
-                                GlobalVariables().loadingBuilderForImage,
-                            errorBuilder:
-                                GlobalVariables().ErrorBuilderForImage,
+                          child: ClipSmoothRect(
+                            radius: SmoothBorderRadius(
+                              cornerRadius: 10,
+                              cornerSmoothing: 1,
+                            ),
+                            child: Image.network(
+                              widget.isProfilePost
+                                  ? Provider.of<Auth>(context, listen: false)
+                                      .logo_url
+                                  : widget.data['profile_photo'],
+                              fit: BoxFit.cover,
+                              loadingBuilder:
+                                  GlobalVariables().loadingBuilderForImage,
+                              errorBuilder:
+                                  GlobalVariables().ErrorBuilderForImage,
+                            ),
                           ),
                         ),
                       ),
@@ -255,12 +340,15 @@ class _PostItemState extends State<PostItem> {
                   width: 37.w,
                   child: Text(
                     widget.isProfilePost
-                        ? Provider.of<Auth>(context, listen: false).store_name
+                        ? Provider.of<Auth>(context, listen: false)
+                            .userData!['store_name']
                         : widget.data['store_name'],
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: _isVendor ? const Color(0xFF094B60) : const Color(0xFF2E0536),
+                      color: _isVendor
+                          ? const Color(0xFF094B60)
+                          : const Color(0xFF2E0536),
                       fontSize: 14,
                       fontFamily: 'Product Sans',
                       fontWeight: FontWeight.w700,
@@ -270,7 +358,8 @@ class _PostItemState extends State<PostItem> {
                 ),
                 const Spacer(),
                 if (!widget.isProfilePost &&
-                    !(Provider.of<Auth>(context, listen: false).user_id ==
+                    !(Provider.of<Auth>(context, listen: false)
+                            .userData?['user_id'] ==
                         widget.data['user_id']))
                   TouchableOpacity(
                     onTap: () async {
@@ -282,7 +371,7 @@ class _PostItemState extends State<PostItem> {
                           TOastNotification().showSuccesToast(
                               context, response['body']['message']);
                           Provider.of<Auth>(context, listen: false)
-                              .followings
+                              .userData?['followings']
                               .add({'user_id': widget.data['user_id']});
                           setState(() {
                             _isFollowing = true;
@@ -299,7 +388,7 @@ class _PostItemState extends State<PostItem> {
                           TOastNotification().showSuccesToast(
                               context, response['body']['message']);
                           Provider.of<Auth>(context, listen: false)
-                              .followings
+                              .userData?['followings']
                               .removeWhere((element) =>
                                   element['user_id'] == widget.data['user_id']);
                           setState(() {
@@ -310,23 +399,33 @@ class _PostItemState extends State<PostItem> {
                               context, response['body']['message']);
                         }
                       }
-                      print(
-                          Provider.of<Auth>(context, listen: false).followings);
+                      print(Provider.of<Auth>(context, listen: false)
+                          .userData?['followings']);
                     },
                     child: Container(
                       width: 70,
                       height: 25,
                       decoration: ShapeDecoration(
-                        shadows:  [
+                        shadows: [
                           BoxShadow(
                             offset: const Offset(3, 6),
-                            color: _isVendor ? const Color.fromRGBO(116, 202, 199, 0.79) : const Color.fromRGBO(158, 116, 158, 0.6),
+                            color: _isVendor
+                                ? const Color.fromRGBO(116, 202, 199, 0.79)
+                                : Provider.of<Auth>(context, listen: false)
+                                            .userData?['user_type'] ==
+                                        UserType.Supplier.name
+                                    ? const Color.fromRGBO(77, 191, 74, 1)
+                                    : const Color.fromRGBO(158, 116, 158, 0.6),
                             blurRadius: 20,
                           ),
                         ],
                         color: _isVendor
                             ? const Color.fromRGBO(124, 193, 191, 1)
-                            : const Color(0xFFFA6E00),
+                            : Provider.of<Auth>(context, listen: false)
+                                        .userData?['user_type'] ==
+                                    UserType.Supplier.name
+                                ? const Color(0xFFA3DC76)
+                                : const Color(0xFFFA6E00),
                         shape: SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius(
                           cornerRadius: 5,
@@ -348,18 +447,16 @@ class _PostItemState extends State<PostItem> {
                       ),
                     ),
                   ),
-             /*   if (!widget.isProfilePost &&
-                    !(Provider.of<Auth>(context, listen: false).user_id ==
-                        widget.data['user_id']))*/
-                IconButton(
-                    onPressed: () async {
-                      {
-                        return MoreSheetInPostItem(context).then((value) {
-                          setState(() {});
-                        });
-                      }
-                    },
-                    icon: const Icon(Icons.more_vert)),
+                if (shouldShowIcon)
+                  IconButton(
+                      onPressed: () async {
+                        {
+                          return MoreSheetInPostItem(context).then((value) {
+                            setState(() {});
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.more_vert)),
               ],
             ),
           ),
@@ -385,12 +482,21 @@ class _PostItemState extends State<PostItem> {
                                             Color.fromRGBO(124, 193, 191, 0.6),
                                         blurRadius: 20,
                                       )
-                                    : const BoxShadow(
-                                        offset: Offset(3, 4),
-                                        color:
-                                            Color.fromRGBO(158, 116, 158, 0.5),
-                                        blurRadius: 15,
-                                      )
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Supplier.name
+                                        ? const BoxShadow(
+                                            offset: Offset(3, 4),
+                                            color: Color.fromRGBO(
+                                                77, 191, 74, 0.5),
+                                            blurRadius: 20,
+                                          )
+                                        : const BoxShadow(
+                                            offset: Offset(3, 4),
+                                            color: Color.fromRGBO(
+                                                158, 116, 158, 0.5),
+                                            blurRadius: 15,
+                                          )
                               ],
                               shape: const SmoothRectangleBorder(),
                             ),
@@ -415,37 +521,55 @@ class _PostItemState extends State<PostItem> {
                   : FlutterCarousel(
                       items: (widget.data['multiple_files'] as List<dynamic>)
                           .map<Widget>((url) {
-                        return Container(
-                          width: double
-                              .infinity, // Take up full width of the screen
-                          decoration: ShapeDecoration(
-                            shadows: [
-                              _isVendor
-                                  ? const BoxShadow(
-                                      offset: Offset(0, 4),
-                                      color: Color.fromRGBO(124, 193, 191, 0.6),
-                                      blurRadius: 20,
-                                    )
-                                  : const BoxShadow(
-                                      offset: Offset(3, 4),
-                                      color: Color.fromRGBO(158, 116, 158, 0.5),
-                                      blurRadius: 15,
-                                    )
-                            ],
-                            shape: const SmoothRectangleBorder(),
-                          ),
-                          child: ClipSmoothRect(
-                            radius: SmoothBorderRadius(
-                              cornerRadius: 20,
-                              cornerSmoothing: 1,
-                            ),
-                            child: Image.network(
-                              url,
-                              fit: BoxFit.cover,
-                              loadingBuilder:
-                                  GlobalVariables().loadingBuilderForImage,
-                              errorBuilder:
-                                  GlobalVariables().ErrorBuilderForImage,
+                        return Center(
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: Container(
+                              margin: EdgeInsets.only(left: 5.w, right: 5.w),
+                              width: double.infinity,
+                              // Take up full width of the screen
+                              decoration: ShapeDecoration(
+                                shadows: [
+                                  _isVendor
+                                      ? const BoxShadow(
+                                          offset: Offset(0, 4),
+                                          color: Color.fromRGBO(
+                                              124, 193, 191, 0.6),
+                                          blurRadius: 20,
+                                        )
+                                      : Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Supplier.name
+                                          ? const BoxShadow(
+                                              offset: Offset(3, 4),
+                                              color: Color.fromRGBO(
+                                                  77, 191, 74, 0.5),
+                                              blurRadius: 20,
+                                            )
+                                          : const BoxShadow(
+                                              offset: Offset(3, 4),
+                                              color: Color.fromRGBO(
+                                                  158, 116, 158, 0.5),
+                                              blurRadius: 15,
+                                            )
+                                ],
+                                shape: const SmoothRectangleBorder(),
+                              ),
+                              child: ClipSmoothRect(
+                                radius: SmoothBorderRadius(
+                                  cornerRadius: 40,
+                                  cornerSmoothing: 1,
+                                ),
+                                child: Image.network(
+                                  url,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder:
+                                      GlobalVariables().loadingBuilderForImage,
+                                  errorBuilder:
+                                      GlobalVariables().ErrorBuilderForImage,
+                                ),
+                              ),
                             ),
                           ),
                         );
@@ -454,10 +578,10 @@ class _PostItemState extends State<PostItem> {
                         autoPlay: false,
                         controller: buttonCarouselController,
                         enlargeCenterPage: true,
-
+                        clipBehavior: Clip.none,
                         viewportFraction: 1.0,
-                        aspectRatio:
-                            1, // Set overall carousel aspect ratio to 1:1
+                        aspectRatio: 1,
+                        // Set overall carousel aspect ratio to 1:1
                         initialPage: 0,
                       ),
                     ),
@@ -496,7 +620,8 @@ class _PostItemState extends State<PostItem> {
                   bottom: 5,
                   child: TouchableOpacity(
                     onTap: () async {
-                      getProductDetails(context);
+                      getProductDetails();
+                      // context.read<TransitionEffect>().setBlurSigma(5.0);
                       //return FeedBottomSheet().ProductsInPostSheet(context, widget.data, _isLiked);
                     },
                     child: Container(
@@ -537,7 +662,9 @@ class _PostItemState extends State<PostItem> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const SizedBox(width: 3,),
+                    const SizedBox(
+                      width: 3,
+                    ),
                     // Text('knknhkink'),
                     // SvgPicture.asset(
                     //   'assets/icons/Favorite.svg',
@@ -548,9 +675,8 @@ class _PostItemState extends State<PostItem> {
                     //like button
                     IconButton(
                       visualDensity: const VisualDensity(
-                          horizontal: VisualDensity.minimumDensity
-                      ),
-                     // padding: EdgeInsets.only(left: 10),
+                          horizontal: VisualDensity.minimumDensity),
+                      // padding: EdgeInsets.only(left: 10),
                       // pa
                       onPressed: () async {
                         // print(widget.data['likes'] ?? []);
@@ -561,7 +687,7 @@ class _PostItemState extends State<PostItem> {
                                 .likePost(
                                     widget.data['id'],
                                     Provider.of<Auth>(context, listen: false)
-                                        .user_id)
+                                        .userData?['user_id'])
                             : await Provider.of<Auth>(context, listen: false)
                                 .likePost(
                                     widget.data['id'], widget.data['user_id']);
@@ -574,13 +700,13 @@ class _PostItemState extends State<PostItem> {
                                 _likeData.add({
                                   'id':
                                       Provider.of<Auth>(context, listen: false)
-                                          .user_id,
+                                          .userData?['user_id'],
                                   'profile_photo':
                                       Provider.of<Auth>(context, listen: false)
                                           .logo_url,
                                   'name':
                                       Provider.of<Auth>(context, listen: false)
-                                          .store_name,
+                                          .userData?['store_name'],
                                 });
                               });
                             } else {
@@ -589,7 +715,7 @@ class _PostItemState extends State<PostItem> {
                                   (element) =>
                                       element['id'] ==
                                       Provider.of<Auth>(context, listen: false)
-                                          .user_id,
+                                          .userData?['user_id'],
                                 );
                               });
                             }
@@ -607,23 +733,29 @@ class _PostItemState extends State<PostItem> {
                       icon: AnimatedContainer(
                         duration: const Duration(milliseconds: 3000),
                         curve: Curves.easeInOut,
-                        child: _isLiked? const Icon(Icons.favorite,color: Colors.red,size: 20,) : SvgPicture.asset(
-                          /*_isLiked ?  Assets.favourite_svg :*/ Assets.favourite_svg,
-                         // colorFilter: ColorFilter.mode(Colors.transparent, BlendMode.xor)
-                          ),
-                         /* color: _isLiked
+                        child: _isLiked
+                            ? const Icon(
+                                Icons.favorite,
+                                color: Colors.red,
+                                size: 20,
+                              )
+                            : SvgPicture.asset(
+                                /*_isLiked ?  Assets.favourite_svg :*/
+                                Assets.favourite_svg,
+                                // colorFilter: ColorFilter.mode(Colors.transparent, BlendMode.xor)
+                              ),
+                        /* color: _isLiked
                               ? Colors.red
                               : null,*/
-                           height: 20,
-                          width: 20,
-                          // Change color when liked
-                        ),
+                        height: 20,
+                        width: 20,
+                        // Change color when liked
                       ),
+                    ),
                     //comment button
                     IconButton(
-                      visualDensity: const VisualDensity(
-                        horizontal: VisualDensity.minimumDensity
-                      ),
+                        visualDensity: const VisualDensity(
+                            horizontal: VisualDensity.minimumDensity),
                         padding: EdgeInsets.zero,
                         onPressed: () async {
                           AppWideLoadingBanner().loadingBanner(context);
@@ -657,20 +789,23 @@ class _PostItemState extends State<PostItem> {
                             setState(() {});
                           });
                         },
-                      icon: SvgPicture.asset(Assets.comment_svg,height: 20,width: 20,)),
-                        //icon: const Icon(Icons.mode_comment_outlined)),
+                        icon: SvgPicture.asset(
+                          Assets.comment_svg,
+                          height: 20,
+                          width: 20,
+                        )),
+                    //icon: const Icon(Icons.mode_comment_outlined)),
                     //share button
                     IconButton(
                         visualDensity: const VisualDensity(
-                            horizontal: VisualDensity.minimumDensity
-                        ),
+                            horizontal: VisualDensity.minimumDensity),
                         padding: EdgeInsets.zero,
                         onPressed: () async {
                           final DynamicLinkParameters parameters =
                               DynamicLinkParameters(
                             uriPrefix: 'https://api.cloudbelly.in',
                             link: Uri.parse(
-                                'https://api.cloudbelly.in/post/?id=${widget.data['id']}&type=post'),
+                                'https://api.cloudbelly.in/?postId=${widget.data['id']}'),
                             androidParameters: const AndroidParameters(
                               packageName: 'com.app.cloudbelly_app',
                             ),
@@ -680,7 +815,11 @@ class _PostItemState extends State<PostItem> {
                           // print(shortUrl);
                           Share.share("${shortUrl}");
                         },
-                        icon: SvgPicture.asset(Assets.share,height: 20,width: 20,))
+                        icon: SvgPicture.asset(
+                          Assets.share,
+                          height: 20,
+                          width: 20,
+                        ))
                   ],
                 ),
                 Container(
@@ -717,9 +856,7 @@ class _PostItemState extends State<PostItem> {
                               for (int i = 0;
                                   (_likeData.length > 2 ? i < 2 : i < 1);
                                   i++)
-                                if (_likeData[i + 1]['profile_photo'] != '' &&
-                                    _likeData[i + 1]['profile_photo'] != null)
-                                  Container(
+                                /* Container(
                                     width: 17,
                                     height: 17,
                                     decoration: ShapeDecoration(
@@ -735,6 +872,36 @@ class _PostItemState extends State<PostItem> {
                                               BorderSide.strokeAlignOutside,
                                           color: Color(0xFFEAF5F7),
                                         ),
+                                      ),
+                                    ),
+                                  ) :*/
+                                if (_likeData[i + 1]['profile_photo'] != '' &&
+                                    _likeData[i + 1]['profile_photo'] != null)
+                                  Container(
+                                    width: 17,
+                                    height: 17,
+                                    decoration: ShapeDecoration(
+                                      color: const Color.fromRGBO(
+                                          31, 111, 109, 0.6),
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                            _likeData[i + 1]['profile_photo']),
+                                        fit: BoxFit.fill,
+                                      ),
+                                      shape: const OvalBorder(
+                                        side: BorderSide(
+                                          width: 2,
+                                          strokeAlign:
+                                              BorderSide.strokeAlignOutside,
+                                          color: Color(0xFFEAF5F7),
+                                        ),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        _likeData[i + 1]['name'][0]
+                                            .toUpperCase(),
+                                        style: const TextStyle(fontSize: 10),
                                       ),
                                     ),
                                   ),
@@ -785,7 +952,7 @@ class _PostItemState extends State<PostItem> {
                                     widget.isProfilePost
                                         ? Provider.of<Auth>(context,
                                                 listen: false)
-                                            .store_name
+                                            .userData!['store_name']
                                         : widget.data['store_name'],
                                     style: const TextStyle(
                                       color: Color(0xFFFA6E00),
@@ -912,6 +1079,24 @@ class _PostItemState extends State<PostItem> {
                 )
               ],
             ),
+          ),
+          GestureDetector(
+            onTap: () {
+              // Handle tap on the area around the BackdropFilter
+              print('Tapped outside of the modal bottom sheet');
+              // You can add any logic here, such as dismissing the modal bottom sheet
+              // For example:
+              // Navigator.of(context).pop();
+            },
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: context.watch<TransitionEffect>().blurSigma,
+                sigmaY: context.watch<TransitionEffect>().blurSigma,
+              ),
+              child: Container(
+                color: Colors.transparent, // Transparent color
+              ),
+            ),
           )
         ],
       ),
@@ -987,12 +1172,13 @@ class _PostItemState extends State<PostItem> {
                               .deletePost(widget.data['id']);
 
                       if (code == '200') {
+                        Navigator.of(context).pop();
                         TOastNotification()
                             .showSuccesToast(context, 'Post deleted');
                         final Data =
                             await Provider.of<Auth>(context, listen: false)
-                                .getFeed() as List<dynamic>;
-                        Navigator.of(context).pop();
+                                .getFeed(widget.data['id']) as List<dynamic>;
+
 
                         Navigator.of(context).pushReplacementNamed(
                             PostsScreen.routeName,
@@ -1008,7 +1194,8 @@ class _PostItemState extends State<PostItem> {
                           blurRadius: 20,
                           boxColor: const Color.fromRGBO(255, 77, 77, 1),
                           cornerRadius: 10,
-                          shadowColor: const Color.fromRGBO(152, 202, 201, 0.8)),
+                          shadowColor:
+                              const Color.fromRGBO(152, 202, 201, 0.8)),
                       width: double.infinity,
                       height: 6.h,
                       child: Row(
@@ -1100,6 +1287,7 @@ class FollowButtonInSHeet extends StatefulWidget {
     super.key,
     required this.data,
   });
+
   dynamic data;
 
   @override
@@ -1115,9 +1303,11 @@ class _FollowButtonInSHeetState extends State<FollowButtonInSHeet> {
   }
 
   bool _isFollowing = false;
+
   bool checkFollow() {
     String id = widget.data['user_id'];
-    List<dynamic> temp = Provider.of<Auth>(context, listen: false).followings;
+    List<dynamic> temp =
+        Provider.of<Auth>(context, listen: false).userData?['followings'];
     for (var user in temp) {
       if (user['user_id'] == id) {
         _isFollowing = true;
@@ -1139,7 +1329,7 @@ class _FollowButtonInSHeetState extends State<FollowButtonInSHeet> {
             TOastNotification()
                 .showSuccesToast(context, response['body']['message']);
             Provider.of<Auth>(context, listen: false)
-                .followings
+                .userData?['followings']
                 .add({'user_id': widget.data['user_id']});
             setState(() {
               _isFollowing = true;
@@ -1155,8 +1345,10 @@ class _FollowButtonInSHeetState extends State<FollowButtonInSHeet> {
           if (response['code'] == 200) {
             TOastNotification()
                 .showSuccesToast(context, response['body']['message']);
-            Provider.of<Auth>(context, listen: false).followings.removeWhere(
-                (element) => element['user_id'] == widget.data['user_id']);
+            Provider.of<Auth>(context, listen: false)
+                .userData?['followings']
+                .removeWhere(
+                    (element) => element['user_id'] == widget.data['user_id']);
             setState(() {
               _isFollowing = false;
             });
@@ -1165,7 +1357,8 @@ class _FollowButtonInSHeetState extends State<FollowButtonInSHeet> {
                 .showErrorToast(context, response['body']['message']);
           }
         }
-        print(Provider.of<Auth>(context, listen: false).followings);
+        print(
+            Provider.of<Auth>(context, listen: false).userData?['followings']);
       },
       child: Container(
           decoration: GlobalVariables().ContainerDecoration(
@@ -1197,6 +1390,7 @@ class PostMoreButtonBigContainerWidget extends StatelessWidget {
   String text;
   Color color;
   Icon icon;
+
   PostMoreButtonBigContainerWidget(
       {super.key, required this.color, required this.icon, required this.text});
 
@@ -1258,6 +1452,7 @@ class PostMoreButtonBigContainerWidget extends StatelessWidget {
 class PostMoreButtonRowWidget extends StatelessWidget {
   Icon icon;
   String text;
+
   PostMoreButtonRowWidget({
     super.key,
     required this.icon,
@@ -1361,7 +1556,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
 
                           if (newData['comments'][index]['user_id'] ==
                               Provider.of<Auth>(context, listen: false)
-                                  .user_id) {
+                                  .userData?['user_id']) {
                             setState(() {
                               _isDeleting[index] =
                                   true; // Assuming isDeleting is a boolean variable to handle whether the delete button should be displayed
@@ -1478,7 +1673,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                         child: Center(
                           child: Text(
                             Provider.of<Auth>(context, listen: true)
-                                .store_name[0]
+                                .userData?['store_name'][0]
                                 .toUpperCase(),
                             style: const TextStyle(fontSize: 20),
                           ),
@@ -1517,7 +1712,9 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                         fillColor: Colors.white,
                         contentPadding: const EdgeInsets.only(left: 14),
                         hintText:
-                            ' Type your comment here for ${widget.isProfilePost ? Provider.of<Auth>(context, listen: false).store_name : widget.data['store_name']}...',
+                            ' Type your comment here for ${widget.isProfilePost ? Provider.of<Auth>(context, listen: false).userData != null ? [
+                                'store_name'
+                              ] : widget.data['store_name'] : ""}...',
                         hintStyle: const TextStyle(
                           color: Color(0xFF519796),
                           fontSize: 12,
@@ -1550,11 +1747,11 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                           format.format(DateTime.now().toUtc());
                       _list.add({
                         'text': _comment,
-                        'user_id':
-                            Provider.of<Auth>(context, listen: false).user_id,
+                        'user_id': Provider.of<Auth>(context, listen: false)
+                            .userData?['user_id'],
                         'created_at': formattedDate,
                         'store_name': Provider.of<Auth>(context, listen: false)
-                            .store_name,
+                            .userData?['store_name'],
                         'profile_photo':
                             Provider.of<Auth>(context, listen: false).logo_url,
                       });
@@ -1611,6 +1808,7 @@ class CommentItemWidget extends StatelessWidget {
       required this.text,
       required this.url,
       required this.dateString});
+
   String name;
   String text;
   String url;

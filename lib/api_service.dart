@@ -6,10 +6,12 @@ import 'dart:developer';
 
 // import 'dart:html';
 
+import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,10 +27,10 @@ class Auth with ChangeNotifier {
   //   return _instance;
   // }
 
-  String user_id = '';
+  /* String user_id = '';
   String user_email = '';
   String store_name = '';
-  String logo_url = '';
+
   String pan_number = '';
   String bank_name = '';
   String pincode = '';
@@ -36,26 +38,73 @@ class Auth with ChangeNotifier {
   String rating = '-';
   List<dynamic> followers = [];
   List<dynamic> followings = [];
-  String userType = '';
+  String userType = '';*/
   List<dynamic> menuList = [];
+  Map<String, dynamic>? userData = UserPreferences.getUser();
+  String logo_url = '';
   String baseUrl = "https://app.cloudbelly.in/";
+  String? fcmToken = '';
 
   // get user_logo_url {
   //   notifyListeners();
   //   return logo_url;
   // }
 
-  String get_user_id() {
+/*  String get_user_id() {
     return user_id;
-  }
+  }*/
 
   final headers = {
     'Accept': '*/*',
     'User-Agent': 'PostmanRuntime/7.36.1',
     'Content-Type': 'application/json',
-    'Accept-Encoding':'gzip, deflate, br'
+    'Accept-Encoding': 'gzip, deflate, br'
   };
+
   // Auth._internal();
+  void getToken(String? token) {
+    fcmToken = token;
+    notifyListeners();
+  }
+
+  Future<void> getUserData() async {
+    userData = UserPreferences.getUser();
+    print("userData :: $userData");
+    notifyListeners();
+  }
+
+  Future<void> setData(Map<String, dynamic>? userProfileData) async {
+    print("userDtat:: don");
+
+    Map<String, dynamic>? userData = {
+      'user_id': userProfileData?['user_id'],
+      'email': userProfileData?['email'],
+      'store_name': userProfileData?['store_name'] ??
+          userProfileData?['email'].split('@')[0],
+      'profile_photo': userProfileData?['profile_photo'] ?? '',
+      'store_availability': userProfileData?['store_availability'] ?? '',
+      'pan_number': userProfileData?['pan_number'] ?? '',
+      'aadhar_number': userProfileData?['aadhar_number'] ?? '',
+      'start_time': userProfileData?['working_hours']['start_time'] ?? '',
+      'end_time': userProfileData?['working_hours']['end_time'] ?? '',
+      'bank_name': userProfileData?['bank_name'] ?? '',
+      'pincode': userProfileData?['pincode'] ?? '',
+      'rating': userProfileData?['rating'] ?? '-',
+      'followers': userProfileData?['followers'] ?? [],
+      'followings': userProfileData?['followings'] ?? [],
+      'cover_image': userProfileData?['cover_image'] ?? '',
+      'account_number': userProfileData?['account_number'] ?? '',
+      'ifsc_code': userProfileData?['ifsc_code'] ?? '',
+      'phone': userProfileData?['phone'] ?? '',
+      'upi_id': userProfileData?['upi_id'] ?? '',
+      'user_type': userProfileData?['user_type'] ?? 'Vendor',
+    };
+    print("userDtat:: $userData");
+    await UserPreferences.setUser(userData ?? {});
+    userData = UserPreferences.getUser();
+    print("userDtat:: $userData");
+    notifyListeners();
+  }
 
   Future<String> signUp(email, pass, phone, type) async {
     const String url = 'https://app.cloudbelly.in/signup';
@@ -74,6 +123,41 @@ class Auth with ChangeNotifier {
         body: jsonEncode(requestBody),
       );
       print("json response:: ${jsonDecode((response.body))}");
+      final DataMap = jsonDecode(response.body);
+      Map<String, dynamic> userProfileData = {
+        'user_id': DataMap['user_id'],
+        'email': DataMap['email'],
+        'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0],
+        'profile_photo': DataMap['profile_photo'] ?? '',
+        'store_availability': DataMap['store_availability'] ?? '',
+        'pan_number': DataMap['pan_number'] ?? '',
+        'aadhar_number': DataMap['aadhar_number'] ?? '',
+        if (DataMap['location'] != null)
+          'location': {
+            'details': DataMap['location']['details'] ?? '',
+            'latitude': DataMap['location']['latitude'] ?? '',
+            'longitude': DataMap['location']['longitude'] ?? '',
+          },
+        if (DataMap['working_hours'] != null)
+          'working_hours': {
+            'start_time': DataMap['working_hours']['start_time'] ?? '',
+            'end_time': DataMap['working_hours']['end_time'] ?? '',
+          },
+        'delivery_addresses': DataMap['delivery_addresses'] ?? [],
+        'bank_name': DataMap['bank_name'] ?? '',
+        'pincode': DataMap['pincode'] ?? '',
+        'rating': DataMap['rating'] ?? '-',
+        'followers': DataMap['followers'] ?? [],
+        'followings': DataMap['followings'] ?? [],
+        'cover_image': DataMap['cover_image'] ?? '',
+        'account_number': DataMap['account_number'] ?? '',
+        'ifsc_code': DataMap['ifsc_code'] ?? '',
+        'phone': DataMap['phone'] ?? '',
+        'upi_id': DataMap['upi_id'] ?? '',
+        'user_type': DataMap['user_type'] ?? 'Vendor',
+      };
+      await UserPreferences.setUser(userProfileData);
+      userData = UserPreferences.getUser();
       notifyListeners();
       return jsonDecode((response.body))['message'];
     } catch (error) {
@@ -84,6 +168,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<String> login(email, pass) async {
+    print("fcmToken:: $fcmToken");
     final prefs = await SharedPreferences.getInstance();
     print('nknbnkjbn');
     final String url = 'https://app.cloudbelly.in/login';
@@ -91,6 +176,7 @@ class Auth with ChangeNotifier {
     final Map<String, dynamic> requestBody = {
       "email": email,
       "password": pass,
+      "fcm_token": prefs.getString('fcmToken'),
     };
     // Login successful
     print("resquestbody:: $requestBody");
@@ -100,11 +186,45 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-      print("response:: ${response.body}");
       final DataMap = jsonDecode(response.body);
-      print('jhj');
-      print('user data:${DataMap}');
-      user_id = DataMap['user_id'];
+      log("dta:: $DataMap");
+      Map<String, dynamic> userProfileData = {
+        'user_id': DataMap['user_id'],
+        'email': DataMap['email'],
+        'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0],
+        'profile_photo': DataMap['profile_photo'] ?? '',
+        'store_availability': DataMap['store_availability'] ?? '',
+        'pan_number': DataMap['pan_number'] ?? '',
+        'aadhar_number': DataMap['aadhar_number'] ?? '',
+        if (DataMap['location'] != null)
+          'location': {
+            'details': DataMap['location']['details'] ?? '',
+            'latitude': DataMap['location']['latitude'] ?? '',
+            'longitude': DataMap['location']['longitude'] ?? '',
+          },
+        if (DataMap['working_hours'] != null)
+          'working_hours': {
+            'start_time': DataMap['working_hours']['start_time'] ?? '',
+            'end_time': DataMap['working_hours']['end_time'] ?? '',
+          },
+        'delivery_addresses': DataMap['delivery_addresses'] ?? [],
+        'bank_name': DataMap['bank_name'] ?? '',
+        'pincode': DataMap['pincode'] ?? '',
+        'rating': DataMap['rating'] ?? '-',
+        'followers': DataMap['followers'] ?? [],
+        'followings': DataMap['followings'] ?? [],
+        'cover_image': DataMap['cover_image'] ?? '',
+        'account_number': DataMap['account_number'] ?? '',
+        'ifsc_code': DataMap['ifsc_code'] ?? '',
+        'phone': DataMap['phone'] ?? '',
+        'upi_id': DataMap['upi_id'] ?? '',
+        'user_type': DataMap['user_type'] ?? 'Vendor',
+      };
+      await UserPreferences.setUser(userProfileData);
+      userData = UserPreferences.getUser();
+      print('user data:$userData');
+      notifyListeners();
+      /* user_id = DataMap['user_id'];
       user_email = DataMap['email'];
       store_name = DataMap['store_name'] ?? '';
       logo_url = DataMap['profile_photo'] ?? '';
@@ -116,12 +236,90 @@ class Auth with ChangeNotifier {
       followings = DataMap['followings'] ?? [];
       cover_image = DataMap['cover_image'] ?? '';
       store_name = store_name == '' ? user_email.split('@')[0] : store_name;
-      userType = DataMap['user_type'] ?? 'Vendor';
-      notifyListeners();
-      final userData = json.encode(
+      userType = DataMap['user_type'] ?? 'Vendor';*/
+      /*final userData = json.encode(
         {'email': email, 'password': pass},
       );
-      prefs.setString('userData', userData);
+      prefs.setString('userData', userData);*/
+      return DataMap['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return "-1";
+    }
+  }
+
+  Future<String> googleLogin(email, userType) async {
+    print("fcmToken:: $fcmToken");
+    final prefs = await SharedPreferences.getInstance();
+    print('nknbnkjbn');
+    final String url = '${baseUrl}google-login';
+
+    final Map<String, dynamic> requestBody = {
+      "email": email,
+      "user_type": userType,
+      "fcm_token": prefs.getString('fcmToken'),
+    };
+    // Login successful
+    print("resquestbody:: $requestBody");
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      print("response:: ${response.body}");
+      final DataMap = jsonDecode(response.body);
+      Map<String, dynamic> userProfileData = {
+        'user_id': DataMap['user_id'],
+        'email': DataMap['email'],
+        'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0],
+        'profile_photo': DataMap['profile_photo'] ?? '',
+        'store_availability': DataMap['store_availability'] ?? '',
+        'pan_number': DataMap['pan_number'] ?? '',
+        'aadhar_number': DataMap['aadhar_number'] ?? '',
+        if (DataMap['location'] != null)
+          'location': {
+            'details': DataMap['location']['details'] ?? '',
+            'latitude': DataMap['location']['latitude'] ?? '',
+            'longitude': DataMap['location']['longitude'] ?? '',
+          },
+        if (DataMap['working_hours'] != null)
+          'working_hours': {
+            'start_time': DataMap['working_hours']['start_time'] ?? '',
+            'end_time': DataMap['working_hours']['end_time'] ?? '',
+          },
+        'delivery_addresses': DataMap['delivery_addresses'] ?? [],
+        'bank_name': DataMap['bank_name'] ?? '',
+        'pincode': DataMap['pincode'] ?? '',
+        'rating': DataMap['rating'] ?? '-',
+        'followers': DataMap['followers'] ?? [],
+        'followings': DataMap['followings'] ?? [],
+        'cover_image': DataMap['cover_image'] ?? '',
+        'account_number': DataMap['account_number'] ?? '',
+        'ifsc_code': DataMap['ifsc_code'] ?? '',
+        'phone': DataMap['phone'] ?? '',
+        'upi_id': DataMap['upi_id'] ?? '',
+        'user_type': DataMap['user_type'] ?? 'Vendor',
+      };
+      await UserPreferences.setUser(userProfileData);
+      userData = UserPreferences.getUser();
+      print("userData:: ${userData?['user_id']}");
+      /*user_id = DataMap['user_id'];
+      user_email = DataMap['email'];
+      store_name = DataMap['store_name'] ?? '';
+      logo_url = DataMap['profile_photo'] ?? '';
+      pan_number = DataMap['pan_number'] ?? '';
+      bank_name = DataMap['bank_name'] ?? '';
+      pincode = DataMap['pincode'] ?? '';
+      rating = DataMap['rating'] ?? '-';
+      followers = DataMap['followers'] ?? [];
+      followings = DataMap['followings'] ?? [];
+      cover_image = DataMap['cover_image'] ?? '';
+      store_name = store_name == '' ? user_email.split('@')[0] : store_name;
+      userType = DataMap['user_type'] ?? 'Vendor';*/
+      notifyListeners();
       return DataMap['message'];
     } catch (error) {
       notifyListeners();
@@ -150,6 +348,9 @@ class Auth with ChangeNotifier {
     await prefs.remove('userData');
     await prefs.remove('feedData');
     await prefs.remove('menuData');
+    await prefs.remove('user');
+    await prefs.remove('isLogin');
+    GoogleSignIn().signOut();
   }
 
   Future sendUserTypeRequest() async {
@@ -192,7 +393,7 @@ class Auth with ChangeNotifier {
     final String url = 'https://app.cloudbelly.in/update-user';
 
     final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
+      'user_id': userData?['user_id'] ?? "",
       'user_name': user_name,
       "store_name": store_name,
       "pincode": pincode,
@@ -227,7 +428,7 @@ class Auth with ChangeNotifier {
     final String url = 'https://app.cloudbelly.in/update-user';
 
     final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
+      'user_id': userData?['user_id'] ?? "",
       'cover_image': cover_image,
     };
 
@@ -255,7 +456,7 @@ class Auth with ChangeNotifier {
     final String url = 'https://app.cloudbelly.in/update-user';
 
     final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
+      'user_id': userData?['user_id'] ?? "",
       'store_name': name,
     };
 
@@ -285,7 +486,7 @@ class Auth with ChangeNotifier {
     // print(VEG);
 
     final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
+      'user_id': userData?['user_id'] ?? "",
       'product_id': product_id,
       'price': price,
       'category': category,
@@ -313,7 +514,7 @@ class Auth with ChangeNotifier {
     final String url = 'https://app.cloudbelly.in/update-user';
 
     final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
+      'user_id': userData?['user_id'] ?? "",
       'profile_photo': profile_photo,
     };
 
@@ -333,15 +534,163 @@ class Auth with ChangeNotifier {
     }
   }
 
+  Future<String> userImage(user_image) async {
+    final String url = 'https://app.cloudbelly.in/update-user';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "profile_photo": user_image
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
+  Future<String> storeName(store_name) async {
+    final String url = 'https://app.cloudbelly.in/update-user';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "store_name": store_name
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
+  Future<String> workingHours(working_hours) async {
+    final String url = 'https://app.cloudbelly.in/update-user';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "working_hours": working_hours
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
+  Future<String> contactNumber(contact_number) async {
+    final String url = 'https://app.cloudbelly.in/update-user';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "phone": contact_number
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
+  Future<String> storeAvailability(store_availability) async {
+    final String url = 'https://app.cloudbelly.in/update-user';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "store_availability": store_availability
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return '-1';
+    }
+  }
+  Future<String> addressUpdate(Map<String, dynamic> addressModel) async {
+    final String url = 'https://app.cloudbelly.in/update-user';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "address": addressModel
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return '-1';
+    }
+  }
   Future<String> storeSetup2(
       pan_number, aadhar_number, fssai_licence_document) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
     final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
+      'user_id': userData?['user_id'] ?? "",
       'pan_number': pan_number,
       "aadhar_number": aadhar_number,
-      "fssai_licence_document": fssai_licence_document,
+      "fssai": fssai_licence_document,
     };
 
     try {
@@ -366,7 +715,7 @@ class Auth with ChangeNotifier {
     final String url = 'https://app.cloudbelly.in/update-user';
 
     final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
+      'user_id': userData?['user_id'] ?? "",
       'bank_name': bank_name,
       "account_number": account_number,
       "ifsc_code": ifsc_code,
@@ -502,7 +851,7 @@ class Auth with ChangeNotifier {
     final String url = 'https://app.cloudbelly.in/product/add';
 
     final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
+      'user_id': userData?['user_id'] ?? "",
       'products': data //email id here
     };
 
@@ -578,7 +927,7 @@ class Auth with ChangeNotifier {
     }
     final Map<String, dynamic> requestBody = list.length == 1
         ? {
-            'user_id': user_id,
+            'user_id': userData?['user_id'] ?? "",
             'tags': tags,
             "file_url": list[0],
             "caption": caption,
@@ -586,7 +935,7 @@ class Auth with ChangeNotifier {
             'menu_items': idList,
           }
         : {
-            'user_id': user_id,
+            'user_id': userData?['user_id'] ?? "",
             'tags': tags,
             'file_url': list[0],
             "multiple_files": list,
@@ -655,11 +1004,11 @@ class Auth with ChangeNotifier {
     return urlList;
   }
 
-  Future<dynamic> getFeed() async {
-    final String url = 'https://app.cloudbelly.in/metadata/get-posts';
+  Future<dynamic> getFeed(String? userId) async {
+    final String url = '${baseUrl}metadata/get-posts';
 
     final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
+      'user_id': userId,
     };
     try {
       final response = await http.post(
@@ -697,11 +1046,11 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<dynamic> getMenu() async {
-    final String url = 'https://app.cloudbelly.in/product/get';
+  Future<dynamic> getMenu(String? userId) async {
+    final String url = '${baseUrl}product/get';
 
     final Map<String, dynamic> requestBody = {
-      'user_id': user_id,
+      'user_id': userId,
     };
 
     try {
@@ -710,7 +1059,7 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-
+      log("menudata:: ${jsonDecode((response.body))}");
       return jsonDecode((response.body));
     } catch (error) {
       // Handle exceptions
@@ -722,7 +1071,7 @@ class Auth with ChangeNotifier {
     final String url = 'https://app.cloudbelly.in/follow';
 
     final Map<String, dynamic> requestBody = {
-      "current_user_id": user_id,
+      "current_user_id": userData?['user_id'] ?? "",
       "profile_user_id": id,
     };
 
@@ -747,7 +1096,7 @@ class Auth with ChangeNotifier {
     final String url = 'https://app.cloudbelly.in/unfollow';
 
     final Map<String, dynamic> requestBody = {
-      "current_user_id": user_id,
+      "current_user_id": userData?['user_id'] ?? "",
       "profile_user_id": id,
     };
 
@@ -786,7 +1135,7 @@ class Auth with ChangeNotifier {
         TOastNotification().showErrorToast(context, 'File size very Large');
       } else {
         final Map<String, dynamic> requestBody = {
-          'user_id': user_id,
+          'user_id': userData?['user_id'] ?? "",
           'product_id': product_id,
           'images': list,
         };
@@ -820,12 +1169,12 @@ class Auth with ChangeNotifier {
     Map<String, dynamic> requestBody = {};
     price != ''
         ? requestBody = {
-            'user_id': user_id,
+            'user_id': userData?['user_id'] ?? "",
             'product_id': product_id,
             'price': price,
           }
         : requestBody = {
-            'user_id': user_id,
+            'user_id': userData?['user_id'] ?? "",
             'product_id': product_id,
             'description': description,
           };
@@ -871,7 +1220,7 @@ class Auth with ChangeNotifier {
 
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
-      "user_id": user_id,
+      "user_id": userData?['user_id'] ?? "",
       'post_id': id,
       'comment': comment,
     };
@@ -897,10 +1246,10 @@ class Auth with ChangeNotifier {
 
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
-      "user_id": user_id,
+      "user_id": userData?['user_id'] ?? "",
       'post_id': id,
       'comment_text': comment,
-      'comment_user_id': user_id,
+      'comment_user_id': userData?['user_id'] ?? "",
     };
 
     try {
@@ -926,7 +1275,7 @@ class Auth with ChangeNotifier {
     Map<String, dynamic> requestBody = {
       "user_id": userId,
       'post_id': id,
-      'like_user_id': user_id,
+      'like_user_id': userData?['user_id'] ?? "",
     };
 
     print(requestBody);
@@ -952,7 +1301,7 @@ class Auth with ChangeNotifier {
 
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
-      "user_id": user_id,
+      "user_id": userData?['user_id'] ?? "",
       'post_id': id,
     };
 
@@ -1022,6 +1371,7 @@ class Auth with ChangeNotifier {
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
       "item_ids": list,
+      "user_id": userData?['user_id'] ?? "",
     };
 
     try {
@@ -1033,16 +1383,13 @@ class Auth with ChangeNotifier {
       // print(response.body);
       // print(response.statusCode);
 
+      // Parse the response body
+      List<dynamic> jsonResponse = jsonDecode(response.body);
 
-        // Parse the response body
-        List<dynamic> jsonResponse = jsonDecode(response.body);
-
-        List<ProductDetails> productList = jsonResponse
-            .map((json) => ProductDetails.fromJson(json))
-            .toList();
+      List<ProductDetails> productList =
+          jsonResponse.map((json) => ProductDetails.fromJson(json)).toList();
       notifyListeners();
-        return productList;
-
+      return productList;
     } catch (error) {
       // Handle exceptions
       print("error:$error");
@@ -1050,12 +1397,12 @@ class Auth with ChangeNotifier {
       return <ProductDetails>[];
     }
   }
-  Future<DeliveryAddressModel> getAddressList() async {
 
+  Future<DeliveryAddressModel> getAddressList() async {
     final String url = '${baseUrl}get-delivery-addresses';
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
-      "user_id": user_id,
+      "user_id": userData?['user_id'] ?? "",
     };
 
     try {
@@ -1067,13 +1414,11 @@ class Auth with ChangeNotifier {
       // print(response.body);
       // print(response.statusCode);
 
-
       // Parse the response body
       final Map<String, dynamic> responseData = jsonDecode(response.body);
-       log("jsonData:: $responseData");
+      log("jsonData:: $responseData");
       notifyListeners();
       return DeliveryAddressModel.fromJson(responseData);
-
     } catch (error) {
       // Handle exceptions
       print("error:$error");
@@ -1081,14 +1426,16 @@ class Auth with ChangeNotifier {
       return DeliveryAddressModel();
     }
   }
-  Future<dynamic> createProductOrder(List<dynamic> list,AddressModel? addressModel) async {
+
+  Future<dynamic> createProductOrder(
+      List<dynamic> list, AddressModel? addressModel) async {
     print("list:: $list");
     final String url = '${baseUrl}order/create';
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
-      "user_id": user_id,
+      "user_id": userData?['user_id'] ?? "",
       "items": list,
-      "location":addressModel,
+      "location": addressModel,
     };
 
     try {
@@ -1100,13 +1447,11 @@ class Auth with ChangeNotifier {
       // print(response.body);
       // print(response.statusCode);
 
-
       // Parse the response body
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
       notifyListeners();
       return jsonResponse;
-
     } catch (error) {
       // Handle exceptions
       print("error:$error");
@@ -1114,14 +1459,75 @@ class Auth with ChangeNotifier {
       return null;
     }
   }
-  Future<String> addAddress(/*AddressModel addressModel*/ Map<String, dynamic> addressModel) async {
+
+  Future<dynamic> submitOrder(String? orderId, String? paymentMode) async {
+    final String url = '${baseUrl}order/submit';
+
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {};
+    requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      'order_id': orderId,
+      'payment_mode': paymentMode,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      print("jsonResponse:: ${response.body}");
+      return jsonDecode((response.body));
+    } catch (error) {
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
+  Future<List<UserModel>> getUserDetails(List<String> userIds) async {
+    print("list:: $userIds");
+    final String url = '${baseUrl}get-user-info';
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {
+      "user_ids": userIds,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      // print(response.body);
+      // print(response.statusCode);
+
+      // Parse the response body
+      List<dynamic> jsonResponse = jsonDecode(response.body);
+
+      List<UserModel> userList =
+          jsonResponse.map((json) => UserModel.fromJson(json)).toList();
+      print("ucidi: ${userList.length}");
+      notifyListeners();
+      return userList;
+    } catch (error) {
+      // Handle exceptions
+      print("error:$error");
+      notifyListeners();
+      return <UserModel>[];
+    }
+  }
+
+  Future<String> addAddress(
+      /*AddressModel addressModel*/
+      Map<String, dynamic> addressModel) async {
     final prefs = await SharedPreferences.getInstance();
     print('addressModel:: ${jsonEncode(addressModel)}');
     final String url = '${baseUrl}update-delivery-address';
 
     final Map<String, dynamic> requestBody = {
-      "user_id": user_id,
-      "address":addressModel,
+      "user_id": userData?['user_id'] ?? "",
+      "address": addressModel,
     };
     // Login successful
     print("resquestbody:: $requestBody");
@@ -1141,14 +1547,14 @@ class Auth with ChangeNotifier {
       return "-1";
     }
   }
+
   Future<dynamic> getInventoryData() async {
-    print(user_id);
     // id = '65e31e9f0bf98389f417cf71';
     final String url = 'https://app.cloudbelly.in/inventory/get-data';
 
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
-      "user_id": user_id,
+      "user_id": userData?['user_id'] ?? "",
     };
 
     try {
@@ -1203,7 +1609,7 @@ class Auth with ChangeNotifier {
     }
     print('new: $_newList');
     Map<String, dynamic> requestBody = {
-      'user_id': user_id,
+      'user_id': userData?['user_id'] ?? "",
       'data': _newList
       // {
       //   "itemId": "1",
@@ -1248,5 +1654,23 @@ class Auth with ChangeNotifier {
       // Handle exceptions
       return {'Error': error};
     }
+  }
+}
+
+class TransitionEffect with ChangeNotifier {
+  //bool _isModalButtomSheetActive = false;
+  double _blurSigma = 0;
+
+  // bool get isModalButtomSheetActive => _isModalButtomSheetActive;
+
+  double get blurSigma => _blurSigma;
+
+  void setBlurSigma(blurSigma) {
+    if (blurSigma < 4) {
+      _blurSigma = 0;
+    } else {
+      _blurSigma = blurSigma;
+    }
+    notifyListeners();
   }
 }

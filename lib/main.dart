@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:cloudbelly_app/screens/Login/map.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/view_cart.dart';
@@ -10,17 +11,30 @@ import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Login/welcome_screen.dart';
+import 'package:cloudbelly_app/services/uni_services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  //await Firebase.initializeApp();
+  showNotification(message);
+  print("Handling a background message: ${message.notification!.body}");
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
+  await UnilinksServices.init();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey:
@@ -31,26 +45,36 @@ void main() async {
       projectId: "cloudbelly-d97a9", //paste your project id here
     ),
   );
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  _firebaseMessaging.getToken().then((token) {
-    print('Firebase Token: $token');
-  });
-  const InitializationSettings initializationSettings =
-  InitializationSettings(
-    android: AndroidInitializationSettings('assets/images/logo.png'),
-  );
-  flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
+  requestNotificationPermission();
+  await FirebaseMessaging.instance.setAutoInitEnabled(true);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FlutterLocalNotificationsPlugin().initialize(
+    const InitializationSettings(
+      android: AndroidInitializationSettings(
+          '@mipmap/ic_launcher'), // Make sure you have the proper icons
+    ),
+    onDidReceiveNotificationResponse: (NotificationResponse? notificationResponse){
+         print("notificationResponse:: ${notificationResponse?.payload}");
+    }
   );
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Received message in foreground: ${message.notification!.title}');
-  });
+    showNotification(message);
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.notification}');
 
-  // Handle notifications when the app is terminated or in the background
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    print('Received message in background: ${message.notification!.title}');
+    if (message.notification != null) {
+      print('Message also contained a notification: ${message.notification}');
+    }
   });
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await UserPreferences.init();
+
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  await prefs.setString('fcmToken', fcmToken ?? "");
+  Auth().getToken(fcmToken);
+  Auth().getUserData();
+
+  //print('fcmToken: $fcmToken');
   //await Firebase.initializeApp(
 
   //     // options: DefaultFirebaseOptions.currentPlatform,
@@ -61,6 +85,39 @@ void main() async {
   ], child: const MyApp()));
 }
 
+Future<void> requestNotificationPermission() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  print('User granted permission: ${settings.authorizationStatus}');
+}
+Future showNotification(RemoteMessage message) async {
+
+  var androidChannel = const AndroidNotificationDetails(
+    'CHANNEL_ID',
+    'CHANNEL_NAME',
+    channelDescription: 'CHANNEL_DESCRIPTION',
+    importance: Importance.high,
+    priority: Priority.high,
+  );
+  var platformChannel = NotificationDetails(android: androidChannel);
+  FlutterLocalNotificationsPlugin().show(
+    message.hashCode,
+    message.notification?.title,
+    message.notification?.body,
+    platformChannel,
+    payload: 'New Payload',
+  );
+}
 // void initDynamicLinks() async {
 //   FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
 //     _handleDeepLink(dynamicLinkData.link);
@@ -107,9 +164,11 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
             create: (ctx) => Auth(),
           ),
-
           ChangeNotifierProvider(
             create: (ctx) => ViewCartProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (ctx) => TransitionEffect(),
           ),
         ],
         child: Consumer<Auth>(
@@ -151,3 +210,24 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
+/*final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  _firebaseMessaging.getToken().then((token) {
+    print('Firebase Token: $token');
+  });
+  const InitializationSettings initializationSettings =
+  InitializationSettings(
+    android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+  );
+  flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+  );
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Received message in foreground: ${message.notification!.title}');
+  });
+
+  // Handle notifications when the app is terminated or in the background
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    print('Received message in background: ${message.notification!.title}');
+  });*/

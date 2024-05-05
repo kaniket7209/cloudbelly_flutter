@@ -12,7 +12,20 @@
           "package_name": "com.app.cloudbelly_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "508708683425-ghcs79l0oo1qeoc5gp41flh5f5asa6na.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.cloudbelly_app",
+            "certificate_hash": "765f29f63cd1333cacfec7fec2e03f2d98edb4fd"
+          }
+        },
+        {
+          "client_id": "508708683425-7fej5j8dlbdsa3aojkoe690j1956a8v1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBDthUWI9foVgRaibKl73SNcBK5beKQakQ"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "508708683425-7fej5j8dlbdsa3aojkoe690j1956a8v1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "508708683425-l87vb23orodhedj59iul9lc05r7q6p3e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.CloudbellyApp"
+              }
+            }
+          ]
         }
       }
     }

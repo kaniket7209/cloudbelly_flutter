@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously, unused_field, unused_local_variable
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
@@ -91,7 +92,7 @@ class _InventoryState extends State<Inventory> {
     final payload = JWT({
       "resource": {"dashboard": 8},
       "params": {
-        'email': Provider.of<Auth>(context, listen: false).user_email,
+        'email': Provider.of<Auth>(context, listen: false).userData?['user_email'],
         'item_id': '1',
       },
     });
@@ -175,6 +176,7 @@ class _InventoryState extends State<Inventory> {
 
     dynamic data =
         await Provider.of<Auth>(context, listen: false).getInventoryData();
+    log("data:: $data");
 
     final int thresholdDays = 3;
     final currentDate = DateTime.now();
@@ -202,6 +204,7 @@ class _InventoryState extends State<Inventory> {
           if (!nearExpiryItems
               .any((element) => element['itemId'] == item['itemId'])) {
             nearExpiryItems.add(item);
+            print("nearExpiryItems:: ${nearExpiryItems.length}");
           }
         }
       }
@@ -527,6 +530,7 @@ class _InventoryState extends State<Inventory> {
               ),
             ),
             Space(2.h),
+            nearExpiryItems.isNotEmpty ?
             Container(
               width: double.infinity,
               child: GridView.builder(
@@ -542,6 +546,7 @@ class _InventoryState extends State<Inventory> {
                 ),
                 itemCount: nearExpiryItems.length,
                 itemBuilder: (context, index) {
+                  print("nearstocksExpire:: ${nearExpiryItems.length}");
                   return StocksNearExpiryWidget(
                     name: nearExpiryItems[index]['itemName'],
                     volume: nearExpiryItems[index]['volumeLeft'] +
@@ -551,6 +556,13 @@ class _InventoryState extends State<Inventory> {
                   );
                 },
               ),
+            ) :  Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(
+                  child: Text('No Near Expiring Items in Your Inventory'),
+                ),
+              ],
             ),
           ],
         ),

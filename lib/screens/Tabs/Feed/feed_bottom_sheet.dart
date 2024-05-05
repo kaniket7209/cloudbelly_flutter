@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
+import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
@@ -22,67 +23,77 @@ class FeedBottomSheet {
     print("length:: ${productList.length}");
     return showModalBottomSheet(
       // useSafeArea: true,
-
+      backgroundColor: Colors.white,
       context: context,
+      enableDrag: false,
       isScrollControlled: true,
-
+      isDismissible: true,
       builder: (BuildContext context) {
         bool _isVendor =
-            Provider.of<Auth>(context, listen: false).userType == 'Vendor';
+            Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+                'Vendor';
         // print(data);
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return SingleChildScrollView(
-              child: Container(
-                decoration: const ShapeDecoration(
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.only(
-                        topLeft:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                        topRight:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+        return WillPopScope(
+          onWillPop: () async {
+            context.read<TransitionEffect>().setBlurSigma(0);
+            return true;
+          },
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                child: Container(
+                  decoration: const ShapeDecoration(
+                    color: Colors.white,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.only(
+                          topLeft: SmoothRadius(
+                              cornerRadius: 35, cornerSmoothing: 1),
+                          topRight: SmoothRadius(
+                              cornerRadius: 35, cornerSmoothing: 1)),
+                    ),
                   ),
-                ),
-                height: MediaQuery.of(context).size.height * 0.9,
-                width: double.infinity,
-                padding: EdgeInsets.only(
-                    top: 2.h, bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TouchableOpacity(
-                        onTap: () {
-                          return Navigator.of(context).pop();
-                        },
-                        child: Center(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 1.h, horizontal: 3.w),
-                            width: 55,
-                            height: 5,
-                            decoration: ShapeDecoration(
-                              color: const Color(0xFFFA6E00),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6)),
+                  height: MediaQuery.of(context).size.height * 0.9,
+                  width: double.infinity,
+                  padding: EdgeInsets.only(
+                      top: 2.h,
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TouchableOpacity(
+                          onTap: () {
+                            return Navigator.of(context).pop();
+                          },
+                          child: Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 1.h, horizontal: 3.w),
+                              width: 55,
+                              height: 5,
+                              decoration: ShapeDecoration(
+                                color: const Color(0xFFFA6E00),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6)),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      ProductInPostSheetWidget(
-                        isVendor: _isVendor,
-                        data: data,
-                        isLiked: isLiked,
-                        productList: productList,
-                      )
-                    ],
+                        ProductInPostSheetWidget(
+                          isVendor: _isVendor,
+                          data: data,
+                          isLiked: isLiked,
+                          productList: productList,
+                          isProfile: false,
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );
@@ -96,9 +107,11 @@ class ProductInPostSheetWidget extends StatefulWidget {
     required this.data,
     required this.isLiked,
     required this.productList,
+    required this.isProfile,
   });
 
   bool isVendor;
+  bool isProfile;
   dynamic data;
   bool isLiked;
   List<ProductDetails> productList;
@@ -170,7 +183,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
     double pageCount = menuItemsCount % 3 == 0
         ? (menuItemsCount / 3) as double
         : (((menuItemsCount / 3).toInt()) + 1);
-    print(pageCount);
+    print("data:: ${widget.data}");
     return Container(
       //padding: EdgeInsets.symmetric(horizontal: 44),
       child: Column(
@@ -223,7 +236,9 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                   children: [
                     const Space(6),
                     Text(
-                      widget.data['store_name'],
+                      widget.data['store_name'] ??
+                          Provider.of<Auth>(context, listen: false)
+                              .userData?['store_name'],
                       style: const TextStyle(
                         color: Color(0xFF2E0435),
                         fontSize: 14,
@@ -269,15 +284,21 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
             ),
           ),
           const Space(18),
-          SizedBox(
+          ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxHeight: 600, // Set the maximum width to 800
+            ),
+
             //  fit: BoxFit.cover,
-            height:/* widget.productList.first.macros?.fats != ""
+
+            /* height:*/ /* widget.productList.first.macros?.fats != ""
                 ? MediaQuery.of(context).size.height * 0.8
-                :*/ MediaQuery.of(context).size.height *
-                    0.7, // Adjust the multiplier as needed
+                :*/ /* MediaQuery.of(context).size.height *
+                    0.7,*/ // Adjust the multiplier as needed
             child: PageView.builder(
                 reverse: false,
                 padEnds: true,
+                clipBehavior: Clip.none,
                 scrollDirection: Axis.horizontal,
                 onPageChanged: (index) {
                   _currentPageIndex = index;
@@ -289,6 +310,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                      setState(() {});
                 },*/
                 itemBuilder: (context, index) {
+                  print(widget.data);
                   final product = widget.productList[index];
                   product.totalPrice ??=
                       widget.productList[index].price ?? "0.0";
@@ -300,14 +322,39 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                             ? Container(
                                 height: MediaQuery.of(context).size.height * .4,
                                 width: MediaQuery.of(context).size.width,
-                                decoration: const ShapeDecoration(
+                                decoration: ShapeDecoration(
                                   shadows: [
-                                    BoxShadow(
+                                    Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Vendor.name
+                                        ? const BoxShadow(
+                                            offset: Offset(0, 4),
+                                            color: Color.fromRGBO(
+                                                124, 193, 191, 0.6),
+                                            blurRadius: 20,
+                                          )
+                                        : Provider.of<Auth>(context,
+                                                        listen: false)
+                                                    .userData?['user_type'] ==
+                                                UserType.Supplier.name
+                                            ? const BoxShadow(
+                                                offset: Offset(3, 4),
+                                                color: Color.fromRGBO(
+                                                    77, 191, 74, 0.5),
+                                                blurRadius: 20,
+                                              )
+                                            : const BoxShadow(
+                                                offset: Offset(3, 4),
+                                                color: Color.fromRGBO(
+                                                    158, 116, 158, 0.5),
+                                                blurRadius: 15,
+                                              )
+                                    /* BoxShadow(
                                       offset: Offset(3, 4),
                                       color:
                                       Color.fromRGBO(158, 116, 158, 0.5),
                                       blurRadius: 15,
-                                    )
+                                    ),*/
                                   ],
                                   shape: SmoothRectangleBorder(),
                                 ),
@@ -356,17 +403,17 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                     ),
                                   ),
                                   const Space(4),
-                                  const Row(
+                                  Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.favorite_border,
                                         size: 20,
                                       ),
-                                      Space(isHorizontal: true, 10),
+                                      const Space(isHorizontal: true, 10),
                                       Text(
-                                        "0",
-                                        style: TextStyle(
+                                        "${(widget.data['likes'] ?? []).length}",
+                                        style: const TextStyle(
                                           color: Color(0xFF9327A8),
                                           fontSize: 12,
                                           fontFamily: 'Product Sans Medium',
@@ -408,7 +455,8 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                   decoration: ShapeDecoration(
                                     shape: SmoothRectangleBorder(
                                         side: const BorderSide(
-                                          color: Color(0xFF000000), // Border color
+                                          color: Color(0xFF000000),
+                                          // Border color
                                           width: 2.0, // Border width
                                         ),
                                         borderRadius: SmoothBorderRadius(
@@ -502,7 +550,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                           ),
                                           Text(
                                             "${widget.productList[index].quantity}",
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: Colors.black,
                                               fontSize: 20,
                                               fontFamily: 'Product Sans',
@@ -612,7 +660,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                             )
                           ],
                         ),
-                        const Space(34),
+                        const Space(25),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -620,19 +668,19 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                             CaloriesColumnWidget(
                                 text: 'Calories',
                                 data:
-                                '${widget.productList[index].macros?.calories} kcal'),
+                                    '${widget.productList[index].macros?.calories} kcal'),
                             CaloriesColumnWidget(
                                 text: 'Protein',
                                 data:
-                                '${widget.productList[index].macros?.proteins} g'),
+                                    '${widget.productList[index].macros?.proteins} g'),
                             CaloriesColumnWidget(
                                 text: 'Carbs',
                                 data:
-                                '${widget.productList[index].macros?.carbohydrates} g'),
+                                    '${widget.productList[index].macros?.carbohydrates} g'),
                             CaloriesColumnWidget(
                                 text: 'Fats',
                                 data:
-                                '${widget.productList[index].macros?.fats} g'),
+                                    '${widget.productList[index].macros?.fats} g'),
                           ],
                         ),
                         /*if (widget.productList[index].macros?.calories != "" ||
@@ -713,7 +761,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Extra chrges may apply',
                         style: TextStyle(
                           color: Color(0xFFF7F7F7),
@@ -728,6 +776,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                     onTap: () {
                       Provider.of<ViewCartProvider>(context, listen: false)
                           .getProductList(tempList);
+                      context.read<TransitionEffect>().setBlurSigma(0);
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => ViewCart()));
                       /* Navigator.of(context).pushNamed(ViewCart.routeName,arguments: {

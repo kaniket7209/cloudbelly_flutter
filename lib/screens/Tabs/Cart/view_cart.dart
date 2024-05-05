@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'dart:ui';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/model.dart';
@@ -41,6 +42,8 @@ class _ViewCartState extends State<ViewCart> {
   Map<String, dynamic> response = {};
   String? orderId;
   List<Map<String, dynamic>> convertedList = [];
+  final Razorpay _razorpay = Razorpay();
+  bool _isBottomSheetOpen = false;
 
   @override
   void initState() {
@@ -79,7 +82,7 @@ class _ViewCartState extends State<ViewCart> {
     }
   }
 
-  void getAddressDetails(BuildContext context) async {
+  void getAddressDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
 
     addressList = await Provider.of<Auth>(context, listen: false)
@@ -87,6 +90,7 @@ class _ViewCartState extends State<ViewCart> {
         .then((value) {
       print("details:: ${jsonEncode(value)}");
       Navigator.of(context).pop();
+      context.read<TransitionEffect>().setBlurSigma(5.0);
       AddressBottomSheet()
           .DelievryAddressSheet(context, value.deliveryAddresses);
       return null;
@@ -101,17 +105,49 @@ class _ViewCartState extends State<ViewCart> {
       TOastNotification().showErrorToast(context, "Please Select Address");
     } else {
       AppWideLoadingBanner().loadingBanner(context);
-      response = await Provider.of<Auth>(context, listen: false).createProductOrder(
-          convertedList, context.read<ViewCartProvider>().addressModel);
+      response = await Provider.of<Auth>(context, listen: false)
+          .createProductOrder(
+              convertedList, context.read<ViewCartProvider>().addressModel);
       Navigator.pop(context);
       if (response['message'] == 'Order processed successfully') {
         orderId = response['order_id'];
         TOastNotification().showSuccesToast(context, response['message']);
+        openCheckout();
         // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>PostItem()));
       } else {
         TOastNotification().showErrorToast(context, response['message']);
       }
       setState(() {});
+    }
+  }
+
+  void openCheckout() async {
+    var options = {
+      'key': 'rzp_test_1DP5mmOlF5G5ag',
+      'amount': 100,
+      'name': 'Acme Corp.',
+      'description': 'Fine T-Shirt',
+      'retry': {'enabled': true, 'max_count': 1},
+      'send_sms_hash': true,
+      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+    };
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
+    _razorpay.open(options);
+  }
+
+  void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
+    print("successResponse:: ${response.data.toString()}");
+    submitOrder();
+  }
+
+  void submitOrder() async {
+    print("hdjnvd");
+    AppWideLoadingBanner().loadingBanner(context);
+    dynamic response = await Provider.of<Auth>(context, listen: false)
+        .submitOrder(orderId, "Cash");
+    Navigator.pop(context);
+    if (response['message'] == "Order submitted successfully") {
+      TOastNotification().showSuccesToast(context, response['message']);
     }
   }
 
@@ -158,7 +194,7 @@ class _ViewCartState extends State<ViewCart> {
                 children: [
                   Space(5.5.h),
                   Row(
-                   mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       TouchableOpacity(
                         onTap: () {
@@ -250,7 +286,7 @@ class _ViewCartState extends State<ViewCart> {
                               ),
                               TouchableOpacity(
                                 onTap: () {
-                                  getAddressDetails(context);
+                                  getAddressDetails();
                                   /* setState(() {
                             _isAddressExpnaded = !_isAddressExpnaded;
                           });*/
@@ -271,7 +307,7 @@ class _ViewCartState extends State<ViewCart> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  getAddressDetails(context);
+                                  getAddressDetails();
                                 },
                                 child: const Text(
                                   "Please Select Location",
@@ -286,7 +322,7 @@ class _ViewCartState extends State<ViewCart> {
                               ),
                               TouchableOpacity(
                                 onTap: () {
-                                  getAddressDetails(context);
+                                  getAddressDetails();
                                   /* setState(() {
                             _isAddressExpnaded = !_isAddressExpnaded;
                           });*/
@@ -414,7 +450,7 @@ class _ViewCartState extends State<ViewCart> {
                                           child: Text(
                                             notifiyer.productList[index].name ??
                                                 "",
-                                           overflow: TextOverflow.ellipsis,
+                                            overflow: TextOverflow.ellipsis,
                                             maxLines: 2,
                                             style: const TextStyle(
                                               color: Color(0xFF4C4C4C),
@@ -498,7 +534,7 @@ class _ViewCartState extends State<ViewCart> {
             ],
           ),*/
                                   //  Space(1, isHorizontal: true),
-                                // Spacer(),
+                                  // Spacer(),
                                   IconButton(
                                     icon: Icon(
                                       Icons.keyboard_arrow_down_sharp,
@@ -684,6 +720,24 @@ class _ViewCartState extends State<ViewCart> {
             ),
           ),
           Space(2.h),
+          GestureDetector(
+            onTap: () {
+              // Handle tap on the area around the BackdropFilter
+              print('Tapped outside of the modal bottom sheet');
+              // You can add any logic here, such as dismissing the modal bottom sheet
+              // For example:
+              // Navigator.of(context).pop();
+            },
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: context.watch<TransitionEffect>().blurSigma,
+                sigmaY: context.watch<TransitionEffect>().blurSigma,
+              ),
+              child: Container(
+                color: Colors.transparent, // Transparent color
+              ),
+            ),
+          )
         ]),
       ),
       bottomNavigationBar: _showContainer
@@ -750,6 +804,7 @@ class _ViewCartState extends State<ViewCart> {
                           convertedList.add(newItem);
                         });
                         createProductOrder();
+                        //openCheckout();
                         //  var provider =Provider.of<ViewCartProvider>(context, listen: false);
                       },
                       child: Container(

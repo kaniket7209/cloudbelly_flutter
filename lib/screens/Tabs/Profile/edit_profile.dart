@@ -75,7 +75,7 @@ class EditProfileWidget extends StatelessWidget {
                               TOastNotification().showSuccesToast(
                                   context, 'Store name updated');
                               Provider.of<Auth>(context, listen: false)
-                                  .store_name = _controller.text;
+                                  .userData?['store_name'] = _controller.text;
                             } else {
                               TOastNotification()
                                   .showErrorToast(context, 'Error!');
@@ -113,7 +113,7 @@ class EditProfileWidget extends StatelessWidget {
                               TOastNotification().showSuccesToast(
                                   context, 'Store name updated');
                               Provider.of<Auth>(context, listen: false)
-                                  .store_name = _controller.text;
+                                  .userData?['store_name'] = _controller.text;
                             } else {
                               TOastNotification()
                                   .showErrorToast(context, body['message']);

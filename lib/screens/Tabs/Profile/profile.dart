@@ -1,17 +1,23 @@
 // ignore_for_file: must_be_immutable, prefer_is_empty, use_build_context_synchronously, curly_braces_in_flow_control_structures
 
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/Profile_setting/kyc_view.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/Profile_setting/payment_details_view.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/customer_widgets_profile.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/edit_profile.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu_item.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/profile_share_view.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -29,8 +35,6 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-enum SampleItem { itemOne }
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -59,7 +63,9 @@ class _ProfileState extends State<Profile> {
     setState(() {
       _isLoading = true;
     });
-    await Provider.of<Auth>(context, listen: false).getFeed().then((feed) {
+    await Provider.of<Auth>(context, listen: false)
+        .getFeed(Provider.of<Auth>(context, listen: false).userData?['user_id'])
+        .then((feed) {
       setState(() {
         feedList = [];
         feedList.addAll(feed);
@@ -67,7 +73,9 @@ class _ProfileState extends State<Profile> {
         _refreshController.refreshCompleted();
       });
     });
-    await Provider.of<Auth>(context, listen: false).getMenu().then((menu) {
+    await Provider.of<Auth>(context, listen: false)
+        .getMenu(Provider.of<Auth>(context, listen: false).userData?['user_id'])
+        .then((menu) {
       setState(() {
         menuList = [];
         menuList.addAll(menu);
@@ -86,6 +94,11 @@ class _ProfileState extends State<Profile> {
   bool _isLoading = false;
   List<String> categories = [];
   String userType = "";
+  Map<String, dynamic>? userData;
+
+  Future<void> getUserDataFromPref() async {
+    userData = UserPreferences.getUser();
+  }
 
   Future<void> _getMenu() async {
     setState(() {
@@ -102,11 +115,14 @@ class _ProfileState extends State<Profile> {
         _isLoading = false;
       });
     } else {
-      await Provider.of<Auth>(context, listen: false).getMenu().then((menu) {
+      await Provider.of<Auth>(context, listen: false)
+          .getMenu(
+              Provider.of<Auth>(context, listen: false).userData?['user_id'])
+          .then((menu) {
         menuList = [];
         menuList.addAll(menu);
         _isLoading = false;
-       /* setState(() {
+        /* setState(() {
 
         });*/
         final menuData = json.encode(
@@ -131,7 +147,9 @@ class _ProfileState extends State<Profile> {
     setState(() {
       _isLoading = true;
     });
-    await Provider.of<Auth>(context, listen: false).getFeed().then((feed) {
+    await Provider.of<Auth>(context, listen: false)
+        .getFeed(Provider.of<Auth>(context, listen: false).userData?['user_id'])
+        .then((feed) {
       setState(() {
         feedList = [];
         feedList.addAll(feed);
@@ -142,17 +160,18 @@ class _ProfileState extends State<Profile> {
 
   @override
   void initState() {
+    super.initState();
+    Provider.of<Auth>(context, listen: false).getUserData();
     _getFeed();
     _getMenu();
-    userType = Provider.of<Auth>(context, listen: false).userType;
-    // TODO: implement initState
-    super.initState();
+    userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
   }
 
   @override
   Widget build(BuildContext context) {
     bool _isVendor =
-        Provider.of<Auth>(context, listen: false).userType == 'Vendor';
+        Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+            'Vendor';
     return SmartRefresher(
       onRefresh: _loading,
       controller: _refreshController,
@@ -185,9 +204,16 @@ class _ProfileState extends State<Profile> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 CustomIconButton(
-                                  text: 'back',
-                                  ic: Icons.arrow_back_ios_new_outlined,
-                                  onTap: () {},
+                                  text: '',
+                                  ic: Icons.qr_code,
+                                  onTap: () {
+                                    print(Provider.of<Auth>(context, listen: false).userData?['profile_photo']);
+                                    context
+                                        .read<TransitionEffect>()
+                                        .setBlurSigma(5.0);
+                                    ProfileShareBottomSheet()
+                                        .AddAddressSheet(context);
+                                  },
                                 ),
                                 Container(
                                   // width: 40.w,
@@ -237,61 +263,67 @@ class _ProfileState extends State<Profile> {
                                       3.w,
                                       isHorizontal: true,
                                     ),
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: ShapeDecoration(
-                                        shadows: [
-                                          const BoxShadow(
-                                            offset: Offset(0, 4),
-                                            color: Color.fromRGBO(
-                                                31, 111, 109, 0.5),
-                                            blurRadius: 20,
-                                          )
-                                        ],
-                                        color: Colors.white,
-                                        shape: SmoothRectangleBorder(
-                                          borderRadius: SmoothBorderRadius(
-                                            cornerRadius: 10,
-                                            cornerSmoothing: 1,
-                                          ),
-                                        ),
-                                      ),
-                                      child: PopupMenuButton<SampleItem>(
-                                        icon: const Icon(Icons.more_horiz),
-                                        initialValue: selectedMenu,
-                                        // Callback that sets the selected popup menu item.
-                                        onSelected: (SampleItem item) async {
-                                          AppWideLoadingBanner()
-                                              .loadingBanner(context);
-
-                                          await Provider.of<Auth>(context,
-                                                  listen: false)
-                                              .logout();
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context)
-                                              .pushReplacementNamed(
-                                                  LoginScreen.routeName);
-                                          setState(() {
-                                            selectedMenu = item;
-                                          });
-                                        },
-                                        itemBuilder: (BuildContext context) =>
-                                            <PopupMenuEntry<SampleItem>>[
-                                          PopupMenuItem<SampleItem>(
-                                            value: SampleItem.itemOne,
-                                            child: Row(
-                                              children: [
-                                                const Icon(Icons.logout),
-                                                Space(
-                                                  3.w,
-                                                  isHorizontal: true,
-                                                ),
-                                                const Text('Logout'),
-                                              ],
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileSettingView()));
+                                      },
+                                      child: Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: ShapeDecoration(
+                                          shadows: [
+                                            const BoxShadow(
+                                              offset: Offset(0, 4),
+                                              color: Color.fromRGBO(
+                                                  31, 111, 109, 0.5),
+                                              blurRadius: 20,
+                                            )
+                                          ],
+                                          color: Colors.white,
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                              cornerRadius: 10,
+                                              cornerSmoothing: 1,
                                             ),
                                           ),
-                                        ],
+                                        ),
+                                        child: Icon(Icons.more_horiz),
+                                        /*child: PopupMenuButton<SampleItem>(
+                                          icon: const Icon(Icons.more_horiz),
+                                          initialValue: selectedMenu,
+                                          // Callback that sets the selected popup menu item.
+                                          onSelected: (SampleItem item) async {
+                                            AppWideLoadingBanner()
+                                                .loadingBanner(context);
+
+                                            await Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .logout();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context)
+                                                .pushReplacementNamed(
+                                                    LoginScreen.routeName);
+                                            setState(() {
+                                              selectedMenu = item;
+                                            });
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                              <PopupMenuEntry<SampleItem>>[
+                                            PopupMenuItem<SampleItem>(
+                                              value: SampleItem.itemOne,
+                                              child: Row(
+                                                children: [
+                                                  const Icon(Icons.logout),
+                                                  Space(
+                                                    3.w,
+                                                    isHorizontal: true,
+                                                  ),
+                                                  const Text('Logout'),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        )*/
                                       ),
                                     ),
                                   ],
@@ -301,7 +333,7 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                       ),
-                      const StoreNameWidget(),
+                      StoreNameWidget(),
                       Space(3.h),
                       Center(
                         child: ConstrainedBox(
@@ -312,13 +344,26 @@ class _ProfileState extends State<Profile> {
                             children: [
                               Center(
                                   child: Container(
-                                height: 20.h,
+                                //height: 20.h,
                                 width: 90.w,
                                 decoration: ShapeDecoration(
-                                  shadows:  [
+                                  shadows: [
                                     BoxShadow(
                                       offset: Offset(0, 4),
-                                      color: Provider.of<Auth>(context, listen: false).userType == UserType.Vendor.name ? const Color.fromRGBO(165, 200, 199, 0.6) : const Color.fromRGBO(188, 115, 188, 0.6) ,
+                                      color: Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Vendor.name
+                                          ? const Color.fromRGBO(
+                                              165, 200, 199, 0.6)
+                                          : Provider.of<Auth>(context,
+                                                          listen: false)
+                                                      .userData?['user_type'] ==
+                                                  UserType.Supplier.name
+                                              ? const Color.fromRGBO(
+                                                  77, 191, 74, 0.6)
+                                              : const Color.fromRGBO(
+                                                  188, 115, 188, 0.6),
                                       blurRadius: 25,
                                     )
                                   ],
@@ -339,24 +384,36 @@ class _ProfileState extends State<Profile> {
                                       children: [
                                         ColumnWidgetHomeScreen(
                                           data: Provider.of<Auth>(context,
-                                                  listen: false)
-                                              .rating,
+                                                      listen: false)
+                                                  .userData?['rating'] ??
+                                              "",
                                           txt: 'Rating',
                                         ),
                                         ColumnWidgetHomeScreen(
-                                          data: (Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .followers)
-                                              .length
-                                              .toString(),
+                                          data: Provider.of<Auth>(context,
+                                                          listen: false)
+                                                      .userData?['followers'] !=
+                                                  null
+                                              ? (Provider.of<Auth>(context,
+                                                          listen: false)
+                                                      .userData?['followers'])
+                                                  .length
+                                                  .toString()
+                                              : "",
                                           txt: 'Followers',
                                         ),
                                         ColumnWidgetHomeScreen(
-                                          data: (Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .followings)
-                                              .length
-                                              .toString(),
+                                          data: Provider.of<Auth>(context,
+                                                              listen: false)
+                                                          .userData?[
+                                                      'followings'] !=
+                                                  null
+                                              ? (Provider.of<Auth>(context,
+                                                          listen: false)
+                                                      .userData?['followings'])
+                                                  .length
+                                                  .toString()
+                                              : "",
                                           txt: 'Following',
                                         )
                                       ],
@@ -371,9 +428,10 @@ class _ProfileState extends State<Profile> {
                                             TextEditingController _controller =
                                                 TextEditingController(
                                                     text: Provider.of<Auth>(
-                                                            context,
-                                                            listen: false)
-                                                        .store_name);
+                                                                context,
+                                                                listen: false)
+                                                            .userData?[
+                                                        'store_name']);
                                             AppWideBottomSheet().showSheet(
                                                 context,
                                                 EditProfileWidget(
@@ -396,7 +454,7 @@ class _ProfileState extends State<Profile> {
                                               uriPrefix:
                                                   'https://api.cloudbelly.in',
                                               link: Uri.parse(
-                                                  'https://api.cloudbelly.in/jTpt?id=${Provider.of<Auth>(context, listen: false).user_id}&type=profile'),
+                                                  'https://api.cloudbelly.in/jTpt?id=${Provider.of<Auth>(context, listen: false).userData?['user_id']}&type=profile'),
                                               androidParameters:
                                                   const AndroidParameters(
                                                 packageName:
@@ -427,7 +485,8 @@ class _ProfileState extends State<Profile> {
                                           ),
                                         ),
                                       ],
-                                    )
+                                    ),
+                                    Space(3.h),
                                   ],
                                 ),
                               )),
@@ -442,10 +501,19 @@ class _ProfileState extends State<Profile> {
                           padding: EdgeInsets.symmetric(
                               vertical: 1.5.h, horizontal: 4.w),
                           decoration: ShapeDecoration(
-                            shadows:  [
+                            shadows: [
                               BoxShadow(
                                 offset: const Offset(0, 4),
-                                color: Provider.of<Auth>(context, listen: false).userType == UserType.Vendor.name ? const Color.fromRGBO(165, 200, 199, 0.6) : const Color.fromRGBO(188, 115, 188, 0.6) ,
+                                color: Provider.of<Auth>(context, listen: false)
+                                            .userData?['user_type'] ==
+                                        UserType.Vendor.name
+                                    ? const Color.fromRGBO(165, 200, 199, 0.6)
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Supplier.name
+                                        ? const Color.fromRGBO(77, 191, 74, 0.6)
+                                        : const Color.fromRGBO(
+                                            188, 115, 188, 0.6),
                                 blurRadius: 30,
                               )
                             ],
@@ -460,7 +528,7 @@ class _ProfileState extends State<Profile> {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                 if (_isVendor)
+                                if (_isVendor)
                                   Container(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 1.h, horizontal: 3.w),
@@ -475,62 +543,83 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 Space(2.h),
                                 userType == UserType.Supplier.name
-                                    ? SizedBox(
-                                        width: 87.w,
+                                    ? Container(
+                                        // height: 6.5.h,
+                                        width: 95.w,
+                                        /* decoration: ShapeDecoration(
+                                          shadows: const [
+                                            BoxShadow(
+                                              offset: Offset(0, 4),
+                                              color: Color.fromRGBO(
+                                                  165, 200, 199, 0.6),
+                                              blurRadius: 20,
+                                            )
+                                          ],
+                                          color: Colors.white,
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                              cornerRadius: 15,
+                                              cornerSmoothing: 1,
+                                            ),
+                                          ),
+                                        ),*/
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            TouchableOpacity(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              TouchableOpacity(
                                                 onTap: () {
                                                   setState(() {
                                                     _activeButtonIndex = 1;
                                                   });
                                                 },
-                                                child:
-                                                    CommomButtonProfileCustomer(
-                                                        isActive:
-                                                            _activeButtonIndex ==
-                                                                1,
-                                                        text: 'Content')),
-                                            TouchableOpacity(
+                                                child: CommonButtonProfile(
+                                                  isActive:
+                                                      _activeButtonIndex == 1,
+                                                  txt: 'Content',
+                                                  width: 52,
+                                                ),
+                                              ),
+                                              TouchableOpacity(
                                                 onTap: () {
                                                   setState(() {
                                                     _activeButtonIndex = 2;
                                                   });
                                                 },
-                                                child:
-                                                    CommomButtonProfileCustomer(
-                                                        isActive:
-                                                            _activeButtonIndex ==
-                                                                2,
-                                                        text: 'Menu')),
-                                            TouchableOpacity(
-                                                onTap: () {
-                                                  setState(() {
-                                                    _activeButtonIndex = 4;
-                                                  });
-                                                },
-                                                child:
-                                                    CommomButtonProfileCustomer(
-                                                        isActive:
-                                                            _activeButtonIndex ==
-                                                                4,
-                                                        text: 'About')),
-                                            TouchableOpacity(
+                                                child: CommonButtonProfile(
+                                                  isActive:
+                                                      _activeButtonIndex == 2,
+                                                  txt: 'Menu',
+                                                  width: 52,
+                                                ),
+                                              ),
+                                              TouchableOpacity(
                                                 onTap: () {
                                                   setState(() {
                                                     _activeButtonIndex = 3;
                                                   });
                                                 },
-                                                child:
-                                                    CommomButtonProfileCustomer(
-                                                        isActive:
-                                                            _activeButtonIndex ==
-                                                                3,
-                                                        text: 'Reviews')),
-                                          ],
-                                        ),
+                                                child: CommonButtonProfile(
+                                                  isActive:
+                                                      _activeButtonIndex == 3,
+                                                  txt: 'About',
+                                                  width: 52,
+                                                ),
+                                              ),
+                                              TouchableOpacity(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _activeButtonIndex = 4;
+                                                  });
+                                                },
+                                                child: CommonButtonProfile(
+                                                  isActive:
+                                                      _activeButtonIndex == 4,
+                                                  txt: 'Reviews',
+                                                  width: 52,
+                                                ),
+                                              ),
+                                            ]),
                                       )
                                     : userType == UserType.Customer.name
                                         ? Container(
@@ -591,7 +680,7 @@ class _ProfileState extends State<Profile> {
                                         : Container(
                                             // height: 6.5.h,
                                             width: 95.w,
-                                             /*decoration: ShapeDecoration(
+                                            /*decoration: ShapeDecoration(
                                           shadows: const [
                                             BoxShadow(
                                               offset: Offset(0, 4),
@@ -710,6 +799,11 @@ class _ProfileState extends State<Profile> {
                                                     return FeedWidget(
                                                         index: index,
                                                         fulldata: feedList,
+                                                        userId: Provider.of<
+                                                                    Auth>(
+                                                                context,
+                                                                listen: false)
+                                                            .userData?['user_id'],
                                                         data: feedList[index]);
                                                   },
                                                 )),
@@ -726,10 +820,29 @@ class _ProfileState extends State<Profile> {
                               ]),
                         ),
                       ),
+
                     ],
-                  )
+                  ),
                 ],
               ),
+              GestureDetector(
+                onTap: () {
+                  // Handle tap on the area around the BackdropFilter
+                  print('Tapped outside of the modal bottom sheet');
+                  // You can add any logic here, such as dismissing the modal bottom sheet
+                  // For example:
+                  // Navigator.of(context).pop();
+                },
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: context.watch<TransitionEffect>().blurSigma,
+                    sigmaY: context.watch<TransitionEffect>().blurSigma,
+                  ),
+                  child: Container(
+                    color: Colors.transparent, // Transparent color
+                  ),
+                ),
+              )
             ],
           ),
         ),
@@ -962,24 +1075,28 @@ class FeedWidget extends StatelessWidget {
     required this.data,
     required this.fulldata,
     required this.index,
+    required this.userId,
   });
 
   final int index;
 
   final dynamic data;
   final dynamic fulldata;
+  final String userId;
   CarouselController buttonCarouselController = CarouselController();
 
   @override
   Widget build(BuildContext context) {
     bool _isVendor =
-        Provider.of<Auth>(context, listen: false).userType == 'Vendor';
+        Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+            'Vendor';
     // bool _isMultiple =
     //     data['multiple_files'] != null && data['multiple_files'].length != 0;
     return TouchableOpacity(
       onTap: () async {
-        final Data = await Provider.of<Auth>(context, listen: false).getFeed()
-            as List<dynamic>;
+        print("fullData:: $fulldata");
+        final Data = await Provider.of<Auth>(context, listen: false)
+            .getFeed(userId) as List<dynamic>;
         Navigator.of(context).pushNamed(PostsScreen.routeName,
             arguments: {'data': Data, 'index': index});
         //  print("data:: $fulldata");

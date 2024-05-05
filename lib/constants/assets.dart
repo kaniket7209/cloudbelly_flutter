@@ -1,4 +1,6 @@
 class Assets {
+
+  ///Icons
   static const String notification_svg = 'assets/icons/notification.svg';
   static const String registration_svg = 'assets/icons/Registration.svg';
   static const String comment_svg = 'assets/icons/comment.svg';
@@ -11,5 +13,14 @@ class Assets {
   static const String location = 'assets/icons/location.png';
   static const String back_Arrows = 'assets/icons/back_Arrows.png';
   static const String notification_png = 'assets/icons/notification.png';
+  static const String googleIcon = 'assets/icons/google_icon.png';
+  static const String editIcon = 'assets/icons/edit_icon.png';
+  static const String nextIcon = 'assets/icons/next_arrow.png';
+
+
+
+  ///Images
   static const String coming_soon_jpg = 'assets/images/coming_soon.jpg';
+  static const String appIcon = 'assets/images/cloudbelly_logo.png';
+  static const String googleLoginBgImage = 'assets/images/google_login_bg_image.jpeg';
 }

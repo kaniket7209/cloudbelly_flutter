@@ -1,5 +1,7 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
+import 'package:cloudbelly_app/prefrence_helper.dart';
+import 'package:cloudbelly_app/screens/Login/google_login.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 
@@ -12,10 +14,13 @@ import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login-screen';
@@ -52,7 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.of(context).pop();
     print("msg:: $msg");
     if (msg == 'Login successful') {
-      TOastNotification().showSuccesToast(context, msg);
+     // TOastNotification().showSuccesToast(context, msg);
+      UserPreferences().isLogin = true;
       Navigator.of(context).pushReplacementNamed(Tabs.routeName);
     } else {
       if (msg == '-1') msg = "Error!";
@@ -63,32 +69,38 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _submitFormSignUp() async {
     // Perform signup logic
     // Add your signup logic here
-    user_pass = user_pass.trim();
-    // For example, print the values:
-    AppWideLoadingBanner().loadingBanner(context);
-    String msg = await Provider.of<Auth>(context, listen: false)
-        .signUp(user_email, user_pass, user_mobile_number, selectedOption);
-   // print('vmdkmv:: $msg');
-    if (msg == 'Registration successful') {
-      String msg = await Provider.of<Auth>(context, listen: false)
-          .login(user_email, user_pass);
+    if(_accepted == false) {
+      TOastNotification().showErrorToast(context, "Please Accept Terms & Condition and Privacy Policy");
 
-      if (msg == 'Login successful') {
-        TOastNotification().showSuccesToast(context, 'Registration successful');
+    }else {
+      user_pass = user_pass.trim();
+      // For example, print the values:
+      AppWideLoadingBanner().loadingBanner(context);
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .signUp(user_email, user_pass, user_mobile_number, selectedOption);
+      // print('vmdkmv:: $msg');
+      if (msg == 'Registration successful') {
+        UserPreferences().isLogin = true;
+       // TOastNotification().showSuccesToast(context, 'Registration successful');
         Navigator.of(context).pop();
         Navigator.of(context).pushReplacementNamed(Tabs.routeName);
       } else {
-        if (msg == '-1') msg = "Error!";
         Navigator.of(context).pop();
         TOastNotification().showErrorToast(context, msg);
       }
+    }
+  }
+  Future<void> _launchURL(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
     } else {
-      Navigator.of(context).pop();
-      TOastNotification().showErrorToast(context, msg);
+      throw 'Could not launch $url';
     }
   }
 
   bool _isPasswordVisible = false;
+  bool _accepted = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -348,6 +360,78 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ),
                                       Space(3.h),
+
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Checkbox(
+                                            value: _accepted,
+                                            activeColor: Colors.blue,
+                                            onChanged: (bool? value) {
+                                              setState(() {
+                                                _accepted = value!;
+                                              });
+                                            },
+                                          ),
+                                          Expanded(
+                                            child: RichText(
+                                              text: TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: "I accept the ",
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Color(0xFF0A4C61),
+                                                        fontFamily: 'Product Sans',
+                                                        fontWeight:
+                                                        FontWeight.w400),
+                                                  ),
+                                                  TextSpan(
+                                                    text: "Terms of Use",
+                                                    style:TextStyle(
+                                                        fontSize: 18,
+                                                        decoration: TextDecoration.underline,
+                                                        decorationColor: Colors.blue,
+                                                        color: Colors.blue,
+                                                        fontFamily: 'Product Sans',
+                                                        fontWeight:
+                                                        FontWeight.w400),
+                                                    recognizer: TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        _launchURL("https://app.cloudbelly.in/terms-and-conditions");                                                      },
+                                                  ),
+                                                  TextSpan(
+                                                    text: " and ",
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Color(0xFF0A4C61),
+                                                        fontFamily: 'Product Sans',
+                                                        fontWeight:
+                                                        FontWeight.w400),
+                                                  ),
+                                                  TextSpan(
+                                                    text: "Privacy policy",
+                                                    style:TextStyle(
+                                                        fontSize: 18,
+                                                        color: Colors.blue,
+                                                        decoration: TextDecoration.underline,
+                                                        decorationColor: Colors.blue,
+                                                        fontFamily: 'Product Sans',
+                                                        fontWeight:
+                                                        FontWeight.w400),
+                                                    recognizer: TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        _launchURL("https://app.cloudbelly.in/privacy-policy");
+                                                      },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          )
+
+                                        ],
+                                      ),
+                                      Space(4.h),
                                       AppWideButton(
                                         num: -1,
                                         txt: 'Sign up',
@@ -358,6 +442,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           //     .pushReplacementNamed(Tabs.routeName);
                                         },
                                       ),
+
                                       Space(4.h),
                                       Container(
                                         width: double.infinity,
@@ -388,11 +473,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ),
                                       Space(2.h),
-                                      CommonButton('Continue with Whatsapp'),
-                                      Space(1.5.h),
-                                      CommonButton('Continue with Google'),
-                                      Space(1.5.h),
-                                      CommonButton('Continue with Facebook'),
+                                    /*  CommonButton('Continue with Whatsapp'),
+                                      Space(1.5.h),*/
+                                      CommonButton('Continue with Google',() {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => GoogleLogin()));
+                                      }),
+                                      /*Space(1.5.h),
+                                      CommonButton('Continue with Facebook'),*/
                                     ],
                                   )
                                 : Column(
@@ -589,11 +676,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ],
                                       ),
                                       Space(2.h),
-                                      CommonButton('Continue with Whatsapp'),
-                                      Space(1.5.h),
-                                      CommonButton('Continue with Google'),
-                                      Space(1.5.h),
-                                      CommonButton('Continue with Facebook'),
+                                     /* CommonButton('Continue with Whatsapp'),
+                                      Space(1.5.h),*/
+                                      CommonButton('Continue with Google',() {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => GoogleLogin()));
+                                      }),
+                                     /* Space(1.5.h),
+                                      CommonButton('Continue with Facebook'),*/
                                     ],
                                   )),
                       ),
