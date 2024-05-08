@@ -1,5 +1,6 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/models/supplier_bulk_order.dart';
 import 'package:cloudbelly_app/screens/supplier/components/constants.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +28,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:async';
 
 class BulkOrderSectionItem extends StatelessWidget {
-  final Map<String, dynamic> itemData;
+  final SupplierBulkOrder itemDetails;
 
-  const BulkOrderSectionItem({super.key, required this.itemData});
+  const BulkOrderSectionItem({super.key, required this.itemDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +63,7 @@ class BulkOrderSectionItem extends StatelessWidget {
                   ),
                 ),
                 child: Image.network(
-                  itemData['imageUrl'],
+                  'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg',
                   height: 40,
                   width: 40,
                 )),
@@ -74,7 +75,7 @@ class BulkOrderSectionItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  itemData['itemName'],
+                  itemDetails.nameId,
                   style: const TextStyle(
                     color: Color(0xFF094B60),
                     fontSize: 12,
@@ -85,7 +86,7 @@ class BulkOrderSectionItem extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${itemData['volume']} kg',
+                  '${itemDetails.quantity} ${itemDetails.unitType}',
                   style: const TextStyle(
                     color: const Color.fromRGBO(250, 110, 0, 1),
                     // background: rgba(250, 110, 0, 1);
@@ -688,9 +689,9 @@ class _SupplierBannerState extends State<SupplierBanner>
 
 //region Bulk Order Item widget
 class BulkOrderItem extends StatelessWidget {
-  final Map<String, dynamic> itemData;
+  final SupplierBulkOrder itemDetails;
 
-  const BulkOrderItem({super.key, required this.itemData});
+  const BulkOrderItem({super.key, required this.itemDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -717,13 +718,13 @@ class BulkOrderItem extends StatelessWidget {
               ),
             ),
             child: Image.network(
-              itemData['imageUrl'],
+              'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg',
               height: 40,
               width: 40,
             )),
         Space(1.h),
         Text(
-          itemData['itemName'].replaceAll(' ', '\n'),
+          itemDetails.nameId.replaceAll(' ', '\n'),
           style: const TextStyle(
             color: Color(0xFF094B60),
             fontSize: 12,
@@ -734,7 +735,7 @@ class BulkOrderItem extends StatelessWidget {
           ),
         ),
         Text(
-          '${itemData['volume']} kg',
+          '${itemDetails.quantity} ${itemDetails.unitType}',
           style: const TextStyle(
             color: const Color.fromRGBO(250, 110, 0, 1),
             // background: rgba(250, 110, 0, 1);

@@ -142,6 +142,9 @@ class Auth with ChangeNotifier {
     }
   }
 
+
+
+
   //logout
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
@@ -150,6 +153,8 @@ class Auth with ChangeNotifier {
     await prefs.remove('feedData');
     await prefs.remove('menuData');
   }
+
+
 
   Future sendUserTypeRequest() async {
     final String url = 'https://app.cloudbelly.in/user-type';
@@ -521,28 +526,29 @@ class Auth with ChangeNotifier {
     }
   }
 
-  // Future<dynamic> getSheetUrl() async {
-  //   final String url = 'https://app.cloudbelly.in/inventory/get-sheet';
+  Future<dynamic> getSheetUrl() async {
+    final String url = 'https://app.cloudbelly.in/inventory/get-sheet';
 
-  //   final Map<String, dynamic> requestBody = {
-  //     'user_id': user_id,
-  //     'user_email': user_email, //email id here
-  //   };
+    final Map<String, dynamic> requestBody = {
+      'user_id': user_id,
+      'user_email': user_email, //email id here
+    };
 
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(url),
-  //       headers: headers,
-  //       body: jsonEncode(requestBody),
-  //     );
-  //     print(jsonDecode((response.body)));
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      print('Inside api services');
+      print(jsonDecode((response.body)));
 
-  //     return jsonDecode((response.body));
-  //   } catch (error) {
-  //     // Handle exceptions
-  //     return '-1';
-  //   }
-  // }
+      return jsonDecode((response.body));
+    } catch (error) {
+      // Handle exceptions
+      return '-1';
+    }
+  }
 
   // Future<dynamic> SyncInventory() async {
   //   final String url = 'https://app.cloudbelly.in/inventory/sync';

@@ -1,14 +1,20 @@
+import 'dart:convert';
 
+import 'package:cloudbelly_app/screens/services.dart';
+import 'package:cloudbelly_app/screens/supplier/bulk_order_sheet.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../api_service.dart';
 import '../../constants/globalVaribales.dart';
+import '../../models/supplier_bulk_order.dart';
 import '../../widgets/appwide_bottom_sheet.dart';
 import '../../widgets/appwide_loading_bannner.dart';
 import '../../widgets/space.dart';
@@ -18,6 +24,7 @@ import '../Tabs/Dashboard/inventory_bottom_sheet.dart';
 import '../Tabs/Dashboard/make_list_inventory.dart';
 import 'components/components.dart';
 import 'components/constants.dart';
+
 class SupplierInventory extends StatefulWidget {
   const SupplierInventory({
     super.key,
@@ -30,66 +37,101 @@ class SupplierInventory extends StatefulWidget {
 class _SupplierInventoryState extends State<SupplierInventory> {
   // bool _isSyncLoading = false;
   List<dynamic> lowStockItems = [];
+
   List<dynamic> allStocks = [];
   List<dynamic> nearExpiryItems = [];
   List<dynamic> stocksYouMayNeed = [];
   bool _isUpdateLoading = false;
   bool _somethingmissing = false;
+
+  late List<SupplierBulkOrder> _bulkOrderItems = [];
   late List<Map<String, dynamic>> bulkOrderItemsDummyData = [
     {
       'itemName': 'Tomato',
       'volume': '181',
       'imageUrl':
-      'https://media.istockphoto.com/id/1450576005/photo/tomato-isolated-tomato-on-white-background-perfect-retouched-tomatoe-side-view-with-clipping.jpg?s=612x612&w=0&k=20&c=lkQa_rpaKpc-ELRRGobYVJH-eMJ0ew9BckCqavkSTA0='
+          'https://media.istockphoto.com/id/1450576005/photo/tomato-isolated-tomato-on-white-background-perfect-retouched-tomatoe-side-view-with-clipping.jpg?s=612x612&w=0&k=20&c=lkQa_rpaKpc-ELRRGobYVJH-eMJ0ew9BckCqavkSTA0='
     },
     {
       'itemName': 'Red Cabbage',
       'volume': '62',
       'imageUrl':
-      'https://media.istockphoto.com/id/175433477/photo/red-cabbage-leaves.jpg?s=612x612&w=0&k=20&c=CVC-6nTaKtQ0Gw5l8Nk5aGb8oA47Ce6eba2qSYYauq0='
+          'https://media.istockphoto.com/id/175433477/photo/red-cabbage-leaves.jpg?s=612x612&w=0&k=20&c=CVC-6nTaKtQ0Gw5l8Nk5aGb8oA47Ce6eba2qSYYauq0='
     },
     {
       'itemName': 'Potato',
       'volume': '105',
       'imageUrl':
-      'https://dukaan.b-cdn.net/700x700/webp/upload_file_service/asg/7e813d1d-0eac-456f-ba82-4a6b81efa130/Potato.png'
+          'https://dukaan.b-cdn.net/700x700/webp/upload_file_service/asg/7e813d1d-0eac-456f-ba82-4a6b81efa130/Potato.png'
     },
     {
       'itemName': 'Green Cabbage',
       'volume': '35',
       'imageUrl':
-      'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg'
+          'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg'
     },
     {
       'itemName': 'Karela',
       'volume': '120',
       'imageUrl':
-      'https://lazyshoppy.com/cdn/shop/products/Bitter_melon_4f3277d7-4f06-4908-9768-b8baa2e78bfb.png?v=1643607808'
+          'https://lazyshoppy.com/cdn/shop/products/Bitter_melon_4f3277d7-4f06-4908-9768-b8baa2e78bfb.png?v=1643607808'
     },
     {
       'itemName': 'Brocolli',
       'volume': '50',
       'imageUrl':
-      'https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_640.png'
+          'https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_640.png'
     },
     {
       'itemName': 'Carrot',
       'volume': '120',
       'imageUrl':
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrMKkDu9OSVJelgM1bSu08TvVJvp_ZtfBIdefBjqCRnA&s'
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrMKkDu9OSVJelgM1bSu08TvVJvp_ZtfBIdefBjqCRnA&s'
     },
   ];
 
   String iframeUrl = "";
   var _iframeController;
 
+  bool _deliveryRouteClicked = false;
+
   @override
   void initState() {
+
+    print('Init state called');
     String temp = _generateTokenAndLaunchDashboard();
     nearExpiryItems = [];
     _setWebviewController(temp);
-    // TODO: implement initState
+    _getUserData();
+    getBulkOrderList();
     super.initState();
+  }
+
+  void getBulkOrderList() async {
+    String user_id = Provider.of<Auth>(context, listen: false).user_id;
+    print('I was callled');
+    _bulkOrderItems = await getBulkOrderData(user_id);
+    setState(() {
+      _bulkOrderItems = _bulkOrderItems;
+    });
+  }
+
+  Future<void> _getUserData() async {
+    dynamic user_type =
+        await Provider.of<Auth>(context, listen: false).getSheetUrl();
+
+    if (user_type != null) {
+      Map<String, dynamic> user_data = user_type as Map<String, dynamic>;
+      print('Here');
+      print('This is the line' + user_data.toString());
+    }
+
+    final pref = await SharedPreferences.getInstance();
+    if (pref.getString('userData') != null) {
+      final extractedUserData =
+          json.decode(pref.getString('userData')!) as Map<String, dynamic>;
+      print('String is ' + extractedUserData.toString());
+    }
   }
 
   @override
@@ -101,194 +143,367 @@ class _SupplierInventoryState extends State<SupplierInventory> {
   }
 
   //region This section will build and populate data inside new bulk order section in Inventory tab
-  Widget _bulkOrderSheetItem(){
-    final ScrollController _controller = ScrollController();
+  // Widget _bulkOrderSheetItem() {
+  //   final ScrollController _controller = ScrollController();
+  //
+  //   return Container(
+  //     // margin: EdgeInsets.symmetric(horizontal: 2.h),
+  //     padding: EdgeInsets.only(
+  //       top: 2.h,
+  //       bottom: MediaQuery.of(context).viewInsets.bottom,
+  //     ),
+  //     decoration: const ShapeDecoration(
+  //       color: Colors.white,
+  //       shape: SmoothRectangleBorder(
+  //         borderRadius: SmoothBorderRadius.only(
+  //           topLeft: SmoothRadius(
+  //             cornerRadius: 35,
+  //             cornerSmoothing: 1,
+  //           ),
+  //           topRight: SmoothRadius(
+  //             cornerRadius: 35,
+  //             cornerSmoothing: 1,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //     child: Padding(
+  //       padding: const EdgeInsets.symmetric(horizontal: 8.0),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           TouchableOpacity(
+  //             onTap: () {
+  //               context.read<TransitionEffect>().setBlurSigma(0);
+  //               return Navigator.of(context).pop();
+  //             },
+  //             child: Center(
+  //               child: Container(
+  //                 padding: EdgeInsets.symmetric(
+  //                   vertical: 1.h,
+  //                   horizontal: 3.w,
+  //                 ),
+  //                 width: 65,
+  //                 height: 6,
+  //                 decoration: ShapeDecoration(
+  //                   color: const Color(0xFFFA6E00),
+  //                   shape: RoundedRectangleBorder(
+  //                     borderRadius: BorderRadius.circular(6),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //           Space(1.h),
+  //           GestureDetector(
+  //             onTap: () {
+  //               print('Im tapped');
+  //               setState(() {
+  //                 _deliveryRouteClicked = true;
+  //               });
+  //             },
+  //             child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.end,
+  //               mainAxisSize: MainAxisSize.max,
+  //               // crossAxisAlignment: CrossAxisAlignment,// Set mainAxisSize to min
+  //               children: [
+  //                 const Text(
+  //                   'Delivery route',
+  //                   style: TextStyle(
+  //                     color: Color(0xFF094B60),
+  //                     fontSize: 12,
+  //                     fontFamily: 'Product Sans',
+  //                     fontWeight: FontWeight.w700,
+  //                     // height: 0.14,
+  //                     letterSpacing: 0.36,
+  //                   ),
+  //                 ),
+  //                 Space(isHorizontal: true, 2.w),
+  //                 Icon(
+  //                   Icons.double_arrow_outlined,
+  //                   size: 16,
+  //                   color: Color(0xFFFA6E00),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           Space(1.h),
+  //           Row(
+  //             children: [
+  //               Space(
+  //                 1.h,
+  //                 isHorizontal: true,
+  //               ),
+  //               Text(
+  //                 'New Bulk Order',
+  //                 style: const TextStyle(
+  //                   color: Color(0xFF094B60),
+  //                   fontSize: 25,
+  //                   fontFamily: 'Jost',
+  //                   fontWeight: FontWeight.w500,
+  //                   // height: 0.06,
+  //                   letterSpacing: 0.54,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           Container(
+  //             height: 350,
+  //             child: Scrollbar(
+  //               interactive: true,
+  //               thumbVisibility: true,
+  //               // Set to true to always show scrollbar
+  //               controller: _controller,
+  //               // Pass the controller
+  //               child: ListView.builder(
+  //                 controller: _controller,
+  //                 // Pass the controller to the ListView as well
+  //                 itemCount: _bulkOrderItems.length,
+  //                 itemBuilder: (context, index) {
+  //                   return Column(
+  //                     children: [
+  //                       index == 0 ? Space(2.h) : SizedBox(),
+  //                       BulkOrderSectionItem(
+  //                         itemDetails:_bulkOrderItems[0] ,),
+  //                       index == 0 ? Space(2.h) : SizedBox(),
+  //                       index > 0 ? Space(2.h) : SizedBox(),
+  //                     ],
+  //                   );
+  //                 },
+  //               ),
+  //             ),
+  //           ),
+  //           Space(2.h),
+  //           Center(
+  //               child: Container(
+  //             height: 45,
+  //             margin: EdgeInsets.symmetric(horizontal: 1.h),
+  //             decoration: ShapeDecoration(
+  //               shadows: [
+  //                 BoxShadow(
+  //                     offset: Offset(5, 6),
+  //                     spreadRadius: 0.1,
+  //                     color: Color.fromRGBO(232, 128, 55, 0.5),
+  //                     blurRadius: 10)
+  //               ],
+  //               color: const Color.fromRGBO(250, 110, 0, 1),
+  //               shape: SmoothRectangleBorder(
+  //                 borderRadius: SmoothBorderRadius(
+  //                   cornerRadius: 10,
+  //                   cornerSmoothing: 1,
+  //                 ),
+  //               ),
+  //             ),
+  //             child: Center(
+  //                 child: Text(
+  //               'Submit your bid',
+  //               style: TextStyle(
+  //                 color: Colors.white,
+  //                 fontSize: 16,
+  //                 fontFamily: 'Product Sans',
+  //                 fontWeight: FontWeight.w700,
+  //                 height: 0,
+  //                 letterSpacing: 0.30,
+  //               ),
+  //             )),
+  //           )),
+  //           Space(1.h)
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-    return Container(
-      // margin: EdgeInsets.symmetric(horizontal: 2.h),
-      padding: EdgeInsets.only(
-        top: 2.h,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      decoration: const ShapeDecoration(
-        color: Colors.white,
-        shape: SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius.only(
-            topLeft: SmoothRadius(
-              cornerRadius: 35,
-              cornerSmoothing: 1,
-            ),
-            topRight: SmoothRadius(
-              cornerRadius: 35,
-              cornerSmoothing: 1,
-            ),
-          ),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TouchableOpacity(
-              onTap: () {
-                context.read<TransitionEffect>().setBlurSigma(0);
-                return Navigator.of(context).pop();
-              },
-              child: Center(
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 1.h,
-                    horizontal: 3.w,
-                  ),
-                  width: 65,
-                  height: 6,
-                  decoration: ShapeDecoration(
-                    color: const Color(0xFFFA6E00),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Space(1.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              mainAxisSize: MainAxisSize.max,
-              // crossAxisAlignment: CrossAxisAlignment,// Set mainAxisSize to min
-              children: [
-                const Text(
-                  'Delivery route',
-                  style: TextStyle(
-                    color: Color(0xFF094B60),
-                    fontSize: 12,
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.w700,
-                    // height: 0.14,
-                    letterSpacing: 0.36,
-                  ),
-                ),
-                Space(isHorizontal: true, 2.w),
-                Icon(
-                  Icons.double_arrow_outlined,
-                  size: 16,
-                  color: Color(0xFFFA6E00),
-                ),
-              ],
-            ),
-            Space(1.h),
-            Row(
-              children: [
-                Space(
-                  1.h,
-                  isHorizontal: true,
-                ),
-                Text(
-                  'New Bulk Order',
-                  style: const TextStyle(
-                    color: Color(0xFF094B60),
-                    fontSize: 25,
-                    fontFamily: 'Jost',
-                    fontWeight: FontWeight.w500,
-                    // height: 0.06,
-                    letterSpacing: 0.54,
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              height: 350,
-              child: Scrollbar(
-                interactive: true,
-                thumbVisibility: true,
-                // Set to true to always show scrollbar
-                controller: _controller,
-                // Pass the controller
-                child: ListView.builder(
-                  controller: _controller,
-                  // Pass the controller to the ListView as well
-                  itemCount: bulkOrderItemsDummyData.length,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        index==0? Space(2.h):SizedBox(),
-                        BulkOrderSectionItem(
-                            itemData:
-                            bulkOrderItemsDummyData[index]),
-                        index==0? Space(2.h):SizedBox(),
-                        index>0?Space(2.h):SizedBox(),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
-            Space(2.h),
-            Center(
-                child: Container(
-                  height: 45,
-                  margin: EdgeInsets.symmetric(horizontal: 1.h),
-                  decoration: ShapeDecoration(
-                    shadows: [
-                      BoxShadow(
-                          offset: Offset(5, 6),
-                          spreadRadius: 0.1,
-                          color: Color.fromRGBO(232, 128, 55, 0.5),
-                          blurRadius: 10)
-                    ],
-                    color: const Color.fromRGBO(250, 110, 0, 1),
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                        cornerRadius: 10,
-                        cornerSmoothing: 1,
-                      ),
-                    ),
-                  ),
-                  child: Center(
-                      child: Text(
-                        'Submit your bid',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w700,
-                          height: 0,
-                          letterSpacing: 0.30,
-                        ),
-                      )),
-                )),
-            Space(1.h)
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _deliveryRoute() {
+  //   final ScrollController _controller = ScrollController();
+  //
+  //   return Container(
+  //     // margin: EdgeInsets.symmetric(horizontal: 2.h),
+  //     padding: EdgeInsets.only(
+  //       top: 2.h,
+  //       bottom: MediaQuery.of(context).viewInsets.bottom,
+  //     ),
+  //     decoration: const ShapeDecoration(
+  //       color: Colors.white,
+  //       shape: SmoothRectangleBorder(
+  //         borderRadius: SmoothBorderRadius.only(
+  //           topLeft: SmoothRadius(
+  //             cornerRadius: 35,
+  //             cornerSmoothing: 1,
+  //           ),
+  //           topRight: SmoothRadius(
+  //             cornerRadius: 35,
+  //             cornerSmoothing: 1,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //     child: Padding(
+  //       padding: const EdgeInsets.symmetric(horizontal: 8.0),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           TouchableOpacity(
+  //             onTap: () {
+  //               context.read<TransitionEffect>().setBlurSigma(0);
+  //               return Navigator.of(context).pop();
+  //             },
+  //             child: Center(
+  //               child: Container(
+  //                 padding: EdgeInsets.symmetric(
+  //                   vertical: 1.h,
+  //                   horizontal: 3.w,
+  //                 ),
+  //                 width: 65,
+  //                 height: 6,
+  //                 decoration: ShapeDecoration(
+  //                   color: const Color(0xFFFA6E00),
+  //                   shape: RoundedRectangleBorder(
+  //                     borderRadius: BorderRadius.circular(6),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //           Space(1.h),
+  //           GestureDetector(
+  //             onTap: () {
+  //               print('Im tapped');
+  //               setState(() {
+  //                 _deliveryRouteClicked = false;
+  //               });
+  //             },
+  //             child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.end,
+  //               mainAxisSize: MainAxisSize.max,
+  //               // crossAxisAlignment: CrossAxisAlignment,// Set mainAxisSize to min
+  //               children: [
+  //                 const Text(
+  //                   'Go Back',
+  //                   style: TextStyle(
+  //                     color: Color(0xFF094B60),
+  //                     fontSize: 12,
+  //                     fontFamily: 'Product Sans',
+  //                     fontWeight: FontWeight.w700,
+  //                     // height: 0.14,
+  //                     letterSpacing: 0.36,
+  //                   ),
+  //                 ),
+  //                 Space(isHorizontal: true, 2.w),
+  //                 Icon(
+  //                   Icons.double_arrow_outlined,
+  //                   size: 16,
+  //                   color: Color(0xFFFA6E00),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           Space(1.h),
+  //           Row(
+  //             children: [
+  //               Space(
+  //                 1.h,
+  //                 isHorizontal: true,
+  //               ),
+  //               Text(
+  //                 'New Bulk Order',
+  //                 style: const TextStyle(
+  //                   color: Color(0xFF094B60),
+  //                   fontSize: 25,
+  //                   fontFamily: 'Jost',
+  //                   fontWeight: FontWeight.w500,
+  //                   // height: 0.06,
+  //                   letterSpacing: 0.54,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           Container(
+  //             height: 350,
+  //             child: Scrollbar(
+  //               interactive: true,
+  //               thumbVisibility: true,
+  //               // Set to true to always show scrollbar
+  //               controller: _controller,
+  //               // Pass the controller
+  //               child: ListView.builder(
+  //                 controller: _controller,
+  //                 // Pass the controller to the ListView as well
+  //                 itemCount: _bulkOrderItems.length,
+  //                 itemBuilder: (context, index) {
+  //                   return Column(
+  //                     children: [
+  //                       index == 0 ? Space(2.h) : SizedBox(),
+  //                       BulkOrderSectionItem(
+  //                           itemDetails:_bulkOrderItems[0] ,),
+  //                       index == 0 ? Space(2.h) : SizedBox(),
+  //                       index > 0 ? Space(2.h) : SizedBox(),
+  //                     ],
+  //                   );
+  //                 },
+  //               ),
+  //             ),
+  //           ),
+  //           Space(2.h),
+  //           Center(
+  //               child: Container(
+  //             height: 45,
+  //             margin: EdgeInsets.symmetric(horizontal: 1.h),
+  //             decoration: ShapeDecoration(
+  //               shadows: [
+  //                 BoxShadow(
+  //                     offset: Offset(5, 6),
+  //                     spreadRadius: 0.1,
+  //                     color: Color.fromRGBO(232, 128, 55, 0.5),
+  //                     blurRadius: 10)
+  //               ],
+  //               color: const Color.fromRGBO(250, 110, 0, 1),
+  //               shape: SmoothRectangleBorder(
+  //                 borderRadius: SmoothBorderRadius(
+  //                   cornerRadius: 10,
+  //                   cornerSmoothing: 1,
+  //                 ),
+  //               ),
+  //             ),
+  //             child: Center(
+  //                 child: Text(
+  //               'Submit your bid',
+  //               style: TextStyle(
+  //                 color: Colors.white,
+  //                 fontSize: 16,
+  //                 fontFamily: 'Product Sans',
+  //                 fontWeight: FontWeight.w700,
+  //                 height: 0,
+  //                 letterSpacing: 0.30,
+  //               ),
+  //             )),
+  //           )),
+  //           Space(1.h)
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
   //endregion
-
   //region This section will build and populate data inside modal buttom sheet for Bulk item view all
-  Widget _bulkOrderSection(){
-
+  Widget _bulkOrderSection() {
     return Container(
-      margin: EdgeInsets.symmetric(vertical:1.h, horizontal: 1.h),
+      margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: 1.h),
       child: Column(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
-        mainAxisAlignment:
-        MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
-              crossAxisAlignment:
-              CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'New Bulk Order',
@@ -296,8 +511,7 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                         color: Color(0xFF094B60),
                         fontSize: 25,
                         fontFamily: 'Jost',
-                        fontWeight:
-                        FontWeight.w500,
+                        fontWeight: FontWeight.w500,
                         // height: 0.06,
                         letterSpacing: 0.54,
                       ),
@@ -307,10 +521,8 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                       style: const TextStyle(
                         color: Color(0xFF094B60),
                         fontSize: 11,
-                        fontFamily:
-                        'Product Sans',
-                        fontWeight:
-                        FontWeight.w200,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w200,
                         // height: 0.06,
                         letterSpacing: 0.54,
                       ),
@@ -321,37 +533,28 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                 TouchableOpacity(
                     onTap: () {
                       context.read<TransitionEffect>().setBlurSigma(5.0);
-                      customButtomSheetSection(context,_bulkOrderSheetItem());
+                      customButtomSheetSection(context, BulkOrderSheet(bulkOrders: _bulkOrderItems,));
                     },
                     child: Padding(
-                      padding:
-                      const EdgeInsets.only(
-                          top: 8.0),
+                      padding: const EdgeInsets.only(top: 8.0),
                       child: Row(
                         children: [
                           const Text(
                             'See all',
                             style: TextStyle(
-                              color: Color(
-                                  0xFF094B60),
+                              color: Color(0xFF094B60),
                               fontSize: 12,
-                              fontFamily:
-                              'Product Sans',
-                              fontWeight:
-                              FontWeight.w700,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w700,
                               // height: 0.14,
                               letterSpacing: 0.36,
                             ),
                           ),
-                          Space(
-                              isHorizontal: true,
-                              2.w),
+                          Space(isHorizontal: true, 2.w),
                           const Icon(
-                            Icons
-                                .arrow_forward_ios,
+                            Icons.arrow_forward_ios,
                             size: 13,
-                            color:
-                            Color(0xFFFA6E00),
+                            color: Color(0xFFFA6E00),
                           ),
                         ],
                       ),
@@ -364,80 +567,52 @@ class _SupplierInventoryState extends State<SupplierInventory> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              BulkOrderItem(
-                itemData: {
-                  'itemName': 'Green Cabbage',
-                  'volume': '120',
-                  'imageUrl':
-                  'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg'
-                },
-              ),
-              BulkOrderItem(
-                itemData: {
-                  'itemName': 'Tomato',
-                  'volume': '120',
-                  'imageUrl':
-                  'https://media.istockphoto.com/id/1450576005/photo/tomato-isolated-tomato-on-white-background-perfect-retouched-tomatoe-side-view-with-clipping.jpg?s=612x612&w=0&k=20&c=lkQa_rpaKpc-ELRRGobYVJH-eMJ0ew9BckCqavkSTA0='
-                },
-              ),
-              BulkOrderItem(
-                itemData: {
-                  'itemName': 'Red Cabbage',
-                  'volume': '120',
-                  'imageUrl':
-                  'https://media.istockphoto.com/id/175433477/photo/red-cabbage-leaves.jpg?s=612x612&w=0&k=20&c=CVC-6nTaKtQ0Gw5l8Nk5aGb8oA47Ce6eba2qSYYauq0='
-                },
-              ),
-              BulkOrderItem(
-                itemData: {
-                  'itemName': 'Potato',
-                  'volume': '120',
-                  'imageUrl':
-                  'https://dukaan.b-cdn.net/700x700/webp/upload_file_service/asg/7e813d1d-0eac-456f-ba82-4a6b81efa130/Potato.png'
-                },
-              ),
+              for (int index = 0; index < _bulkOrderItems.length; index++)
+                BulkOrderItem(
+                  itemDetails: _bulkOrderItems[index],
+                ),
             ],
           ),
           Space(2.h),
           Center(
-              child:Container(
-                height: 45,
-                margin: EdgeInsets.symmetric(horizontal: 1.h),
-                decoration: ShapeDecoration(
-                  shadows: [
-                    BoxShadow(
-                        offset: Offset(5, 6),
-                        spreadRadius: 0.1,
-                        color: Color.fromRGBO(232, 128, 55, 0.5),
-                        blurRadius: 10)
-                  ],
-                  color:const Color.fromRGBO(250, 110, 0, 1),
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius(
-                      cornerRadius: 10,
-                      cornerSmoothing: 1,
-                    ),
-                  ),
+              child: Container(
+            height: 45,
+            margin: EdgeInsets.symmetric(horizontal: 1.h),
+            decoration: ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                    offset: Offset(5, 6),
+                    spreadRadius: 0.1,
+                    color: Color.fromRGBO(232, 128, 55, 0.5),
+                    blurRadius: 10)
+              ],
+              color: const Color.fromRGBO(250, 110, 0, 1),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 10,
+                  cornerSmoothing: 1,
                 ),
-                child: Center(
-                    child: Text(
-                      'Place your bid',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: 'Product Sans',
-                        fontWeight: FontWeight.w700,
-                        height: 0,
-                        letterSpacing: 0.30,
-                      ),
-                    )),
-              )
-          ),
+              ),
+            ),
+            child: Center(
+                child: Text(
+              'Place your bid',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w700,
+                height: 0,
+                letterSpacing: 0.30,
+              ),
+            )),
+          )),
           Space(1.h)
         ],
       ),
     );
   }
+
   //endregion
 
   void _setWebviewController(String url) {
@@ -488,7 +663,7 @@ class _SupplierInventoryState extends State<SupplierInventory> {
     lowStockItems = [];
 
     final data =
-    await Provider.of<Auth>(context, listen: false).getInventoryData();
+        await Provider.of<Auth>(context, listen: false).getInventoryData();
 
     lowStockItems = findLowStockItems(data['inventory_data']);
 
@@ -503,13 +678,10 @@ class _SupplierInventoryState extends State<SupplierInventory> {
   }
 
   Future<void> _getStocksYouMayNeed() async {
-    stocksYouMayNeed = [
-
-
-    ];
+    stocksYouMayNeed = [];
 
     final data =
-    await Provider.of<Auth>(context, listen: false).getInventoryData();
+        await Provider.of<Auth>(context, listen: false).getInventoryData();
 
     stocksYouMayNeed = data['inventory_data'];
     _somethingmissing = false;
@@ -557,7 +729,7 @@ class _SupplierInventoryState extends State<SupplierInventory> {
     nearExpiryItems = [];
 
     dynamic data =
-    await Provider.of<Auth>(context, listen: false).getInventoryData();
+        await Provider.of<Auth>(context, listen: false).getInventoryData();
 
     final int thresholdDays = 3;
     final currentDate = DateTime.now();
@@ -648,9 +820,6 @@ class _SupplierInventoryState extends State<SupplierInventory> {
     return daysUntilRunOut + 1;
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     List<dynamic> dataList = [];
@@ -660,7 +829,8 @@ class _SupplierInventoryState extends State<SupplierInventory> {
       children: [
         whiteCardSection(_bulkOrderSection()),
         Space(2.h),
-        Center(child: Text(
+        Center(
+            child: Text(
           'Manage your inventory',
           style: const TextStyle(
             color: Color(0xFF094B60),
@@ -690,35 +860,35 @@ class _SupplierInventoryState extends State<SupplierInventory> {
             ),
             _isUpdateLoading
                 ? SizedBox(
-              width: 30.w,
-              height: 5.h,
-              child: Center(child: CircularProgressIndicator()),
-            )
+                    width: 30.w,
+                    height: 5.h,
+                    child: Center(child: CircularProgressIndicator()),
+                  )
                 : Supplier_Make_Update_ListWidget(
-              txt: 'Update List',
-              onTap: () async {
-                AppWideLoadingBanner().loadingBanner(context);
+                    txt: 'Update List',
+                    onTap: () async {
+                      AppWideLoadingBanner().loadingBanner(context);
 
-                final data =
-                await Provider.of<Auth>(context, listen: false)
-                    .getInventoryData();
-                Navigator.of(context).pop();
-                setState(() {
-                  _isUpdateLoading = false;
-                });
+                      final data =
+                          await Provider.of<Auth>(context, listen: false)
+                              .getInventoryData();
+                      Navigator.of(context).pop();
+                      setState(() {
+                        _isUpdateLoading = false;
+                      });
 
-                if ((data['inventory_data'] as List<dynamic>).length !=
-                    0) {
-                  List<dynamic> _dataList = data['inventory_data'];
+                      if ((data['inventory_data'] as List<dynamic>).length !=
+                          0) {
+                        List<dynamic> _dataList = data['inventory_data'];
 
-                  _dataList
-                      .sort((a, b) => a["itemId"].compareTo(b["itemId"]));
+                        _dataList
+                            .sort((a, b) => a["itemId"].compareTo(b["itemId"]));
 
-                  InventoryBottomSheets()
-                      .UpdateListBottomSheet(context, _dataList);
-                }
-              },
-            ),
+                        InventoryBottomSheets()
+                            .UpdateListBottomSheet(context, _dataList);
+                      }
+                    },
+                  ),
           ],
         ),
         Space(3.h),
@@ -757,11 +927,11 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                 child: Row(
                   children: [
                     for (int index = 0;
-                    index <
-                        (stocksYouMayNeed.length > 5
-                            ? 5
-                            : stocksYouMayNeed.length);
-                    index++)
+                        index <
+                            (stocksYouMayNeed.length > 5
+                                ? 5
+                                : stocksYouMayNeed.length);
+                        index++)
                       StocksMayBeNeedWidget(
                         txt: stocksYouMayNeed[index]['itemName'],
                         url: stocksYouMayNeed[index]['image_url'] ?? '',
@@ -811,22 +981,22 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                     child: Column(
                       children: List.generate(
                           lowStockItems.length > 4 ? 4 : lowStockItems.length,
-                              (index) {
-                            int runway = lowStockItems[index]['runway'];
-                            return LowStocksWidget(
-                              // url: lowStockItems[index]['image_url'],
-                              amountLeft:
+                          (index) {
+                        int runway = lowStockItems[index]['runway'];
+                        return LowStocksWidget(
+                          // url: lowStockItems[index]['image_url'],
+                          amountLeft:
                               '${lowStockItems[index]['volumeLeft']}  ${lowStockItems[index]['unitType']} left',
-                              item: lowStockItems[index]['itemName'],
-                              percentage:
+                          item: lowStockItems[index]['itemName'],
+                          percentage:
                               double.parse(lowStockItems[index]['volumeLeft']) /
                                   double.parse(
                                       lowStockItems[index]['volumePurchased']),
-                              text:
+                          text:
                               runway < 0 ? 'Expired' : '${runway} days runway',
-                              url: lowStockItems[index]['image_url'] ?? '',
-                            );
-                          }),
+                          url: lowStockItems[index]['image_url'] ?? '',
+                        );
+                      }),
                     ),
                   );
                 }
@@ -874,11 +1044,11 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                     child: Row(
                       children: [
                         for (int index = 0;
-                        index <
-                            (nearExpiryItems.length > 5
-                                ? 5
-                                : nearExpiryItems.length);
-                        index++)
+                            index <
+                                (nearExpiryItems.length > 5
+                                    ? 5
+                                    : nearExpiryItems.length);
+                            index++)
                           StocksNearExpiryWidget(
                             name: nearExpiryItems[index]['itemName'],
                             volume: nearExpiryItems[index]['volumeLeft'] +
@@ -957,9 +1127,9 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.only(
                         topLeft:
-                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
                         topRight:
-                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
                   ),
                 ),
                 height: MediaQuery.of(context).size.height * 0.6,
@@ -1003,10 +1173,10 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                           Container(
                             width: double.infinity,
                             child: ListView.builder(
-                              physics:
-                              const NeverScrollableScrollPhysics(), // Disable scrolling
-                              shrinkWrap:
-                              true, // Allow the GridView to shrink-wrap its content
+                              physics: const NeverScrollableScrollPhysics(),
+                              // Disable scrolling
+                              shrinkWrap: true,
+                              // Allow the GridView to shrink-wrap its content
                               addAutomaticKeepAlives: true,
 
                               padding: EdgeInsets.symmetric(
@@ -1018,12 +1188,12 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                                 return LowStocksWidget(
                                     isSheet: true,
                                     amountLeft:
-                                    '${allStocks[index]['volumeLeft']}  ${allStocks[index]['unitType']} left',
+                                        '${allStocks[index]['volumeLeft']}  ${allStocks[index]['unitType']} left',
                                     item: allStocks[index]['itemName'],
                                     percentage: double.parse(
-                                        allStocks[index]['volumeLeft']) /
+                                            allStocks[index]['volumeLeft']) /
                                         double.parse(allStocks[index]
-                                        ['volumePurchased']),
+                                            ['volumePurchased']),
                                     text: runway < 0
                                         ? 'Expired'
                                         : '${runway} days runway',
@@ -1060,9 +1230,9 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.only(
                         topLeft:
-                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
                         topRight:
-                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
                   ),
                 ),
                 height: MediaQuery.of(context).size.height * 0.6,
@@ -1102,8 +1272,8 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                       Column(
                         children: [
                           for (int index = 0;
-                          index < stocksYouMayNeed.length;
-                          index++)
+                              index < stocksYouMayNeed.length;
+                              index++)
                             Container(
                               margin: EdgeInsets.symmetric(
                                 vertical: 15,
@@ -1153,13 +1323,13 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                                     height: 30,
                                     decoration: GlobalVariables()
                                         .ContainerDecoration(
-                                        offset: Offset(0, 4),
-                                        blurRadius: 4,
-                                        shadowColor:
-                                        Color.fromRGBO(0, 0, 0, 0.25),
-                                        boxColor:
-                                        Color.fromRGBO(84, 166, 193, 1),
-                                        cornerRadius: 10),
+                                            offset: Offset(0, 4),
+                                            blurRadius: 4,
+                                            shadowColor:
+                                                Color.fromRGBO(0, 0, 0, 0.25),
+                                            boxColor:
+                                                Color.fromRGBO(84, 166, 193, 1),
+                                            cornerRadius: 10),
                                     child: Center(
                                       child: Text(
                                         'Add',
@@ -1188,5 +1358,3 @@ class _SupplierInventoryState extends State<SupplierInventory> {
     );
   }
 }
-
-

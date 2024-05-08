@@ -42,15 +42,22 @@ class _SocialStatusContentState extends State<SocialStatusContent>
   @override
   void initState() {
     // print('counter: $counter ');
+    getUserType();
     // TODO: implement initState
     super.initState();
   }
 
+  void getUserType(){
+    _userType=Provider.of<Auth>(context, listen: false).userType;
+    print('User type is '+_userType.toString());
+  }
+
   PageController _pageController = PageController(initialPage: 0);
   int _currentPageIndex = 0;
+  String _userType='';
   // bool _isLoading = false;
 
-  List<String> _dailyList = ['Daily', 'Weekly', "monthly"];
+  List<String> _dailyList = ['Daily', 'Weekly', "Monthly"];
   int _dailyIndex = 0;
   List<double> barValue = [50, 30, 90, 60, 80, 25];
   List<Color> barColors = [
@@ -161,6 +168,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                           heading: 'Add cover image',
                           text:
                               'Give a nice visual to your store when a customer visits',
+                          userType: _userType,
                         ),
                       ),
                       TouchableOpacity(
@@ -179,6 +187,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                             heading: 'Add Logo',
                             text:
                                 'Give personalised vibes when customer visits your store',
+                            userType: _userType,
                           ),
                         ),
                       ),
@@ -1309,10 +1318,12 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
 class AddSomething_EnhaceWidget extends StatelessWidget {
   String heading;
   String text;
+  String userType;
   AddSomething_EnhaceWidget({
     super.key,
     required this.heading,
     required this.text,
+    required this.userType
   });
 
   @override
@@ -1328,7 +1339,7 @@ class AddSomething_EnhaceWidget extends StatelessWidget {
             blurRadius: 20,
           )
         ],
-        color: Color.fromRGBO(207, 245, 245, 1),
+        color:  Color.fromRGBO(77, 191, 74, 1),
         shape: SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius.all(
               SmoothRadius(cornerRadius: 25, cornerSmoothing: 1)),
