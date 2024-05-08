@@ -2,6 +2,7 @@ class SupplierBulkOrder {
   final String nameId;
   final int quantity;
   final String unitType;
+  final String imageUrl;
   List<String> userIDs;
 
   SupplierBulkOrder({
@@ -9,6 +10,7 @@ class SupplierBulkOrder {
     required this.quantity,
     required this.unitType,
     required this.userIDs,
+    required this.imageUrl
   });
 
   factory SupplierBulkOrder.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class SupplierBulkOrder {
       quantity: json['total_qty'] as int,
       unitType: json['unit_type'] as String,
       userIDs: List<String>.from(json['user_ids'] as List<dynamic>),
+      imageUrl: json['image_url']
     );
   }
 

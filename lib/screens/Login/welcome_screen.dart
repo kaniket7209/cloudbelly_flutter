@@ -50,6 +50,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         print('User type- ' + user_type);
 
         if (user_type == 'Supplier')
+          // Navigator.of(context).pushReplacementNamed(SupplierTabs.routeName);
           Navigator.of(context).pushReplacementNamed(SupplierTabs.routeName);
         else {
           TOastNotification().showSuccesToast(context, msg);

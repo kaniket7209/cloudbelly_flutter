@@ -656,6 +656,42 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "permission_handler",
+      "rootUri": "file:///C:/Users/USER/AppData/Local/Pub/Cache/hosted/pub.dev/permission_handler-11.3.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.15"
+    },
+    {
+      "name": "permission_handler_android",
+      "rootUri": "file:///C:/Users/USER/AppData/Local/Pub/Cache/hosted/pub.dev/permission_handler_android-12.0.6",
+      "packageUri": "lib/",
+      "languageVersion": "2.15"
+    },
+    {
+      "name": "permission_handler_apple",
+      "rootUri": "file:///C:/Users/USER/AppData/Local/Pub/Cache/hosted/pub.dev/permission_handler_apple-9.4.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.15"
+    },
+    {
+      "name": "permission_handler_html",
+      "rootUri": "file:///C:/Users/USER/AppData/Local/Pub/Cache/hosted/pub.dev/permission_handler_html-0.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "permission_handler_platform_interface",
+      "rootUri": "file:///C:/Users/USER/AppData/Local/Pub/Cache/hosted/pub.dev/permission_handler_platform_interface-4.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "permission_handler_windows",
+      "rootUri": "file:///C:/Users/USER/AppData/Local/Pub/Cache/hosted/pub.dev/permission_handler_windows-0.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "petitparser",
       "rootUri": "file:///C:/Users/USER/AppData/Local/Pub/Cache/hosted/pub.dev/petitparser-6.0.2",
       "packageUri": "lib/",
@@ -998,7 +1034,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-05-06T06:05:52.798304Z",
+  "generated": "2024-05-08T06:35:21.735514Z",
   "generator": "pub",
   "generatorVersion": "3.3.2"
 }

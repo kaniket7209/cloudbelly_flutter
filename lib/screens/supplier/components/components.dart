@@ -159,6 +159,7 @@ class ImageWidgetInventory extends StatelessWidget {
   double height;
   String url;
   double radius;
+
   ImageWidgetInventory({
     super.key,
     required this.height,
@@ -168,6 +169,7 @@ class ImageWidgetInventory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     String newUrl = '';
     if (url != '') {
       String originalLink = url;
@@ -175,6 +177,7 @@ class ImageWidgetInventory extends StatelessWidget {
           originalLink.indexOf('/d/') + 3, originalLink.indexOf('/view'));
       newUrl = 'https://drive.google.com/uc?export=view&id=$fileId';
     }
+    print(newUrl);
     return Container(
       height: height,
       width: height,
@@ -196,34 +199,35 @@ class ImageWidgetInventory extends StatelessWidget {
       ),
       child: url != ''
           ? ClipSmoothRect(
-        radius: SmoothBorderRadius(
-          cornerRadius: radius,
-          cornerSmoothing: 1,
-        ),
-        child: Image(
-          fit: BoxFit.cover,
-          image: NetworkImage(newUrl),
-          loadingBuilder: (BuildContext context, Widget child,
-              ImageChunkEvent? loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
-                    : null,
+              radius: SmoothBorderRadius(
+                cornerRadius: radius,
+                cornerSmoothing: 1,
               ),
-            );
-          },
-          errorBuilder: (BuildContext context, Object error,
-              StackTrace? stackTrace) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Error loading image'),
-            );
-          },
-        ),
-      )
+              child: Image(
+                fit: BoxFit.cover,
+                image: NetworkImage(newUrl),
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  );
+                },
+                errorBuilder: (BuildContext context, Object error,
+                    StackTrace? stackTrace) {
+                  print(error.toString());
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Error loading image'),
+                  );
+                },
+              ),
+            )
           : null,
     );
   }
@@ -233,6 +237,7 @@ class StocksNearExpiryWidget extends StatelessWidget {
   String name;
   String volume;
   String url;
+
   StocksNearExpiryWidget({
     super.key,
     required this.name,
@@ -263,7 +268,7 @@ class StocksNearExpiryWidget extends StatelessWidget {
         ),
       ),
       child:
-      Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         const Space(3),
         ImageWidgetInventory(height: 75, url: url, radius: 15),
         const Space(5),
@@ -302,6 +307,7 @@ class LowStocksWidget extends StatelessWidget {
   String item;
   bool isSheet;
   String url;
+
   // String url;
   LowStocksWidget({
     super.key,
@@ -320,10 +326,10 @@ class LowStocksWidget extends StatelessWidget {
     Color color = percentage < 0.1
         ? const Color.fromRGBO(245, 75, 75, 1)
         : percentage < 0.2
-        ? const Color.fromRGBO(250, 110, 0, 1)
-        : percentage < 0.3
-        ? const Color.fromARGB(255, 237, 172, 123)
-        : const Color(0xFF8EE239);
+            ? const Color.fromRGBO(250, 110, 0, 1)
+            : percentage < 0.3
+                ? const Color.fromARGB(255, 237, 172, 123)
+                : const Color(0xFF8EE239);
 
     return Container(
       margin: EdgeInsets.only(bottom: 2.h),
@@ -408,8 +414,8 @@ class LowStocksWidget extends StatelessWidget {
                 width: percentage < 0.1
                     ? widhth * percentage + 7.w
                     : percentage < 0.2
-                    ? widhth * percentage + 5.w
-                    : widhth * percentage,
+                        ? widhth * percentage + 5.w
+                        : widhth * percentage,
               ),
               Positioned(
                   left: 10,
@@ -450,6 +456,7 @@ class LowStocksWidget extends StatelessWidget {
 class StocksMayBeNeedWidget extends StatelessWidget {
   String url;
   String txt;
+
   StocksMayBeNeedWidget({super.key, this.txt = 'chicken', this.url = ''});
 
   @override
@@ -486,34 +493,34 @@ class StocksMayBeNeedWidget extends StatelessWidget {
             ),
             child: url != ''
                 ? ClipSmoothRect(
-              radius: SmoothBorderRadius(
-                cornerRadius: 10,
-                cornerSmoothing: 1,
-              ),
-              child: Image(
-                fit: BoxFit.cover,
-                image: NetworkImage(newUrl),
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent? loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                          : null,
+                    radius: SmoothBorderRadius(
+                      cornerRadius: 10,
+                      cornerSmoothing: 1,
                     ),
-                  );
-                },
-                errorBuilder: (BuildContext context, Object error,
-                    StackTrace? stackTrace) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Error loading image'),
-                  );
-                },
-              ),
-            )
+                    child: Image(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(newUrl),
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
+                      errorBuilder: (BuildContext context, Object error,
+                          StackTrace? stackTrace) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('Error loading image'),
+                        );
+                      },
+                    ),
+                  )
                 : null,
           ),
           Space(1.h),
@@ -568,6 +575,7 @@ class SeeAllWidget extends StatelessWidget {
 class Supplier_Make_Update_ListWidget extends StatelessWidget {
   String txt;
   final Function? onTap;
+
   Supplier_Make_Update_ListWidget({
     super.key,
     required this.txt,
@@ -617,11 +625,11 @@ class Supplier_Make_Update_ListWidget extends StatelessWidget {
 
 //endregion
 
-
 //region Supplier profile banner
 class SupplierBanner extends StatefulWidget {
   // const SupplierBanner({super.key});
   double height;
+
   SupplierBanner({super.key, this.height = 300});
 
   @override
@@ -639,53 +647,51 @@ class _SupplierBannerState extends State<SupplierBanner>
         ),
         child: Provider.of<Auth>(context, listen: true).cover_image == ''
             ? Container(
-            width: 100.w,
-            height: widget.height == 300 ? 30.h : widget.height,
-            decoration: ShapeDecoration(
-              color:Color.fromRGBO(163, 220, 118, 1),
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius.only(
-                    bottomLeft:
-                    SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
-                    bottomRight:
-                    SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
-              ),
-            ))
+                width: 100.w,
+                height: widget.height == 300 ? 30.h : widget.height,
+                decoration: ShapeDecoration(
+                  color: Color.fromRGBO(163, 220, 118, 1),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                        bottomLeft:
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                        bottomRight:
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
+                  ),
+                ))
             : Container(
-          width: 100.w,
-          height: widget.height == 300 ? 30.h : widget.height,
-          decoration: ShapeDecoration(
-            color: Color(0xFFB1D9D8),
-            shape: SmoothRectangleBorder(
-              borderRadius: SmoothBorderRadius.only(
-                  bottomLeft:
-                  SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
-                  bottomRight:
-                  SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
-            ),
-          ),
-          child: ClipSmoothRect(
-            radius: SmoothBorderRadius.only(
-                bottomLeft:
-                SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
-                bottomRight:
-                SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
-            child: Image.network(
-              Provider.of<Auth>(context, listen: true).cover_image,
-              fit: BoxFit.cover,
-              loadingBuilder: GlobalVariables().loadingBuilderForImage,
-              errorBuilder: GlobalVariables().ErrorBuilderForImage,
-            ),
-          ),
-        ),
+                width: 100.w,
+                height: widget.height == 300 ? 30.h : widget.height,
+                decoration: ShapeDecoration(
+                  color: Color(0xFFB1D9D8),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                        bottomLeft:
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                        bottomRight:
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
+                  ),
+                ),
+                child: ClipSmoothRect(
+                  radius: SmoothBorderRadius.only(
+                      bottomLeft:
+                          SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                      bottomRight:
+                          SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
+                  child: Image.network(
+                    Provider.of<Auth>(context, listen: true).cover_image,
+                    fit: BoxFit.cover,
+                    loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                    errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                  ),
+                ),
+              ),
       ),
     );
   }
 }
 
 //endregion
-
-
 
 //region Bulk Order Item widget
 class BulkOrderItem extends StatelessWidget {
@@ -699,29 +705,26 @@ class BulkOrderItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-            padding: EdgeInsets.all(1),
-            decoration: ShapeDecoration(
-              shadows: const [
-                BoxShadow(
-                  offset: Offset(0, 8),
-                  color: Color.fromRGBO(162, 210, 167, 0.6),
-                  // rgba
-                  blurRadius: 25,
-                )
-              ],
-              color: Colors.white,
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius(
-                  cornerRadius: 15,
-                  cornerSmoothing: 1,
-                ),
+          padding: EdgeInsets.all(1),
+          decoration: ShapeDecoration(
+            shadows: const [
+              BoxShadow(
+                offset: Offset(0, 8),
+                color: Color.fromRGBO(162, 210, 167, 0.6),
+                // rgba
+                blurRadius: 25,
+              )
+            ],
+            color: Colors.white,
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 15,
+                cornerSmoothing: 1,
               ),
             ),
-            child: Image.network(
-              'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg',
-              height: 40,
-              width: 40,
-            )),
+          ),
+          child: ImageWidgetInventory(height: 40,radius: 10,url: itemDetails.imageUrl,),
+        ),
         Space(1.h),
         Text(
           itemDetails.nameId.replaceAll(' ', '\n'),
@@ -751,5 +754,3 @@ class BulkOrderItem extends StatelessWidget {
   }
 }
 //
-
-

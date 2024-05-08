@@ -111,6 +111,7 @@ class MyApp extends StatelessWidget {
               LoginScreen.routeName: (context) => LoginScreen(),
               '/map': (context) => MapScreen(),
               WelcomeScreen.routeName: (context) => WelcomeScreen(),
+
               Tabs.routeName: (context) => Tabs(),
               SupplierTabs.routeName:(context)=>SupplierTabs(),
               PostsScreen.routeName: (context) => PostsScreen(),

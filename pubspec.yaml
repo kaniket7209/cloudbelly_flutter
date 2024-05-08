@@ -65,6 +65,7 @@ dependencies:
   loading_indicator: ^3.1.1
   unique_simple_bar_chart: ^0.0.4
   fine_bar_chart: ^0.0.3
+  permission_handler: ^11.3.1
   # multiple_images_picker: ^1.0.1
 
 dev_dependencies:
