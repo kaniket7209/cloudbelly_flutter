@@ -43,18 +43,17 @@ Future<dynamic> customButtomSheetSection(
     isScrollControlled: true,
     isDismissible: false,
     builder: (BuildContext context) {
+      // Calculate the height of the child widget
+      double childWidgetHeight = MediaQuery.of(context).size.height;
       return WillPopScope(
         onWillPop: () async {
           context.read<TransitionEffect>().setBlurSigma(0);
           return true;
         },
         child: DraggableScrollableSheet(
-          initialChildSize: 0.55,
-          // Adjust as needed
           minChildSize: 0.3,
           // Adjust as needed
-          maxChildSize: 0.55,
-          // Adjust as needed
+          maxChildSize: 0.75,
           expand: false,
           builder: (BuildContext context, ScrollController scrollController) {
             return StatefulBuilder(

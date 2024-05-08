@@ -3,6 +3,7 @@ import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/supplier_bulk_order.dart';
 import 'package:cloudbelly_app/screens/supplier/components/constants.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -27,10 +28,17 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:async';
 
-class BulkOrderSectionItem extends StatelessWidget {
+class BulkOrderSectionItem extends StatefulWidget {
   final SupplierBulkOrder itemDetails;
 
   const BulkOrderSectionItem({super.key, required this.itemDetails});
+
+  @override
+  State<BulkOrderSectionItem> createState() => _BulkOrderSectionItemState();
+}
+
+class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
+  late bool _setPrice = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +70,10 @@ class BulkOrderSectionItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                child: Image.network(
-                  'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg',
+                child: ImageWidgetInventory(
                   height: 40,
-                  width: 40,
+                  radius: 10,
+                  url: widget.itemDetails.imageUrl,
                 )),
             Space(
               2.h,
@@ -75,7 +83,7 @@ class BulkOrderSectionItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  itemDetails.nameId,
+                  widget.itemDetails.nameId,
                   style: const TextStyle(
                     color: Color(0xFF094B60),
                     fontSize: 12,
@@ -86,7 +94,7 @@ class BulkOrderSectionItem extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${itemDetails.quantity} ${itemDetails.unitType}',
+                  '${widget.itemDetails.quantity} ${widget.itemDetails.unitType}',
                   style: const TextStyle(
                     color: const Color.fromRGBO(250, 110, 0, 1),
                     // background: rgba(250, 110, 0, 1);
@@ -101,55 +109,126 @@ class BulkOrderSectionItem extends StatelessWidget {
             )
           ],
         ),
-        Row(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              decoration: ShapeDecoration(
-                shadows: const [
-                  BoxShadow(
-                    offset: Offset(0, 8),
-                    color: Color.fromRGBO(162, 210, 167, 0.6),
-                    // rgba
-                    blurRadius: 25,
-                  )
-                ],
-                color: Colors.white,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 5,
-                    cornerSmoothing: 1,
-                  ),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    'Add Price',
-                    style: const TextStyle(
-                      color: Color(0xFF094B60),
-                      fontSize: 12,
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.w400,
-                      // height: 0.06,
-                      letterSpacing: 0.54,
+        _setPrice
+            ? Container(
+                height: 40,
+                width: 100,
+                padding: EdgeInsets.only(bottom: 2),
+                decoration: ShapeDecoration(
+                  shadows: const [
+                    BoxShadow(
+                      offset: Offset(0, 8),
+                      color: Color.fromRGBO(162, 210, 167, 0.6),
+                      // rgba
+                      blurRadius: 25,
+                    )
+                  ],
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 5,
+                      cornerSmoothing: 1,
                     ),
                   ),
-                  Space(1.h),
-                  const Icon(
-                    Icons.add,
-                    size: 16,
-                    color: Color(0xFFFA6E00),
-                  ),
-                ],
+                ),
+                child: TextFormField(
+                    textAlignVertical: TextAlignVertical.center,
+                    // controller: toDate,
+                    // keyboardType: TextInputType.none,
+                    // onTap: () {
+                    //   selectDate(
+                    //       context, fromDate, toDate, true); //set Is TO date as true
+                    // },
+                    // onChanged: (var val){
+                    //    toDate.text=toDate.text;
+                    // },
+                    // enabled: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter password';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        // Change the border when the text field is focused
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                            color: Colors.green), // Set the desired color
+                      ),
+                      contentPadding: EdgeInsets.all(20),
+                      prefixIcon: Icon(
+                        Icons.currency_rupee,
+                        size: 18,
+                      ),
+                      prefixIconColor: Colors.green,
+                      // enabledBorder: OutlineInputBorder(
+                      //   borderRadius: BorderRadius.circular(10),
+                      //   borderSide: BorderSide(color: Colors.green),
+                      // ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.green),
+                      ),
+                      // hintText: 'Sagar',
+                    )))
+            : GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _setPrice = true;
+                  });
+                },
+                child: Row(
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      decoration: ShapeDecoration(
+                        shadows: const [
+                          BoxShadow(
+                            offset: Offset(0, 8),
+                            color: Color.fromRGBO(162, 210, 167, 0.6),
+                            // rgba
+                            blurRadius: 25,
+                          )
+                        ],
+                        color: Colors.white,
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 5,
+                            cornerSmoothing: 1,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Add Price',
+                            style: const TextStyle(
+                              color: Color(0xFF094B60),
+                              fontSize: 12,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w400,
+                              // height: 0.06,
+                              letterSpacing: 0.54,
+                            ),
+                          ),
+                          Space(1.h),
+                          const Icon(
+                            Icons.add,
+                            size: 16,
+                            color: Color(0xFFFA6E00),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Space(
+                      2.h,
+                      isHorizontal: true,
+                    )
+                  ],
+                ),
               ),
-            ),
-            Space(
-              2.h,
-              isHorizontal: true,
-            )
-          ],
-        ),
       ],
     );
   }
@@ -169,7 +248,6 @@ class ImageWidgetInventory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     String newUrl = '';
     if (url != '') {
       String originalLink = url;
@@ -723,7 +801,11 @@ class BulkOrderItem extends StatelessWidget {
               ),
             ),
           ),
-          child: ImageWidgetInventory(height: 40,radius: 10,url: itemDetails.imageUrl,),
+          child: ImageWidgetInventory(
+            height: 40,
+            radius: 10,
+            url: itemDetails.imageUrl,
+          ),
         ),
         Space(1.h),
         Text(

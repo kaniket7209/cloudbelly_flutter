@@ -1,6 +1,7 @@
 class SupplierBulkOrder {
   final String nameId;
   final int quantity;
+  late int price;
   final String unitType;
   final String imageUrl;
   List<String> userIDs;
@@ -10,7 +11,8 @@ class SupplierBulkOrder {
     required this.quantity,
     required this.unitType,
     required this.userIDs,
-    required this.imageUrl
+    required this.imageUrl,
+
   });
 
   factory SupplierBulkOrder.fromJson(Map<String, dynamic> json) {

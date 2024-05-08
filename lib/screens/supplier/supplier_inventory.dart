@@ -24,6 +24,7 @@ import '../Tabs/Dashboard/inventory_bottom_sheet.dart';
 import '../Tabs/Dashboard/make_list_inventory.dart';
 import 'components/components.dart';
 import 'components/constants.dart';
+import 'components/functions.dart';
 
 class SupplierInventory extends StatefulWidget {
   const SupplierInventory({
@@ -173,7 +174,7 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                       ),
                     ),
                     Text(
-                      'To deliver by -24th May, 2024 by 12PM',
+                      'To deliver by -${formatDate(DateTime.now().add(Duration(days: 2)).toString())}, by 2PM',
                       style: const TextStyle(
                         color: Color(0xFF094B60),
                         fontSize: 11,
@@ -230,39 +231,46 @@ class _SupplierInventoryState extends State<SupplierInventory> {
             ],
           ),
           Space(2.h),
-          Center(
-              child: Container(
-            height: 45,
-            margin: EdgeInsets.symmetric(horizontal: 1.h),
-            decoration: ShapeDecoration(
-              shadows: [
-                BoxShadow(
-                    offset: Offset(5, 6),
-                    spreadRadius: 0.1,
-                    color: Color.fromRGBO(232, 128, 55, 0.5),
-                    blurRadius: 10)
-              ],
-              color: const Color.fromRGBO(250, 110, 0, 1),
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius(
-                  cornerRadius: 10,
-                  cornerSmoothing: 1,
+          TouchableOpacity(
+            onTap: (){
+              context.read<TransitionEffect>().setBlurSigma(5.0);
+              customButtomSheetSection(context, BulkOrderSheet(bulkOrders: _bulkOrderItems,));
+
+            },
+            child: Center(
+                child: Container(
+              height: 45,
+              margin: EdgeInsets.symmetric(horizontal: 1.h),
+              decoration: ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                      offset: Offset(5, 6),
+                      spreadRadius: 0.1,
+                      color: Color.fromRGBO(232, 128, 55, 0.5),
+                      blurRadius: 10)
+                ],
+                color: const Color.fromRGBO(250, 110, 0, 1),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 10,
+                    cornerSmoothing: 1,
+                  ),
                 ),
               ),
-            ),
-            child: Center(
-                child: Text(
-              'Place your bid',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontFamily: 'Product Sans',
-                fontWeight: FontWeight.w700,
-                height: 0,
-                letterSpacing: 0.30,
-              ),
+              child: Center(
+                  child: Text(
+                'Place your bid',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontFamily: 'Product Sans',
+                  fontWeight: FontWeight.w700,
+                  height: 0,
+                  letterSpacing: 0.30,
+                ),
+              )),
             )),
-          )),
+          ),
           Space(1.h)
         ],
       ),
