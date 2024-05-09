@@ -38,6 +38,12 @@ class BulkOrderSheet extends StatefulWidget {
 
 class _BulkOrderSheetState extends State<BulkOrderSheet> {
   List<UserDetail> users = [];
+
+  late Map<String, dynamic> userAddressDetails={
+    'businessName':'',
+    'addressDetails':''
+  };
+
   late int activeFlag = 0;
   CameraPosition? cameraPosition;
   Position? _currentPosition;
@@ -142,6 +148,15 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
         );
 
         Marker marker = Marker(
+          onTap: (){
+            print('Im tapped');
+            userAddressDetails['businessName']=users[i].hNo;
+            print(userAddressDetails['businessName']);
+            setState(() {
+
+            });
+
+          },
           icon: await getCustomMarker(users[i].image),
           anchor: Offset(0.5, 0.5),
           markerId: MarkerId(users[i].userID),
@@ -210,6 +225,30 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   void dispose() {
     timer?.cancel();
     super.dispose();
+  }
+
+  Widget googleMap(snapshot){
+    return GoogleMap(
+      myLocationButtonEnabled: true,
+      zoomControlsEnabled: true,
+      myLocationEnabled: true,
+      scrollGesturesEnabled: true,
+      markers: snapshot.data ?? {},
+      onMapCreated: (GoogleMapController controller) {
+        _mapController = controller;
+      },
+      initialCameraPosition: CameraPosition(
+        target: LatLng(
+          double.parse(
+              users.isNotEmpty ? users[1].lat : '0'),
+          double.parse(
+              users.isNotEmpty ? users[1].long : '0'),
+        ),
+        zoom: 12,
+        bearing: 10,
+        tilt: 30,
+      ),
+    );
   }
 
   @override
@@ -432,10 +471,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                     future: setMapMarkers(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                            child: CircularProgressIndicator(
-                          color: Color.fromRGBO(10, 76, 97, 1),
-                        ));
+                        return googleMap(snapshot) ;
                       } else if (snapshot.hasError) {
                         // return Center(child: Text('Error loading markers'));
                         // Log the error to your console or debug log
@@ -449,27 +485,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                           child: Text(''),
                         );
                       } else {
-                        return GoogleMap(
-                          myLocationButtonEnabled: true,
-                          zoomControlsEnabled: true,
-                          myLocationEnabled: true,
-                          scrollGesturesEnabled: true,
-                          markers: snapshot.data ?? {},
-                          onMapCreated: (GoogleMapController controller) {
-                            _mapController = controller;
-                          },
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(
-                              double.parse(
-                                  users.isNotEmpty ? users[1].lat : '0'),
-                              double.parse(
-                                  users.isNotEmpty ? users[1].long : '0'),
-                            ),
-                            zoom: 12,
-                            bearing: 10,
-                            tilt: 30,
-                          ),
-                        );
+                        return googleMap(snapshot);
                       }
                     },
                   ),
@@ -515,7 +531,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
               isHorizontal: true,
             ),
             Text(
-              'Hotel Gardenia',
+              userAddressDetails['businessName'],
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
