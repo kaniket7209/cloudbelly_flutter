@@ -175,8 +175,6 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     }
   }
 
-  late String googleMapDummyImage =
-      'https://th.bing.com/th/id/OIP.BkaMPU9wX3ZUndILIVi3hgHaIQ?rs=1&pid=ImgDetMain';
 
   final ScrollController _controller = ScrollController();
 
@@ -273,6 +271,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   }
 
   Widget _bulkOrderItemSheet() {
+
     return Column(
       children: [
         Space(1.h),
@@ -410,7 +409,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
         Stack(children: [
           Container(
             clipBehavior: Clip.hardEdge,
-            height: MediaQuery.of(context).size.height / 3,
+            height: MediaQuery.of(context).size.height / 2,
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -556,11 +555,18 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    for (int index = 0; index < widget.bulkOrders.length; index++)
+                      
+                      BulkOrderItem(
+                        itemDetails: widget.bulkOrders[index],
+                      ),
+
                   ],
                 ),
               ),
+              Space(2.h)
             ],
           ),
         )

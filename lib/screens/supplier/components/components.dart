@@ -40,6 +40,7 @@ class BulkOrderSectionItem extends StatefulWidget {
 
 class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
   late bool _setPrice = false;
+  FocusNode _priceFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +113,7 @@ class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
         ),
         _setPrice
             ? TextField(
+          focusNode: _priceFocusNode,
           onChanged: (var val){
             widget.itemDetails.price=int.parse(val);
           },
@@ -144,6 +146,7 @@ class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
                 onTap: () {
                   setState(() {
                     _setPrice = true;
+                    _priceFocusNode.requestFocus();
                   });
                 },
                 child: Row(
