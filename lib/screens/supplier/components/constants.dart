@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,44 +39,17 @@ Future<dynamic> customButtomSheetSection(
   bool _isVendor =
       Provider.of<Auth>(context, listen: false).userType == 'Vendor';
   return showModalBottomSheet(
-    backgroundColor: Colors.white,
     context: context,
-    enableDrag: true,
-    isScrollControlled: true,
-    isDismissible: false,
+    backgroundColor: Colors.transparent, // Important: make the background transparent
+    isScrollControlled: true,  // This allows the bottom sheet to expand to the content size
     builder: (BuildContext context) {
-      // Calculate the height of the child widget
-      double childWidgetHeight = MediaQuery.of(context).size.height;
-      return WillPopScope(
-        onWillPop: () async {
-          context.read<TransitionEffect>().setBlurSigma(0);
-          return true;
-        },
-        child: DraggableScrollableSheet(
-          minChildSize: 0.3,
-          // Adjust as needed
-          maxChildSize: 0.75,
-          expand: false,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              double extent = 10; // Initial extent value
-              return NotificationListener<DraggableScrollableNotification>(
-                onNotification: (notification) {
-                  if (notification.extent != extent) {
-                    extent = notification.extent;
-                    // print('Extent: $extent');
-                    context.read<TransitionEffect>().setBlurSigma(
-                        notification.extent * 10); // Print extent value
-                  }
-                  return false;
-                },
-                child: SingleChildScrollView(
-                    controller: scrollController, child: childWidget),
-              );
-            });
-          },
-        ),
+      return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5), // Adjust the blur intensity
+          child: SingleChildScrollView(
+            child: Wrap(
+                children: [childWidget]
+            ),
+          )
       );
     },
   );

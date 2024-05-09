@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:cloudbelly_app/models/user_detail.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,7 +38,7 @@ class BulkOrderSheet extends StatefulWidget {
 
 class _BulkOrderSheetState extends State<BulkOrderSheet> {
   List<UserDetail> users = [];
-  late bool _showDeliveryRoute = false;
+  late int activeFlag = 0;
   CameraPosition? cameraPosition;
   Position? _currentPosition;
   List<Placemark> placeMarks = [];
@@ -54,35 +57,104 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     getUsersDetails();
   }
 
-  Future<void> setMapMarkers() async {
-    print('Inside map marker');
+  Future<BitmapDescriptor> getCustomMarker(String imageUrl) async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final double radius = 50; // Radius of the circle for the marker
+
+    // Paint for the circle
+    final Paint circlePaint = Paint()..color = Colors.white;
+
+    // Paint for the image
+    final Paint imagePaint = Paint();
+
+    // Load the image from network
+    final ui.Image image = await loadImageFromNetwork(imageUrl);
+
+    // Create a circle path to clip the image
+    final Path clipPath = Path()
+      ..addOval(
+          Rect.fromCircle(center: Offset(radius, radius), radius: radius));
+
+    canvas.clipPath(clipPath);
+
+    // Draw the circle
+    canvas.drawCircle(Offset(radius, radius), radius, circlePaint);
+
+    // Calculate the image position to center it inside the circle
+    double imgWidth = image.width.toDouble();
+    double imgHeight = image.height.toDouble();
+    double aspectRatio = imgWidth / imgHeight;
+
+    double targetWidth, targetHeight;
+    if (aspectRatio > 1.0) {
+      targetHeight = radius * 2;
+      targetWidth = targetHeight * aspectRatio;
+    } else {
+      targetWidth = radius * 2;
+      targetHeight = targetWidth / aspectRatio;
+    }
+
+    // Draw the image centered in the circle
+    canvas.drawImageRect(
+      image,
+      Rect.fromLTRB(0, 0, imgWidth, imgHeight),
+      Rect.fromLTWH(radius - targetWidth / 2, radius - targetHeight / 2,
+          targetWidth, targetHeight),
+      imagePaint,
+    );
+
+    // Convert canvas to image
+    final ui.Image img =
+        await pictureRecorder.endRecording().toImage(50 * 2, 50 * 2);
+    final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
+
+    // Convert image to BitmapDescriptor
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
+  }
+
+  Future<ui.Image> loadImageFromNetwork(String imageUrl) async {
+    // Fetch the image via HTTP
+    final http.Response responseData = await http.get(Uri.parse(imageUrl));
+    // Obtain the image data
+    final Uint8List bytes = responseData.bodyBytes;
+
+    // Decode the image to the required format
+    final ui.Codec codec = await ui.instantiateImageCodec(bytes);
+    final ui.FrameInfo frameInfo = await codec.getNextFrame();
+
+    // Return the image
+    return frameInfo.image;
+  }
+
+  Future<Set<Marker>> setMapMarkers() async {
+    Set<Marker> localMarkers = {};
+
     for (int i = 0; i < users.length; i++) {
       final response = await http.get(Uri.parse(users[i].image));
-
-      if (response != null) {
+      if (response.statusCode == 200) {
         final bytes = response.bodyBytes;
-
-        // Compress the image
         final compressedBytes = await FlutterImageCompress.compressWithList(
           bytes,
-          minHeight: 100, // Provide desired dimensions for the compressed image
+          minHeight: 100,
           minWidth: 100,
-          quality: 70, // Adjust quality as needed
+          quality: 70,
         );
 
-        print(users[i].lat);
         Marker marker = Marker(
-          icon: await BitmapDescriptor.fromBytes(compressedBytes,
-              size: Size.zero),
+          icon: await getCustomMarker(users[i].image),
           anchor: Offset(0.5, 0.5),
           markerId: MarkerId(users[i].userID),
           position:
               LatLng(double.parse(users[i].lat), double.parse(users[i].long)),
           infoWindow: InfoWindow(title: users[i].userName),
         );
-        _markers.add(marker);
+
+        localMarkers.add(marker);
       }
     }
+
+    return localMarkers;
   }
 
   Future<void> getUsersDetails() async {
@@ -91,9 +163,9 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     }
     users = await getUsersDetailsByUserIDs(userIDs);
 
-    if (users != null) {
-      await setMapMarkers();
-    }
+    // if (users != null) {
+    //   await setMapMarkers();
+    // }
   }
 
   Future<void> _checkLocationPermission() async {
@@ -103,105 +175,44 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     }
   }
 
-  // Future<void> _getCurrentLocation() async {
-  //   AppWideLoadingBanner().loadingBanner(context);
-  //   try {
-  //     Position position = await Geolocator.getCurrentPosition(
-  //         desiredAccuracy: LocationAccuracy.high);
-  //     _currentPosition = position;
-  //     _mapController?.animateCamera(
-  //       CameraUpdate.newCameraPosition(
-  //         CameraPosition(
-  //           target: LatLng(
-  //             _currentPosition?.latitude ?? 22.88689073443092,
-  //             _currentPosition?.longitude ?? 79.5086424934095,
-  //           ),
-  //           zoom: 15,
-  //           bearing: 45,
-  //           tilt: 30,
-  //           //  zoom: 19,
-  //         ),
-  //       ),
-  //     );
-  //     var marker = Marker(
-  //       markerId: MarkerId("1"),
-  //       position: LatLng(
-  //           _currentPosition?.latitude ?? 22.88689073443092,
-  //           _currentPosition?.longitude ??
-  //               79.5086424934095), // Assuming 'd' contains 'latitude' and 'longitude'
-  //     );
-  //     _markers.add(marker);
-  //     List<Placemark> placemarks = await placemarkFromCoordinates(
-  //         _currentPosition?.latitude ?? 22.88689073443092,
-  //         _currentPosition?.longitude ?? 79.5086424934095);
-  //     if (placemarks.isNotEmpty) {
-  //       Placemark placemark = placemarks.first;
-  //
-  //       address =
-  //           '${placemark.street}, ${placemark.subLocality},${placemark.subAdministrativeArea}, ${placemark.locality}, ${placemark.administrativeArea},${placemark.country}, ${placemark.postalCode}';
-  //       area = '${placemark.administrativeArea}';
-  //
-  //       print("address $area,$address");
-  //     } else {
-  //       address = 'Address not found';
-  //     }
-  //     print(
-  //         "postiton:: ${_currentPosition?.latitude} ${_currentPosition?.longitude}");
-  //   } catch (e) {
-  //     print('Error: $e');
-  //   }
-  //   Navigator.pop(context);
-  //   setState(() {});
-  // }
-
   late String googleMapDummyImage =
       'https://th.bing.com/th/id/OIP.BkaMPU9wX3ZUndILIVi3hgHaIQ?rs=1&pid=ImgDetMain';
 
-  // late List<Map<String, dynamic>> bulkOrderItemsDummyData = [
-  //   {
-  //     'itemName': 'Tomato',
-  //     'volume': '181',
-  //     'imageUrl':
-  //         'https://media.istockphoto.com/id/1450576005/photo/tomato-isolated-tomato-on-white-background-perfect-retouched-tomatoe-side-view-with-clipping.jpg?s=612x612&w=0&k=20&c=lkQa_rpaKpc-ELRRGobYVJH-eMJ0ew9BckCqavkSTA0='
-  //   },
-  //   {
-  //     'itemName': 'Red Cabbage',
-  //     'volume': '62',
-  //     'imageUrl':
-  //         'https://media.istockphoto.com/id/175433477/photo/red-cabbage-leaves.jpg?s=612x612&w=0&k=20&c=CVC-6nTaKtQ0Gw5l8Nk5aGb8oA47Ce6eba2qSYYauq0='
-  //   },
-  //   {
-  //     'itemName': 'Potato',
-  //     'volume': '105',
-  //     'imageUrl':
-  //         'https://dukaan.b-cdn.net/700x700/webp/upload_file_service/asg/7e813d1d-0eac-456f-ba82-4a6b81efa130/Potato.png'
-  //   },
-  //   {
-  //     'itemName': 'Green Cabbage',
-  //     'volume': '35',
-  //     'imageUrl':
-  //         'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg'
-  //   },
-  //   {
-  //     'itemName': 'Karela',
-  //     'volume': '120',
-  //     'imageUrl':
-  //         'https://lazyshoppy.com/cdn/shop/products/Bitter_melon_4f3277d7-4f06-4908-9768-b8baa2e78bfb.png?v=1643607808'
-  //   },
-  //   {
-  //     'itemName': 'Brocolli',
-  //     'volume': '50',
-  //     'imageUrl':
-  //         'https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_640.png'
-  //   },
-  //   {
-  //     'itemName': 'Carut',
-  //     'volume': '120',
-  //     'imageUrl':
-  //         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrMKkDu9OSVJelgM1bSu08TvVJvp_ZtfBIdefBjqCRnA&s'
-  //   },
-  // ];
   final ScrollController _controller = ScrollController();
+
+  Widget _buildBody() {
+    switch (activeFlag) {
+      case 0:
+        return _bulkOrderItemSheet();
+      case 1:
+        return _deliveryRoute();
+      case 2:
+        return _bidSuccessful();
+      default:
+        return _bulkOrderItemSheet(); // Default case if the flag is out of expected range
+    }
+  }
+
+  Duration duration = Duration(hours: 3, minutes: 45, seconds: 4);
+  Timer? timer;
+
+  void startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (duration.inSeconds == 0) {
+        timer.cancel();
+      } else {
+        setState(() {
+          duration -= Duration(seconds: 1);
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +265,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                 ),
               ),
             ),
-            !_showDeliveryRoute ? _bulkOrderItemSheet() : _deliveryRoute()
+            _buildBody()
           ],
         ),
       ),
@@ -269,7 +280,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
           onTap: () {
             print('Im tapped');
             setState(() {
-              _showDeliveryRoute = true;
+              activeFlag = 1;
             });
           },
           child: Row(
@@ -346,37 +357,45 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
         ),
         Space(2.h),
         Center(
-            child: Container(
-          height: 45,
-          margin: EdgeInsets.symmetric(horizontal: 1.h),
-          decoration: ShapeDecoration(
-            shadows: [
-              BoxShadow(
-                  offset: Offset(5, 6),
-                  spreadRadius: 0.1,
-                  color: Color.fromRGBO(232, 128, 55, 0.5),
-                  blurRadius: 10)
-            ],
-            color: const Color.fromRGBO(250, 110, 0, 1),
-            shape: SmoothRectangleBorder(
-              borderRadius: SmoothBorderRadius(
-                cornerRadius: 10,
-                cornerSmoothing: 1,
+            child: GestureDetector(
+          onTap: () {
+            setState(() {
+              activeFlag = 2;
+              startTimer();
+            });
+          },
+          child: Container(
+            height: 45,
+            margin: EdgeInsets.symmetric(horizontal: 1.h),
+            decoration: ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                    offset: Offset(5, 6),
+                    spreadRadius: 0.1,
+                    color: Color.fromRGBO(232, 128, 55, 0.5),
+                    blurRadius: 10)
+              ],
+              color: const Color.fromRGBO(250, 110, 0, 1),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 10,
+                  cornerSmoothing: 1,
+                ),
               ),
             ),
+            child: Center(
+                child: Text(
+              'Submit your bid',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w700,
+                height: 0,
+                letterSpacing: 0.30,
+              ),
+            )),
           ),
-          child: Center(
-              child: Text(
-            'Submit your bid',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontFamily: 'Product Sans',
-              fontWeight: FontWeight.w700,
-              height: 0,
-              letterSpacing: 0.30,
-            ),
-          )),
         )),
         Space(1.h)
       ],
@@ -392,7 +411,6 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
           Container(
             clipBehavior: Clip.hardEdge,
             height: MediaQuery.of(context).size.height / 3,
-            width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -410,25 +428,51 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height / 3,
-                  width: MediaQuery.of(context).size.width,
-                  child: GoogleMap(
-                    zoomControlsEnabled: false,
-                    myLocationEnabled: false,
-                    markers: Set<Marker>.of(_markers),
-                    onMapCreated: (GoogleMapController controller) {
-                      setState(() {
-                        _mapController = controller;
-                      });
+                  width: MediaQuery.of(context).size.width - 10,
+                  child: FutureBuilder<Set<Marker>>(
+                    future: setMapMarkers(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                            child: CircularProgressIndicator(
+                          color: Color.fromRGBO(10, 76, 97, 1),
+                        ));
+                      } else if (snapshot.hasError) {
+                        // return Center(child: Text('Error loading markers'));
+                        // Log the error to your console or debug log
+                        debugPrint('Error loading markers: ${snapshot.error}');
+                        print('Error loading markers: ${snapshot.error}');
+
+                        // Optionally, assert in development mode to catch unexpected errors
+                        assert(
+                            false, 'Error loading markers: ${snapshot.error}');
+                        return Center(
+                          child: Text(''),
+                        );
+                      } else {
+                        return GoogleMap(
+                          myLocationButtonEnabled: true,
+                          zoomControlsEnabled: true,
+                          myLocationEnabled: true,
+                          scrollGesturesEnabled: true,
+                          markers: snapshot.data ?? {},
+                          onMapCreated: (GoogleMapController controller) {
+                            _mapController = controller;
+                          },
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(
+                              double.parse(
+                                  users.isNotEmpty ? users[1].lat : '0'),
+                              double.parse(
+                                  users.isNotEmpty ? users[1].long : '0'),
+                            ),
+                            zoom: 12,
+                            bearing: 10,
+                            tilt: 30,
+                          ),
+                        );
+                      }
                     },
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(
-                        double.parse(users[0].lat),
-                        double.parse(users[0].long),
-                      ),
-                      zoom: 3,
-                      bearing: 30,
-                      tilt: 0,
-                    ),
                   ),
                 ),
               ),
@@ -444,7 +488,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
               ic: Icons.arrow_back_ios_new_outlined,
               onTap: () {
                 setState(() {
-                  _showDeliveryRoute = false;
+                  activeFlag = 0;
                 });
               },
             ),
@@ -514,90 +558,6 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // BulkOrderItem(
-                    //   itemData: {
-                    //     'itemName': 'Green Cabbage',
-                    //     'volume': '120',
-                    //     'imageUrl':
-                    //         'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg'
-                    //   },
-                    // ),
-                    // Space(
-                    //   2.h,
-                    //   isHorizontal: true,
-                    // ),
-                    // BulkOrderItem(
-                    //   itemData: {
-                    //     'itemName': 'Tomato',
-                    //     'volume': '120',
-                    //     'imageUrl':
-                    //         'https://media.istockphoto.com/id/1450576005/photo/tomato-isolated-tomato-on-white-background-perfect-retouched-tomatoe-side-view-with-clipping.jpg?s=612x612&w=0&k=20&c=lkQa_rpaKpc-ELRRGobYVJH-eMJ0ew9BckCqavkSTA0='
-                    //   },
-                    // ),
-                    // Space(
-                    //   2.h,
-                    //   isHorizontal: true,
-                    // ),
-                    // BulkOrderItem(
-                    //   itemData: {
-                    //     'itemName': 'Red Cabbage',
-                    //     'volume': '120',
-                    //     'imageUrl':
-                    //         'https://media.istockphoto.com/id/175433477/photo/red-cabbage-leaves.jpg?s=612x612&w=0&k=20&c=CVC-6nTaKtQ0Gw5l8Nk5aGb8oA47Ce6eba2qSYYauq0='
-                    //   },
-                    // ),
-                    // Space(
-                    //   2.h,
-                    //   isHorizontal: true,
-                    // ),
-                    // BulkOrderItem(
-                    //   itemData: {
-                    //     'itemName': 'Potato',
-                    //     'volume': '120',
-                    //     'imageUrl':
-                    //         'https://dukaan.b-cdn.net/700x700/webp/upload_file_service/asg/7e813d1d-0eac-456f-ba82-4a6b81efa130/Potato.png'
-                    //   },
-                    // ),
-                    // Space(
-                    //   2.h,
-                    //   isHorizontal: true,
-                    // ),
-                    // BulkOrderItem(
-                    //   itemData: {
-                    //     'itemName': 'Green Cabbage',
-                    //     'volume': '120',
-                    //     'imageUrl':
-                    //         'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg'
-                    //   },
-                    // ),
-                    // Space(
-                    //   2.h,
-                    //   isHorizontal: true,
-                    // ),
-                    // BulkOrderItem(
-                    //   itemData: {
-                    //     'itemName': 'Tomato',
-                    //     'volume': '120',
-                    //     'imageUrl':
-                    //         'https://media.istockphoto.com/id/1450576005/photo/tomato-isolated-tomato-on-white-background-perfect-retouched-tomatoe-side-view-with-clipping.jpg?s=612x612&w=0&k=20&c=lkQa_rpaKpc-ELRRGobYVJH-eMJ0ew9BckCqavkSTA0='
-                    //   },
-                    // ),
-                    // Space(
-                    //   2.h,
-                    //   isHorizontal: true,
-                    // ),
-                    // BulkOrderItem(
-                    //   itemData: {
-                    //     'itemName': 'Red Cabbage',
-                    //     'volume': '120',
-                    //     'imageUrl':
-                    //         'https://media.istockphoto.com/id/175433477/photo/red-cabbage-leaves.jpg?s=612x612&w=0&k=20&c=CVC-6nTaKtQ0Gw5l8Nk5aGb8oA47Ce6eba2qSYYauq0='
-                    //   },
-                    // ),
-                    // Space(
-                    //   2.h,
-                    //   isHorizontal: true,
-                    // ),
                   ],
                 ),
               ),
@@ -605,6 +565,96 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
           ),
         )
       ],
+    );
+  }
+
+  Widget _bidSuccessful() {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = twoDigits(duration.inHours);
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 4.h, vertical: 4.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Your bid has been placed successfully',
+            style: const TextStyle(
+              color: Color(0xFF094B60),
+              fontSize: 25,
+              fontFamily: 'PT Sans',
+              fontWeight: FontWeight.w700,
+              // height: 0.06,
+              letterSpacing: 0.54,
+            ),
+          ),
+          Space(1.h),
+          const Text(
+            'We will notify you if you win the orders in',
+            style: TextStyle(
+              color: Color(0xFF094B60),
+              fontSize: 12,
+              fontFamily: 'PT Sans',
+              fontWeight: FontWeight.w400,
+              // height: 0.06,
+              letterSpacing: 0.54,
+            ),
+          ),
+          Space(3.h),
+          const Center(
+            child: Text(
+              'Countdown :',
+              style: TextStyle(
+                color: Color.fromRGBO(250, 110, 0, 1),
+                fontSize: 12,
+                fontFamily: 'PT Sans',
+                fontWeight: FontWeight.w700,
+                // height: 0.06,
+                letterSpacing: 0.54,
+              ),
+            ),
+          ),
+          Space(1.h),
+          Center(
+            child: IntrinsicWidth(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 1.h),
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shadows: [
+                    BoxShadow(
+                        offset: Offset(0, 8),
+                        spreadRadius: 0,
+                        color: Color.fromRGBO(162, 210, 167, 0.38),
+                        blurRadius: 20)
+                  ],
+                  // color: const Color.fromRGBO(250, 110, 0, 1),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 10,
+                      cornerSmoothing: 1,
+                    ),
+                  ),
+                ),
+                child: Center(
+                    child: Text(
+                  '$hours:$minutes:$seconds',
+                  style: TextStyle(
+                    color: Color.fromRGBO(10, 76, 97, 1),
+                    fontSize: 12,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                    letterSpacing: 0.30,
+                  ),
+                )),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

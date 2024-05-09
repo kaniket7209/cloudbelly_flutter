@@ -1,3 +1,4 @@
+
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/supplier_bulk_order.dart';
@@ -110,68 +111,35 @@ class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
           ],
         ),
         _setPrice
-            ? Container(
-                height: 40,
-                width: 100,
-                padding: EdgeInsets.only(bottom: 2),
-                decoration: ShapeDecoration(
-                  shadows: const [
-                    BoxShadow(
-                      offset: Offset(0, 8),
-                      color: Color.fromRGBO(162, 210, 167, 0.6),
-                      // rgba
-                      blurRadius: 25,
-                    )
-                  ],
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius(
-                      cornerRadius: 5,
-                      cornerSmoothing: 1,
-                    ),
-                  ),
-                ),
-                child: TextFormField(
-                    textAlignVertical: TextAlignVertical.center,
-                    // controller: toDate,
-                    // keyboardType: TextInputType.none,
-                    // onTap: () {
-                    //   selectDate(
-                    //       context, fromDate, toDate, true); //set Is TO date as true
-                    // },
-                    // onChanged: (var val){
-                    //    toDate.text=toDate.text;
-                    // },
-                    // enabled: false,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter password';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        // Change the border when the text field is focused
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                            color: Colors.green), // Set the desired color
-                      ),
-                      contentPadding: EdgeInsets.all(20),
-                      prefixIcon: Icon(
-                        Icons.currency_rupee,
-                        size: 18,
-                      ),
-                      prefixIconColor: Colors.green,
-                      // enabledBorder: OutlineInputBorder(
-                      //   borderRadius: BorderRadius.circular(10),
-                      //   borderSide: BorderSide(color: Colors.green),
-                      // ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.green),
-                      ),
-                      // hintText: 'Sagar',
-                    )))
+            ? TextField(
+          onChanged: (var val){
+            widget.itemDetails.price=int.parse(val);
+          },
+          keyboardType: TextInputType.number,
+          textAlignVertical: TextAlignVertical.center,
+          decoration: InputDecoration(
+            constraints: BoxConstraints(minHeight: 40, minWidth: 10.h, maxHeight: 50, maxWidth: 15.h),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Color(0xFF094B60)),
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),  // Adjusted padding
+            suffixText: '/-',
+            // prefixIcon: Icon(
+            //   Icons.currency_rupee,
+            //   size: 18,
+            // ),
+            prefixStyle: TextStyle(
+              color: Color(0xFF094B60)
+            ),
+            prefixText: 'Rs-',
+            prefixIconColor: Color(0xFF094B60),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Color(0xFF094B60)),
+            ),
+          ),
+        )
             : GestureDetector(
                 onTap: () {
                   setState(() {
