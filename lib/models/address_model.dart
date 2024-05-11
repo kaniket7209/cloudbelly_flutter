@@ -1,5 +1,4 @@
-
-part of'model.dart';
+part of 'model.dart';
 
 @JsonSerializable()
 class DeliveryAddressModel {
@@ -8,7 +7,8 @@ class DeliveryAddressModel {
 
   DeliveryAddressModel({this.deliveryAddresses});
 
-  factory DeliveryAddressModel.fromJson(Map<String, dynamic> json) => _$DeliveryAddressModelFromJson(json);
+  factory DeliveryAddressModel.fromJson(Map<String, dynamic> json) =>
+      _$DeliveryAddressModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$DeliveryAddressModelToJson(this);
 }
@@ -24,16 +24,18 @@ class AddressModel {
   final String? pincode;
   final String? type;
 
-  AddressModel({this.hno,
-    this.id,
-    this.landmark,
-    this.latitude,
-    this.location,
-    this.longitude,
-    this.pincode,
-    this.type});
+  AddressModel(
+      {this.hno,
+      this.id,
+      this.landmark,
+      this.latitude,
+      this.location,
+      this.longitude,
+      this.pincode,
+      this.type});
 
-  factory AddressModel.fromJson(Map<String, dynamic> json) => _$AddressModelFromJson(json);
+  factory AddressModel.fromJson(Map<String, dynamic> json) =>
+      _$AddressModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$AddressModelToJson(this);
 }

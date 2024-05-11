@@ -658,6 +658,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
   Future<String> addressUpdate(Map<String, dynamic> addressModel) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
@@ -682,6 +683,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
   Future<String> storeSetup2(
       pan_number, aadhar_number, fssai_licence_document) async {
     final String url = 'https://app.cloudbelly.in/update-user';
