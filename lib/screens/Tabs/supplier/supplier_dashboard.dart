@@ -7,7 +7,6 @@ import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/performance.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
-import 'package:cloudbelly_app/screens/Tabs/supplier/components/constants.dart';
 import 'package:cloudbelly_app/screens/Tabs/supplier/supplier_inventory.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
@@ -19,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'components/components.dart';
+import 'components/constants.dart';
 
 class SupplierDashboard extends StatefulWidget {
   const SupplierDashboard({super.key});
@@ -141,7 +141,6 @@ class _SupplierDashboardState extends State<SupplierDashboard>
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -226,14 +225,8 @@ class _SupplierDashboardState extends State<SupplierDashboard>
                       // For example:
                       // Navigator.of(context).pop();
                     },
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(
-                        sigmaX: context.watch<TransitionEffect>().blurSigma,
-                        sigmaY: context.watch<TransitionEffect>().blurSigma,
-                      ),
-                      child: Container(
-                        color: Colors.transparent, // Transparent color
-                      ),
+                    child: Container(
+                      color: Colors.transparent, // Transparent color
                     ),
                   )
                 ],
@@ -257,7 +250,7 @@ class StoreLogoWidget extends StatelessWidget {
       // mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const Space(15),
-        Provider.of<Auth>(context, listen: true).userData?['logo_url'] != ''
+        Provider.of<Auth>(context, listen: true).logo_url != ''
             ? Container(
                 height: 70,
                 width: 70,
@@ -306,7 +299,7 @@ class StoreLogoWidget extends StatelessWidget {
                 child: Center(
                   child: Text(
                     Provider.of<Auth>(context, listen: true)
-                        .userData?['store_name'][0]
+                        .userData!['store_name']
                         .toUpperCase(),
                     style: TextStyle(fontSize: 40),
                   ),
@@ -343,7 +336,8 @@ class StoreNameWidget extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    Provider.of<Auth>(context, listen: true).userData?['store_name'],
+                    Provider.of<Auth>(context, listen: true)
+                        .userData!['store_name'],
                     maxLines: 2,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,

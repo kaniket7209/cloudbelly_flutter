@@ -10,10 +10,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02fb6a08-6e3a-426b-9d24-81a9fbe6379c" name="Changes" comment="- issues resolved">
-      <change afterPath="$PROJECT_DIR$/lib/models/supplier_bulk_order.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/models/user_detail.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/services/supplier_services.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/bulk_order_sheet.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/components/functions.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/user_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/user_detail.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/supplier/components/components.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/components/components.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/supplier/components/constants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/components/constants.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/supplier/supplier_dashboard.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/supplier_dashboard.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/supplier/supplier_inventory.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/supplier_inventory.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +100,7 @@
     "ignore.virus.scanning.warn.message": "true",
     "io.flutter.reload.alreadyRun": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/SAGAR ADHIKARI/Documents/GitHub/cloudbelly_flutter/lib/models",
+    "last_opened_file_path": "C:/Users/SAGAR ADHIKARI/Documents/GitHub/cloudbelly_flutter/lib/screens/Tabs/supplier",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -103,11 +110,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\SAGAR ADHIKARI\Documents\GitHub\cloudbelly_flutter\lib\screens\Tabs\supplier" />
       <recent name="C:\Users\SAGAR ADHIKARI\Documents\GitHub\cloudbelly_flutter\lib\models" />
       <recent name="D:\cloudbelly_flutter-cb_orders\cloudbelly_flutter-cb_orders\assets\images" />
       <recent name="D:\cloudbelly_flutter-cb_orders\cloudbelly_flutter-cb_orders\assets\icons" />
       <recent name="D:\cloudbelly_flutter-cb_orders\cloudbelly_flutter-cb_orders\android\app" />
-      <recent name="D:\cloudbelly_flutter-cb_orders\cloudbelly_flutter-cb_orders\android" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\cloudbelly_flutter-cb_orders\cloudbelly_flutter-cb_orders\lib\services" />
