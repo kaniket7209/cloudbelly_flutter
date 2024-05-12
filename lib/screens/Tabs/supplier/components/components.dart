@@ -83,7 +83,7 @@ class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.itemDetails.nameId,
+                  '${widget.itemDetails.nameId}',
                   style: const TextStyle(
                     color: Color(0xFF094B60),
                     fontSize: 12,
@@ -114,6 +114,7 @@ class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
                 focusNode: _priceFocusNode,
                 onChanged: (var val) {
                   widget.itemDetails.price = int.parse(val);
+                  setState(() {});
                 },
                 keyboardType: TextInputType.number,
                 textAlignVertical: TextAlignVertical.center,

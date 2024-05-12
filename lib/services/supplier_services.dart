@@ -66,3 +66,27 @@ Future<List<UserDetail>> getUsersDetailsByUserIDs(List<String> userIds) async {
   throw Exception('Error: ');
   // }
 }
+
+Future<int> placeSupplierBid(Map<String, dynamic> bidData) async {
+  var apiUrl = 'https://app.cloudbelly.in/get-user-info';
+
+  // Convert the request body to JSON
+  String requestBodyJson = jsonEncode(bidData);
+
+  // try {
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    body: requestBodyJson,
+  );
+  print('Response is ' + response.statusCode.toString());
+  if (response.statusCode == 200) {
+    return 200;
+  } else {
+    return 400;
+    // throw Exception('Failed to fetch data');
+  }
+}

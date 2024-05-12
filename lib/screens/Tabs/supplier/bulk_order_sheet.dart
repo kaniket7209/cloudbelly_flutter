@@ -21,6 +21,7 @@ import '../../../models/supplier_bulk_order.dart';
 import '../../../services/supplier_services.dart';
 import '../../../widgets/custom_icon_button.dart';
 import '../../../widgets/space.dart';
+import '../../../widgets/toast_notification.dart';
 import '../../../widgets/touchableOpacity.dart';
 import 'components/components.dart';
 import 'dart:ui' as ui;
@@ -37,6 +38,35 @@ class BulkOrderSheet extends StatefulWidget {
 class _BulkOrderSheetState extends State<BulkOrderSheet> {
   List<UserDetail> users = [];
 
+  late bool _placeBid = false;
+  late List<SupplierBulkOrder> _bulkOrders = [];
+  Map<String, dynamic> _postbidData = {
+    "supplier_id": "",
+    "bids": [
+      {
+        "_id": "Cabbage",
+        "total_qty": 40,
+        "unit_type": "kg",
+        "user_ids": ["65e320c50bf98389f417cf72", "6638d139146a67961673b1cd"],
+        "price": 20
+      },
+      {
+        "_id": "Milk",
+        "total_qty": 300,
+        "unit_type": "litre",
+        "user_ids": ["661b94e48cce8c042ce0c105"],
+        "price": 30
+      },
+      {
+        "_id": "Tomato",
+        "total_qty": 40,
+        "unit_type": "kg",
+        "user_ids": ["661b94e48cce8c042ce0c105", "6638d139146a67961673b1cd"],
+        "price": 25
+      }
+    ]
+  };
+
   late Map<String, dynamic> userAddressDetails = {
     'businessName': '',
     'addressDetails': ''
@@ -51,14 +81,54 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   late List<Marker> _markers = [];
   GoogleMapController? _mapController;
   late List<String> userIDs = [];
+  TOastNotification toastNotification = TOastNotification();
 
   // late bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    // Create a deep copy of the list and its items
+    _bulkOrders = widget.bulkOrders.map((order) => order.clone()).toList();
     _checkLocationPermission();
     getUsersDetails();
+  }
+
+  Future<void> submitSupplierBid() async {
+    bool foundValidPrice = false;
+
+    for (int i = 0; i < _bulkOrders.length; i++) {
+      if (_bulkOrders[i].price > 0) {
+        print('Yes my price is greater than 0 ' +
+            _bulkOrders[i].price.toString());
+
+        Map<String, dynamic> bidData = {
+          "supplier_id":
+              Provider.of<Auth>(context, listen: false).userData!['user_id'],
+          "bids": SupplierBulkOrder.toJsonList(_bulkOrders)
+        };
+        int statusCode = await placeSupplierBid(bidData);
+
+        if (statusCode == 200) {
+          setState(() {
+            activeFlag = 2;
+            startTimer();
+          });
+        }
+        foundValidPrice = true;
+        break;
+      }
+    }
+
+    if (!foundValidPrice) {
+      setState(() {
+        _placeBid = false;
+      });
+
+      // Show error toast if no valid price was found
+      toastNotification.showErrorToast(
+          context, "No valid price found for any bulk order.");
+    }
   }
 
   Future<BitmapDescriptor> getCustomMarker(String imageUrl) async {
@@ -168,8 +238,8 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   }
 
   Future<void> getUsersDetails() async {
-    for (int i = 0; i < widget.bulkOrders.length; i++) {
-      userIDs += widget.bulkOrders[i].userIDs;
+    for (int i = 0; i < _bulkOrders.length; i++) {
+      userIDs += _bulkOrders[i].userIDs;
     }
     users = await getUsersDetailsByUserIDs(userIDs);
 
@@ -369,13 +439,13 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
             child: ListView.builder(
               controller: _controller,
               // Pass the controller to the ListView as well
-              itemCount: widget.bulkOrders.length,
+              itemCount: _bulkOrders.length,
               itemBuilder: (context, index) {
                 return Column(
                   children: [
                     index == 0 ? Space(2.h) : SizedBox(),
                     BulkOrderSectionItem(
-                      itemDetails: widget.bulkOrders[index],
+                      itemDetails: _bulkOrders[index],
                     ),
                     index == 0 ? Space(2.h) : SizedBox(),
                     index > 0 ? Space(2.h) : SizedBox(),
@@ -390,8 +460,8 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
             child: GestureDetector(
           onTap: () {
             setState(() {
-              activeFlag = 2;
-              startTimer();
+              _placeBid = true;
+              submitSupplierBid();
             });
           },
           child: Container(
@@ -414,16 +484,35 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
               ),
             ),
             child: Center(
-                child: Text(
-              'Submit your bid',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontFamily: 'Product Sans',
-                fontWeight: FontWeight.w700,
-                height: 0,
-                letterSpacing: 0.30,
-              ),
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Submit your bid',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: 0.30,
+                  ),
+                ),
+                _placeBid
+                    ? Space(
+                        2.h,
+                        isHorizontal: true,
+                      )
+                    : SizedBox(),
+                _placeBid
+                    ? SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.grey,
+                        ))
+                    : SizedBox()
+              ],
             )),
           ),
         )),
@@ -564,11 +653,9 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    for (int index = 0;
-                        index < widget.bulkOrders.length;
-                        index++)
+                    for (int index = 0; index < _bulkOrders.length; index++)
                       BulkOrderItem(
-                        itemDetails: widget.bulkOrders[index],
+                        itemDetails: _bulkOrders[index],
                       ),
                   ],
                 ),
