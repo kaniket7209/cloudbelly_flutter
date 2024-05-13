@@ -7,6 +7,7 @@ import 'package:cloudbelly_app/screens/Tabs/Cart/add_address.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
+import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,7 +22,8 @@ import 'package:provider/provider.dart';
 
 class GoogleMapScreen extends StatefulWidget {
   final String type;
-  const GoogleMapScreen({super.key,required this.type});
+
+  const GoogleMapScreen({super.key, required this.type});
 
   @override
   State<GoogleMapScreen> createState() => _GoogleMapScreenState();
@@ -327,8 +329,19 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                   height: 48,
                   child: TouchableOpacity(
                     onTap: () {
-                      context.read<TransitionEffect>().setBlurSigma(5.0);
-                      AddAddressBottomSheet().AddAddressSheet(context,_currentPosition?.latitude ?? 0.0,_currentPosition?.longitude ?? 0.0,address ??" ",widget.type);
+                      if (_currentPosition?.latitude != null ||
+                          _currentPosition?.longitude != null) {
+                        context.read<TransitionEffect>().setBlurSigma(5.0);
+                        AddAddressBottomSheet().AddAddressSheet(
+                            context,
+                            _currentPosition?.latitude ?? 0.0,
+                            _currentPosition?.longitude ?? 0.0,
+                            address ?? " ",
+                            widget.type);
+                      } else {
+                        TOastNotification().showErrorToast(
+                            context, "Please get the location");
+                      }
                     },
                     child: ButtonWidgetHomeScreen(
                       txt: 'Confirm Location',

@@ -15,6 +15,7 @@ class AppwideTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   double height;
   final Widget? prefixIcon;
+  final String? userType;
 
   AppwideTextField({
     required this.hintText,
@@ -24,6 +25,7 @@ class AppwideTextField extends StatelessWidget {
     this.controller,
     this.validator,
     this.prefixIcon,
+    this.userType,
   });
 
   @override
@@ -34,15 +36,29 @@ class AppwideTextField extends StatelessWidget {
         shadows: [
           BoxShadow(
             offset: const Offset(0, 4),
-            color: /*Provider.of<Auth>(context, listen: false).userType ==
+            color: userType ==
+                UserType.Vendor.name
+                ? const Color.fromRGBO(
+                165, 200, 199, 0.6)
+                : userType ==
+                UserType.Supplier.name
+                ? const Color.fromRGBO(
+                77, 191, 74, 0.3)
+                : const Color.fromRGBO(
+                188, 115, 188, 0.2),
+            blurRadius: 20,
+          ),/*
+          BoxShadow(
+            offset: const Offset(0, 4),
+            color: *//*Provider.of<Auth>(context, listen: false).userType ==
                     UserType.Vendor.name
-                ?*/ const Color.fromRGBO(165, 200, 199, 0.6),
-                /*: const Color(0xFFBC73BC),*/
+                ?*//* const Color.fromRGBO(165, 200, 199, 0.6),
+                *//*: const Color(0xFFBC73BC),*//*
             blurRadius: Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
                     UserType.Vendor.name
                 ? 20
                 : 15,
-          )
+          )*/
         ],
         color: Colors.white,
         shape: const SmoothRectangleBorder(
@@ -55,8 +71,16 @@ class AppwideTextField extends StatelessWidget {
         child: TextFormField(
           controller: controller,
           validator: validator,
-          style: const TextStyle(
-            color: Color(0xFF094B60),
+          style: Provider.of<Auth>(context, listen: false)
+              .userData?['user_type'] ==
+              UserType.Vendor.name
+              ?  const TextStyle(
+            color:  Color(0xFF0A4C61) ,
+          ) : const TextStyle(
+              fontSize: 14,
+              fontFamily: 'PT Sans',
+              fontWeight: FontWeight.w400,
+              color: Color(0xFF2E0536)
           ),
           decoration: InputDecoration(
             fillColor: Colors.white,

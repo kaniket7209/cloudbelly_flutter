@@ -41,7 +41,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https"
-                    android:host="api.cloudbelly.in" />
+                    android:host="app.cloudbelly.in" />
             </intent-filter>
 
             <intent-filter android:autoVerify="true"
@@ -50,7 +50,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https"
-                    android:host="api.cloudbelly.in" />
+                    android:host="app.cloudbelly.in" />
             </intent-filter>
         </activity>
         <meta-data

@@ -475,6 +475,7 @@ class _SheetWidgetState extends State<SheetWidget> {
                                                               ),
                                                               Space(2.5.h),
                                                               AppwideTextField(
+                                                                userType: Provider.of<Auth>(context, listen: false).userData?['user_type'],
                                                                 controller:
                                                                     _cotrolller,
                                                                 hintText:
@@ -787,6 +788,7 @@ class _SheetWidgetState extends State<SheetWidget> {
               ),
               Space(4.h),
               AppwideTextField(
+                userType: Provider.of<Auth>(context, listen: false).userData?['user_type'],
                   hintText: 'Enter new volume', onChanged: (newValue) {}),
               AppWideButton(num: 1, txt: 'Update Volume'),
             ],

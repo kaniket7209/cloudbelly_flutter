@@ -161,7 +161,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    Provider.of<Auth>(context, listen: false).getUserData();
+    Provider.of<Auth>(context, listen: false).userData = UserPreferences.getUser();
     _getFeed();
     _getMenu();
     userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
@@ -1098,7 +1098,7 @@ class FeedWidget extends StatelessWidget {
         final Data = await Provider.of<Auth>(context, listen: false)
             .getFeed(userId) as List<dynamic>;
         Navigator.of(context).pushNamed(PostsScreen.routeName,
-            arguments: {'data': Data, 'index': index});
+            arguments: {'data': Data, 'index': index,"userId":userId});
         //  print("data:: $fulldata");
       },
       child: Stack(

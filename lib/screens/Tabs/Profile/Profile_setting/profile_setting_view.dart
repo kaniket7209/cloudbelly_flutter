@@ -34,6 +34,7 @@ class ProfileSettingView extends StatefulWidget {
 class _ProfileSettingViewState extends State<ProfileSettingView> {
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   bool? _switchValue;
   TimeOfDay? tillTime;
@@ -41,41 +42,60 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   String? fromTiming;
   String? tillTiming;
   Map<String, dynamic> workingHours = {};
-  Map<String, dynamic>? userData;
+  Map<String, dynamic>? userDetails;
 
   @override
   void initState() {
     super.initState();
-    userData = UserPreferences.getUser();
-    print("fromTime:: ${userData?['working_hours']['start_time']}");
-    print("endTime:: ${userData?['working_hours']['end_time']}");
-    if (userData?['store_name'] != null) {
-      nameController.text = userData?['store_name'];
+    userDetails = UserPreferences.getUser();
+
+    /* if (userData?['user_type'] == UserType.Customer.name) {
+      if (userData?['user_name'] != null) {
+        nameController.text = userData?['user_name'];
+      }
+    } else {*/
+    if (Provider.of<Auth>(context, listen: false).userData?['store_name'] !=
+        null) {
+      nameController.text =
+          Provider.of<Auth>(context, listen: false).userData?['store_name'];
+    }
+    if (Provider.of<Auth>(context, listen: false).userData?['email'] != null) {
+      emailController.text =
+          Provider.of<Auth>(context, listen: false).userData?['email'];
+    }
+    if (Provider.of<Auth>(context, listen: false).userData?['phone'] != null) {
+      numberController.text =
+          Provider.of<Auth>(context, listen: false).userData?['phone'];
+    }
+    if (Provider.of<Auth>(context, listen: false).userData?['working_hours'] !=
+        null) {
+      if (Provider.of<Auth>(context, listen: false).userData?['working_hours']
+              ['start_time'] !=
+          null) {
+        fromTiming = Provider.of<Auth>(context, listen: false)
+            .userData?['working_hours']['start_time'];
+        setState(() {});
+      }
+      if (Provider.of<Auth>(context, listen: false).userData?['working_hours']
+              ['end_time'] !=
+          null) {
+        tillTiming = Provider.of<Auth>(context, listen: false)
+            .userData?['working_hours']['end_time'];
+
+        setState(() {});
+      }
     }
 
-    if (userData?['phone'] != null) {
-      numberController.text = userData?['phone'];
+    if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
+        null) {
+      addressController.text = Provider.of<Auth>(context, listen: false)
+          .userData?['address']['location'];
     }
-
-    if (userData?['working_hours']['start_time'] != null) {
-      fromTiming = userData?['working_hours']['start_time'];
-      setState(() {
-
-      });
-    }
-    if (userData?['working_hours']['end_time'] != null) {
-      tillTiming = userData?['working_hours']['end_time'];
-
-      setState(() {
-
-      });
-    }
-
-    if (userData?['location'] != null) {
-      addressController.text = userData?['location']['details'];
-    }
-    if (userData?['store_availability'] != null) {
-      _switchValue = userData?['store_availability'];
+    if (Provider.of<Auth>(context, listen: false)
+            .userData?['store_availability'] !=
+        null) {
+      _switchValue = Provider.of<Auth>(context, listen: false)
+          .userData?['store_availability'];
     }
   }
 
@@ -87,11 +107,116 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       String msg = await Provider.of<Auth>(context, listen: false)
           .storeName(nameController.text);
       if (msg == 'User information updated successfully.') {
-        Provider.of<Auth>(context, listen: false).userData?['store_name'] ==
+        Provider.of<Auth>(context, listen: false).userData?['store_name'] =
             nameController.text;
-        //  print('pin: ${pan_number}');
-        TOastNotification()
-            .showSuccesToast(context, 'Store name update successfully');
+        Map<String, dynamic>? userData = {
+          'user_id':
+              Provider.of<Auth>(context, listen: false).userData?['user_id'],
+          'user_name':
+              Provider.of<Auth>(context, listen: false).userData?['user_name'],
+          'email': Provider.of<Auth>(context, listen: false).userData?['email'],
+          'store_name': nameController.text,
+          'profile_photo': Provider.of<Auth>(context, listen: false)
+                  .userData?['profile_photo'] ??
+              '',
+          'store_availability': Provider.of<Auth>(context, listen: false)
+                  .userData?['store_availability'] ??
+              false,
+          'pan_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['pan_number'] ??
+              '',
+          'aadhar_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['aadhar_number'] ??
+              '',
+          if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
+              null)
+            'address': {
+              "location": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['location'],
+              "latitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['latitude'],
+              "longitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['longitude'],
+              "hno": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['hno'],
+              "pincode": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['pincode'],
+              "landmark": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['landmark'],
+              "type": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['type'],
+            },
+          if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
+              null)
+            'location': {
+              'details': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['details'] ??
+                  '',
+              'latitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['latitude'] ??
+                  '',
+              'longitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['longitude'] ??
+                  '',
+            },
+          if (Provider.of<Auth>(context, listen: false)
+                  .userData?['working_hours'] !=
+              null)
+            'working_hours': {
+              'start_time': Provider.of<Auth>(context, listen: false)
+                      .userData?['working_hours']['start_time'] ??
+                  '',
+              'end_time': Provider.of<Auth>(context, listen: false)
+                      .userData?['working_hours']['end_time'] ??
+                  '',
+            },
+          'delivery_addresses': Provider.of<Auth>(context, listen: false)
+                  .userData?['delivery_addresses'] ??
+              [],
+          'bank_name': Provider.of<Auth>(context, listen: false)
+                  .userData?['bank_name'] ??
+              '',
+          'pincode':
+              Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
+                  '',
+          'rating':
+              Provider.of<Auth>(context, listen: false).userData?['rating'] ??
+                  '-',
+          'followers': Provider.of<Auth>(context, listen: false)
+                  .userData?['followers'] ??
+              [],
+          'followings': Provider.of<Auth>(context, listen: false)
+                  .userData?['followings'] ??
+              [],
+          'cover_image': Provider.of<Auth>(context, listen: false)
+                  .userData?['cover_image'] ??
+              '',
+          'account_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['account_number'] ??
+              '',
+          'ifsc_code': Provider.of<Auth>(context, listen: false)
+                  .userData?['ifsc_code'] ??
+              '',
+          'phone':
+              Provider.of<Auth>(context, listen: false).userData?['phone'] ??
+                  '',
+          'upi_id':
+              Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
+                  '',
+          'user_type': Provider.of<Auth>(context, listen: false)
+                  .userData?['user_type'] ??
+              'Vendor',
+        };
+        await UserPreferences.setUser(userData);
+        userDetails = UserPreferences.getUser();
+        print(
+            'name: ${Provider.of<Auth>(context, listen: false).userData?['store_name']}');
+        TOastNotification().showSuccesToast(
+            context,
+            Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+                    UserType.Customer.name
+                ? "User name update successfully"
+                : 'Store name update successfully');
         Navigator.of(context).pop();
         // prefs.setInt('counter', 3);
       } else {
@@ -106,31 +231,254 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   Future<void> submitUserImage(dynamic userImage) async {
     // final prefs = await SharedPreferences.getInstance();
-    if (userImage != '') {
+    AppWideLoadingBanner().loadingBanner(context);
+
+    String msg =
+        await Provider.of<Auth>(context, listen: false).userImage(userImage);
+    if (msg == 'User information updated successfully.') {
+      Navigator.of(context).pop();
+      Provider.of<Auth>(context, listen: false).userData?['profile_photo'] =
+          userImage;
+      Map<String, dynamic>? userData = {
+        'user_id':
+            Provider.of<Auth>(context, listen: false).userData?['user_id'],
+        'user_name':
+            Provider.of<Auth>(context, listen: false).userData?['user_name'],
+        'email': Provider.of<Auth>(context, listen: false).userData?['email'],
+        'store_name':
+            Provider.of<Auth>(context, listen: false).userData?['store_name'],
+        'profile_photo': userImage ?? '',
+        'store_availability': Provider.of<Auth>(context, listen: false)
+                .userData?['store_availability'] ??
+            false,
+        'pan_number':
+            Provider.of<Auth>(context, listen: false).userData?['pan_number'] ??
+                '',
+        'aadhar_number': Provider.of<Auth>(context, listen: false)
+                .userData?['aadhar_number'] ??
+            '',
+        if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
+            null)
+          'address': {
+            "location": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['location'],
+            "latitude": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['latitude'],
+            "longitude": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['longitude'],
+            "hno": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['hno'],
+            "pincode": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['pincode'],
+            "landmark": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['landmark'],
+            "type": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['type'],
+          },
+        if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
+            null)
+          'location': {
+            'details': Provider.of<Auth>(context, listen: false)
+                    .userData?['location']['details'] ??
+                '',
+            'latitude': Provider.of<Auth>(context, listen: false)
+                    .userData?['location']['latitude'] ??
+                '',
+            'longitude': Provider.of<Auth>(context, listen: false)
+                    .userData?['location']['longitude'] ??
+                '',
+          },
+        if (Provider.of<Auth>(context, listen: false)
+                .userData?['working_hours'] !=
+            null)
+          'working_hours': {
+            'start_time': Provider.of<Auth>(context, listen: false)
+                    .userData?['working_hours']['start_time'] ??
+                '',
+            'end_time': Provider.of<Auth>(context, listen: false)
+                    .userData?['working_hours']['end_time'] ??
+                '',
+          },
+        'delivery_addresses': Provider.of<Auth>(context, listen: false)
+                .userData?['delivery_addresses'] ??
+            [],
+        'bank_name':
+            Provider.of<Auth>(context, listen: false).userData?['bank_name'] ??
+                '',
+        'pincode':
+            Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
+                '',
+        'rating':
+            Provider.of<Auth>(context, listen: false).userData?['rating'] ??
+                '-',
+        'followers':
+            Provider.of<Auth>(context, listen: false).userData?['followers'] ??
+                [],
+        'followings':
+            Provider.of<Auth>(context, listen: false).userData?['followings'] ??
+                [],
+        'cover_image': Provider.of<Auth>(context, listen: false)
+                .userData?['cover_image'] ??
+            '',
+        'account_number': Provider.of<Auth>(context, listen: false)
+                .userData?['account_number'] ??
+            '',
+        'ifsc_code':
+            Provider.of<Auth>(context, listen: false).userData?['ifsc_code'] ??
+                '',
+        'phone':
+            Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
+        'upi_id':
+            Provider.of<Auth>(context, listen: false).userData?['upi_id'] ?? '',
+        'user_type':
+            Provider.of<Auth>(context, listen: false).userData?['user_type'] ??
+                'Vendor',
+      };
+      await UserPreferences.setUser(userData);
+      userDetails = UserPreferences.getUser();
+      print(
+          'profile_photo: ${Provider.of<Auth>(context, listen: false).userData?['profile_photo']}');
+      TOastNotification()
+          .showSuccesToast(context, 'Profile Image update successfully');
+      // prefs.setInt('counter', 3);
+    } else {
+      TOastNotification().showErrorToast(context, msg);
+      Navigator.of(context).pop();
+    }
+    Navigator.of(context).pop();
+    print(msg);
+  }
+
+  Future<void> submitEmail() async {
+    // final prefs = await SharedPreferences.getInstance();
+    if (emailController.text != '') {
       AppWideLoadingBanner().loadingBanner(context);
 
       String msg = await Provider.of<Auth>(context, listen: false)
-          .userImage(nameController.text);
+          .email(emailController.text);
       if (msg == 'User information updated successfully.') {
-        Provider.of<Auth>(context, listen: false).userData?['profile_photo'] ==
-            userImage;
+        Provider.of<Auth>(context, listen: false).userData?['email'] =
+            emailController.text;
+        Map<String, dynamic>? userData = {
+          'user_id':
+              Provider.of<Auth>(context, listen: false).userData?['user_id'],
+          'user_name':
+              Provider.of<Auth>(context, listen: false).userData?['user_name'],
+          'email': emailController.text,
+          'store_name':
+              Provider.of<Auth>(context, listen: false).userData?['store_name'],
+          'profile_photo': Provider.of<Auth>(context, listen: false)
+                  .userData?['profile_photo'] ??
+              '',
+          'store_availability': Provider.of<Auth>(context, listen: false)
+                  .userData?['store_availability'] ??
+              false,
+          'pan_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['pan_number'] ??
+              '',
+          'aadhar_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['aadhar_number'] ??
+              '',
+          if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
+              null)
+            'address': {
+              "location": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['location'],
+              "latitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['latitude'],
+              "longitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['longitude'],
+              "hno": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['hno'],
+              "pincode": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['pincode'],
+              "landmark": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['landmark'],
+              "type": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['type'],
+            },
+          if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
+              null)
+            'location': {
+              'details': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['details'] ??
+                  '',
+              'latitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['latitude'] ??
+                  '',
+              'longitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['longitude'] ??
+                  '',
+            },
+          if (Provider.of<Auth>(context, listen: false)
+                  .userData?['working_hours'] !=
+              null)
+            'working_hours': {
+              'start_time': Provider.of<Auth>(context, listen: false)
+                      .userData?['working_hours']['start_time'] ??
+                  '',
+              'end_time': Provider.of<Auth>(context, listen: false)
+                      .userData?['working_hours']['end_time'] ??
+                  '',
+            },
+          'delivery_addresses': Provider.of<Auth>(context, listen: false)
+                  .userData?['delivery_addresses'] ??
+              [],
+          'bank_name': Provider.of<Auth>(context, listen: false)
+                  .userData?['bank_name'] ??
+              '',
+          'pincode':
+              Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
+                  '',
+          'rating':
+              Provider.of<Auth>(context, listen: false).userData?['rating'] ??
+                  '-',
+          'followers': Provider.of<Auth>(context, listen: false)
+                  .userData?['followers'] ??
+              [],
+          'followings': Provider.of<Auth>(context, listen: false)
+                  .userData?['followings'] ??
+              [],
+          'cover_image': Provider.of<Auth>(context, listen: false)
+                  .userData?['cover_image'] ??
+              '',
+          'account_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['account_number'] ??
+              '',
+          'ifsc_code': Provider.of<Auth>(context, listen: false)
+                  .userData?['ifsc_code'] ??
+              '',
+          'phone':
+              Provider.of<Auth>(context, listen: false).userData?['phone'] ??
+                  '',
+          'upi_id':
+              Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
+                  '',
+          'user_type': Provider.of<Auth>(context, listen: false)
+                  .userData?['user_type'] ??
+              'Vendor',
+        };
+        await UserPreferences.setUser(userData);
+        userDetails = UserPreferences.getUser();
+
         //  print('pin: ${pan_number}');
         TOastNotification()
-            .showSuccesToast(context, 'Profile Image update successfully');
+            .showSuccesToast(context, 'Email update successfully');
         Navigator.of(context).pop();
         // prefs.setInt('counter', 3);
       } else {
         TOastNotification().showErrorToast(context, msg);
         Navigator.of(context).pop();
       }
-      Navigator.of(context).pop();
       print(msg);
     } else {
-      TOastNotification().showErrorToast(context, 'Please fill all fields');
+      TOastNotification().showErrorToast(context, 'Please fill email fields');
     }
   }
 
   Future<void> submitContactNumber() async {
+    print("contactNUmber:: ${numberController.text}");
+
     // final prefs = await SharedPreferences.getInstance();
     if (numberController.text != '') {
       AppWideLoadingBanner().loadingBanner(context);
@@ -138,8 +486,109 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       String msg = await Provider.of<Auth>(context, listen: false)
           .contactNumber(numberController.text);
       if (msg == 'User information updated successfully.') {
-        Provider.of<Auth>(context, listen: false).userData?['phone'] ==
+        Provider.of<Auth>(context, listen: false).userData?['phone'] =
             numberController.text;
+        Map<String, dynamic>? userData = {
+          'user_id':
+              Provider.of<Auth>(context, listen: false).userData?['user_id'],
+          'user_name':
+              Provider.of<Auth>(context, listen: false).userData?['user_name'],
+          'email': Provider.of<Auth>(context, listen: false).userData?['email'],
+          'store_name':
+              Provider.of<Auth>(context, listen: false).userData?['store_name'],
+          'profile_photo': Provider.of<Auth>(context, listen: false)
+                  .userData?['profile_photo'] ??
+              '',
+          'store_availability': Provider.of<Auth>(context, listen: false)
+                  .userData?['store_availability'] ??
+              false,
+          'pan_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['pan_number'] ??
+              '',
+          'aadhar_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['aadhar_number'] ??
+              '',
+          if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
+              null)
+            'address': {
+              "location": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['location'],
+              "latitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['latitude'],
+              "longitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['longitude'],
+              "hno": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['hno'],
+              "pincode": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['pincode'],
+              "landmark": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['landmark'],
+              "type": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['type'],
+            },
+          if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
+              null)
+            'location': {
+              'details': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['details'] ??
+                  '',
+              'latitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['latitude'] ??
+                  '',
+              'longitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['longitude'] ??
+                  '',
+            },
+          if (Provider.of<Auth>(context, listen: false)
+                  .userData?['working_hours'] !=
+              null)
+            'working_hours': {
+              'start_time': Provider.of<Auth>(context, listen: false)
+                      .userData?['working_hours']['start_time'] ??
+                  '',
+              'end_time': Provider.of<Auth>(context, listen: false)
+                      .userData?['working_hours']['end_time'] ??
+                  '',
+            },
+          'delivery_addresses': Provider.of<Auth>(context, listen: false)
+                  .userData?['delivery_addresses'] ??
+              [],
+          'bank_name': Provider.of<Auth>(context, listen: false)
+                  .userData?['bank_name'] ??
+              '',
+          'pincode':
+              Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
+                  '',
+          'rating':
+              Provider.of<Auth>(context, listen: false).userData?['rating'] ??
+                  '-',
+          'followers': Provider.of<Auth>(context, listen: false)
+                  .userData?['followers'] ??
+              [],
+          'followings': Provider.of<Auth>(context, listen: false)
+                  .userData?['followings'] ??
+              [],
+          'cover_image': Provider.of<Auth>(context, listen: false)
+                  .userData?['cover_image'] ??
+              '',
+          'account_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['account_number'] ??
+              '',
+          'ifsc_code': Provider.of<Auth>(context, listen: false)
+                  .userData?['ifsc_code'] ??
+              '',
+          'phone': numberController.text ?? '',
+          'upi_id':
+              Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
+                  '',
+          'user_type': Provider.of<Auth>(context, listen: false)
+                  .userData?['user_type'] ??
+              'Vendor',
+        };
+        await UserPreferences.setUser(userData);
+        userDetails = UserPreferences.getUser();
+        print(
+            "contactNUmber:: ${Provider.of<Auth>(context, listen: false).userData?['phone']}");
         //  print('pin: ${pan_number}');
         TOastNotification()
             .showSuccesToast(context, 'Contact Number update successfully');
@@ -167,7 +616,107 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       String msg = await Provider.of<Auth>(context, listen: false)
           .workingHours(workingHours);
       if (msg == 'User information updated successfully.') {
-        Provider.of<Auth>(context, listen: false).userData?['working_hours'] == workingHours;
+        Provider.of<Auth>(context, listen: false).userData?['working_hours'] =
+            workingHours;
+        Map<String, dynamic>? userData = {
+          'user_id':
+              Provider.of<Auth>(context, listen: false).userData?['user_id'],
+          'user_name':
+              Provider.of<Auth>(context, listen: false).userData?['user_name'],
+          'email': Provider.of<Auth>(context, listen: false).userData?['email'],
+          'store_name':
+              Provider.of<Auth>(context, listen: false).userData?['store_name'],
+          'profile_photo': Provider.of<Auth>(context, listen: false)
+                  .userData?['profile_photo'] ??
+              '' ??
+              '',
+          'store_availability': Provider.of<Auth>(context, listen: false)
+                  .userData?['store_availability'] ??
+              false,
+          'pan_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['pan_number'] ??
+              '',
+          'aadhar_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['aadhar_number'] ??
+              '',
+          if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
+              null)
+            'address': {
+              "location": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['location'],
+              "latitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['latitude'],
+              "longitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['longitude'],
+              "hno": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['hno'],
+              "pincode": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['pincode'],
+              "landmark": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['landmark'],
+              "type": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['type'],
+            },
+          if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
+              null)
+            'location': {
+              'details': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['details'] ??
+                  '',
+              'latitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['latitude'] ??
+                  '',
+              'longitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['longitude'] ??
+                  '',
+            },
+          if (Provider.of<Auth>(context, listen: false)
+                  .userData?['working_hours'] !=
+              null)
+            'working_hours': {
+              'start_time': "${fromTime?.hour}:${fromTime?.minute}" ?? '',
+              'end_time': "${tillTime?.hour}:${tillTime?.minute}" ?? '',
+            },
+          'delivery_addresses': Provider.of<Auth>(context, listen: false)
+                  .userData?['delivery_addresses'] ??
+              [],
+          'bank_name': Provider.of<Auth>(context, listen: false)
+                  .userData?['bank_name'] ??
+              '',
+          'pincode':
+              Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
+                  '',
+          'rating':
+              Provider.of<Auth>(context, listen: false).userData?['rating'] ??
+                  '-',
+          'followers': Provider.of<Auth>(context, listen: false)
+                  .userData?['followers'] ??
+              [],
+          'followings': Provider.of<Auth>(context, listen: false)
+                  .userData?['followings'] ??
+              [],
+          'cover_image': Provider.of<Auth>(context, listen: false)
+                  .userData?['cover_image'] ??
+              '',
+          'account_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['account_number'] ??
+              '',
+          'ifsc_code': Provider.of<Auth>(context, listen: false)
+                  .userData?['ifsc_code'] ??
+              '',
+          'phone':
+              Provider.of<Auth>(context, listen: false).userData?['phone'] ??
+                  '',
+          'upi_id':
+              Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
+                  '',
+          'user_type': Provider.of<Auth>(context, listen: false)
+                  .userData?['user_type'] ??
+              'Vendor',
+        };
+        await UserPreferences.setUser(userData);
+        userDetails = UserPreferences.getUser();
+
         //  print('pin: ${pan_number}');
         TOastNotification()
             .showSuccesToast(context, 'working hours update successfully');
@@ -192,8 +741,107 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
         .storeAvailability(_switchValue);
     if (msg == 'User information updated successfully.') {
       Provider.of<Auth>(context, listen: false)
-              .userData?['store_availability'] ==
-          _switchValue;
+          .userData?['store_availability'] = _switchValue;
+      Map<String, dynamic>? userData = {
+        'user_id':
+            Provider.of<Auth>(context, listen: false).userData?['user_id'],
+        'user_name':
+            Provider.of<Auth>(context, listen: false).userData?['user_name'],
+        'email': Provider.of<Auth>(context, listen: false).userData?['email'],
+        'store_name':
+            Provider.of<Auth>(context, listen: false).userData?['store_name'],
+        'profile_photo': Provider.of<Auth>(context, listen: false)
+                .userData?['profile_photo'] ??
+            '' ??
+            '',
+        'store_availability': _switchValue ?? false,
+        'pan_number':
+            Provider.of<Auth>(context, listen: false).userData?['pan_number'] ??
+                '',
+        'aadhar_number': Provider.of<Auth>(context, listen: false)
+                .userData?['aadhar_number'] ??
+            '',
+        if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
+            null)
+          'address': {
+            "location": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['location'],
+            "latitude": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['latitude'],
+            "longitude": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['longitude'],
+            "hno": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['hno'],
+            "pincode": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['pincode'],
+            "landmark": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['landmark'],
+            "type": Provider.of<Auth>(context, listen: false)
+                .userData?['address']['type'],
+          },
+        if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
+            null)
+          'location': {
+            'details': Provider.of<Auth>(context, listen: false)
+                    .userData?['location']['details'] ??
+                '',
+            'latitude': Provider.of<Auth>(context, listen: false)
+                    .userData?['location']['latitude'] ??
+                '',
+            'longitude': Provider.of<Auth>(context, listen: false)
+                    .userData?['location']['longitude'] ??
+                '',
+          },
+        if (Provider.of<Auth>(context, listen: false)
+                .userData?['working_hours'] !=
+            null)
+          'working_hours': {
+            'start_time': Provider.of<Auth>(context, listen: false)
+                    .userData?['working_hours']['start_time'] ??
+                '' ??
+                '',
+            'end_time': Provider.of<Auth>(context, listen: false)
+                    .userData?['working_hours']['end_time'] ??
+                '',
+          },
+        'delivery_addresses': Provider.of<Auth>(context, listen: false)
+                .userData?['delivery_addresses'] ??
+            [],
+        'bank_name':
+            Provider.of<Auth>(context, listen: false).userData?['bank_name'] ??
+                '',
+        'pincode':
+            Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
+                '',
+        'rating':
+            Provider.of<Auth>(context, listen: false).userData?['rating'] ??
+                '-',
+        'followers':
+            Provider.of<Auth>(context, listen: false).userData?['followers'] ??
+                [],
+        'followings':
+            Provider.of<Auth>(context, listen: false).userData?['followings'] ??
+                [],
+        'cover_image': Provider.of<Auth>(context, listen: false)
+                .userData?['cover_image'] ??
+            '',
+        'account_number': Provider.of<Auth>(context, listen: false)
+                .userData?['account_number'] ??
+            '',
+        'ifsc_code':
+            Provider.of<Auth>(context, listen: false).userData?['ifsc_code'] ??
+                '',
+        'phone':
+            Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
+        'upi_id':
+            Provider.of<Auth>(context, listen: false).userData?['upi_id'] ?? '',
+        'user_type':
+            Provider.of<Auth>(context, listen: false).userData?['user_type'] ??
+                'Vendor',
+      };
+      await UserPreferences.setUser(userData);
+      userDetails = UserPreferences.getUser();
+
       //  print('pin: ${pan_number}');
       TOastNotification()
           .showSuccesToast(context, 'StoreAvailability update successfully');
@@ -225,6 +873,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.h),
@@ -262,7 +911,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                             ? const Color.fromRGBO(
                                                 198, 239, 161, 0.6)
                                             : const Color.fromRGBO(
-                                                130, 47, 130, 0.6),
+                                                130, 47, 130, 0.4),
                                     blurRadius: 20,
                                   ),
                                 ],
@@ -301,7 +950,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                             ? const Color.fromRGBO(
                                                 77, 191, 74, 0.5)
                                             : const Color.fromRGBO(
-                                                130, 47, 130, 0.7),
+                                                130, 47, 130, 0.4),
                                     blurRadius: 20,
                                   )
                                 ],
@@ -497,8 +1146,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                                           listen: false)
                                                       .userData?[
                                                   'profile_photo'] = "";
+                                              submitUserImage("");
                                               setState(() {});
-                                              Navigator.pop(context);
                                             },
                                             child: const Text(
                                               "Remove logo",
@@ -558,13 +1207,17 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                             },
                           );
                         },
-                        child: Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Image.asset(
-                            Assets.editIcon,
-                            height: 15,
-                            width: 15,
-                            fit: BoxFit.cover,
+                        child: SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Image.asset(
+                              Assets.editIcon,
+                              height: 15,
+                              width: 15,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
@@ -580,7 +1233,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                         fontFamily: 'Jost',
                         fontWeight: FontWeight.w600,
                         height: 0.03,
-                        letterSpacing: 0.78,
+                        letterSpacing: 3,
                       ),
                     ),
                   ),
@@ -589,228 +1242,266 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               const Space(
                 23,
               ),
-              TextWidgetStoreSetup(label: 'Enter brand name'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextWidgetStoreSetup(
+                    label: userDetails?['user_type'] == UserType.Customer.name
+                        ? 'Enter user name'
+                        : 'Enter brand name'),
+              ),
               Space(1.h),
               Container(
+                height: 45,
                 // rgba(165, 200, 199, 1),
-                decoration: const ShapeDecoration(
+                decoration: ShapeDecoration(
                   shadows: [
                     BoxShadow(
-                      offset: Offset(0, 4),
-                      color: Color.fromRGBO(165, 200, 199, 0.6),
+                      offset: const Offset(0, 4),
+                      color: Provider.of<Auth>(context, listen: false)
+                                  .userData?['user_type'] ==
+                              UserType.Vendor.name
+                          ? const Color.fromRGBO(165, 200, 199, 0.4)
+                          : Provider.of<Auth>(context, listen: false)
+                                      .userData?['user_type'] ==
+                                  UserType.Supplier.name
+                              ? const Color.fromRGBO(77, 191, 74, 0.3)
+                              : const Color.fromRGBO(188, 115, 188, 0.2),
                       blurRadius: 20,
                     )
                   ],
                   color: Colors.white,
-                  shape: SmoothRectangleBorder(
+                  shape: const SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.all(
                         SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
                   ),
                 ),
-                height: 6.h,
-                width: MediaQuery.of(context).size.width,
-                child: Center(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          width: 70.w,
-                          child: TextField(
-                            onChanged: (value) {
-                              nameController.text = value;
-                              setState(() {});
-                            },
-                            style: const TextStyle(
-                              color: Color(0xFF0A4C61),
+                //  height: 6.h,
+                child: TextField(
+                  onChanged: (value) {
+                    nameController.text = value;
+                    setState(() {});
+                  },
+                  style: Provider.of<Auth>(context, listen: false)
+                              .userData?['user_type'] ==
+                          UserType.Vendor.name
+                      ? const TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF0A4C61),
+                        )
+                      : const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'PT Sans',
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF2E0536)),
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    suffixIcon: nameController.text.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Image.asset(
+                              Assets.editIcon,
+                              height: 15,
+                              width: 15,
                             ),
-                            onSubmitted: (newvalue) async {
-                              /* AppWideLoadingBanner().loadingBanner(context);
-                              final code =
-                              await Provider.of<Auth>(context, listen: false)
-                                  .updateStoreName(_controller.text);
-                              Navigator.of(context).pop();
-                              if (code == '200') {
-                                TOastNotification().showSuccesToast(
-                                    context, 'Store name updated');
-                                Provider.of<Auth>(context, listen: false)
-                                    .userData?['store_name'] = _controller.text;
-                              } else {
-                                TOastNotification()
-                                    .showErrorToast(context, 'Error!');
-                              }*/
+                          )
+                        : IconButton(
+                            onPressed: () {
+                              submitStoreName();
                             },
-                            controller: nameController,
-                            decoration: const InputDecoration(
-                              fillColor: Colors.white,
-                              hintText: "Enter your  brand name here",
-                              contentPadding: EdgeInsets.only(left: 14),
-                              hintStyle: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF0A4C61),
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.w400),
-                              border: InputBorder.none,
-                              // suffixIcon:
-                            ),
-                            // onChanged: onChanged,
+                            icon: const Icon(Icons.done),
+                            color: const Color(0xFFFA6E00),
                           ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15),
-                        child: TouchableOpacity(
-                          onTap: () async {
-                            /* if (_controller.text != '') {
-                              AppWideLoadingBanner().loadingBanner(context);
-                              final body =
-                              await Provider.of<Auth>(context, listen: false)
-                                  .updateStoreName(_controller.text);
-                              Navigator.of(context).pop();
-                              print(body);
-                              if (body['code'] == 200) {
-                                TOastNotification().showSuccesToast(
-                                    context, 'Store name updated');
-                                Provider.of<Auth>(context, listen: false)
-                                    .userData?['store_name'] = _controller.text;
-                              } else {
-                                TOastNotification()
-                                    .showErrorToast(context, body['message']);
-                              }
-                            }*/
-                          },
-                          child: nameController.text.isEmpty
-                              ? Image.asset(
-                                  Assets.editIcon,
-                                  height: 15,
-                                  width: 15,
-                                )
-                              : IconButton(
-                                  onPressed: () {
-                                    submitStoreName();
-                                  },
-                                  icon: const Icon(Icons.done),
-                                  color: const Color(0xFFFA6E00),
-                                ),
-                        ),
-                      )
-                    ],
+                    hintText: "Enter your brand name here",
+                    contentPadding: const EdgeInsets.only(left: 14, top: 10),
+                    hintStyle: TextStyle(
+                        fontSize: 12,
+                        color: Provider.of<Auth>(context, listen: false)
+                                    .userData?['user_type'] ==
+                                UserType.Vendor.name
+                            ? const Color(0xFF0A4C61)
+                            : const Color(0xFF494949),
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w400),
+                    border: InputBorder.none,
+                    // suffixIcon:
                   ),
                 ),
               ),
               Space(
                 3.h,
               ),
+              if (userDetails?['user_type'] == UserType.Customer.name) ...[
+                TextWidgetStoreSetup(label: 'Enter email'),
+                Space(1.h),
+                Container(
+                  // rgba(165, 200, 199, 1),
+                  decoration: ShapeDecoration(
+                    shadows: [
+                      BoxShadow(
+                        offset: const Offset(0, 4),
+                        color: Provider.of<Auth>(context, listen: false)
+                                    .userData?['user_type'] ==
+                                UserType.Vendor.name
+                            ? const Color.fromRGBO(165, 200, 199, 0.6)
+                            : Provider.of<Auth>(context, listen: false)
+                                        .userData?['user_type'] ==
+                                    UserType.Supplier.name
+                                ? const Color.fromRGBO(77, 191, 74, 0.3)
+                                : const Color.fromRGBO(188, 115, 188, 0.2),
+                        blurRadius: 20,
+                      )
+                    ],
+                    color: Colors.white,
+                    shape: const SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.all(
+                          SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+                    ),
+                  ),
+                  //  height: 6.h,
+                  child: TextField(
+                    onChanged: (value) {
+                      emailController.text = value;
+                      setState(() {});
+                    },
+                    style: Provider.of<Auth>(context, listen: false)
+                                .userData?['user_type'] ==
+                            UserType.Vendor.name
+                        ? const TextStyle(
+                            color: Color(0xFF0A4C61),
+                          )
+                        : const TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'PT Sans',
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFF2E0536)),
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      suffixIcon: emailController.text.isEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Image.asset(
+                                Assets.editIcon,
+                                height: 15,
+                                width: 15,
+                              ),
+                            )
+                          : IconButton(
+                              onPressed: () {
+                                submitEmail();
+                              },
+                              icon: const Icon(Icons.done),
+                              color: const Color(0xFFFA6E00),
+                            ),
+                      hintText: "Enter your email here",
+                      contentPadding: const EdgeInsets.only(left: 14, top: 10),
+                      hintStyle: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF0A4C61),
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400),
+                      border: InputBorder.none,
+                      // suffixIcon:
+                    ),
+                    /*decoration: const InputDecoration(
+                          fillColor: Colors.white,
+                          hintText: "Enter your  brand name here",
+                          contentPadding: EdgeInsets.only(left: 14),
+                          hintStyle: TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF0A4C61),
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w400),
+                          border: InputBorder.none,
+                          // suffixIcon:
+                        ),*/
+                    // onChanged: onChanged,
+                  ),
+                ),
+                Space(
+                  3.h,
+                ),
+              ],
               TextWidgetStoreSetup(label: 'Contact number'),
               Space(1.h),
               Container(
                 // rgba(165, 200, 199, 1),
-                decoration: const ShapeDecoration(
+                decoration: ShapeDecoration(
                   shadows: [
                     BoxShadow(
-                      offset: Offset(0, 4),
-                      color: Color.fromRGBO(165, 200, 199, 0.6),
+                      offset: const Offset(0, 4),
+                      color: Provider.of<Auth>(context, listen: false)
+                                  .userData?['user_type'] ==
+                              UserType.Vendor.name
+                          ? const Color.fromRGBO(165, 200, 199, 0.6)
+                          : Provider.of<Auth>(context, listen: false)
+                                      .userData?['user_type'] ==
+                                  UserType.Supplier.name
+                              ? const Color.fromRGBO(77, 191, 74, 0.3)
+                              : const Color.fromRGBO(188, 115, 188, 0.2),
                       blurRadius: 20,
-                    )
+                    ),
                   ],
                   color: Colors.white,
-                  shape: SmoothRectangleBorder(
+                  shape: const SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.all(
                         SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
                   ),
                 ),
-                height: 6.h,
-                child: Center(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          width: 70.w,
-                          child: TextField(
-                            onChanged: (value) {
-                              numberController.text = value;
-                              setState(() {});
-                            },
-                            style: const TextStyle(
-                              color: Color(0xFF0A4C61),
+                // height: 6.h,
+                child: TextField(
+                  onChanged: (value) {
+                    numberController.text = value;
+                    setState(() {});
+                  },
+                  style: Provider.of<Auth>(context, listen: false)
+                              .userData?['user_type'] ==
+                          UserType.Vendor.name
+                      ? const TextStyle(
+                          color: Color(0xFF0A4C61),
+                        )
+                      : const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'PT Sans',
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF2E0536)),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  controller: numberController,
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    suffixIcon: numberController.text.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Image.asset(
+                              Assets.editIcon,
+                              height: 15,
+                              width: 15,
                             ),
-                            onSubmitted: (newvalue) async {
-                              /* AppWideLoadingBanner().loadingBanner(context);
-                              final code =
-                              await Provider.of<Auth>(context, listen: false)
-                                  .updateStoreName(_controller.text);
-                              Navigator.of(context).pop();
-                              if (code == '200') {
-                                TOastNotification().showSuccesToast(
-                                    context, 'Store name updated');
-                                Provider.of<Auth>(context, listen: false)
-                                    .userData?['store_name'] = _controller.text;
-                              } else {
-                                TOastNotification()
-                                    .showErrorToast(context, 'Error!');
-                              }*/
+                          )
+                        : IconButton(
+                            onPressed: () {
+                              submitContactNumber();
                             },
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            controller: numberController,
-                            decoration: const InputDecoration(
-                              fillColor: Colors.white,
-                              hintText: "Enter your contact here",
-                              contentPadding: EdgeInsets.only(left: 14),
-                              hintStyle: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF0A4C61),
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.w400),
-                              border: InputBorder.none,
-                              // suffixIcon:
-                            ),
-                            // onChanged: onChanged,
+                            icon: const Icon(Icons.done),
+                            color: const Color(0xFFFA6E00),
                           ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15),
-                        child: TouchableOpacity(
-                          onTap: () async {
-                            /* if (_controller.text != '') {
-                              AppWideLoadingBanner().loadingBanner(context);
-                              final body =
-                              await Provider.of<Auth>(context, listen: false)
-                                  .updateStoreName(_controller.text);
-                              Navigator.of(context).pop();
-                              print(body);
-                              if (body['code'] == 200) {
-                                TOastNotification().showSuccesToast(
-                                    context, 'Store name updated');
-                                Provider.of<Auth>(context, listen: false)
-                                    .userData?['store_name'] = _controller.text;
-                              } else {
-                                TOastNotification()
-                                    .showErrorToast(context, body['message']);
-                              }
-                            }*/
-                          },
-                          child: numberController.text.isEmpty
-                              ? Image.asset(
-                                  Assets.editIcon,
-                                  height: 15,
-                                  width: 15,
-                                )
-                              : IconButton(
-                                  onPressed: () {
-                                    submitContactNumber();
-                                  },
-                                  icon: const Icon(Icons.done),
-                                  color: const Color(0xFFFA6E00),
-                                ),
-                        ),
-                      ),
-                    ],
+                    hintText: "Enter your contact here",
+                    contentPadding: const EdgeInsets.only(left: 14, top: 10),
+                    hintStyle: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF0A4C61),
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w400),
+                    border: InputBorder.none,
+                    // suffixIcon:
                   ),
+                  // onChanged: onChanged,
                 ),
               ),
               Space(
@@ -820,406 +1511,454 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               Space(1.h),
               Container(
                 // rgba(165, 200, 199, 1),
-                decoration: const ShapeDecoration(
+                decoration: ShapeDecoration(
                   shadows: [
                     BoxShadow(
-                      offset: Offset(0, 4),
-                      color: Color.fromRGBO(165, 200, 199, 0.6),
+                      offset: const Offset(0, 4),
+                      color: Provider.of<Auth>(context, listen: false)
+                                  .userData?['user_type'] ==
+                              UserType.Vendor.name
+                          ? const Color.fromRGBO(165, 200, 199, 0.6)
+                          : Provider.of<Auth>(context, listen: false)
+                                      .userData?['user_type'] ==
+                                  UserType.Supplier.name
+                              ? const Color.fromRGBO(77, 191, 74, 0.3)
+                              : const Color.fromRGBO(188, 115, 188, 0.2),
                       blurRadius: 20,
                     )
                   ],
                   color: Colors.white,
-                  shape: SmoothRectangleBorder(
+                  shape: const SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.all(
                         SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
                   ),
                 ),
-                height: 6.h,
-                child: Center(
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 70.w,
-                        child: TextField(
-                          readOnly: true,
-                          onTap: () {
-                           Navigator.push(context, MaterialPageRoute(builder: (context) => const GoogleMapScreen(type: "profile",)));
-                          },
-                          onChanged: (value) {
-                            addressController.text = value;
-                            setState(() {});
-                          },
-                          onSubmitted: (newvalue) async {},
-                          controller: addressController,
-                          style: const TextStyle(
-                            color: Color(0xFF0A4C61),
+                child: TextField(
+                  readOnly: true,
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const GoogleMapScreen(
+                                  type: "profile",
+                                )));
+                  },
+                  onChanged: (value) {
+                    addressController.text = value;
+                    setState(() {});
+                  },
+                  onSubmitted: (newvalue) async {},
+                  controller: addressController,
+                  style: Provider.of<Auth>(context, listen: false)
+                              .userData?['user_type'] ==
+                          UserType.Vendor.name
+                      ? const TextStyle(
+                          color: Color(0xFF0A4C61),
+                        )
+                      : const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'PT Sans',
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF2E0536)),
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    suffixIcon: addressController.text.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Image.asset(
+                              Assets.editIcon,
+                              height: 15,
+                              width: 15,
+                            ),
+                          )
+                        : IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const GoogleMapScreen(
+                                              type: "profile")));
+                            },
+                            icon: const Icon(Icons.done),
+                            color: const Color(0xFFFA6E00),
                           ),
-                          decoration: const InputDecoration(
-                            fillColor: Colors.white,
-                            hintText: "Choose from map",
-                            contentPadding: EdgeInsets.only(left: 14),
+                    hintText: "Enter your contact here",
+                    contentPadding: const EdgeInsets.only(left: 14, top: 10),
+                    hintStyle: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF0A4C61),
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w400),
+                    border: InputBorder.none,
+                    // suffixIcon:
+                  ),
+                  /*    decoration: const InputDecoration(
+                    fillColor: Colors.white,
+                    hintText: "Choose from map",
+                    contentPadding: EdgeInsets.only(left: 14),
 
-                            hintStyle: TextStyle(
-                                fontSize: 12,
-                                color: Color(0xFF0A4C61),
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.w400),
-                            border: InputBorder.none,
-                            // suffixIcon:
+                    hintStyle: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF0A4C61),
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w400),
+                    border: InputBorder.none,
+                    // suffixIcon:
+                  ),*/
+                  // onChanged: onChanged,
+                ),
+              ),
+              if (Provider.of<Auth>(context, listen: false)
+                      .userData?['user_type'] !=
+                  UserType.Customer.name) ...[
+                Space(
+                  3.h,
+                ),
+                TextWidgetStoreSetup(label: 'Choose your working hours'),
+                Space(1.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () async {
+                          final TimeOfDay? pickedTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+
+                          if (pickedTime != null && pickedTime != fromTime) {
+                            setState(() {
+                              fromTime = pickedTime;
+                              print("fromTime:: ${fromTime}");
+                            });
+                          }
+                        },
+                        child: Container(
+                          decoration: ShapeDecoration(
+                            shadows: [
+                              BoxShadow(
+                                offset: const Offset(0, 4),
+                                color: Provider.of<Auth>(context, listen: false)
+                                            .userData?['user_type'] ==
+                                        UserType.Vendor.name
+                                    ? const Color.fromRGBO(165, 200, 199, 0.6)
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Supplier.name
+                                        ? const Color.fromRGBO(77, 191, 74, 0.3)
+                                        : const Color.fromRGBO(
+                                            130, 47, 130, 0.2),
+                                blurRadius: 20,
+                              )
+                            ],
+                            color: Colors.white,
+                            shape: const SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius.all(SmoothRadius(
+                                  cornerRadius: 10, cornerSmoothing: 1)),
+                            ),
                           ),
-                          // onChanged: onChanged,
+                          height: 45,
+                          // width: 40.w,
+                          child: Center(
+                            child: Text(
+                              fromTime != null
+                                  ? "${fromTime?.hour}:${fromTime?.minute}"
+                                  : fromTiming ?? "From",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color:
+                                      Provider.of<Auth>(context, listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Vendor.name
+                                          ? const Color(0xFF0A4C61)
+                                          : const Color(0xFF2E0536),
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
                         ),
                       ),
-                      Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15),
-                        child: TouchableOpacity(
-                          onTap: () async {
-                            /* if (_controller.text != '') {
-                              AppWideLoadingBanner().loadingBanner(context);
-                              final body =
-                              await Provider.of<Auth>(context, listen: false)
-                                  .updateStoreName(_controller.text);
-                              Navigator.of(context).pop();
-                              print(body);
-                              if (body['code'] == 200) {
-                                TOastNotification().showSuccesToast(
-                                    context, 'Store name updated');
-                                Provider.of<Auth>(context, listen: false)
-                                    .userData?['store_name'] = _controller.text;
-                              } else {
-                                TOastNotification()
-                                    .showErrorToast(context, body['message']);
-                              }
-                            }*/
-                          },
-                          child: addressController.text.isEmpty
-                              ? Image.asset(
-                                  Assets.editIcon,
-                                  height: 15,
-                                  width: 15,
-                                )
-                              : const Icon(
-                                  Icons.done,
-                                  color: Color(0xFFFA6E00),
-                                ),
+                    ),
+                    const Space(
+                      21,
+                      isHorizontal: true,
+                    ),
+                    const Text(
+                      "-",
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Color(0xFFFA6E00),
+                          fontFamily: 'Kavoon',
+                          fontWeight: FontWeight.w400),
+                    ),
+                    const Space(
+                      21,
+                      isHorizontal: true,
+                    ),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () async {
+                          final TimeOfDay? pickedTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+
+                          if (pickedTime != null && pickedTime != tillTime) {
+                            setState(() {
+                              tillTime = pickedTime;
+                            });
+                            submitStoreWorkingHours();
+                          }
+                        },
+                        child: Container(
+                          height: 45,
+                          decoration: ShapeDecoration(
+                            shadows: [
+                              BoxShadow(
+                                offset: const Offset(0, 4),
+                                color: Provider.of<Auth>(context, listen: false)
+                                            .userData?['user_type'] ==
+                                        UserType.Vendor.name
+                                    ? const Color.fromRGBO(165, 200, 199, 0.6)
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Supplier.name
+                                        ? const Color.fromRGBO(77, 191, 74, 0.3)
+                                        : const Color.fromRGBO(
+                                            130, 47, 130, 0.7),
+                                blurRadius: 20,
+                              )
+                            ],
+                            color: Colors.white,
+                            shape: const SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius.all(SmoothRadius(
+                                  cornerRadius: 10, cornerSmoothing: 1)),
+                            ),
+                          ),
+                          //width: 40.w,
+                          child: Center(
+                            child: Text(
+                              tillTime != null
+                                  ? "${tillTime?.hour}:${tillTime?.minute}"
+                                  : tillTiming ?? "Till",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color:
+                                      Provider.of<Auth>(context, listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Vendor.name
+                                          ? const Color(0xFF0A4C61)
+                                          : const Color(0xFF2E0536),
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
                         ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Space(
+                  42,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextWidgetStoreSetup(label: 'Store availability'),
+                    Container(
+                      height: 01, // Adjust the scale factor to adjust the height
+                      child: CupertinoSwitch(
+                        thumbColor: _switchValue == true
+                            ? const Color(0xFF4DAB4B)
+                            : const Color(0xFFF82E52),
+                        activeColor: _switchValue == true
+                            ? const Color(0xFFBFFC9A)
+                            : const Color(0xFFF82E52).withOpacity(0.5),
+                        trackColor: const Color(0xFFF82E52).withOpacity(0.5),
+                        value: _switchValue ?? false,
+                        onChanged: (value) {
+                          setState(() {
+                            _switchValue = value;
+                          });
+                          submitStoreAvailability();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Space(
+                  3.h,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PaymentDetailsView()));
+                  },
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 25,
+                        width: 25,
+                        decoration: ShapeDecoration(
+                          shadows: const [
+                            BoxShadow(
+                              offset: Offset(0, 4),
+                              color: Color.fromRGBO(165, 200, 199, 0.6),
+                              blurRadius: 20,
+                            )
+                          ],
+                          color: Provider.of<Auth>(context, listen: false)
+                                          .userData?['pan_number'] !=
+                                      null &&
+                                  Provider.of<Auth>(context, listen: false)
+                                          .userData?['pan_number'] !=
+                                      ""
+                              ? const Color(0xFFFA6E00)
+                              : const Color(0xFFA5C8C799),
+                          shape: const SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius.all(SmoothRadius(
+                                cornerRadius: 10, cornerSmoothing: 1)),
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 15,
+                        ),
+                      ),
+                      const Space(
+                        16,
+                        isHorizontal: true,
+                      ),
+                      Text(
+                        "Payment setup",
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Provider.of<Auth>(context, listen: false)
+                                        .userData?['user_type'] ==
+                                    UserType.Vendor.name
+                                ? const Color(0xFF0A4C61)
+                                : const Color(0xFF2E0536),
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w700),
+                      ),
+                      const Space(
+                        9,
+                        isHorizontal: true,
+                      ),
+                      if (Provider.of<Auth>(context, listen: false)
+                                  .userData?['pan_number'] ==
+                              null &&
+                          Provider.of<Auth>(context, listen: false)
+                                  .userData?['pan_number'] ==
+                              "") ...[
+                        Container(
+                          height: 8,
+                          width: 8,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFF82E52),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ],
+                      const Spacer(),
+                      Image.asset(
+                        Assets.nextIcon,
+                        height: 20,
+                        width: 8,
                       )
                     ],
                   ),
                 ),
-              ),
-              Space(
-                3.h,
-              ),
-              TextWidgetStoreSetup(label: 'Choose your working hours'),
-              Space(1.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        final TimeOfDay? pickedTime = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        );
-
-                        if (pickedTime != null && pickedTime != fromTime) {
-                          setState(() {
-                            fromTime = pickedTime;
-                          });
-                        }
-                      },
-                      child: Container(
-                        decoration: const ShapeDecoration(
-                          shadows: [
-                            BoxShadow(
-                              offset: Offset(0, 4),
-                              color: Color.fromRGBO(165, 200, 199, 0.6),
-                              blurRadius: 20,
-                            )
-                          ],
-                          color: Colors.white,
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius.all(SmoothRadius(
-                                cornerRadius: 10, cornerSmoothing: 1)),
-                          ),
-                        ),
-                        height: 6.h,
-                        // width: 40.w,
-                        child: Center(
-                          child: Text(
-                            fromTiming == null || fromTiming == ""
-                                ? fromTime != null
-                                    ? "${fromTime?.hour}:${fromTime?.minute}"
-                                    : "From"
-                                : fromTiming ?? "",
-                            style: const TextStyle(
-                                fontSize: 12,
-                                color: Color(0xFF0A4C61),
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Space(
-                    21,
-                    isHorizontal: true,
-                  ),
-                  const Text(
-                    "-",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFFFA6E00),
-                        fontFamily: 'Kavoon',
-                        fontWeight: FontWeight.w400),
-                  ),
-                  const Space(
-                    21,
-                    isHorizontal: true,
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        final TimeOfDay? pickedTime = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        );
-
-                        if (pickedTime != null && pickedTime != tillTime) {
-                          setState(() {
-                            tillTime = pickedTime;
-                          });
-                          submitStoreWorkingHours();
-                        }
-                      },
-                      child: Container(
-                        decoration: const ShapeDecoration(
-                          shadows: [
-                            BoxShadow(
-                              offset: Offset(0, 4),
-                              color: Color.fromRGBO(165, 200, 199, 0.6),
-                              blurRadius: 20,
-                            )
-                          ],
-                          color: Colors.white,
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius.all(SmoothRadius(
-                                cornerRadius: 10, cornerSmoothing: 1)),
-                          ),
-                        ),
-                        height: 6.h,
-                        //width: 40.w,
-                        child: Center(
-                          child: Text(
-                            tillTiming == null || tillTiming == ""
-                                ? tillTime != null
-                                    ? "${tillTime?.hour}:${tillTime?.minute}"
-                                    : "Till"
-                                : tillTiming ?? "",
-                            style: const TextStyle(
-                                fontSize: 12,
-                                color: Color(0xFF0A4C61),
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Space(
-                3.h,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextWidgetStoreSetup(label: 'Store availability'),
-                  SizedBox(
-                    height: 18,
-                    child: CupertinoSwitch(
-                      thumbColor: _switchValue == true
-                          ? const Color(0xFF4DAB4B)
-                          : const Color(0xFFF82E52),
-                      activeColor: _switchValue == true
-                          ? const Color(0xFFBFFC9A)
-                          : const Color(0xFFF82E52).withOpacity(0.5),
-                      trackColor: const Color(0xFFF82E52).withOpacity(0.5),
-                      value: _switchValue ?? false,
-                      onChanged: (value) {
-                        setState(() {
-                          _switchValue = value;
-                        });
-                        submitStoreAvailability();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              Space(
-                3.h,
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const KycView()));
-                },
-                child: Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: ShapeDecoration(
-                        shadows: const [
-                          BoxShadow(
-                            offset: Offset(0, 4),
-                            color: Color.fromRGBO(165, 200, 199, 0.6),
-                            blurRadius: 20,
-                          )
-                        ],
-                        color: Provider.of<Auth>(context, listen: false)
-                                        .userData?['pan_number'] !=
-                                    null &&
-                                Provider.of<Auth>(context, listen: false)
-                                        .userData?['pan_number'] !=
-                                    ""
-                            ? const Color(0xFFFA6E00)
-                            : const Color(0xFFA5C8C799),
-                        shape: const SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius.all(SmoothRadius(
-                              cornerRadius: 10, cornerSmoothing: 1)),
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 15,
-                      ),
-                    ),
-                    const Space(
-                      16,
-                      isHorizontal: true,
-                    ),
-                    const Text(
-                      "Payment setup",
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF0A4C61),
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w700),
-                    ),
-                    const Space(
-                      9,
-                      isHorizontal: true,
-                    ),
-                    if (Provider.of<Auth>(context, listen: false)
-                                .userData?['pan_number'] ==
-                            null &&
-                        Provider.of<Auth>(context, listen: false)
-                                .userData?['pan_number'] ==
-                            "") ...[
+                Space(
+                  3.h,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const KycView()));
+                  },
+                  child: Row(
+                    children: [
                       Container(
-                        height: 8,
-                        width: 8,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFF82E52),
-                          shape: BoxShape.circle,
+                        height: 25,
+                        width: 25,
+                        decoration: ShapeDecoration(
+                          shadows: const [
+                            BoxShadow(
+                              offset: Offset(0, 4),
+                              color: Color.fromRGBO(165, 200, 199, 0.6),
+                              blurRadius: 20,
+                            )
+                          ],
+                          color: Provider.of<Auth>(context, listen: false)
+                                          .userData?['bank_name'] !=
+                                      null &&
+                                  Provider.of<Auth>(context, listen: false)
+                                          .userData?['bank_name'] !=
+                                      ""
+                              ? const Color(0xFFFA6E00)
+                              : const Color(0xFFA5C8C799),
+                          shape: const SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius.all(SmoothRadius(
+                                cornerRadius: 10, cornerSmoothing: 1)),
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 15,
                         ),
                       ),
+                      const Space(
+                        16,
+                        isHorizontal: true,
+                      ),
+                      Text(
+                        "KYC & documents",
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Provider.of<Auth>(context, listen: false)
+                                        .userData?['user_type'] ==
+                                    UserType.Vendor.name
+                                ? const Color(0xFF0A4C61)
+                                : const Color(0xFF2E0536),
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w700),
+                      ),
+                      const Space(
+                        9,
+                        isHorizontal: true,
+                      ),
+                      if (Provider.of<Auth>(context, listen: false)
+                                  .userData?['bank_name'] ==
+                              null &&
+                          Provider.of<Auth>(context, listen: false)
+                                  .userData?['bank_name'] ==
+                              "")
+                        Container(
+                          height: 8,
+                          width: 8,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFF82E52),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      const Spacer(),
+                      Image.asset(
+                        Assets.nextIcon,
+                        height: 20,
+                        width: 8,
+                      )
                     ],
-                    const Spacer(),
-                    Image.asset(
-                      Assets.nextIcon,
-                      height: 20,
-                      width: 8,
-                    )
-                  ],
+                  ),
                 ),
-              ),
-              Space(
-                3.h,
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const PaymentDetailsView()));
-                },
-                child: Row(
-                  children: [
-                    Container(
-                      height: 25,
-                      width: 25,
-                      decoration: ShapeDecoration(
-                        shadows: const [
-                          BoxShadow(
-                            offset: Offset(0, 4),
-                            color: Color.fromRGBO(165, 200, 199, 0.6),
-                            blurRadius: 20,
-                          )
-                        ],
-                        color: Provider.of<Auth>(context, listen: false)
-                                        .userData?['bank_name'] !=
-                                    null &&
-                                Provider.of<Auth>(context, listen: false)
-                                        .userData?['bank_name'] !=
-                                    ""
-                            ? const Color(0xFFFA6E00)
-                            : const Color(0xFFA5C8C799),
-                        shape: SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius.all(SmoothRadius(
-                              cornerRadius: 10, cornerSmoothing: 1)),
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 15,
-                      ),
-                    ),
-                    const Space(
-                      16,
-                      isHorizontal: true,
-                    ),
-                    const Text(
-                      "KYC & documents",
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF0A4C61),
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w700),
-                    ),
-                    const Space(
-                      9,
-                      isHorizontal: true,
-                    ),
-                    if (Provider.of<Auth>(context, listen: false)
-                                .userData?['bank_name'] ==
-                            null &&
-                        Provider.of<Auth>(context, listen: false)
-                                .userData?['bank_name'] ==
-                            "")
-                      Container(
-                        height: 8,
-                        width: 8,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFF82E52),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    const Spacer(),
-                    Image.asset(
-                      Assets.nextIcon,
-                      height: 20,
-                      width: 8,
-                    )
-                  ],
-                ),
-              ),
+              ],
               const Space(24),
               const Text(
                 "Please note your store will be live for receiving orders only after your trade & FSSAI license is verified, which will notify once approved.",
@@ -1271,9 +2010,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     decoration: GlobalVariables().ContainerDecoration(
                       offset: const Offset(0, 4),
                       blurRadius: 15,
-                      boxColor: const Color(0xFFF82E52),
+                      boxColor: const Color.fromRGBO(248, 46, 82, 1),
                       cornerRadius: 10,
-                      shadowColor: const Color.fromRGBO(128, 55, 128, 0.91),
+                      shadowColor: const Color.fromRGBO(232, 128, 55, 0.5),
                     ),
                     child: const Text(
                       'Log Out',

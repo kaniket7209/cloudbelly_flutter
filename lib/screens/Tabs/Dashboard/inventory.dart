@@ -201,11 +201,15 @@ class _InventoryState extends State<Inventory> {
             item['purchaseDate'],
             int.parse(item['shelf_life']),
           );
+          print("nearExpiryItems:: ${nearExpiryItems.length}");
+
           if (!nearExpiryItems
               .any((element) => element['itemId'] == item['itemId'])) {
             nearExpiryItems.add(item);
             print("nearExpiryItems:: ${nearExpiryItems.length}");
           }
+
+          nearExpiryItems = allStocks.where((element) => element['runway'] < 0).toList();
         }
       }
     });
@@ -252,7 +256,7 @@ class _InventoryState extends State<Inventory> {
       }
     }
 
-    print(allStocks.length);
+    print("lowStocks:: ${allStocks.length}");
 
     return lowStocks;
   }
@@ -398,7 +402,7 @@ class _InventoryState extends State<Inventory> {
             Spacer(),
             TouchableOpacity(
                 onTap: () {
-                  print(allStocks);
+                  print("allStocksItem :: $allStocks");
                   return LowStocksSheet(context);
                 },
                 child: SeeAllWidget()),
@@ -462,6 +466,11 @@ class _InventoryState extends State<Inventory> {
             Spacer(),
             TouchableOpacity(
                 onTap: () {
+                 /* var tempList = allStocks.where((element) => element['runway'] <0).toList();
+                  setState(() {
+                    nearExpiryItems.add(tempList);
+                  });*/
+                  print("stocks near:: ${allStocks.where((element) => element['runway'] <0).toList()}");
                   StockNearExpirySheet(context);
                 },
                 child: SeeAllWidget()),
@@ -471,6 +480,8 @@ class _InventoryState extends State<Inventory> {
         FutureBuilder(
             future: _getNearExpiryStocks(),
             builder: (context, snapshot) {
+              var tempList = stocksYouMayNeed.where((element) => element['runway'] <0).toList();
+
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(),
@@ -478,12 +489,12 @@ class _InventoryState extends State<Inventory> {
               }
               if (snapshot.hasError) {
                 return Center(
-                  child: Text(nearExpiryItems.length == 0
+                  child: Text(tempList.length == 0
                       ? 'No Item in Inventory'
                       : 'Error happend while fetching data , try again later !'),
                 );
               } else {
-                if (nearExpiryItems.length == 0)
+                if (tempList.length == 0)
                   return Center(
                     child: Text('No Near Expiring Items in Your Inventory'),
                   );
@@ -494,16 +505,16 @@ class _InventoryState extends State<Inventory> {
                       children: [
                         for (int index = 0;
                             index <
-                                (nearExpiryItems.length > 5
+                                (tempList.length > 5
                                     ? 5
-                                    : nearExpiryItems.length);
+                                    : tempList.length);
                             index++)
                           StocksNearExpiryWidget(
-                            name: nearExpiryItems[index]['itemName'],
-                            volume: nearExpiryItems[index]['volumeLeft'] +
+                            name: tempList[index]['itemName'],
+                            volume: tempList[index]['volumeLeft'] +
                                 ' ' +
-                                nearExpiryItems[index]['unitType'],
-                            url: nearExpiryItems[index]['image_url'] ?? '',
+                                tempList[index]['unitType'],
+                            url: tempList[index]['image_url'] ?? '',
                           ),
                       ],
                     ),
@@ -517,6 +528,7 @@ class _InventoryState extends State<Inventory> {
   }
 
   Future<void> StockNearExpirySheet(BuildContext context) {
+    var tempList = allStocks.where((element) => element['runway'] <0).toList();
     return AppWideBottomSheet().showSheet(
         context,
         // Container(),
@@ -530,7 +542,7 @@ class _InventoryState extends State<Inventory> {
               ),
             ),
             Space(2.h),
-            nearExpiryItems.isNotEmpty ?
+            tempList.isNotEmpty ?
             Container(
               width: double.infinity,
               child: GridView.builder(
@@ -544,15 +556,15 @@ class _InventoryState extends State<Inventory> {
                   crossAxisSpacing: 4.w,
                   mainAxisSpacing: 1.5.h,
                 ),
-                itemCount: nearExpiryItems.length,
+                itemCount: tempList.length ?? 1,
                 itemBuilder: (context, index) {
-                  print("nearstocksExpire:: ${nearExpiryItems.length}");
+                  print("nearstocksExpire:: ${tempList.length}");
                   return StocksNearExpiryWidget(
-                    name: nearExpiryItems[index]['itemName'],
-                    volume: nearExpiryItems[index]['volumeLeft'] +
+                    name: tempList[index]['itemName'],
+                    volume: tempList[index]['volumeLeft'] +
                         ' ' +
-                        nearExpiryItems[index]['unitType'],
-                    url: nearExpiryItems[index]['image_url'] ?? '',
+                        tempList[index]['unitType'],
+                    url: tempList[index]['image_url'] ?? '',
                   );
                 },
               ),

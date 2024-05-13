@@ -1,3 +1,6 @@
+
+import 'dart:developer';
+
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +22,7 @@ class _PostsScreenState extends State<PostsScreen> {
   bool _didChanged = true;
   List<dynamic> data = [];
   int? index;
+  String? userId;
 
   @override
   void didChangeDependencies() {
@@ -28,6 +32,7 @@ class _PostsScreenState extends State<PostsScreen> {
       data = arguments['data'] as List<dynamic>;
       // data = data.reversed.toList();
       index = arguments['index'] as int;
+      userId = arguments['userId'] as String;
       print("index:: $index");
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToPost();
@@ -44,6 +49,7 @@ class _PostsScreenState extends State<PostsScreen> {
   void initState() {
     super.initState();
     print("math:: ${55.h + 65.0.h * (index ?? 0)}");
+    print("abcduserIds:::: ${userId}");
 
     /*WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.animateTo(
@@ -55,10 +61,10 @@ class _PostsScreenState extends State<PostsScreen> {
   }
 
   Future<void> _refreshFeed() async {
-    final Data = await Provider.of<Auth>(context, listen: false).getFeed(Provider.of<Auth>(context, listen: false).userData?['user_id']) as List<dynamic>;
+    final Data = await Provider.of<Auth>(context, listen: false).getFeed(userId) as List<dynamic>;
 
     Navigator.of(context).pushReplacementNamed(PostsScreen.routeName,
-        arguments: {'data': Data, 'index': 0});
+        arguments: {'data': Data, 'index': 0, "userId" : userId});
   }
 
   void _scrollToPost() {
@@ -130,11 +136,12 @@ class _PostsScreenState extends State<PostsScreen> {
                   // print(item);
                   bool _isMultiple = item['multiple_files'] != null &&
                       item['multiple_files'].length != 0;
-                  print("item:: $item");
+                  log("item:: $userId");
                   return PostItem(
                     isMultiple: _isMultiple,
                     data: item,
                     isProfilePost: true,
+                    userId: userId,
                   );
                 }).toList(),
               )

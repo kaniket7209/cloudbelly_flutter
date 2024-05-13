@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
       String msg = await Provider.of<Auth>(context, listen: false)
           .signUp(user_email, user_pass, user_mobile_number, selectedOption);
       // print('vmdkmv:: $msg');
-      if (msg == 'Registration successful') {
+      if (msg == 'Registration Succesful') {
         UserPreferences().isLogin = true;
        // TOastNotification().showSuccesToast(context, 'Registration successful');
         Navigator.of(context).pop();
@@ -204,6 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Space(4.h),
                                       AppwideTextField(
                                         hintText: 'Enter your Email',
+                                        userType:  "Vendor",
                                         onChanged: (p0) {
                                           user_email = p0.toString();
                                           // print(p0);
@@ -212,6 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Space(3.h),
                                       AppwideTextField(
                                         hintText: 'Enter your Phone Number',
+                                        userType:  "Vendor",
                                         onChanged: (p0) {
                                           user_mobile_number = p0.toString();
                                           // print(p0);
@@ -530,6 +532,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Space(4.h),
                                       AppwideTextField(
                                         hintText: 'Enter your Email',
+                                        userType: "Vendor",
                                         onChanged: (p0) {
                                           user_email = p0;
                                           // print(p0);
