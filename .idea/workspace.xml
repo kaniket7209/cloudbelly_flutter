@@ -10,27 +10,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02fb6a08-6e3a-426b-9d24-81a9fbe6379c" name="Changes" comment="- issues resolved">
-      <change afterPath="$PROJECT_DIR$/lib/models/model.g.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/bellyMart_sheet.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/stocks_you_may_need.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/sucess_sheet.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/local.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.h" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/api_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/api_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/bellyMart_sheet.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/bellyMart_sheet.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/inventory.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/inventory.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.h" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/linux/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/generated_plugins.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.h" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/stocks_you_may_need.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/stocks_you_may_need.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/kyc_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/kyc_view.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/payment_details_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/payment_details_view.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,11 +95,13 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "renish",
     "io.flutter.reload.alreadyRun": "true",
+    "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Admin/OneDrive/Desktop/cloudbelly_flutter-cb_orders/cloudbelly_flutter-cb_orders",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.17",
