@@ -38,34 +38,11 @@ class BulkOrderSheet extends StatefulWidget {
 class _BulkOrderSheetState extends State<BulkOrderSheet> {
   List<UserDetail> users = [];
 
+  late bool _bidWon=false;
+
   late bool _placeBid = false;
   late List<SupplierBulkOrder> _bulkOrders = [];
-  Map<String, dynamic> _postbidData = {
-    "supplier_id": "",
-    "bids": [
-      {
-        "_id": "Cabbage",
-        "total_qty": 40,
-        "unit_type": "kg",
-        "user_ids": ["65e320c50bf98389f417cf72", "6638d139146a67961673b1cd"],
-        "price": 20
-      },
-      {
-        "_id": "Milk",
-        "total_qty": 300,
-        "unit_type": "litre",
-        "user_ids": ["661b94e48cce8c042ce0c105"],
-        "price": 30
-      },
-      {
-        "_id": "Tomato",
-        "total_qty": 40,
-        "unit_type": "kg",
-        "user_ids": ["661b94e48cce8c042ce0c105", "6638d139146a67961673b1cd"],
-        "price": 25
-      }
-    ]
-  };
+
 
   late Map<String, dynamic> userAddressDetails = {
     'businessName': '',
@@ -654,8 +631,13 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     for (int index = 0; index < _bulkOrders.length; index++)
-                      BulkOrderItem(
-                        itemDetails: _bulkOrders[index],
+                      Row(
+                        children: [
+                          BulkOrderItem(
+                            itemDetails: _bulkOrders[index],
+                          ),
+                          Space(3.h, isHorizontal: true,),
+                        ],
                       ),
                   ],
                 ),

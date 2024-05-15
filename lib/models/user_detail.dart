@@ -22,24 +22,25 @@ class UserDetail {
 
   // Constructor from JSON map
   factory UserDetail.fromJson(Map<String, dynamic> json) {
+    var address = json['address'] ?? {};
     return UserDetail(
         userID: json['_id'],
         userName: json['email'],
-        hNo: json['address']['hno'],
-        lat: json['address']['latitude'],
-        long: json['address']['longitude'],
-        addressType: json['address']['type'],
-        location: json['address']['location'],
-        image: json['cover_image'] ??
-            'https://media.istockphoto.com/id/175433477/photo/red-cabbage-leaves.jpg?s=612x612&w=0&k=20&c=CVC-6nTaKtQ0Gw5l8Nk5aGb8oA47Ce6eba2qSYYauq0=',
-        detailedAddress: json['address']['landmark'] +
-            ', ' +
-            json['address']['location'] +
-            ', ' +
-            json['address']['location'] +
-            ', ' +
-            json['address']['pincode'].toString() +
-            ', India');
+        hNo: address['hno'] ?? 'No address found',
+        lat: address['latitude']?.toString() ?? "26.744729",
+    long: address['longitude']?.toString() ?? "88.4114101",
+    addressType: address['type'] ?? "Not known",
+    location: address['location'] ?? "User address details not updated",
+    image: json['cover_image'] ??
+    'https://media.istockphoto.com/id/175433477/photo/red-cabbage-leaves.jpg?s=612x612&w=0&k=20&c=CVC-6nTaKtQ0Gw5l8Nk5aGb8oA47Ce6eba2qSYYauq0=',
+    detailedAddress: (address['landmark'] ?? '') +
+    ', ' +
+    (address['location'] ?? '') +
+    ', ' +
+    (address['location'] ?? '') +
+    ', ' +
+    (address['pincode']?.toString() ?? '') +
+    ', India');
   }
 
   // Method to convert instance to JSON-serializable map

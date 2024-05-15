@@ -46,50 +46,8 @@ class _SupplierInventoryState extends State<SupplierInventory> {
   bool _somethingmissing = false;
 
   late List<SupplierBulkOrder> _bulkOrderItems = [];
-  late List<Map<String, dynamic>> bulkOrderItemsDummyData = [
-    {
-      'itemName': 'Tomato',
-      'volume': '181',
-      'imageUrl':
-          'https://media.istockphoto.com/id/1450576005/photo/tomato-isolated-tomato-on-white-background-perfect-retouched-tomatoe-side-view-with-clipping.jpg?s=612x612&w=0&k=20&c=lkQa_rpaKpc-ELRRGobYVJH-eMJ0ew9BckCqavkSTA0='
-    },
-    {
-      'itemName': 'Red Cabbage',
-      'volume': '62',
-      'imageUrl':
-          'https://media.istockphoto.com/id/175433477/photo/red-cabbage-leaves.jpg?s=612x612&w=0&k=20&c=CVC-6nTaKtQ0Gw5l8Nk5aGb8oA47Ce6eba2qSYYauq0='
-    },
-    {
-      'itemName': 'Potato',
-      'volume': '105',
-      'imageUrl':
-          'https://dukaan.b-cdn.net/700x700/webp/upload_file_service/asg/7e813d1d-0eac-456f-ba82-4a6b81efa130/Potato.png'
-    },
-    {
-      'itemName': 'Green Cabbage',
-      'volume': '35',
-      'imageUrl':
-          'https://www.shutterstock.com/image-photo/cabbage-isolated-on-white-background-600nw-1556699831.jpg'
-    },
-    {
-      'itemName': 'Karela',
-      'volume': '120',
-      'imageUrl':
-          'https://lazyshoppy.com/cdn/shop/products/Bitter_melon_4f3277d7-4f06-4908-9768-b8baa2e78bfb.png?v=1643607808'
-    },
-    {
-      'itemName': 'Brocolli',
-      'volume': '50',
-      'imageUrl':
-          'https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_640.png'
-    },
-    {
-      'itemName': 'Carrot',
-      'volume': '120',
-      'imageUrl':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrMKkDu9OSVJelgM1bSu08TvVJvp_ZtfBIdefBjqCRnA&s'
-    },
-  ];
+
+  late bool _bidWon=false;
 
   String iframeUrl = "";
   var _iframeController;
@@ -225,11 +183,18 @@ class _SupplierInventoryState extends State<SupplierInventory> {
           Space(2.h),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            // mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               for (int index = 0; index < _bulkOrderItems.length; index++)
-                BulkOrderItem(
-                  itemDetails: _bulkOrderItems[index],
+                Row(
+                  children: [
+                    index==0? Space(2.h, isHorizontal: true,):SizedBox(),
+                    BulkOrderItem(
+                      itemDetails: _bulkOrderItems[index],
+
+                    ),
+                    Space(3.h, isHorizontal: true,)
+                  ],
                 ),
             ],
           ),

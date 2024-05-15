@@ -350,15 +350,6 @@ class _KycViewState extends State<KycView> {
                   // For example:
                   // Navigator.of(context).pop();
                 },
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: context.watch<TransitionEffect>().blurSigma,
-                    sigmaY: context.watch<TransitionEffect>().blurSigma,
-                  ),
-                  child: Container(
-                    color: Colors.transparent, // Transparent color
-                  ),
-                ),
               )
             ],
           ),

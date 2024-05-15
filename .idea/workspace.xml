@@ -10,12 +10,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02fb6a08-6e3a-426b-9d24-81a9fbe6379c" name="Changes" comment="- issues resolved">
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/local.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/models/supplier_bulk_order.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/supplier_bulk_order.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/user_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/user_detail.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Cart/google_map_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Cart/google_map_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Cart/view_cart.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Cart/view_cart.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/kyc_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/kyc_view.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Profile/post_item.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Profile/post_item.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Profile/profile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Profile/profile.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/supplier/bulk_order_sheet.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/bulk_order_sheet.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/supplier/components/components.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/components/components.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/supplier/supplier_inventory.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/supplier_inventory.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/services/supplier_services.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/supplier_services.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -210,8 +225,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="Dart">
           <url>file://$PROJECT_DIR$/lib/screens/Tabs/supplier/bulk_order_sheet.dart</url>
-          <line>289</line>
+          <line>266</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/screens/Tabs/Cart/google_map_screen.dart</url>
+          <line>339</line>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

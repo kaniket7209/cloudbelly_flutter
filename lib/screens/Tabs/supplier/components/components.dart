@@ -39,6 +39,32 @@ class BulkOrderSectionItem extends StatefulWidget {
 class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
   late bool _setPrice = false;
   FocusNode _priceFocusNode = FocusNode();
+  final TextEditingController _priceController = TextEditingController();
+
+  @override
+  void dispose() {
+    _priceFocusNode.removeListener(_onFocusChange);
+    _priceFocusNode.dispose();
+    _priceController.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    print('Im callled');
+    if (!_priceFocusNode.hasFocus) {
+      if (_priceController.text.isEmpty) {
+        setState(() {
+          _setPrice = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _priceFocusNode.addListener(_onFocusChange);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,40 +136,54 @@ class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
           ],
         ),
         _setPrice
-            ? TextField(
-                focusNode: _priceFocusNode,
-                onChanged: (var val) {
-                  widget.itemDetails.price = int.parse(val);
-                  setState(() {});
-                },
-                keyboardType: TextInputType.number,
-                textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(
-                  constraints: BoxConstraints(
-                      minHeight: 40,
-                      minWidth: 10.h,
-                      maxHeight: 50,
-                      maxWidth: 15.h),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Color(0xFF094B60)),
+            ? Padding(
+              padding: const EdgeInsets.only(right: 15),
+              child: Container(
+                  decoration: ShapeDecoration(
+                    shadows: const [
+                      BoxShadow(
+                        offset: Offset(0, 8),
+                        color: Color.fromRGBO(162, 210, 167, 0.6),
+                        blurRadius: 25,
+                      )
+                    ],
+                    color: Colors.white,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 5,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
                   ),
-                  contentPadding: EdgeInsets.symmetric(
-                      vertical: 5, horizontal: 10), // Adjusted padding
-                  suffixText: '/-',
-                  // prefixIcon: Icon(
-                  //   Icons.currency_rupee,
-                  //   size: 18,
-                  // ),
-                  prefixStyle: TextStyle(color: Color(0xFF094B60)),
-                  prefixText: 'Rs-',
-                  prefixIconColor: Color(0xFF094B60),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Color(0xFF094B60)),
+                  child: TextField(
+                    controller: _priceController,
+                    cursorColor: Color(0xFF094B60),
+                    focusNode: _priceFocusNode,
+                    onChanged: (var val) {
+                      widget.itemDetails.price = int.parse(val);
+                      setState(() {});
+                    },
+                    keyboardType: TextInputType.number,
+                    textAlignVertical: TextAlignVertical.center,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      isDense: true,
+                      constraints: BoxConstraints(
+                          minHeight: 40,
+                          minWidth: 12.h,
+                          maxHeight: 50,
+                          maxWidth: 15.h),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      // Adjusted padding
+                      suffixText: '/-',
+                      prefixStyle: TextStyle(color: Color(0xFF094B60)),
+                      prefixText: 'Rs-',
+                      prefixIconColor: Color(0xFF094B60),
+                    ),
                   ),
                 ),
-              )
+            )
             : GestureDetector(
                 onTap: () {
                   setState(() {
@@ -161,7 +201,6 @@ class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
                           BoxShadow(
                             offset: Offset(0, 8),
                             color: Color.fromRGBO(162, 210, 167, 0.6),
-                            // rgba
                             blurRadius: 25,
                           )
                         ],
@@ -182,11 +221,10 @@ class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
                               fontSize: 12,
                               fontFamily: 'Product Sans',
                               fontWeight: FontWeight.w400,
-                              // height: 0.06,
                               letterSpacing: 0.54,
                             ),
                           ),
-                          Space(1.h),
+                          SizedBox(width: 10), // Adjusted space
                           const Icon(
                             Icons.add,
                             size: 16,
@@ -195,10 +233,7 @@ class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
                         ],
                       ),
                     ),
-                    Space(
-                      2.h,
-                      isHorizontal: true,
-                    )
+                    SizedBox(width: 20) // Adjusted space
                   ],
                 ),
               ),

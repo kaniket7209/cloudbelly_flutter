@@ -39,6 +39,8 @@ Future<List<SupplierBulkOrder>> getBulkOrderData(String userId) async {
 
 Future<List<UserDetail>> getUsersDetailsByUserIDs(List<String> userIds) async {
   var apiUrl = 'https://app.cloudbelly.in/get-user-info';
+  print(apiUrl.toString());
+  print(userIds.toString());
   Map<String, dynamic> requestBody = {
     'user_ids': userIds,
   };
