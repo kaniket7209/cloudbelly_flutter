@@ -128,9 +128,7 @@ class _ItemsViewState extends State<ItemsView> {
             itemBuilder: (context, index) {
               return Column(
                 children: [
-                  /* for (int index = 0;
-                                  index < stocksYouMayNeed.length;
-                                  index++)*/
+                  
                   Container(
                     margin: const EdgeInsets.symmetric(
                       vertical: 15,
@@ -233,7 +231,7 @@ class _ItemsViewState extends State<ItemsView> {
             /* separatorBuilder: (context, _) {
                   return Space(30);
                 },*/
-            itemCount: 20,
+            itemCount: 1,
           ),
 
         ],

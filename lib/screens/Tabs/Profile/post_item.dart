@@ -804,9 +804,9 @@ class _PostItemState extends State<PostItem> {
                         onPressed: () async {
                           final DynamicLinkParameters parameters =
                               DynamicLinkParameters(
-                            uriPrefix: 'https://api.cloudbelly.in',
+                            uriPrefix: 'https://app.cloudbelly.in',
                             link: Uri.parse(
-                                'https://api.cloudbelly.in/?postId=${widget.data['id']}'),
+                                'https://app.cloudbelly.in/?postId=${widget.data['id']}'),
                             androidParameters: const AndroidParameters(
                               packageName: 'com.app.cloudbelly_app',
                             ),

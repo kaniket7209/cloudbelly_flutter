@@ -122,7 +122,7 @@ class _QrViewState extends State<QrView> {
                     border: Border.all(color: Colors.black),
                   ),
                   child: Text(
-                    "https://api.cloudbelly.in/?profileId=${Provider.of<Auth>(context, listen: false).userData?['user_id']}",
+                    "https://app.cloudbelly.in/?profileId=${Provider.of<Auth>(context, listen: false).userData?['user_id']}",
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 18,
@@ -148,9 +148,9 @@ class _QrViewState extends State<QrView> {
                   onPressed: () {
                     final DynamicLinkParameters parameters =
                     DynamicLinkParameters(
-                      uriPrefix: 'https://api.cloudbelly.in',
+                      uriPrefix: 'https://app.cloudbelly.in',
                       link: Uri.parse(
-                          'https://api.cloudbelly.in/?profileId=${Provider.of<Auth>(context, listen: false).userData?['user_id']}'),
+                          'https://app.cloudbelly.in/?profileId=${Provider.of<Auth>(context, listen: false).userData?['user_id']}'),
                       androidParameters: const AndroidParameters(
                         packageName: 'com.app.cloudbelly_app',
                       ),

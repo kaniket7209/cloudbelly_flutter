@@ -452,9 +452,9 @@ class _ProfileState extends State<Profile> {
                                                 parameters =
                                                 DynamicLinkParameters(
                                               uriPrefix:
-                                                  'https://api.cloudbelly.in',
+                                                  'https://app.cloudbelly.in',
                                               link: Uri.parse(
-                                                  'https://api.cloudbelly.in/jTpt?id=${Provider.of<Auth>(context, listen: false).userData?['user_id']}&type=profile'),
+                                                  'https://app.cloudbelly.in/jTpt?id=${Provider.of<Auth>(context, listen: false).userData?['user_id']}&type=profile'),
                                               androidParameters:
                                                   const AndroidParameters(
                                                 packageName:
@@ -1219,6 +1219,7 @@ class CommonButtonProfile extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6)),
                   ),
                 ),
+                
               ],
             ),
           ],

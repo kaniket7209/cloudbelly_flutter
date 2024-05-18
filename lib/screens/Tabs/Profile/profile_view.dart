@@ -502,7 +502,7 @@ class _ProfileViewState extends State<ProfileView> {
                             ),
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
+                                children: [                                 
                                   if (_isVendor)
                                     Container(
                                       padding: EdgeInsets.symmetric(
