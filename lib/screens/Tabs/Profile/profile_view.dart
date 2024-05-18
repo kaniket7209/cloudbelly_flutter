@@ -4,10 +4,8 @@ import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/model.dart';
-import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/customer_widgets_profile.dart';
-import 'package:cloudbelly_app/screens/Tabs/Profile/edit_profile.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu_item.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
@@ -64,11 +62,16 @@ class _ProfileViewState extends State<ProfileView> {
       RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
-    // monitor network fetch
-    await Future.delayed(const Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
+  try {
+    await getUserInfo(widget.userIdList);
+    await _getFeed();
+    await _getMenu();
     _refreshController.refreshCompleted();
+  } catch (error) {
+    _refreshController.refreshFailed();
   }
+}
+
 
   Future<void> getUserInfo(List<String> userIds) async {
     // AppWideLoadingBanner().loadingBanner(context);
@@ -176,15 +179,24 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   @override
-  void initState() {
-    print("renish:: ${widget.userIdList}");
-   getUserInfo(widget.userIdList);
-    _getFeed();
-    _getMenu();
-    userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-    // TODO: implement initState
-    super.initState();
-  }
+void initState() {
+  super.initState();
+  Future.delayed(Duration.zero, () {
+    final userId = ModalRoute.of(context)?.settings.arguments as String?;
+    if (userId != null) {
+      widget.userIdList = [userId];
+    }
+    _loadAllData();
+  });
+}
+
+void _loadAllData() {
+  getUserInfo(widget.userIdList);
+  _getFeed();
+  _getMenu();
+  userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+}
+
 
   @override
   Widget build(BuildContext context) {

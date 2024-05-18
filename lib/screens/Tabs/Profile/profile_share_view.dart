@@ -122,7 +122,7 @@ class _QrViewState extends State<QrView> {
                     border: Border.all(color: Colors.black),
                   ),
                   child: Text(
-                    "https://app.cloudbelly.in/?profileId=${Provider.of<Auth>(context, listen: false).userData?['user_id']}",
+                    "https://api.cloudbelly.in/?profileId=${Provider.of<Auth>(context, listen: false).userData?['user_id']}",
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 18,
@@ -134,7 +134,7 @@ class _QrViewState extends State<QrView> {
                   ),
                 ),
               ),
-              Space(
+              const Space(
                 08,
                 isHorizontal: true,
               ),
@@ -145,22 +145,28 @@ class _QrViewState extends State<QrView> {
                   border: Border.all(color: Colors.black),
                 ),
                 child: IconButton(
-                  onPressed: () {
+                  onPressed: () async {
                     final DynamicLinkParameters parameters =
-                    DynamicLinkParameters(
-                      uriPrefix: 'https://app.cloudbelly.in',
+                        DynamicLinkParameters(
+                      uriPrefix:
+                          'https://api.cloudbelly.in', // Ensure this is the correct URI prefix configured in Firebase
                       link: Uri.parse(
                           'https://app.cloudbelly.in/?profileId=${Provider.of<Auth>(context, listen: false).userData?['user_id']}'),
                       androidParameters: const AndroidParameters(
-                        packageName: 'com.app.cloudbelly_app',
+                        packageName:
+                            'com.app.cloudbelly_app', // Ensure this matches your app's package name in Android
                       ),
+                      // Add iOS parameters if your app supports iOS
                     );
 
-                    final Uri shortUrl = parameters.link;
-                    // print(shortUrl);
-                    Share.share("${shortUrl}");
+                    final ShortDynamicLink dynamicUrl =
+                        await FirebaseDynamicLinks.instance
+                            .buildShortLink(parameters);
+                    final Uri shortUrl = dynamicUrl.shortUrl;
+                    Share.share(
+                        "Check out my profile on CloudBelly: ${shortUrl.toString()}");
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.share,
                     color: Colors.black,
                   ),

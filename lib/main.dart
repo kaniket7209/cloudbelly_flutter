@@ -24,6 +24,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+import 'screens/Tabs/Profile/profile_view.dart';
+
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -128,26 +130,26 @@ void initDynamicLinks() async {
     print('Dynamic Link Failed: $error');
   });
 
+  // Get the initial dynamic link if the app is opened with a dynamic link
   final data = await FirebaseDynamicLinks.instance.getInitialLink();
-  final Uri deepLink = data!.link;
-  _handleDeepLink(deepLink);
+  if (data?.link != null) {
+    _handleDeepLink(data!.link);
+  }
 }
 
 void _handleDeepLink(Uri deepLink) {
-  if (deepLink != null) {
-    // if (deepLink.pathSegments.contains('userProfile')) {
-    final String? userId = deepLink.queryParameters['id'];
-    if (userId != null) {
-      // Use navigatorKey to navigate without context
-      navigatorKey.currentState!.push(MaterialPageRoute(
-        builder: (context) {
-          return const PostsScreen();
-        },
-      ));
-    }
-    // }
+  final String? userId = deepLink.queryParameters['profileId'];
+  if (userId != null) {
+    print(" profileId found in the deep link");
+    // Use the navigator key to push the ProfileView
+    navigatorKey.currentState?.push(MaterialPageRoute(
+      builder: (context) => ProfileView(userIdList: [userId]),
+    ));
+  } else {
+    print("No profileId found in the deep link");
   }
 }
+
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
