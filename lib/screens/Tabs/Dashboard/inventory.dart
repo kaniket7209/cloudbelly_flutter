@@ -2,9 +2,11 @@
 
 import 'dart:async';
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/bellyMart_sheet.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory_bottom_sheet.dart';
@@ -201,11 +203,15 @@ class _InventoryState extends State<Inventory> {
             item['purchaseDate'],
             int.parse(item['shelf_life']),
           );
+          print("nearExpiryItems:: ${nearExpiryItems.length}");
+
           if (!nearExpiryItems
               .any((element) => element['itemId'] == item['itemId'])) {
             nearExpiryItems.add(item);
             print("nearExpiryItems:: ${nearExpiryItems.length}");
           }
+
+          nearExpiryItems = allStocks.where((element) => element['runway'] < 0).toList();
         }
       }
     });
@@ -252,7 +258,7 @@ class _InventoryState extends State<Inventory> {
       }
     }
 
-    print(allStocks.length);
+    print("lowStocks:: ${allStocks.length}");
 
     return lowStocks;
   }
@@ -275,8 +281,22 @@ class _InventoryState extends State<Inventory> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const Center(
+          child: Text(
+            "Manage your inventory",
+            style:  TextStyle(
+              color: Color.fromRGBO(10, 76, 97, 1),
+              fontSize: 20,
+              fontFamily: 'Jost',
+              fontWeight: FontWeight.w600,
+              height: 0,
+              letterSpacing: 0.14,
+            ),
+          ),
+        ),
+        const Space(14),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Make_Update_ListWidget(
               txt: 'Make List',
@@ -291,16 +311,20 @@ class _InventoryState extends State<Inventory> {
                 });
               },
             ),
+            const Space(25,isHorizontal: true,),
             _isUpdateLoading
                 ? SizedBox(
                     width: 30.w,
                     height: 5.h,
-                    child: Center(child: CircularProgressIndicator()),
+                    child: const Center(child: CircularProgressIndicator()),
                   )
                 : Make_Update_ListWidget(
-                    txt: 'Preview List',
+                    txt: 'BellyMart',
+                    color:  const Color.fromRGBO(10, 76, 97, 1),
                     onTap: () async {
-                      AppWideLoadingBanner().loadingBanner(context);
+                      context.read<TransitionEffect>().setBlurSigma(5.0);
+                      BellyMartBottomSheet().BellyMartSheet(context);
+                      /*AppWideLoadingBanner().loadingBanner(context);
 
                       final data =
                           await Provider.of<Auth>(context, listen: false)
@@ -319,10 +343,28 @@ class _InventoryState extends State<Inventory> {
 
                         InventoryBottomSheets()
                             .UpdateListBottomSheet(context, _dataList);
-                      }
+                      }*/
                     },
                   ),
           ],
+        ),
+        GestureDetector(
+          onTap: () {
+            // Handle tap on the area around the BackdropFilter
+            print('Tapped outside of the modal bottom sheet');
+            // You can add any logic here, such as dismissing the modal bottom sheet
+            // For example:
+            // Navigator.of(context).pop();
+          },
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: context.watch<TransitionEffect>().blurSigma,
+              sigmaY: context.watch<TransitionEffect>().blurSigma,
+            ),
+            child: Container(
+              color: Colors.transparent, // Transparent color
+            ),
+          ),
         ),
         // Space(3.h),
         // Center(
@@ -347,7 +389,7 @@ class _InventoryState extends State<Inventory> {
             const BoldTextWidgetHomeScreen(
               txt: 'Stocks you may need',
             ),
-            Spacer(),
+            const Spacer(),
             TouchableOpacity(
                 onTap: () {
                   return StockYouMayNeedSheet(context);
@@ -392,16 +434,16 @@ class _InventoryState extends State<Inventory> {
         Space(3.h),
         Row(
           children: [
-            BoldTextWidgetHomeScreen(
+            const BoldTextWidgetHomeScreen(
               txt: 'Low stocks',
             ),
-            Spacer(),
+            const Spacer(),
             TouchableOpacity(
                 onTap: () {
-                  print(allStocks);
+                  print("allStocksItem :: $allStocks");
                   return LowStocksSheet(context);
                 },
-                child: SeeAllWidget()),
+                child: const SeeAllWidget()),
           ],
         ),
         Space(2.h),
@@ -422,7 +464,7 @@ class _InventoryState extends State<Inventory> {
                 );
               } else {
                 if (lowStockItems.length == 0)
-                  return Center(
+                  return const Center(
                     child: Text('No Item in Low Stocks'),
                   );
                 else {
@@ -456,21 +498,28 @@ class _InventoryState extends State<Inventory> {
         Space(2.h),
         Row(
           children: [
-            BoldTextWidgetHomeScreen(
+            const BoldTextWidgetHomeScreen(
               txt: 'Stocks near expiry',
             ),
-            Spacer(),
+            const Spacer(),
             TouchableOpacity(
                 onTap: () {
+                 /* var tempList = allStocks.where((element) => element['runway'] <0).toList();
+                  setState(() {
+                    nearExpiryItems.add(tempList);
+                  });*/
+                  print("stocks near:: ${allStocks.where((element) => element['runway'] <0).toList()}");
                   StockNearExpirySheet(context);
                 },
-                child: SeeAllWidget()),
+                child: const SeeAllWidget()),
           ],
         ),
         Space(2.h),
         FutureBuilder(
             future: _getNearExpiryStocks(),
             builder: (context, snapshot) {
+              var tempList = stocksYouMayNeed.where((element) => element['runway'] <0).toList();
+
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(),
@@ -478,13 +527,13 @@ class _InventoryState extends State<Inventory> {
               }
               if (snapshot.hasError) {
                 return Center(
-                  child: Text(nearExpiryItems.length == 0
+                  child: Text(tempList.length == 0
                       ? 'No Item in Inventory'
                       : 'Error happend while fetching data , try again later !'),
                 );
               } else {
-                if (nearExpiryItems.length == 0)
-                  return Center(
+                if (tempList.length == 0)
+                  return const Center(
                     child: Text('No Near Expiring Items in Your Inventory'),
                   );
                 else {
@@ -494,16 +543,16 @@ class _InventoryState extends State<Inventory> {
                       children: [
                         for (int index = 0;
                             index <
-                                (nearExpiryItems.length > 5
+                                (tempList.length > 5
                                     ? 5
-                                    : nearExpiryItems.length);
+                                    : tempList.length);
                             index++)
                           StocksNearExpiryWidget(
-                            name: nearExpiryItems[index]['itemName'],
-                            volume: nearExpiryItems[index]['volumeLeft'] +
+                            name: tempList[index]['itemName'],
+                            volume: tempList[index]['volumeLeft'] +
                                 ' ' +
-                                nearExpiryItems[index]['unitType'],
-                            url: nearExpiryItems[index]['image_url'] ?? '',
+                                tempList[index]['unitType'],
+                            url: tempList[index]['image_url'] ?? '',
                           ),
                       ],
                     ),
@@ -517,6 +566,7 @@ class _InventoryState extends State<Inventory> {
   }
 
   Future<void> StockNearExpirySheet(BuildContext context) {
+    var tempList = allStocks.where((element) => element['runway'] <0).toList();
     return AppWideBottomSheet().showSheet(
         context,
         // Container(),
@@ -525,12 +575,12 @@ class _InventoryState extends State<Inventory> {
           children: [
             Padding(
               padding: EdgeInsets.only(left: 2.w),
-              child: BoldTextWidgetHomeScreen(
+              child: const BoldTextWidgetHomeScreen(
                 txt: 'Stocks near expiry',
               ),
             ),
             Space(2.h),
-            nearExpiryItems.isNotEmpty ?
+            tempList.isNotEmpty ?
             Container(
               width: double.infinity,
               child: GridView.builder(
@@ -544,19 +594,19 @@ class _InventoryState extends State<Inventory> {
                   crossAxisSpacing: 4.w,
                   mainAxisSpacing: 1.5.h,
                 ),
-                itemCount: nearExpiryItems.length,
+                itemCount: tempList.length ?? 1,
                 itemBuilder: (context, index) {
-                  print("nearstocksExpire:: ${nearExpiryItems.length}");
+                  print("nearstocksExpire:: ${tempList.length}");
                   return StocksNearExpiryWidget(
-                    name: nearExpiryItems[index]['itemName'],
-                    volume: nearExpiryItems[index]['volumeLeft'] +
+                    name: tempList[index]['itemName'],
+                    volume: tempList[index]['volumeLeft'] +
                         ' ' +
-                        nearExpiryItems[index]['unitType'],
-                    url: nearExpiryItems[index]['image_url'] ?? '',
+                        tempList[index]['unitType'],
+                    url: tempList[index]['image_url'] ?? '',
                   );
                 },
               ),
-            ) :  Column(
+            ) :  const Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Center(
@@ -624,7 +674,7 @@ class _InventoryState extends State<Inventory> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          BoldTextWidgetHomeScreen(
+                          const BoldTextWidgetHomeScreen(
                             txt: 'Low stocks',
                           ),
                           Space(1.h),
@@ -724,7 +774,7 @@ class _InventoryState extends State<Inventory> {
                         ),
                       ),
                       Space(2.h),
-                      BoldTextWidgetHomeScreen(
+                      const BoldTextWidgetHomeScreen(
                         txt: 'Stocks you may need',
                       ),
                       Column(
@@ -733,7 +783,7 @@ class _InventoryState extends State<Inventory> {
                               index < stocksYouMayNeed.length;
                               index++)
                             Container(
-                              margin: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(
                                 vertical: 15,
                               ),
                               child: Row(children: [
@@ -742,7 +792,7 @@ class _InventoryState extends State<Inventory> {
                                     radius: 12,
                                     url: stocksYouMayNeed[index]['image_url'] ??
                                         ''),
-                                Space(
+                                const Space(
                                   14,
                                   isHorizontal: true,
                                 ),
@@ -751,19 +801,19 @@ class _InventoryState extends State<Inventory> {
                                   children: [
                                     Text(
                                       stocksYouMayNeed[index]['itemName'],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Color(0xFF094B60),
                                         fontSize: 14,
                                         fontFamily: 'Product Sans',
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
-                                    Space(2),
+                                    const Space(2),
                                     Text(
                                       stocksYouMayNeed[index]['runway'] < 0
                                           ? '${stocksYouMayNeed[index]['volumeLeft']} ${stocksYouMayNeed[index]['unitType']} left and ${"expired 8 days before"}'
                                           : '${stocksYouMayNeed[index]['volumeLeft']} ${stocksYouMayNeed[index]['unitType']} for next ${stocksYouMayNeed[index]['runway']} days',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Color(0xFFFA6E00),
                                         fontSize: 8,
                                         fontFamily: 'Product Sans',
@@ -772,7 +822,7 @@ class _InventoryState extends State<Inventory> {
                                     )
                                   ],
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 TouchableOpacity(
                                   onTap: () {
                                     AppWideLoadingBanner()
@@ -783,14 +833,14 @@ class _InventoryState extends State<Inventory> {
                                     height: 30,
                                     decoration: GlobalVariables()
                                         .ContainerDecoration(
-                                            offset: Offset(0, 4),
+                                            offset: const Offset(0, 4),
                                             blurRadius: 4,
                                             shadowColor:
-                                                Color.fromRGBO(0, 0, 0, 0.25),
+                                                const Color.fromRGBO(0, 0, 0, 0.25),
                                             boxColor:
-                                                Color.fromRGBO(84, 166, 193, 1),
+                                                const Color.fromRGBO(84, 166, 193, 1),
                                             cornerRadius: 10),
-                                    child: Center(
+                                    child: const Center(
                                       child: Text(
                                         'Add',
                                         style: TextStyle(
@@ -883,8 +933,8 @@ class ImageWidgetInventory extends StatelessWidget {
                 },
                 errorBuilder: (BuildContext context, Object error,
                     StackTrace? stackTrace) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Text('Error loading image'),
                   );
                 },
@@ -1017,7 +1067,7 @@ class LowStocksWidget extends StatelessWidget {
         children: [
           Space(isHorizontal: true, 3.w),
           ImageWidgetInventory(height: 35, url: url, radius: 10),
-          Space(isHorizontal: true, 11),
+          const Space(isHorizontal: true, 11),
           SizedBox(
             width: 20.w,
             child: Text(
@@ -1032,7 +1082,7 @@ class LowStocksWidget extends StatelessWidget {
               ),
             ),
           ),
-          Space(isHorizontal: true, 17),
+          const Space(isHorizontal: true, 17),
           Stack(
             children: [
               Container(
@@ -1176,8 +1226,8 @@ class StocksMayBeNeedWidget extends StatelessWidget {
                       },
                       errorBuilder: (BuildContext context, Object error,
                           StackTrace? stackTrace) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        return const Padding(
+                          padding: EdgeInsets.all(8.0),
                           child: Text('Error loading image'),
                         );
                       },
@@ -1237,11 +1287,13 @@ class SeeAllWidget extends StatelessWidget {
 class Make_Update_ListWidget extends StatelessWidget {
   String txt;
   final Function? onTap;
+  Color? color;
 
   Make_Update_ListWidget({
     super.key,
     required this.txt,
     required this.onTap,
+    this.color,
   });
 
   @override
@@ -1259,7 +1311,7 @@ class Make_Update_ListWidget extends StatelessWidget {
                 blurRadius: 20,
               )
             ],
-            color: const Color.fromRGBO(84, 166, 193, 1),
+            color: color ?? const Color.fromRGBO(84, 166, 193, 1),
             shape: SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius(
                 cornerRadius: 10,

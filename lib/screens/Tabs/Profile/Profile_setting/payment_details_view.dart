@@ -1,4 +1,5 @@
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
@@ -35,21 +36,21 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
     super.initState();
     userData = UserPreferences.getUser();
     print("userData :: $userData");
-    if (userData?['bank_name'] != null) {
-      bank_name = userData?['bank_name'];
+    if (Provider.of<Auth>(context, listen: false).userData?['bank_name'] != null) {
+      bank_name = Provider.of<Auth>(context, listen: false).userData?['bank_name'];
     }
 
-    if (userData?['account_number'] != null) {
-      accountNumberController.text = userData?['account_number'];
-      reEnterAccountNumber.text = userData?['account_number'];
+    if (Provider.of<Auth>(context, listen: false).userData?['account_number'] != null) {
+      accountNumberController.text =Provider.of<Auth>(context, listen: false). userData?['account_number'];
+      reEnterAccountNumber.text = Provider.of<Auth>(context, listen: false).userData?['account_number'];
     }
 
-    if (userData?['ifsc_code'] != null) {
-      ifscCode.text = userData?['ifsc_code'];
+    if (Provider.of<Auth>(context, listen: false).userData?['ifsc_code'] != null) {
+      ifscCode.text = Provider.of<Auth>(context, listen: false).userData?['ifsc_code'];
     }
 
-    if (userData?['upi_id'] != null) {
-      upiController.text = userData?['upi_id'];
+    if (Provider.of<Auth>(context, listen: false).userData?['upi_id'] != null) {
+      upiController.text = Provider.of<Auth>(context, listen: false).userData?['upi_id'];
     }
   }
 
@@ -67,8 +68,54 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                 upiController.text);
 
         if (msg == 'User information updated successfully.') {
-          Provider.of<Auth>(context, listen: false).userData?['bank_name'] =
-              bank_name;
+          Provider.of<Auth>(context, listen: false).userData?['bank_name'] = bank_name;
+          Provider.of<Auth>(context, listen: false).userData?['account_number'] = accountNumberController.text;
+          Provider.of<Auth>(context, listen: false).userData?['ifsc_code'] = ifscCode.text;
+          Provider.of<Auth>(context, listen: false).userData?['upi_id'] = upiController.text;
+          Map<String, dynamic>? userData = {
+            'user_id': Provider.of<Auth>(context, listen: false).userData?['user_id'],
+            'user_name': Provider.of<Auth>(context, listen: false).userData?['user_name'],
+            'email': Provider.of<Auth>(context, listen: false).userData?['email'],
+            'store_name': Provider.of<Auth>(context, listen: false).userData?['store_name'],
+            'profile_photo': Provider.of<Auth>(context, listen: false).userData?['profile_photo']  ?? '',
+            'store_availability': Provider.of<Auth>(context, listen: false).userData?['store_availability'] ?? false,
+            'pan_number': Provider.of<Auth>(context, listen: false).userData?['pan_number'] ?? '',
+            'aadhar_number': Provider.of<Auth>(context, listen: false).userData?['aadhar_number'] ?? '',
+            if(Provider.of<Auth>(context, listen: false).userData?['address'] != null)
+              'address' :{
+                "location": Provider.of<Auth>(context, listen: false).userData?['address']['location'],
+                "latitude": Provider.of<Auth>(context, listen: false).userData?['address']['latitude'],
+                "longitude": Provider.of<Auth>(context, listen: false).userData?['address']['longitude'],
+                "hno": Provider.of<Auth>(context, listen: false).userData?['address']['hno'],
+                "pincode": Provider.of<Auth>(context, listen: false).userData?['address']['pincode'],
+                "landmark": Provider.of<Auth>(context, listen: false).userData?['address']['landmark'],
+                "type": Provider.of<Auth>(context, listen: false).userData?['address']['type'],
+              },
+            if (Provider.of<Auth>(context, listen: false).userData?['location'] != null)
+              'location': {
+                'details': Provider.of<Auth>(context, listen: false).userData?['location']['details'] ?? '',
+                'latitude': Provider.of<Auth>(context, listen: false).userData?['location']['latitude'] ?? '',
+                'longitude': Provider.of<Auth>(context, listen: false).userData?['location']['longitude'] ?? '',
+              },
+            if (Provider.of<Auth>(context, listen: false).userData?['working_hours'] != null)
+              'working_hours': {
+                'start_time': Provider.of<Auth>(context, listen: false).userData?['working_hours']['start_time'] ?? '',
+                'end_time': Provider.of<Auth>(context, listen: false).userData?['working_hours']['end_time'] ?? '',
+              },
+            'delivery_addresses': Provider.of<Auth>(context, listen: false).userData?['delivery_addresses'] ?? [],
+            'bank_name': bank_name ?? '',
+            'pincode': Provider.of<Auth>(context, listen: false).userData?['pincode'] ?? '',
+            'rating': Provider.of<Auth>(context, listen: false).userData?['rating'] ?? '-',
+            'followers': Provider.of<Auth>(context, listen: false).userData?['followers'] ?? [],
+            'followings': Provider.of<Auth>(context, listen: false).userData?['followings'] ?? [],
+            'cover_image': Provider.of<Auth>(context, listen: false).userData?['cover_image'] ?? '',
+            'account_number': accountNumberController.text ?? '',
+            'ifsc_code': ifscCode.text ?? '',
+            'phone': Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
+            'upi_id': upiController.text ?? '',
+            'user_type': Provider.of<Auth>(context, listen: false).userData?['user_type'] ?? 'Vendor',
+          };
+          await UserPreferences.setUser(userData);
           TOastNotification()
               .showSuccesToast(context, 'Payment details updated');
           Navigator.of(context).pop();
@@ -118,7 +165,7 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                         ),
                       ),
                     ),
-                    Space(
+                    const Space(
                       14,
                       isHorizontal: true,
                     ),
@@ -141,18 +188,31 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                 TextWidgetStoreSetup(label: 'Select your bank'),
                 Space(1.h),
                 Container(
-                  padding: EdgeInsets.only(left: 14),
+                  padding: const EdgeInsets.only(left: 14),
                   // rgba(165, 200, 199, 1),
-                  decoration: const ShapeDecoration(
+                  decoration:  ShapeDecoration(
                     shadows: [
                       BoxShadow(
-                        offset: Offset(0, 4),
-                        color: Color.fromRGBO(165, 200, 199, 0.6),
+                        offset: const Offset(0, 4),
+                        color: Provider.of<Auth>(context,
+                            listen: false)
+                            .userData?['user_type'] ==
+                            UserType.Vendor.name
+                            ? const Color.fromRGBO(
+                            165, 200, 199, 0.6)
+                            : Provider.of<Auth>(context,
+                            listen: false)
+                            .userData?['user_type'] ==
+                            UserType.Supplier.name
+                            ? const Color.fromRGBO(
+                            77, 191, 74, 0.3)
+                            : const Color.fromRGBO(
+                            130, 47, 130, 0.7),
                         blurRadius: 20,
                       )
                     ],
                     color: Colors.white,
-                    shape: SmoothRectangleBorder(
+                    shape: const SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius.all(
                           SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
                     ),
@@ -165,9 +225,12 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                       hint: Text(
                         bank_name.isEmpty ? 'Choose from the list' : bank_name,
                         textAlign: TextAlign.left,
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 14,
-                            color: Color(0xFF0A4C61),
+                            color:  Provider.of<Auth>(context, listen: false)
+                                .userData?['user_type'] ==
+                                UserType.Vendor.name
+                                ?  const Color(0xFF0A4C61) : const Color(0xFF2E0536),
                             fontFamily: 'Product Sans',
                             fontWeight: FontWeight.w400),
                       ),
@@ -206,6 +269,9 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                 AppwideTextField(
                   controller: accountNumberController,
                   hintText: 'Type your account number here',
+                  userType: Provider.of<Auth>(context,
+                      listen: false)
+                      .userData?['user_type'] ,
                   onChanged: (p0) {
                     // user_name = p0.toString();
                     // print(user_name);
@@ -219,6 +285,10 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                 AppwideTextField(
                   controller: reEnterAccountNumber,
                   hintText: 'Type here account number here',
+
+                  userType: Provider.of<Auth>(context,
+                      listen: false)
+                      .userData?['user_type'] ,
                   onChanged: (p0) {
                     // user_name = p0.toString();
                     // print(user_name);
@@ -232,6 +302,9 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                 AppwideTextField(
                   controller: ifscCode,
                   hintText: 'Enter your IFSC code here',
+                  userType: Provider.of<Auth>(context,
+                      listen: false)
+                      .userData?['user_type'] ,
                   onChanged: (p0) {
                     // user_name = p0.toString();
                     // print(user_name);
@@ -245,6 +318,9 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                 AppwideTextField(
                   controller: upiController,
                   hintText: 'Type your UPI ID here',
+                  userType: Provider.of<Auth>(context,
+                      listen: false)
+                      .userData?['user_type'] ,
                   onChanged: (p0) {
                     // user_name = p0.toString();
                     // print(user_name);
@@ -267,7 +343,7 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                   },
                   num: 2,
                   txt: 'Complete payment setup'),
-              Space(17),
+              const Space(17),
               InkWell(
                 onTap: () {
                   Navigator.push(context,

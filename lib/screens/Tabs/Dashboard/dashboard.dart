@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/performance.dart';
@@ -67,7 +68,7 @@ class _DashBoardState extends State<DashBoard>
                                 text: 'notification',
                                 ic: Icons.notifications_outlined,
                                 onTap: () {
-                                  Navigator.of(context).pushNamed('/map');
+                                  // Navigator.of(context).pushNamed('/map');
                                 },
                               ),
                               Container(width: 40.w, child: StoreLogoWidget()),
@@ -124,18 +125,20 @@ class _DashBoardState extends State<DashBoard>
                                                 ),
                                                 ColumnWidgetHomeScreen(
                                                   data: (Provider.of<Auth>(
-                                                              context,
-                                                              listen: false)
-                                                          .userData?['followers'])
+                                                                  context,
+                                                                  listen: false)
+                                                              .userData?[
+                                                          'followers'])
                                                       .length
                                                       .toString(),
                                                   txt: 'Followers',
                                                 ),
                                                 ColumnWidgetHomeScreen(
                                                   data: (Provider.of<Auth>(
-                                                              context,
-                                                              listen: false)
-                                                          .userData?['followings'])
+                                                                  context,
+                                                                  listen: false)
+                                                              .userData?[
+                                                          'followings'])
                                                       .length
                                                       .toString(),
                                                   txt: 'Following',
@@ -261,17 +264,36 @@ class StoreLogoWidget extends StatelessWidget {
       // mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const Space(15),
-        Provider.of<Auth>(context, listen: true).logo_url != ''
+        Provider.of<Auth>(context, listen: false).userData?['profile_photo'] !=
+                ''
             ? Container(
                 height: 70,
                 width: 70,
-                decoration: const ShapeDecoration(
+                decoration: ShapeDecoration(
                   shadows: [
-                    BoxShadow(
-                      offset: Offset(0, 4),
-                      color: Color.fromRGBO(31, 111, 109, 0.6),
-                      blurRadius: 20,
-                    )
+                    Provider.of<Auth>(context, listen: false)
+                                .userData?['user_type'] ==
+                            UserType.Vendor.name
+                        ? const BoxShadow(
+                            offset: Offset(0, 4),
+                            color: Color.fromRGBO(31, 111, 109, 0.6),
+                            blurRadius: 20,
+                          )
+                        : Provider.of<Auth>(context, listen: false)
+                                    .userData?['user_type'] ==
+                                UserType.Supplier.name
+                            ? const BoxShadow(
+                                offset: Offset(0, 4),
+                                color: Color.fromRGBO(163, 220, 118, 0.6),
+                                // rgba(163, 220, 118, 1)
+                                blurRadius: 20,
+                              )
+                            : const BoxShadow(
+                                offset: Offset(0, 4),
+                                color: Color.fromRGBO(188, 115, 188, 0.6),
+                                // rgba(163, 220, 118, 1)
+                                blurRadius: 20,
+                              ),
                   ],
                   shape: SmoothRectangleBorder(),
                 ),
@@ -281,7 +303,8 @@ class StoreLogoWidget extends StatelessWidget {
                     cornerSmoothing: 1,
                   ),
                   child: Image.network(
-                    Provider.of<Auth>(context, listen: true).logo_url,
+                    Provider.of<Auth>(context, listen: false)
+                        .userData?['profile_photo'],
                     fit: BoxFit.cover,
                     loadingBuilder: GlobalVariables().loadingBuilderForImage,
                     errorBuilder: GlobalVariables().ErrorBuilderForImage,
@@ -349,7 +372,9 @@ class StoreNameWidget extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    name ?? Provider.of<Auth>(context, listen: true).userData?['store_name'],
+                    name ??
+                        Provider.of<Auth>(context, listen: true)
+                            .userData?['store_name'],
                     maxLines: 2,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,

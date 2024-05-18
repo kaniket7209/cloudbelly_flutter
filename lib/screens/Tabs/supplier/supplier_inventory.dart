@@ -463,7 +463,7 @@ class _SupplierInventoryState extends State<SupplierInventory> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        whiteCardSection(_bulkOrderSection()),
+        whiteCardSection(_bulkOrderSection(),context),
         Space(2.h),
         Center(
             child: Text(

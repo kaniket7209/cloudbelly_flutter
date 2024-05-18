@@ -1,5 +1,7 @@
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class GlobalVariables {
   static final GlobalVariables _instance = GlobalVariables._internal();

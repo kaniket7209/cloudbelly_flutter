@@ -35,23 +35,32 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
+<!-- 
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https"
-                    android:host="api.cloudbelly.in" />
-            </intent-filter>
+                    android:host="app.cloudbelly.in" />
+            </intent-filter> -->
+            <intent-filter android:autoVerify="true">
+    <action android:name="android.intent.action.VIEW"/>
+    <category android:name="android.intent.category.DEFAULT"/>
+    <category android:name="android.intent.category.BROWSABLE"/>
+    <data android:scheme="https"
+          android:host="app.cloudbelly.in"
+          android:pathPrefix="/"/>
+</intent-filter>
 
-            <intent-filter android:autoVerify="true"
+
+            <!-- <intent-filter android:autoVerify="true"
                 tools:targetApi="m">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https"
-                    android:host="api.cloudbelly.in" />
-            </intent-filter>
+                    android:host="app.cloudbelly.in" />
+            </intent-filter> -->
         </activity>
         <meta-data
             android:name="firebase_messaging_auto_init_enabled"

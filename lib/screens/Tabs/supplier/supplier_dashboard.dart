@@ -32,6 +32,9 @@ class _SupplierDashboardState extends State<SupplierDashboard>
   int _activeButtonIndex = 2;
 
   Future<void> _refreshFeed() async {
+    print(
+        "logo_url:: ${Provider.of<Auth>(context, listen: false).userData?['logo_url']}");
+
     setState(() {});
   }
 
@@ -182,7 +185,8 @@ class _SupplierDashboardState extends State<SupplierDashboard>
                                   Navigator.of(context).pushNamed('/map');
                                 },
                               ),
-                              Container(width: 40.w, child: StoreLogoWidget()),
+                              SizedBox(
+                                  width: 40.w, child: const StoreLogoWidget()),
                               CustomIconButton(
                                 ic: Icons.more_horiz,
                                 onTap: () {},
@@ -198,11 +202,11 @@ class _SupplierDashboardState extends State<SupplierDashboard>
                             maxWidth: 440, // Set the maximum width to 420
                           ),
                           child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 5.w),
+                            margin: EdgeInsets.symmetric(horizontal: 20),
                             child: Column(
                               children: [
                                 Space(3.h),
-                                whiteCardSection(_profileSummary()),
+                                whiteCardSection(_profileSummary(), context),
                                 Space(3.h),
                                 if (_activeButtonIndex == 1)
                                   SocialStatusContent(),
@@ -246,11 +250,19 @@ class StoreLogoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        "logo_url:: ${Provider.of<Auth>(context, listen: true).userData?['logo_url']}");
+    print(
+        "store_name:: ${Provider.of<Auth>(context, listen: true).userData?['store_name']}");
     return Column(
       // mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const Space(15),
-        Provider.of<Auth>(context, listen: true).logo_url != ''
+        Provider.of<Auth>(context, listen: true).userData?['profile_photo'] !=
+                    '' ||
+                Provider.of<Auth>(context, listen: true)
+                        .userData?['profile_photo'] !=
+                    null
             ? Container(
                 height: 70,
                 width: 70,
@@ -271,7 +283,8 @@ class StoreLogoWidget extends StatelessWidget {
                     cornerSmoothing: 1,
                   ),
                   child: Image.network(
-                    Provider.of<Auth>(context, listen: true).logo_url,
+                    Provider.of<Auth>(context, listen: true)
+                        .userData?['profile_photo'],
                     fit: BoxFit.cover,
                     loadingBuilder: GlobalVariables().loadingBuilderForImage,
                     errorBuilder: GlobalVariables().ErrorBuilderForImage,

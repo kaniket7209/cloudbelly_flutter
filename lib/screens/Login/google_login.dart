@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/prefrence_helper.dart';
@@ -87,197 +89,225 @@ class _GoogleLoginState extends State<GoogleLogin> {
                 fit: StackFit.loose,
                 children: [
                   Image.asset(
-                   Assets.googleLoginBgImage,
+                    Assets.googleLoginBgImage,
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.height,
                     fit: BoxFit.cover,
                     filterQuality: FilterQuality.high,
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 40.0, vertical: 10.h),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Space(4.h),
-                          const Center(
-                            child: Text(
-                              'Tell us who you are?',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontFamily: 'Jost',
-                                fontWeight: FontWeight.w800,
-                                height: 0.03,
-                                letterSpacing: 0.78,
-                              ),
-                            ),
-                          ),
-                          Space(3.h),
-                          ListView.separated(
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: () {
-                                    selectedIndex = index;
-                                    setState(() {});
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(
-                                        left: 34,
-                                        top: 10,
-                                        bottom: 10,
-                                        right: 10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          userTypeList[index],
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            color: Color(0xFF0A4C61),
-                                            fontSize: 14,
-                                            fontFamily: 'Product Sans',
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                        const Space(
-                                          10,
-                                          isHorizontal: true,
-                                        ),
-                                        Container(
-                                          //height: 30,width: 30,
-                                          padding: const EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                            color:selectedIndex == index ? const Color(0xFFFA6E00) : const Color(0xFFABABAB),
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                          ),
-                                          child: const Center(
-                                            child: Icon(
-                                              Icons.check,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                              separatorBuilder: (context, _) {
-                                return const Space(21);
-                              },
-                              itemCount: userTypeList.length),
-                          Space(2.h),
-                          Space(3.h),
-                          RichText(
-                            text: TextSpan(
-                              children: [
-                                const TextSpan(
-                                  text:
-                                      "By Clicking Log In with google, you agree to our ",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w400),
-                                ),
-                                TextSpan(
-                                  text: "Terms.",
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Colors.white,
-                                      color: Colors.white,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w400),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      _launchURL(
-                                          "https://app.cloudbelly.in/terms-and-conditions");
-                                    },
-                                ),
-                                const TextSpan(
-                                  text:
-                                      " Learn how we process your data in our",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w400),
-                                ),
-                                TextSpan(
-                                  text: "Privacy policy",
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Colors.white,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w400),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      _launchURL(
-                                          "https://app.cloudbelly.in/privacy-policy");
-                                    },
-                                ),
-                              ],
-                            ),
-                          ),
-                          Space(2.h),
-                          InkWell(
-                            onTap: (){
-                              _handleSignIn();
 
-                            },
-                            child: Center(
-                              child: Container(
-                                height: 5.h,
-                                width: double.infinity,
-                                decoration: const ShapeDecoration(
-                                  shadows: [
-                                    BoxShadow(
-                                      offset: Offset(0, 4),
-                                      color: Color.fromRGBO(165, 200, 199, 0.2),
-                                      blurRadius: 20,
-                                    )
-                                  ],
-                                  color: Colors.white,
-                                  shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius.all(
-                                        SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+                  ),
+                  ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(0.6), // Adjust opacity as needed
+                      BlendMode.srcOver,
+                    ),
+                    child: Image.asset(
+                      Assets.googleLoginBgImage,
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.height,
+                      fit: BoxFit.cover,
+                      filterQuality: FilterQuality.high,
+
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20.0,left: 20.0,top: 30.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        //color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 40.0, vertical: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Space(4.h),
+                                const Center(
+                                  child: Text(
+                                    'Tell us who you are?',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontFamily: 'Jost',
+                                      fontWeight: FontWeight.w800,
+                                      height: 0.03,
+                                      letterSpacing: 0.78,
+                                    ),
                                   ),
                                 ),
-                                child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                Space(3.h),
+                                ListView.separated(
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: () {
+                                          selectedIndex = index;
+                                          setState(() {});
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.only(
+                                              left: 34,
+                                              top: 10,
+                                              bottom: 10,
+                                              right: 10),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                userTypeList[index],
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                  color: Color(0xFF0A4C61),
+                                                  fontSize: 14,
+                                                  fontFamily: 'Product Sans',
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                              const Space(
+                                                10,
+                                                isHorizontal: true,
+                                              ),
+                                              Container(
+                                                //height: 30,width: 30,
+                                                padding: const EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  color:selectedIndex == index ? const Color(0xFFFA6E00) : const Color(0xFFABABAB),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                                child: const Center(
+                                                  child: Icon(
+                                                    Icons.check,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    separatorBuilder: (context, _) {
+                                      return const Space(21);
+                                    },
+                                    itemCount: userTypeList.length),
+                                Space(2.h),
+                                Space(3.h),
+                                RichText(
+                                  text: TextSpan(
                                     children: [
-                                      Image.asset(Assets.googleIcon,height: 25,width: 25,),
-                                      const Space(08,isHorizontal: true,),
-                                      const Text(
-                                        "Login with Google",
+                                      const TextSpan(
+                                        text:
+                                            "By Clicking Log In with google, you agree to our ",
                                         style: TextStyle(
                                             fontSize: 18,
-                                            color: Color(0xFF0A4C61),
+                                            color: Colors.white,
                                             fontFamily: 'Product Sans',
                                             fontWeight: FontWeight.w400),
+                                      ),
+                                      TextSpan(
+                                        text: "Terms.",
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            decoration: TextDecoration.underline,
+                                            decorationColor: Colors.white,
+                                            color: Colors.white,
+                                            fontFamily: 'Product Sans',
+                                            fontWeight: FontWeight.w400),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            _launchURL(
+                                                "https://app.cloudbelly.in/terms-and-conditions");
+                                          },
+                                      ),
+                                      const TextSpan(
+                                        text:
+                                            " Learn how we process your data in our",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                            fontFamily: 'Product Sans',
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                      TextSpan(
+                                        text: "Privacy policy",
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                            decoration: TextDecoration.underline,
+                                            decorationColor: Colors.white,
+                                            fontFamily: 'Product Sans',
+                                            fontWeight: FontWeight.w400),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            _launchURL(
+                                                "https://app.cloudbelly.in/privacy-policy");
+                                          },
                                       ),
                                     ],
                                   ),
                                 ),
-                              ),
+                                Space(2.h),
+                                InkWell(
+                                  onTap: (){
+                                    _handleSignIn();
+                        
+                                  },
+                                  child: Center(
+                                    child: Container(
+                                      height: 5.h,
+                                      width: double.infinity,
+                                      decoration: const ShapeDecoration(
+                                        shadows: [
+                                          BoxShadow(
+                                            offset: Offset(0, 4),
+                                            color: Color.fromRGBO(165, 200, 199, 0.2),
+                                            blurRadius: 20,
+                                          )
+                                        ],
+                                        color: Colors.white,
+                                        shape: SmoothRectangleBorder(
+                                          borderRadius: SmoothBorderRadius.all(
+                                              SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(Assets.googleIcon,height: 25,width: 25,),
+                                            const Space(08,isHorizontal: true,),
+                                            const Text(
+                                              "Login with Google",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Color(0xFF0A4C61),
+                                                  fontFamily: 'Product Sans',
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Space(20)
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   )

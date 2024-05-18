@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
@@ -97,7 +98,8 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
                 latitude, longitude, store_name, max_order_capacity);
 
         if (msg == 'User information updated successfully.') {
-          Provider.of<Auth>(context, listen: false).userData?['pincode'] = pincode;
+          Provider.of<Auth>(context, listen: false).userData?['pincode'] =
+              pincode;
           Provider.of<Auth>(context, listen: false).logo_url = profile_photo;
           // print(Provider.of<Auth>(context, listen: false).pincode);
           TOastNotification().showSuccesToast(context, 'User Details Updated');
@@ -117,6 +119,7 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
 
   bool _isImageUploading = false;
   Position? _currentPosition;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -250,6 +253,8 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
                     TextWidgetStoreSetup(label: 'Enter business owner’s name'),
                     Space(1.h),
                     AppwideTextField(
+                      userType: Provider.of<Auth>(context, listen: false)
+                          .userData?['user_type'],
                       hintText: 'Type name here',
                       onChanged: (p0) {
                         user_name = p0.toString();
@@ -263,6 +268,8 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
                     TextWidgetStoreSetup(label: 'Enter store name'),
                     Space(1.h),
                     AppwideTextField(
+                      userType: Provider.of<Auth>(context, listen: false)
+                          .userData?['user_type'],
                       hintText: 'Type store name here',
                       onChanged: (p0) {
                         store_name = p0.toString();
@@ -274,6 +281,8 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
                     TextWidgetStoreSetup(label: 'Where is your store located?'),
                     Space(1.h),
                     AppwideTextField(
+                      userType: Provider.of<Auth>(context, listen: false)
+                          .userData?['user_type'],
                       hintText: 'Enter your location',
                       onChanged: (p0) async {
                         location_details = p0.toString();
@@ -285,6 +294,8 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
                     TextWidgetStoreSetup(label: 'Please enter pin code'),
                     Space(1.h),
                     AppwideTextField(
+                      userType: Provider.of<Auth>(context, listen: false)
+                          .userData?['user_type'],
                       hintText: 'Enter your pin code',
                       onChanged: (p0) {
                         pincode = p0.toString();
@@ -375,6 +386,8 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
                     TextWidgetStoreSetup(label: 'Max order capacity'),
                     Space(1.h),
                     AppwideTextField(
+                      userType: Provider.of<Auth>(context, listen: false)
+                          .userData?['user_type'],
                       hintText: 'Type here',
                       onChanged: (p0) {
                         max_order_capacity = p0.toString();
@@ -405,6 +418,7 @@ class _Sheet1State extends State<Sheet1> with SingleTickerProviderStateMixin {
 class TextWidgetStoreSetup extends StatelessWidget {
   String label;
   Color? color;
+
   TextWidgetStoreSetup({
     super.key,
     required this.label,
@@ -415,11 +429,20 @@ class TextWidgetStoreSetup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label,
-      style:  TextStyle(
+      style: Provider.of<Auth>(context, listen: false)
+          .userData?['user_type'] ==
+          UserType.Vendor.name
+          ? TextStyle(
         color: color ?? const Color(0xFF0A4C61),
         fontSize: 14,
         fontFamily: 'Product Sans',
         fontWeight: FontWeight.w700,
+       // letterSpacing: 1,
+      ) : TextStyle(
+        color: color ?? const Color(0xFF494949),
+        fontSize: 16,
+        fontFamily: 'Jost',
+        fontWeight: FontWeight.w400,
         height: 0,
         letterSpacing: 0.14,
       ),
@@ -450,7 +473,8 @@ class _Sheet2State extends State<Sheet2> with SingleTickerProviderStateMixin {
           .storeSetup2(pan_number, aadhar_number, fssai_licence_document);
 
       if (msg == 'User information updated successfully.') {
-        Provider.of<Auth>(context, listen: false).userData?['pan_number'] == pan_number;
+        Provider.of<Auth>(context, listen: false).userData?['pan_number'] ==
+            pan_number;
         print('pin: ${pan_number}');
         TOastNotification().showSuccesToast(context, 'KYC details updated');
         if (num == 2) Navigator.of(context).pop();
@@ -570,6 +594,8 @@ class _Sheet2State extends State<Sheet2> with SingleTickerProviderStateMixin {
                     TextWidgetStoreSetup(label: 'Enter your PAN '),
                     Space(1.h),
                     AppwideTextField(
+                      userType: Provider.of<Auth>(context, listen: false)
+                          .userData?['user_type'],
                       hintText: 'Type your pan card number here',
                       onChanged: (p0) {
                         pan_number = p0.toString();
@@ -577,19 +603,21 @@ class _Sheet2State extends State<Sheet2> with SingleTickerProviderStateMixin {
                         // print(user_name);
                       },
                     ),
-                      Space(
-                        3.h,
-                      ),
-                      TextWidgetStoreSetup(label: 'Aadhar card'),
-                      Space(1.h),
-                      AppwideTextField(
-                        hintText: 'Type your aadhar card number here',
-                        onChanged: (p0) {
-                          aadhar_number = p0.toString();
-                          // user_name = p0.toString();
-                          // print(user_name);
-                        },
-                      ),
+                    Space(
+                      3.h,
+                    ),
+                    TextWidgetStoreSetup(label: 'Aadhar card'),
+                    Space(1.h),
+                    AppwideTextField(
+                      userType: Provider.of<Auth>(context, listen: false)
+                          .userData?['user_type'],
+                      hintText: 'Type your aadhar card number here',
+                      onChanged: (p0) {
+                        aadhar_number = p0.toString();
+                        // user_name = p0.toString();
+                        // print(user_name);
+                      },
+                    ),
                     Space(
                       3.h,
                     ),
@@ -798,6 +826,7 @@ class _Sheet3State extends State<Sheet3> with SingleTickerProviderStateMixin {
   String re_account_number = '';
   String ifsc_code = '';
   String upi_id = '';
+
   Future<void> _SubmitForm() async {
     // final prefs = await SharedPreferences.getInstance();
     if (bank_name != '' &&
@@ -810,7 +839,8 @@ class _Sheet3State extends State<Sheet3> with SingleTickerProviderStateMixin {
             .storeSetup3(bank_name, account_number, ifsc_code, upi_id);
 
         if (msg == 'User information updated successfully.') {
-          Provider.of<Auth>(context, listen: false).userData?['bank_name'] = bank_name;
+          Provider.of<Auth>(context, listen: false).userData?['bank_name'] =
+              bank_name;
           TOastNotification()
               .showSuccesToast(context, 'Payment details updated');
           Navigator.of(context).pop();
@@ -986,6 +1016,8 @@ class _Sheet3State extends State<Sheet3> with SingleTickerProviderStateMixin {
                     TextWidgetStoreSetup(label: 'Enter your account number'),
                     Space(1.h),
                     AppwideTextField(
+                      userType: Provider.of<Auth>(context, listen: false)
+                          .userData?['user_type'],
                       hintText: 'Type your account number here',
                       onChanged: (p0) {
                         account_number = p0.toString();
@@ -999,6 +1031,8 @@ class _Sheet3State extends State<Sheet3> with SingleTickerProviderStateMixin {
                     TextWidgetStoreSetup(label: 'Re-enter you account number '),
                     Space(1.h),
                     AppwideTextField(
+                      userType: Provider.of<Auth>(context, listen: false)
+                          .userData?['user_type'],
                       hintText: 'Type here account number here',
                       onChanged: (p0) {
                         re_account_number = p0.toString();
@@ -1012,6 +1046,8 @@ class _Sheet3State extends State<Sheet3> with SingleTickerProviderStateMixin {
                     TextWidgetStoreSetup(label: 'Enter IFSC code'),
                     Space(1.h),
                     AppwideTextField(
+                      userType: Provider.of<Auth>(context, listen: false)
+                          .userData?['user_type'],
                       hintText: 'Enter your IFSC code here',
                       onChanged: (p0) {
                         ifsc_code = p0.toString();
@@ -1025,6 +1061,8 @@ class _Sheet3State extends State<Sheet3> with SingleTickerProviderStateMixin {
                     TextWidgetStoreSetup(label: 'Enter your UPI ID'),
                     Space(1.h),
                     AppwideTextField(
+                      userType: Provider.of<Auth>(context, listen: false)
+                          .userData?['user_type'],
                       hintText: 'Type your UPI ID here',
                       onChanged: (p0) {
                         upi_id = p0.toString();

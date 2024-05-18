@@ -161,7 +161,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    Provider.of<Auth>(context, listen: false).getUserData();
+    Provider.of<Auth>(context, listen: false).userData = UserPreferences.getUser();
     _getFeed();
     _getMenu();
     userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
@@ -452,9 +452,9 @@ class _ProfileState extends State<Profile> {
                                                 parameters =
                                                 DynamicLinkParameters(
                                               uriPrefix:
-                                                  'https://api.cloudbelly.in',
+                                                  'https://app.cloudbelly.in',
                                               link: Uri.parse(
-                                                  'https://api.cloudbelly.in/jTpt?id=${Provider.of<Auth>(context, listen: false).userData?['user_id']}&type=profile'),
+                                                  'https://app.cloudbelly.in/jTpt?id=${Provider.of<Auth>(context, listen: false).userData?['user_id']}&type=profile'),
                                               androidParameters:
                                                   const AndroidParameters(
                                                 packageName:
@@ -1081,7 +1081,7 @@ class FeedWidget extends StatelessWidget {
         final Data = await Provider.of<Auth>(context, listen: false)
             .getFeed(userId) as List<dynamic>;
         Navigator.of(context).pushNamed(PostsScreen.routeName,
-            arguments: {'data': Data, 'index': index});
+            arguments: {'data': Data, 'index': index,"userId":userId});
         //  print("data:: $fulldata");
       },
       child: Stack(
@@ -1202,6 +1202,7 @@ class CommonButtonProfile extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6)),
                   ),
                 ),
+                
               ],
             ),
           ],

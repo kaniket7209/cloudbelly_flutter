@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:cloudbelly_app/screens/Login/map.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
@@ -13,6 +14,7 @@ import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Login/welcome_screen.dart';
 import 'package:cloudbelly_app/services/uni_services.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -79,7 +81,7 @@ void main() async {
 
   //     // options: DefaultFirebaseOptions.currentPlatform,
   //   );
-  // initDynamicLinks();
+  initDynamicLinks();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => Auth()),
   ], child: const MyApp()));
@@ -118,34 +120,34 @@ Future showNotification(RemoteMessage message) async {
     payload: 'New Payload',
   );
 }
-// void initDynamicLinks() async {
-//   FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
-//     _handleDeepLink(dynamicLinkData.link);
-//   }).onError((error) {
-//     // Handle errors
-//     print('Dynamic Link Failed: $error');
-//   });
+void initDynamicLinks() async {
+  FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+    _handleDeepLink(dynamicLinkData.link);
+  }).onError((error) {
+    // Handle errors
+    print('Dynamic Link Failed: $error');
+  });
 
-//   final data = await FirebaseDynamicLinks.instance.getInitialLink();
-//   final Uri deepLink = data!.link;
-//   _handleDeepLink(deepLink);
-// }
+  final data = await FirebaseDynamicLinks.instance.getInitialLink();
+  final Uri deepLink = data!.link;
+  _handleDeepLink(deepLink);
+}
 
-// void _handleDeepLink(Uri deepLink) {
-//   if (deepLink != null) {
-//     // if (deepLink.pathSegments.contains('userProfile')) {
-//     final String? userId = deepLink.queryParameters['id'];
-//     if (userId != null) {
-//       // Use navigatorKey to navigate without context
-//       navigatorKey.currentState!.push(MaterialPageRoute(
-//         builder: (context) {
-//           return Profile();
-//         },
-//       ));
-//     }
-//     // }
-//   }
-// }
+void _handleDeepLink(Uri deepLink) {
+  if (deepLink != null) {
+    // if (deepLink.pathSegments.contains('userProfile')) {
+    final String? userId = deepLink.queryParameters['id'];
+    if (userId != null) {
+      // Use navigatorKey to navigate without context
+      navigatorKey.currentState!.push(MaterialPageRoute(
+        builder: (context) {
+          return const PostsScreen();
+        },
+      ));
+    }
+    // }
+  }
+}
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

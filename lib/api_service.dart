@@ -126,10 +126,11 @@ class Auth with ChangeNotifier {
       final DataMap = jsonDecode(response.body);
       Map<String, dynamic> userProfileData = {
         'user_id': DataMap['user_id'],
+        'user_name': DataMap['user_name'],
         'email': DataMap['email'],
         'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0],
         'profile_photo': DataMap['profile_photo'] ?? '',
-        'store_availability': DataMap['store_availability'] ?? '',
+        'store_availability': DataMap['store_availability'] ?? false,
         'pan_number': DataMap['pan_number'] ?? '',
         'aadhar_number': DataMap['aadhar_number'] ?? '',
         if (DataMap['location'] != null)
@@ -137,6 +138,16 @@ class Auth with ChangeNotifier {
             'details': DataMap['location']['details'] ?? '',
             'latitude': DataMap['location']['latitude'] ?? '',
             'longitude': DataMap['location']['longitude'] ?? '',
+          },
+        if(DataMap['address'] != null)
+          'address' :{
+            "location": DataMap['address']['location'],
+            "latitude": DataMap['address']['latitude'],
+            "longitude": DataMap['address']['longitude'],
+            "hno": DataMap['address']['hno'],
+            "pincode": DataMap['address']['pincode'],
+            "landmark": DataMap['address']['landmark'],
+            "type": DataMap['address']['type'],
           },
         if (DataMap['working_hours'] != null)
           'working_hours': {
@@ -190,12 +201,23 @@ class Auth with ChangeNotifier {
       log("dta:: $DataMap");
       Map<String, dynamic> userProfileData = {
         'user_id': DataMap['user_id'],
+        'user_name': DataMap['user_name'],
         'email': DataMap['email'],
         'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0],
         'profile_photo': DataMap['profile_photo'] ?? '',
-        'store_availability': DataMap['store_availability'] ?? '',
+        'store_availability': DataMap['store_availability'] ?? false,
         'pan_number': DataMap['pan_number'] ?? '',
         'aadhar_number': DataMap['aadhar_number'] ?? '',
+        if(DataMap['address'] != null)
+          'address' :{
+            "location": DataMap['address']['location'],
+            "latitude": DataMap['address']['latitude'],
+            "longitude": DataMap['address']['longitude'],
+            "hno": DataMap['address']['hno'],
+            "pincode": DataMap['address']['pincode'],
+            "landmark": DataMap['address']['landmark'],
+            "type": DataMap['address']['type'],
+          },
         if (DataMap['location'] != null)
           'location': {
             'details': DataMap['location']['details'] ?? '',
@@ -274,9 +296,10 @@ class Auth with ChangeNotifier {
       Map<String, dynamic> userProfileData = {
         'user_id': DataMap['user_id'],
         'email': DataMap['email'],
+        'user_name': DataMap['user_name'],
         'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0],
         'profile_photo': DataMap['profile_photo'] ?? '',
-        'store_availability': DataMap['store_availability'] ?? '',
+        'store_availability': DataMap['store_availability'] ?? false,
         'pan_number': DataMap['pan_number'] ?? '',
         'aadhar_number': DataMap['aadhar_number'] ?? '',
         if (DataMap['location'] != null)
@@ -284,6 +307,16 @@ class Auth with ChangeNotifier {
             'details': DataMap['location']['details'] ?? '',
             'latitude': DataMap['location']['latitude'] ?? '',
             'longitude': DataMap['location']['longitude'] ?? '',
+          },
+        if(DataMap['address'] != null)
+          'address' :{
+            "location": DataMap['address']['location'],
+            "latitude": DataMap['address']['latitude'],
+            "longitude": DataMap['address']['longitude'],
+            "hno": DataMap['address']['hno'],
+            "pincode": DataMap['address']['pincode'],
+            "landmark": DataMap['address']['landmark'],
+            "type": DataMap['address']['type'],
           },
         if (DataMap['working_hours'] != null)
           'working_hours': {
@@ -305,7 +338,7 @@ class Auth with ChangeNotifier {
       };
       await UserPreferences.setUser(userProfileData);
       userData = UserPreferences.getUser();
-      print("userData:: ${userData?['user_id']}");
+      print("userData:: ${userData}");
       /*user_id = DataMap['user_id'];
       user_email = DataMap['email'];
       store_name = DataMap['store_name'] ?? '';
@@ -608,7 +641,30 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+  Future<String> email(email) async {
+    final String url = 'https://app.cloudbelly.in/update-user';
 
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "email": email
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return '-1';
+    }
+  }
   Future<String> contactNumber(contact_number) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
@@ -1280,7 +1336,7 @@ class Auth with ChangeNotifier {
       'like_user_id': userData?['user_id'] ?? "",
     };
 
-    print(requestBody);
+    print("requestBody:: ${requestBody}");
 
     try {
       final response = await http.post(
@@ -1288,7 +1344,7 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-      print(response.body);
+      print("likeResponse:: ${response.body}");
       print(response.statusCode);
 
       return response.statusCode.toString();

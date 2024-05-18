@@ -7,6 +7,7 @@ import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/rating_widget.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -255,18 +256,23 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                           15,
                           isHorizontal: true,
                         ),
-                        Container(
-                            height: 25,
-                            width: 25,
-                            decoration: ShapeDecoration(
-                                color: const Color.fromRGBO(84, 166, 193, 1),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20))),
-                            child: const Center(
-                                child: Icon(
-                              Icons.double_arrow_rounded,
-                              color: Colors.white,
-                            )))
+                        InkWell(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileSettingView()));
+                          },
+                          child: Container(
+                              height: 25,
+                              width: 25,
+                              decoration: ShapeDecoration(
+                                  color: const Color.fromRGBO(84, 166, 193, 1),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20))),
+                              child: const Center(
+                                  child: Icon(
+                                Icons.double_arrow_rounded,
+                                color: Colors.white,
+                              ))),
+                        )
                       ],
                     ),
                   ),

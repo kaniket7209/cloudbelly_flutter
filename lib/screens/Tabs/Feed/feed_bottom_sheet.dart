@@ -344,6 +344,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                                 blurRadius: 20,
                                               )
                                             : const BoxShadow(
+
                                                 offset: Offset(3, 4),
                                                 color: Color.fromRGBO(
                                                     158, 116, 158, 0.5),

@@ -10,27 +10,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02fb6a08-6e3a-426b-9d24-81a9fbe6379c" name="Changes" comment="- issues resolved">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/android/gradlew" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/local.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/models/user_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/user_detail.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Cart/google_map_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Cart/google_map_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Cart/view_cart.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Cart/view_cart.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/kyc_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/kyc_view.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Profile/post_item.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Profile/post_item.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Profile/profile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Profile/profile.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/supplier/bulk_order_sheet.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/bulk_order_sheet.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/supplier/components/components.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/components/components.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/supplier/supplier_inventory.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/supplier_inventory.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/services/supplier_services.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/supplier_services.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/model.dart" afterDir="false" />
+
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +41,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="sagar_dev" />
+        <entry key="$PROJECT_DIR$" value="renish" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -65,6 +55,10 @@
             <RecentBranchesForRepo>
               <option name="branches">
                 <list>
+                  <RecentBranch>
+                    <option name="branchName" value="google_sign-add" />
+                    <option name="lastUsedInstant" value="1714886488" />
+                  </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="renish" />
                     <option name="lastUsedInstant" value="1711995100" />
@@ -89,7 +83,7 @@
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="2e8HdKybn3pgTGWIFs1ECZRO3nZ" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -106,15 +100,15 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;sagar__dev__copy&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+
+    &quot;git-widget-placeholder&quot;: &quot;google__sign-add&quot;,
     &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/SAGAR ADHIKARI/Documents/GitHub/cloudbelly_flutter/lib/screens/Tabs/supplier&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/aniketkumarsingh/Desktop/flutter_cb_App/cloudbelly_flutter&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;device.mirroring&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
 }</component>
@@ -190,7 +184,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712845359670</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="- issues resolved">
+      <option name="closed" value="true" />
+      <created>1714886541072</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1714886541076</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">

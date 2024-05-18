@@ -7,8 +7,9 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../../api_service.dart';
 
-Widget whiteCardSection(Widget widget) {
+Widget whiteCardSection(Widget widget,BuildContext context) {
   return Container(
+    width: MediaQuery.of(context).size.width,
     decoration: ShapeDecoration(
       shadows: const [
         BoxShadow(

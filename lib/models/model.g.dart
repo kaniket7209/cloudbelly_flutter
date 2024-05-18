@@ -4,6 +4,7 @@ part of 'model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
+// **************************************************************************
 
 ProductDetails _$ProductDetailsFromJson(Map<String, dynamic> json) =>
     ProductDetails(

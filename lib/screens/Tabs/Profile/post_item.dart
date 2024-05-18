@@ -36,12 +36,14 @@ class PostItem extends StatefulWidget {
     super.key,
     required bool isMultiple,
     required this.data,
+    this.userId,
     this.isProfilePost = true,
   }) : _isMultiple = isMultiple;
 
   final bool _isMultiple;
   bool isProfilePost;
   final data;
+  final String? userId;
 
   @override
   State<PostItem> createState() => _PostItemState();
@@ -414,7 +416,7 @@ class _PostItemState extends State<PostItem> {
                                 : Provider.of<Auth>(context, listen: false)
                                             .userData?['user_type'] ==
                                         UserType.Supplier.name
-                                    ? const Color.fromRGBO(77, 191, 74, 1)
+                                    ? const Color.fromRGBO(77, 191, 74, 0.3)
                                     : const Color.fromRGBO(158, 116, 158, 0.6),
                             blurRadius: 20,
                           ),
@@ -679,15 +681,14 @@ class _PostItemState extends State<PostItem> {
                       // padding: EdgeInsets.only(left: 10),
                       // pa
                       onPressed: () async {
-                        // print(widget.data['likes'] ?? []);
+                         print( "abcds:: ${widget.userId}");
                         String code = '';
 
                         code = widget.isProfilePost
                             ? await Provider.of<Auth>(context, listen: false)
                                 .likePost(
                                     widget.data['id'],
-                                    Provider.of<Auth>(context, listen: false)
-                                        .userData?['user_id'])
+                                    widget.userId ?? "")
                             : await Provider.of<Auth>(context, listen: false)
                                 .likePost(
                                     widget.data['id'], widget.data['user_id']);
@@ -803,9 +804,9 @@ class _PostItemState extends State<PostItem> {
                         onPressed: () async {
                           final DynamicLinkParameters parameters =
                               DynamicLinkParameters(
-                            uriPrefix: 'https://api.cloudbelly.in',
+                            uriPrefix: 'https://app.cloudbelly.in',
                             link: Uri.parse(
-                                'https://api.cloudbelly.in/?postId=${widget.data['id']}'),
+                                'https://app.cloudbelly.in/?postId=${widget.data['id']}'),
                             androidParameters: const AndroidParameters(
                               packageName: 'com.app.cloudbelly_app',
                             ),
