@@ -2,28 +2,19 @@ import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:uni_links/uni_links.dart';
 
 class ProfileShareBottomSheet {
   Future<dynamic> AddAddressSheet(BuildContext context) {
     return showModalBottomSheet(
-      // useSafeArea: true,
-
       context: context,
       isScrollControlled: true,
-
       builder: (BuildContext context) {
-        bool _isVendor =
-            Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
-                'Vendor';
-        // print(data);
         return PopScope(
           canPop: true,
           onPopInvoked: (_) {
@@ -43,7 +34,6 @@ class ProfileShareBottomSheet {
                               cornerRadius: 35, cornerSmoothing: 1)),
                     ),
                   ),
-                  //height: MediaQuery.of(context).size.height * 0.4,
                   width: double.infinity,
                   padding: EdgeInsets.only(
                       top: 2.h,
@@ -122,7 +112,7 @@ class _QrViewState extends State<QrView> {
                     border: Border.all(color: Colors.black),
                   ),
                   child: Text(
-                    "https://api.cloudbelly.in/?profileId=${Provider.of<Auth>(context, listen: false).userData?['user_id']}",
+                    "https://app.cloudbelly.in/profile?profileId=${Provider.of<Auth>(context, listen: false).userData?['user_id']}",
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 18,
@@ -146,25 +136,15 @@ class _QrViewState extends State<QrView> {
                 ),
                 child: IconButton(
                   onPressed: () async {
-                    final DynamicLinkParameters parameters =
-                        DynamicLinkParameters(
-                      uriPrefix:
-                          'https://api.cloudbelly.in', // Ensure this is the correct URI prefix configured in Firebase
-                      link: Uri.parse(
-                          'https://app.cloudbelly.in/?profileId=${Provider.of<Auth>(context, listen: false).userData?['user_id']}'),
-                      androidParameters: const AndroidParameters(
-                        packageName:
-                            'com.app.cloudbelly_app', // Ensure this matches your app's package name in Android
-                      ),
-                      // Add iOS parameters if your app supports iOS
-                    );
+                    final String userId =
+                        Provider.of<Auth>(context, listen: false)
+                                .userData?['user_id'] ??
+                            '';
+                    final Uri deepLink = Uri.parse(
+                        'https://app.cloudbelly.in/profile?profileId=$userId');
 
-                    final ShortDynamicLink dynamicUrl =
-                        await FirebaseDynamicLinks.instance
-                            .buildShortLink(parameters);
-                    final Uri shortUrl = dynamicUrl.shortUrl;
                     Share.share(
-                        "Check out my profile on CloudBelly: ${shortUrl.toString()}");
+                        "$deepLink");
                   },
                   icon: const Icon(
                     Icons.share,

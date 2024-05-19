@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'dart:io';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:uni_links/uni_links.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/prefrence_helper.dart';
@@ -9,28 +13,19 @@ import 'package:cloudbelly_app/screens/Tabs/Cart/view_cart.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/graphs.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
-
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Login/welcome_screen.dart';
 import 'package:cloudbelly_app/services/uni_services.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
 import 'screens/Tabs/Profile/profile_view.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  //await Firebase.initializeApp();
   showNotification(message);
   print("Handling a background message: ${message.notification!.body}");
 }
@@ -38,15 +33,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
-  await UnilinksServices.init();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey:
-          "AIzaSyB3UySbCaiXjC_bh2h9JAjTKvbeUVA1OmQ", // paste your api key here
-      appId:
-          "1:508708683425:android:fcfeda59f64fd186e9bae0", //paste your app id here
-      messagingSenderId: "508708683425", //paste your messagingSenderId here
-      projectId: "cloudbelly-d97a9", //paste your project id here
+      apiKey: "AIzaSyB3UySbCaiXjC_bh2h9JAjTKvbeUVA1OmQ",
+      appId: "1:508708683425:android:fcfeda59f64fd186e9bae0",
+      messagingSenderId: "508708683425",
+      projectId: "cloudbelly-d97a9",
     ),
   );
   requestNotificationPermission();
@@ -54,8 +46,7 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FlutterLocalNotificationsPlugin().initialize(
     const InitializationSettings(
-      android: AndroidInitializationSettings(
-          '@mipmap/ic_launcher'), // Make sure you have the proper icons
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
     ),
     onDidReceiveNotificationResponse: (NotificationResponse? notificationResponse){
          print("notificationResponse:: ${notificationResponse?.payload}");
@@ -65,25 +56,18 @@ void main() async {
     showNotification(message);
     print('Got a message whilst in the foreground!');
     print('Message data: ${message.notification}');
-
     if (message.notification != null) {
       print('Message also contained a notification: ${message.notification}');
     }
   });
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await UserPreferences.init();
-
   final fcmToken = await FirebaseMessaging.instance.getToken();
   await prefs.setString('fcmToken', fcmToken ?? "");
   Auth().getToken(fcmToken);
   Auth().getUserData();
 
-  //print('fcmToken: $fcmToken');
-  //await Firebase.initializeApp(
-
-  //     // options: DefaultFirebaseOptions.currentPlatform,
-  //   );
-  initDynamicLinks();
+  initUniLinks();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => Auth()),
   ], child: const MyApp()));
@@ -91,7 +75,6 @@ void main() async {
 
 Future<void> requestNotificationPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
-
   NotificationSettings settings = await messaging.requestPermission(
     alert: true,
     announcement: false,
@@ -101,11 +84,10 @@ Future<void> requestNotificationPermission() async {
     provisional: false,
     sound: true,
   );
-
   print('User granted permission: ${settings.authorizationStatus}');
 }
-Future showNotification(RemoteMessage message) async {
 
+Future<void> showNotification(RemoteMessage message) async {
   var androidChannel = const AndroidNotificationDetails(
     'CHANNEL_ID',
     'CHANNEL_NAME',
@@ -122,34 +104,39 @@ Future showNotification(RemoteMessage message) async {
     payload: 'New Payload',
   );
 }
-void initDynamicLinks() async {
-  FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
-    _handleDeepLink(dynamicLinkData.link);
-  }).onError((error) {
-    // Handle errors
-    print('Dynamic Link Failed: $error');
-  });
 
-  // Get the initial dynamic link if the app is opened with a dynamic link
-  final data = await FirebaseDynamicLinks.instance.getInitialLink();
-  if (data?.link != null) {
-    _handleDeepLink(data!.link);
+Future<void> initUniLinks() async {
+  try {
+    final initialLink = await getInitialLink();
+    if (initialLink != null) {
+      _handleDeepLink(Uri.parse(initialLink));
+    }
+    uriLinkStream.listen((Uri? uri) {
+      if (uri != null) {
+        _handleDeepLink(uri);
+      }
+    }, onError: (err) {
+      print('Error handling deep link: $err');
+    });
+  } on PlatformException {
+    print('PlatformException when handling deep link');
+  } on FormatException {
+    print('FormatException when handling deep link');
   }
 }
 
 void _handleDeepLink(Uri deepLink) {
+  print("Received deep link: $deepLink");
   final String? userId = deepLink.queryParameters['profileId'];
   if (userId != null) {
-    print(" profileId found in the deep link");
-    // Use the navigator key to push the ProfileView
+    print("Extracted userId: $userId");
     navigatorKey.currentState?.push(MaterialPageRoute(
       builder: (context) => ProfileView(userIdList: [userId]),
     ));
   } else {
-    print("No profileId found in the deep link");
+    print("No userId found in the deep link");
   }
 }
-
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -214,24 +201,3 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
-/*final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  _firebaseMessaging.getToken().then((token) {
-    print('Firebase Token: $token');
-  });
-  const InitializationSettings initializationSettings =
-  InitializationSettings(
-    android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-  );
-  flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
-  );
-
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Received message in foreground: ${message.notification!.title}');
-  });
-
-  // Handle notifications when the app is terminated or in the background
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    print('Received message in background: ${message.notification!.title}');
-  });*/
