@@ -1,15 +1,14 @@
-import 'package:cloudbelly_app/api_service.dart';
+import 'dart:ui';
+
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-//import '../../../api_service.dart';
+import '../../../../api_service.dart';
 
-
-Widget whiteCardSection(Widget widget,BuildContext context) {
+Widget whiteCardSection(Widget widget) {
   return Container(
-    width: MediaQuery.of(context).size.width,
     decoration: ShapeDecoration(
       shadows: const [
         BoxShadow(
@@ -36,48 +35,21 @@ Future<dynamic> customButtomSheetSection(
   final ScrollController _controller = ScrollController();
 
   bool _isVendor =
-      Provider.of<Auth>(context, listen: false).userData?['user_type'] == 'Vendor';
+      Provider.of<Auth>(context, listen: false).userData!['user_type'] ==
+          'Vendor';
   return showModalBottomSheet(
-    backgroundColor: Colors.white,
     context: context,
-    enableDrag: false,
-    isScrollControlled: true,
-    isDismissible: true,
+    backgroundColor:
+        Colors.transparent, // Important: make the background transparent
+    isScrollControlled:
+        true, // This allows the bottom sheet to expand to the content size
     builder: (BuildContext context) {
-      return WillPopScope(
-        onWillPop: () async {
-          context.read<TransitionEffect>().setBlurSigma(0);
-          return true;
-        },
-        child: DraggableScrollableSheet(
-          initialChildSize: 0.55,
-          // Adjust as needed
-          minChildSize: 0.3,
-          // Adjust as needed
-          maxChildSize: 0.55,
-          // Adjust as needed
-          expand: false,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              double extent = 10; // Initial extent value
-              return NotificationListener<DraggableScrollableNotification>(
-                onNotification: (notification) {
-                  if (notification.extent != extent) {
-                    extent = notification.extent;
-                    // print('Extent: $extent');
-                    context.read<TransitionEffect>().setBlurSigma(
-                        notification.extent * 10); // Print extent value
-                  }
-                  return false;
-                },
-                child: SingleChildScrollView(
-                    controller: scrollController, child: childWidget),
-              );
-            });
-          },
-        ),
-      );
+      return BackdropFilter(
+          filter: ImageFilter.blur(
+              sigmaX: 5, sigmaY: 5), // Adjust the blur intensity
+          child: SingleChildScrollView(
+            child: Wrap(children: [childWidget]),
+          ));
     },
   );
 }
