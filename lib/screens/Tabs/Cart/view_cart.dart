@@ -18,8 +18,25 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+String createUpiPaymentUrl(String upiId, String name, String amount, String transactionId) {
+  return 'upi://pay?pa=$upiId&pn=$name&tn=OrderId:$transactionId&am=$amount&cu=INR';
+}
+
+void initiateUpiPayment(String upiId, String name, String amount, String transactionId) async {
+  final upiUrl = Uri.parse('upi://pay?pa=$upiId&pn=$name&tn=OrderId:$transactionId&am=$amount&cu=INR');
+
+  if (await canLaunch(upiUrl.toString())) {
+    await launch(upiUrl.toString());
+  } else {
+    print('Could not launch $upiUrl');
+  }
+}
+
 
 AddressModel? addressModel = AddressModel();
+
 
 class ViewCart extends StatefulWidget {
   static const routeName = '/view-cart';
@@ -128,24 +145,44 @@ class _ViewCartState extends State<ViewCart> {
     }
   }
 
-  void openCheckout() async {
-    var options = {
-      'key': 'rzp_test_1DP5mmOlF5G5ag',
-      'amount': 100,
-      'name': 'Acme Corp.',
-      'description': 'Fine T-Shirt',
-      'retry': {'enabled': true, 'max_count': 1},
-      'send_sms_hash': true,
-      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
-    };
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
-    _razorpay.open(options);
-  }
+  // void openCheckout() async {
+  //   var options = {
+  //     'key': 'rzp_test_1DP5mmOlF5G5ag',
+  //     'amount': 100,
+  //     'name': 'Acme Corp.',
+  //     'description': 'Fine T-Shirt',
+  //     'retry': {'enabled': true, 'max_count': 1},
+  //     'send_sms_hash': true,
+  //     'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+  //   };
+  //   _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
+  //   _razorpay.open(options);
+  // }
 
-  void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-    print("successResponse:: ${response.data.toString()}");
-    submitOrder();
-  }
+
+  // void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
+  //   print("successResponse:: ${response.data.toString()}");
+  //   submitOrder();
+  // }
+  void openCheckout() async {
+  var options = {
+    'key': 'rzp_test_1DP5mmOlF5G5ag',
+    'amount': 100,
+    'name': 'Acme Corp.',
+    'description': 'Fine T-Shirt',
+    'retry': {'enabled': true, 'max_count': 1},
+    'send_sms_hash': true,
+    'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+  };
+  _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
+  _razorpay.open(options);
+}
+
+void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
+  print("successResponse:: ${response.data.toString()}");
+  submitOrder();
+}
+
 
   void submitOrder() async {
     print("hdjnvd");
@@ -176,98 +213,141 @@ class _ViewCartState extends State<ViewCart> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromRGBO(254, 247, 254, 1),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // Your existing code
-          Container(
-            width: 100.w,
-            decoration: const ShapeDecoration(
-              color: Colors.white,
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius.only(
-                    bottomLeft:
-                        SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
-                    bottomRight:
-                        SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
-              ),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color.fromRGBO(254, 247, 254, 1),
+    body: SingleChildScrollView(
+      controller: _scrollController,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+          width: 100.w,
+          decoration: const ShapeDecoration(
+            color: Colors.white,
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.only(
+                  bottomLeft:
+                      SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                  bottomRight:
+                      SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
             ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 6.w),
-              child: Column(
-                children: [
-                  Space(5.5.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      TouchableOpacity(
-                        onTap: () {
-                          Navigator.of(context).maybePop();
-                        },
-                        child: const Padding(
-                          padding:
-                              EdgeInsets.only(right: 10, top: 10, bottom: 10),
-                          child: SizedBox(
-                            child: Text(
-                              '<<',
-                              style: TextStyle(
-                                color: Color(0xFFFA6E00),
-                                fontSize: 22,
-                                fontFamily: 'Kavoon',
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.66,
-                              ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 6.w),
+            child: Column(
+              children: [
+                Space(5.5.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    TouchableOpacity(
+                      onTap: () {
+                        Navigator.of(context).maybePop();
+                      },
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.only(right: 10, top: 10, bottom: 10),
+                        child: SizedBox(
+                          child: Text(
+                            '<<',
+                            style: TextStyle(
+                              color: Color(0xFFFA6E00),
+                              fontSize: 22,
+                              fontFamily: 'Kavoon',
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.66,
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: 60.w,
-                        child: const Text(
-                          'Geeta’s Kitchen',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Color(0xFF1E1E1E),
-                            fontSize: 16,
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w500,
-                          ),
+                    ),
+                    SizedBox(
+                      width: 60.w,
+                      child: const Text(
+                        'Geeta’s Kitchen',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Color(0xFF1E1E1E),
+                          fontSize: 16,
+                          fontFamily: 'Jost',
+                          fontWeight: FontWeight.w500,
                         ),
-                      )
-                    ],
-                  ),
-                  Space(0.5.h),
-                  Container(
-                    width: double.infinity,
-                    decoration: const ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          width: 0.50,
-                          strokeAlign: BorderSide.strokeAlignCenter,
-                          color: Color(0xFF2E0536),
-                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Space(0.5.h),
+                Container(
+                  width: double.infinity,
+                  decoration: const ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        width: 0.50,
+                        strokeAlign: BorderSide.strokeAlignCenter,
+                        color: Color(0xFF2E0536),
                       ),
                     ),
                   ),
-                  Space(1.7.h),
-                  Consumer<ViewCartProvider>(
-                      builder: (context, notifier, child) {
-                    return notifier.addressModel?.location != null
-                        ? Row(
-                            children: [
-                              const Icon(
-                                Icons.location_pin,
+                ),
+                Space(1.7.h),
+                Consumer<ViewCartProvider>(
+                    builder: (context, notifier, child) {
+                  return notifier.addressModel?.location != null
+                      ? Row(
+                          children: [
+                            const Icon(
+                              Icons.location_pin,
+                              size: 35,
+                              color: Color(0xFFFA6E00),
+                            ),
+                            Text(
+                              notifier.addressModel?.type ?? "",
+                              style: const TextStyle(
+                                color: Color(0xFF1E1E1E),
+                                fontSize: 18,
+                                fontFamily: 'Jost',
+                                fontWeight: FontWeight.w500,
+                                height: 0.05,
+                              ),
+                            ),
+                            const Spacer(),
+                            SizedBox(
+                              width: 35.w,
+                              child: Text(
+                                notifier.addressModel?.location ??
+                                    'Please Select Location',
+                                maxLines: _isAddressExpnaded ? 6 : 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    color: Color(0xFF2E0536),
+                                    fontSize: 14,
+                                    fontFamily: 'Jost',
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                            TouchableOpacity(
+                              onTap: () {
+                                getAddressDetails();
+                              },
+                              child: const Icon(
+                                Icons.keyboard_arrow_down,
                                 size: 35,
                                 color: Color(0xFFFA6E00),
                               ),
-                              Text(
-                                notifier.addressModel?.type ?? "",
-                                style: const TextStyle(
+                            ),
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                getAddressDetails();
+                              },
+                              child: const Text(
+                                "Please Select Location",
+                                style: TextStyle(
                                   color: Color(0xFF1E1E1E),
                                   fontSize: 18,
                                   fontFamily: 'Jost',
@@ -275,214 +355,206 @@ class _ViewCartState extends State<ViewCart> {
                                   height: 0.05,
                                 ),
                               ),
-                              const Spacer(),
-                              SizedBox(
-                                width: 35.w,
-                                child: Text(
-                                  notifier.addressModel?.location ??
-                                      'Please Select Location',
-                                  maxLines: _isAddressExpnaded ? 6 : 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      color: Color(0xFF2E0536),
-                                      fontSize: 14,
-                                      fontFamily: 'Jost',
-                                      fontWeight: FontWeight.w400),
-                                ),
+                            ),
+                            TouchableOpacity(
+                              onTap: () {
+                                getAddressDetails();
+                              },
+                              child: const Icon(
+                                Icons.keyboard_arrow_down,
+                                size: 35,
+                                color: Color(0xFFFA6E00),
                               ),
-                              TouchableOpacity(
-                                onTap: () {
-                                  getAddressDetails();
-                                },
-                                child: const Icon(
-                                  Icons.keyboard_arrow_down,
-                                  size: 35,
-                                  color: Color(0xFFFA6E00),
-                                ),
-                              ),
-                            ],
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  getAddressDetails();
-                                },
-                                child: const Text(
-                                  "Please Select Location",
-                                  style: TextStyle(
-                                    color: Color(0xFF1E1E1E),
-                                    fontSize: 18,
-                                    fontFamily: 'Jost',
-                                    fontWeight: FontWeight.w500,
-                                    height: 0.05,
-                                  ),
-                                ),
-                              ),
-                              TouchableOpacity(
-                                onTap: () {
-                                  getAddressDetails();
-                                },
-                                child: const Icon(
-                                  Icons.keyboard_arrow_down,
-                                  size: 35,
-                                  color: Color(0xFFFA6E00),
-                                ),
-                              ),
-                            ],
-                          );
-                  }),
-                  Space(2.h),
-                ],
-              ),
-            ),
-          ),
-          Space(3.5.h),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 6.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Space(32),
-                Consumer<ViewCartProvider>(
-                    builder: (context, notifiyer, child) {
-                  return Container(
-                      padding: EdgeInsets.only(
-                          top: 2.5.h, left: 4.w, right: 4.w, bottom: 1.h),
-                      decoration: GlobalVariables().ContainerDecoration(
-                          offset: const Offset(0, 4),
-                          blurRadius: 15,
-                          shadowColor: const Color.fromRGBO(188, 115, 188, 0.2),
-                          boxColor: Colors.white,
-                          cornerRadius: 25),
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: notifiyer.productList.length,
-                          itemBuilder: (context, index) {
-                            return MenuItemInCart(
-                              productDetails: notifiyer.productList[index],
-                              onQuantityChanged: calculateTotalAmount,
-                            );
-                          }));
+                            ),
+                          ],
+                        );
                 }),
-                Space(1.h),
-                const Space(33),
-                const Space(16),
-                PriceWidget(
-                  totalAmount: totalAmount,
-                ),
-                Space(4.h),
-                TextWidgetCart(
-                    text:
-                        'Review your order & address details to avoid cancellations'),
-                Space(1.5.h),
-                const policyWidgetCart(),
+                Space(2.h),
               ],
             ),
           ),
-          Space(2.h),
-        ]),
-      ),
-      bottomNavigationBar: _showContainer
-          ? AnimatedContainer(
-              duration: const Duration(
-                  milliseconds: 300),
-              height: 100,
-              child: Container(
-                padding: const EdgeInsets.only(right: 18, left: 29),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                width: double.infinity,
-                height: 75,
-                decoration: GlobalVariables().ContainerDecoration(
-                    offset: const Offset(3, 6),
-                    blurRadius: 20,
-                    shadowColor: const Color.fromRGBO(179, 108, 179, 0.5),
-                    boxColor: const Color.fromRGBO(123, 53, 141, 1),
-                    cornerRadius: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Rs $totalAmount',
-                          style: const TextStyle(
-                            color: Color(0xFFF7F7F7),
-                            fontSize: 16,
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w600,
-                          ),
+        ),
+        // Space(3.5.h),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 6.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Space(32),
+              Consumer<ViewCartProvider>(
+                  builder: (context, notifiyer, child) {
+                return Container(
+                    padding: EdgeInsets.only(
+                        top: 2.5.h, left: 4.w, right: 4.w, bottom: 1.h),
+                    decoration: GlobalVariables().ContainerDecoration(
+                        offset: const Offset(0, 4),
+                        blurRadius: 15,
+                        shadowColor: const Color.fromRGBO(188, 115, 188, 0.2),
+                        boxColor: Colors.white,
+                        cornerRadius: 25),
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: notifiyer.productList.length,
+                        itemBuilder: (context, index) {
+                          return MenuItemInCart(
+                            productDetails: notifiyer.productList[index],
+                            onQuantityChanged: calculateTotalAmount,
+                          );
+                        }));
+              }),
+              Space(1.h),
+              const Space(33),
+              const Space(16),
+              PriceWidget(
+                totalAmount: totalAmount,
+              ),
+              Space(4.h),
+              TextWidgetCart(
+                  text:
+                      'Review your order & address details to avoid cancellations'),
+              Space(1.5.h),
+              const policyWidgetCart(),
+            ],
+          ),
+        ),
+        Space(2.h),
+      ]),
+    ),
+    bottomNavigationBar: _showContainer
+        ? AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            height: 100,
+            child: Container(
+              padding: const EdgeInsets.only(right: 18, left: 29),
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              width: double.infinity,
+              height: 75,
+              decoration: GlobalVariables().ContainerDecoration(
+                  offset: const Offset(3, 6),
+                  blurRadius: 20,
+                  shadowColor: const Color.fromRGBO(179, 108, 179, 0.5),
+                  boxColor: const Color.fromRGBO(123, 53, 141, 1),
+                  cornerRadius: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Rs $totalAmount',
+                        style: const TextStyle(
+                          color: Color(0xFFF7F7F7),
+                          fontSize: 16,
+                          fontFamily: 'Jost',
+                          fontWeight: FontWeight.w600,
                         ),
-                        Text(
-                          'View Detailed Bill',
+                      ),
+                      Text(
+                        'View Detailed Bill',
+                        style: TextStyle(
+                          color: Color(0xFFF7F7F7),
+                          fontSize: 12,
+                          fontFamily: 'Jost',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      )
+                    ],
+                  ),
+                  TouchableOpacity(
+                    onTap: () {
+                      context
+                          .read<ViewCartProvider>()
+                          .productList
+                          .forEach((element) {
+                        String productId = element.id ?? "";
+                        String priceEach = element.totalPrice ?? "";
+                        int quantity = element.quantity ?? 0;
+
+                        Map<String, dynamic> newItem = {
+                          'product_id': productId,
+                          'price_each': priceEach,
+                          'quantity': quantity,
+                        };
+
+                        convertedList.add(newItem);
+                      });
+                      createProductOrder();
+                    },
+                    child: Container(
+                      height: 41,
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
+                      decoration: ShapeDecoration(
+                        color: const Color.fromRGBO(84, 166, 193, 1),
+                        shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                          cornerRadius: 12,
+                          cornerSmoothing: 1,
+                        )),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Proceed to payment',
                           style: TextStyle(
-                            color: Color(0xFFF7F7F7),
-                            fontSize: 12,
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        )
-                      ],
-                    ),
-                    TouchableOpacity(
-                      onTap: () {
-                        context
-                            .read<ViewCartProvider>()
-                            .productList
-                            .forEach((element) {
-                          String productId = element.id ?? "";
-                          String priceEach = element.totalPrice ?? "";
-                          int quantity = element.quantity ?? 0;
-
-                          Map<String, dynamic> newItem = {
-                            'product_id': productId,
-                            'price_each': priceEach,
-                            'quantity': quantity,
-                          };
-
-                          convertedList.add(newItem);
-                        });
-                        createProductOrder();
-                      },
-                      child: Container(
-                        height: 41,
-                        padding: const EdgeInsets.symmetric(horizontal: 18),
-                        decoration: ShapeDecoration(
-                          color: const Color.fromRGBO(84, 166, 193, 1),
-                          shape: SmoothRectangleBorder(
-                              borderRadius: SmoothBorderRadius(
-                            cornerRadius: 12,
-                            cornerSmoothing: 1,
-                          )),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'Proceed to payment',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                              letterSpacing: 0.14,
-                            ),
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w700,
+                            height: 0,
+                            letterSpacing: 0.14,
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  // // UPI Payment Button
+                  // TouchableOpacity(
+                  //   onTap: () {
+                  //     String upiId = '6206630515@paytm'; // Replace with actual UPI ID
+                  //     String name = 'Aniket Kumar Singh'; // Replace with actual vendor name
+                  //     String amount = totalAmount.toString(); // Use the calculated total amount
+                  //     String transactionId = 'transaction_id_123'; // Generate or use actual transaction ID
+                  //     initiateUpiPayment(upiId, name, amount, transactionId);
+                  //   },
+                  //   child: Container(
+                  //     height: 41,
+                  //     padding: const EdgeInsets.symmetric(horizontal: 18),
+                  //     decoration: ShapeDecoration(
+                  //       color: const Color.fromRGBO(84, 166, 193, 1),
+                  //       shape: SmoothRectangleBorder(
+                  //           borderRadius: SmoothBorderRadius(
+                  //         cornerRadius: 12,
+                  //         cornerSmoothing: 1,
+                  //       )),
+                  //     ),
+                  //     child: const Center(
+                  //       child: Text(
+                  //         'Pay with UPI',
+                  //         style: TextStyle(
+                  //           color: Colors.white,
+                  //           fontSize: 14,
+                  //           fontFamily: 'Product Sans',
+                  //           fontWeight: FontWeight.w700,
+                  //           height: 0,
+                  //           letterSpacing: 0.14,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  
+                  // ),
+                
+                
+                ],
               ),
-            )
-          : null,
-    );
-  }
+            ),
+          )
+        : null,
+  );
+}
 }
 
 class DeliveryInstructionWidgetCart extends StatelessWidget {
