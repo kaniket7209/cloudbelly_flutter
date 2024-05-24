@@ -453,7 +453,7 @@ Widget build(BuildContext context) {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'View Detailed Bill',
                         style: TextStyle(
                           color: Color(0xFFF7F7F7),
