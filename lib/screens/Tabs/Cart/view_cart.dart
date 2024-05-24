@@ -49,6 +49,7 @@ class _ViewCartState extends State<ViewCart> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+    calculateTotalAmount();
   }
 
   @override
@@ -72,14 +73,21 @@ class _ViewCartState extends State<ViewCart> {
       setState(() {
         _scrollingDown = false;
       });
-      // To hide the container after some scrolling up, you can add a condition here
-      // For example, if you want to hide it after scrolling up by 100 pixels
       if (_scrollController.offset <= 100) {
         setState(() {
           _showContainer = false;
         });
       }
     }
+  }
+
+  void calculateTotalAmount() {
+    setState(() {
+      totalAmount = context.read<ViewCartProvider>().productList.fold<double>(0.0, (sum, item) {
+        final totalPrice = double.tryParse(item.totalPrice ?? "0") ?? 0.0;
+        return sum + totalPrice;
+      });
+    });
   }
 
   void getAddressDetails() async {
@@ -113,7 +121,6 @@ class _ViewCartState extends State<ViewCart> {
         orderId = response['order_id'];
         TOastNotification().showSuccesToast(context, response['message']);
         openCheckout();
-        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>PostItem()));
       } else {
         TOastNotification().showErrorToast(context, response['message']);
       }
@@ -165,7 +172,7 @@ class _ViewCartState extends State<ViewCart> {
 
     // If this function is called inside a StatefulWidget, call setState to trigger a UI update
     setState(() {
-      // Perform any necessary UI updates here
+      calculateTotalAmount();
     });
   }
 
@@ -176,6 +183,7 @@ class _ViewCartState extends State<ViewCart> {
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          // Your existing code
           Container(
             width: 100.w,
             decoration: const ShapeDecoration(
@@ -204,7 +212,6 @@ class _ViewCartState extends State<ViewCart> {
                           padding:
                               EdgeInsets.only(right: 10, top: 10, bottom: 10),
                           child: SizedBox(
-                            //width: 25,
                             child: Text(
                               '<<',
                               style: TextStyle(
@@ -252,7 +259,6 @@ class _ViewCartState extends State<ViewCart> {
                       builder: (context, notifier, child) {
                     return notifier.addressModel?.location != null
                         ? Row(
-                            // crossAxisAlignment: CrossAxisAlignment.st,
                             children: [
                               const Icon(
                                 Icons.location_pin,
@@ -287,14 +293,8 @@ class _ViewCartState extends State<ViewCart> {
                               TouchableOpacity(
                                 onTap: () {
                                   getAddressDetails();
-                                  /* setState(() {
-                            _isAddressExpnaded = !_isAddressExpnaded;
-                          });*/
                                 },
                                 child: const Icon(
-                                  /*_isAddressExpnaded
-                              ? Icons.keyboard_arrow_up
-                              :*/
                                   Icons.keyboard_arrow_down,
                                   size: 35,
                                   color: Color(0xFFFA6E00),
@@ -323,14 +323,8 @@ class _ViewCartState extends State<ViewCart> {
                               TouchableOpacity(
                                 onTap: () {
                                   getAddressDetails();
-                                  /* setState(() {
-                            _isAddressExpnaded = !_isAddressExpnaded;
-                          });*/
                                 },
                                 child: const Icon(
-                                  /*_isAddressExpnaded
-                              ? Icons.keyboard_arrow_up
-                              :*/
                                   Icons.keyboard_arrow_down,
                                   size: 35,
                                   color: Color(0xFFFA6E00),
@@ -350,41 +344,6 @@ class _ViewCartState extends State<ViewCart> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 50,
-                  padding: EdgeInsets.symmetric(horizontal: 6.w),
-                  decoration: GlobalVariables().ContainerDecoration(
-                      offset: const Offset(0, 4),
-                      blurRadius: 15,
-                      shadowColor: const Color.fromRGBO(188, 115, 188, 0.2),
-                      boxColor: Colors.white,
-                      cornerRadius: 15),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Ordering for somebody?',
-                        style: TextStyle(
-                          color: Color(0xFF2E0536),
-                          fontSize: 14,
-                          fontFamily: 'Product Sans Medium',
-                          fontWeight: FontWeight.w500,
-                          height: 0.13,
-                        ),
-                      ),
-                      Text(
-                        'Add details',
-                        style: TextStyle(
-                          color: Color(0xFFFA6E00),
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w700,
-                          height: 0.08,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
                 const Space(32),
                 Consumer<ViewCartProvider>(
                     builder: (context, notifiyer, child) {
@@ -402,311 +361,15 @@ class _ViewCartState extends State<ViewCart> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: notifiyer.productList.length,
                           itemBuilder: (context, index) {
-                            return Container(
-                              margin: EdgeInsets.only(bottom: 1.5.h),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            margin:
-                                                const EdgeInsets.only(top: 2),
-                                            height: 15,
-                                            width: 15,
-                                            decoration: ShapeDecoration(
-                                              shadows: const [
-                                                BoxShadow(
-                                                  offset: Offset(0, 10),
-                                                  color: Color.fromRGBO(
-                                                      56, 56, 56, 0.15),
-                                                  blurRadius: 15,
-                                                ),
-                                              ],
-                                              gradient: const LinearGradient(
-                                                begin: Alignment.bottomLeft,
-                                                end: Alignment.topRight,
-                                                colors: [
-                                                  Color.fromRGBO(
-                                                      26, 155, 15, 1),
-                                                  Color.fromRGBO(36, 255, 0, 1)
-                                                ],
-                                              ),
-                                              shape: SmoothRectangleBorder(
-                                                  borderRadius:
-                                                      SmoothBorderRadius(
-                                                cornerRadius: 4,
-                                                cornerSmoothing: 1,
-                                              )),
-                                            )),
-                                        const Space(9, isHorizontal: true),
-                                        Expanded(
-                                          child: Text(
-                                            notifiyer.productList[index].name ??
-                                                "",
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
-                                            style: const TextStyle(
-                                              color: Color(0xFF4C4C4C),
-                                              fontSize: 14,
-                                              fontFamily: 'Product Sans Medium',
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  /*Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: const EdgeInsets.only(top: 2),
-                      height: 15,
-                      width: 15,
-                      decoration: ShapeDecoration(
-                        shadows: const [
-                          BoxShadow(
-                            offset: Offset(0, 10),
-                            color: Color.fromRGBO(56, 56, 56, 0.15),
-                            blurRadius: 15,
-                          ),
-                        ],
-                        gradient: const LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: [
-                            Color.fromRGBO(26, 155, 15, 1),
-                            Color.fromRGBO(36, 255, 0, 1)
-                          ],
-                        ),
-                        shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                          cornerRadius: 4,
-                          cornerSmoothing: 1,
-                        )),
-                      )),
-                  const Space(9, isHorizontal: true),
-                  SizedBox(
-                    width: 28.w,
-                    child: Text(
-                      widget.productDetails.name ?? "",
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFF4C4C4C),
-                        fontSize: 14,
-                        fontFamily: 'Product Sans Medium',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              */ /*const Row(
-                children: [
-                  Space(24, isHorizontal: true),
-                  Text(
-                    'Customize ',
-                    style: TextStyle(
-                      color: Color(0xFF4C4C4C),
-                      fontSize: 12,
-                      fontFamily: 'Jost',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  Icon(
-                    Icons.keyboard_arrow_down_sharp,
-                    size: 27,
-                    color: Color(0xFFFA6E00),
-                  ),
-                ],
-              )*/ /*
-            ],
-          ),*/
-                                  //  Space(1, isHorizontal: true),
-                                  // Spacer(),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.keyboard_arrow_down_sharp,
-                                      size: 35,
-                                    ),
-
-                                    onPressed: () {
-                                      setState(() {
-                                        if (notifiyer
-                                                .productList[index].quantity! >
-                                            1) {
-                                          notifiyer.productList[index]
-                                              .quantity = notifiyer
-                                                  .productList[index]
-                                                  .quantity! -
-                                              1;
-                                          updateTotalPrice(
-                                              notifiyer.productList[index]);
-                                          totalAmount -= double.tryParse(
-                                                  notifiyer.productList[index]
-                                                          .totalPrice ??
-                                                      "")!
-                                              .toDouble();
-                                          print(totalAmount);
-                                          /*for (var p in widget.productList) {
-                                          subTotal -= double.tryParse(p.totalPrice ?? "")!.toDouble();
-                                        }
-                                       */
-                                          //  calculateTotalAmount(widget.productDetails);
-                                        }
-                                      });
-                                    },
-                                    // weight: 1000,
-                                    color: Color(0xFFFA6E00),
-                                  ),
-                                  Container(
-                                    height: 33,
-                                    width: 33,
-                                    decoration: GlobalVariables()
-                                        .ContainerDecoration(
-                                            offset: const Offset(3, 6),
-                                            blurRadius: 20,
-                                            shadowColor: const Color.fromRGBO(
-                                                158, 116, 158, 0.5),
-                                            boxColor: const Color(0xFFFA6E00),
-                                            cornerRadius: 8),
-                                    child: Center(
-                                      child: Text(
-                                        '${notifiyer.productList[index].quantity}',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontFamily: 'Product Sans',
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.keyboard_arrow_up_sharp,
-                                      size: 35,
-                                    ),
-
-                                    onPressed: () {
-                                      setState(() {
-                                        if (notifiyer
-                                                .productList[index].quantity! <
-                                            10) {
-                                          notifiyer.productList[index]
-                                              .quantity = notifiyer
-                                                  .productList[index]
-                                                  .quantity! +
-                                              1;
-
-                                          updateTotalPrice(
-                                              notifiyer.productList[index]);
-                                          totalAmount += double.tryParse(
-                                                  notifiyer.productList[index]
-                                                          .totalPrice ??
-                                                      "")!
-                                              .toDouble();
-
-                                          /*for (var p in widget.productList) {
-                                          subTotal += double.tryParse(p.totalPrice ?? "")!.toDouble();
-                                        }*/
-                                          print(totalAmount);
-                                          // calculateTotalAmount(widget.productDetails);
-                                        }
-                                      });
-                                    },
-                                    // weight: 1000,
-                                    color: Color(0xFFFA6E00),
-                                  ),
-                                  //const Space(1, isHorizontal: true),
-                                  Text(
-                                    'Rs ${notifiyer.productList[index].totalPrice}',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: Color(0xFFFA6E00),
-                                      fontSize: 14,
-                                      fontFamily: 'Jost',
-                                      fontWeight: FontWeight.w600,
-                                      height: 0.08,
-                                    ),
-                                  )
-                                ],
-                              ),
+                            return MenuItemInCart(
+                              productDetails: notifiyer.productList[index],
+                              onQuantityChanged: calculateTotalAmount,
                             );
-                          })
-
-                      /*Column(
-                    children: [
-                      for (int index = 0; index < 3; index++) const MenuItemInCart(),
-                    ],
-                  ),*/
-                      );
+                          }));
                 }),
-                Space(3.h),
-                TextWidgetCart(text: 'Offers & Benefits'),
                 Space(1.h),
-                Container(
-                  height: 50,
-                  padding: EdgeInsets.symmetric(horizontal: 6.w),
-                  decoration: GlobalVariables().ContainerDecoration(
-                      offset: const Offset(0, 4),
-                      blurRadius: 15,
-                      shadowColor: const Color.fromRGBO(188, 115, 188, 0.2),
-                      boxColor: Colors.white,
-                      cornerRadius: 15),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Apply Coupon',
-                        style: TextStyle(
-                          color: Color(0xFF2E0536),
-                          fontSize: 14,
-                          fontFamily: 'Product Sans Medium',
-                          fontWeight: FontWeight.w500,
-                          height: 0.13,
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 20,
-                        color: Color(0xFFFA6E00),
-                      ),
-                    ],
-                  ),
-                ),
                 const Space(33),
-                TextWidgetCart(text: 'Delivery Instructions'),
                 const Space(16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    DeliveryInstructionWidgetCart(
-                      text: 'Take-Away',
-                    ),
-                    DeliveryInstructionWidgetCart(
-                      text: 'Leave at the door',
-                    ),
-                    DeliveryInstructionWidgetCart(
-                      text: 'Avoid Calling',
-                    ),
-                    DeliveryInstructionWidgetCart(
-                      text: 'Leave at security',
-                    ),
-                  ],
-                ),
-                Space(4.h),
                 PriceWidget(
                   totalAmount: totalAmount,
                 ),
@@ -720,13 +383,12 @@ class _ViewCartState extends State<ViewCart> {
             ),
           ),
           Space(2.h),
-          
         ]),
       ),
       bottomNavigationBar: _showContainer
           ? AnimatedContainer(
               duration: const Duration(
-                  milliseconds: 300), // Adjust the duration as needed
+                  milliseconds: 300),
               height: 100,
               child: Container(
                 padding: const EdgeInsets.only(right: 18, left: 29),
@@ -787,8 +449,6 @@ class _ViewCartState extends State<ViewCart> {
                           convertedList.add(newItem);
                         });
                         createProductOrder();
-                        //openCheckout();
-                        //  var provider =Provider.of<ViewCartProvider>(context, listen: false);
                       },
                       child: Container(
                         height: 41,
@@ -918,7 +578,7 @@ class _PriceWidgetState extends State<PriceWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Delivery Fee 2.7 kms",
+                "Delivery Fee ",
                 style: TextStyle(
                   color: Color(0xFF2E0536),
                   fontSize: 12,
@@ -941,7 +601,7 @@ class _PriceWidgetState extends State<PriceWidget> {
           ),
           Space(2),
           Text(
-            "Save Rs 10 on delivery fee by ordering above Rs 159",
+            "Avail free delivery as you rank in our first 100 customers",
             style: TextStyle(
               color: Color(0xFFD382E3),
               fontSize: 10,
@@ -955,30 +615,31 @@ class _PriceWidgetState extends State<PriceWidget> {
             thickness: 0.5,
           ),
           Space(14.5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Delivery Tip",
-                style: TextStyle(
-                  color: Color(0xFF2E0536),
-                  fontSize: 16,
-                  fontFamily: 'Product Sans Medium',
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
-                "Add tip",
-                style: TextStyle(
-                  color: Color(0xFFD382E3),
-                  fontSize: 14,
-                  fontFamily: 'Jost',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          Space(6),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       "Delivery Tip",
+          //       style: TextStyle(
+          //         color: Color(0xFF2E0536),
+          //         fontSize: 16,
+          //         fontFamily: 'Product Sans Medium',
+          //         fontWeight: FontWeight.w500,
+          //       ),
+          //     ),
+          //     Text(
+          //       "Add tip",
+          //       style: TextStyle(
+          //         color: Color(0xFFD382E3),
+          //         fontSize: 14,
+          //         fontFamily: 'Jost',
+          //         fontWeight: FontWeight.w600,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          
+          // Space(6),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1012,7 +673,7 @@ class _PriceWidgetState extends State<PriceWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 "Total:",
                 style: TextStyle(
                   color: Color(0xFF383838),
@@ -1022,8 +683,8 @@ class _PriceWidgetState extends State<PriceWidget> {
                 ),
               ),
               Text(
-                "Rs 430",
-                style: TextStyle(
+                "Rs ${widget.totalAmount}",
+                style: const TextStyle(
                   color: Color(0xFFFA6E00),
                   fontSize: 16,
                   fontFamily: 'Jost',
@@ -1100,29 +761,29 @@ class policyWidgetCart extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
             ),
-            const Space(18),
-            const Text(
-              'READ CANCELLATION POLICY',
-              style: TextStyle(
-                color: Color(0xFFFA6E00),
-                fontSize: 12,
-                fontFamily: 'Jost',
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Container(
-              width: 170,
-              decoration: const ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    width: 1,
-                    strokeAlign: BorderSide.strokeAlignOutside,
-                    color: Color(0xFFFA6E00),
-                  ),
-                ),
-              ),
-            ),
-            const Space(20)
+            // const Space(18),
+            // const Text(
+            //   'READ CANCELLATION POLICY',
+            //   style: TextStyle(
+            //     color: Color(0xFFFA6E00),
+            //     fontSize: 12,
+            //     fontFamily: 'Jost',
+            //     fontWeight: FontWeight.w600,
+            //   ),
+            // ),
+            // Container(
+            //   width: 170,
+            //   decoration: const ShapeDecoration(
+            //     shape: RoundedRectangleBorder(
+            //       side: BorderSide(
+            //         width: 1,
+            //         strokeAlign: BorderSide.strokeAlignOutside,
+            //         color: Color(0xFFFA6E00),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            // const Space(20)
           ],
         ));
   }
@@ -1132,41 +793,28 @@ class MenuItemInCart extends StatefulWidget {
   MenuItemInCart({
     super.key,
     required this.productDetails,
+    required this.onQuantityChanged,
   });
 
-  late ProductDetails productDetails;
+  final ProductDetails productDetails;
+  final Function onQuantityChanged;
 
   @override
   State<MenuItemInCart> createState() => _MenuItemInCartState();
 }
 
 class _MenuItemInCartState extends State<MenuItemInCart> {
-  late final int? totalAmount;
-
-  void calculateTotalAmount(ProductDetails product) {
-    setState(() {
-      final int price = int.tryParse(product.totalPrice ?? "0.0") ?? 0;
-      final int totalPrice = (price + (price ?? 0)).toInt();
-      // totalAmount = (product.totalPrice ?? "")+ (product.totalPrice ?? "");
-      print("totalAmount:: $totalPrice");
-    });
-  }
-
   void updateTotalPrice(ProductDetails product) {
     final double price = double.tryParse(product.price ?? "0.0") ?? 0.0;
 
     // Calculate the total price
-    final int totalPrice = (price * (product.quantity ?? 0)).toInt();
+    final double totalPrice = price * (product.quantity ?? 0);
 
     // Assign the calculated total price to the product
     product.totalPrice = totalPrice.toString();
 
-    // Print for debugging
-    print("Total price: $totalPrice");
-
-    // If this function is called inside a StatefulWidget, call setState to trigger a UI update
     setState(() {
-      // Perform any necessary UI updates here
+      widget.onQuantityChanged();
     });
   }
 
@@ -1176,7 +824,6 @@ class _MenuItemInCartState extends State<MenuItemInCart> {
       margin: EdgeInsets.only(bottom: 1.5.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: Row(
@@ -1225,94 +872,20 @@ class _MenuItemInCartState extends State<MenuItemInCart> {
               ],
             ),
           ),
-          /*Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: const EdgeInsets.only(top: 2),
-                      height: 15,
-                      width: 15,
-                      decoration: ShapeDecoration(
-                        shadows: const [
-                          BoxShadow(
-                            offset: Offset(0, 10),
-                            color: Color.fromRGBO(56, 56, 56, 0.15),
-                            blurRadius: 15,
-                          ),
-                        ],
-                        gradient: const LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: [
-                            Color.fromRGBO(26, 155, 15, 1),
-                            Color.fromRGBO(36, 255, 0, 1)
-                          ],
-                        ),
-                        shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                          cornerRadius: 4,
-                          cornerSmoothing: 1,
-                        )),
-                      )),
-                  const Space(9, isHorizontal: true),
-                  SizedBox(
-                    width: 28.w,
-                    child: Text(
-                      widget.productDetails.name ?? "",
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFF4C4C4C),
-                        fontSize: 14,
-                        fontFamily: 'Product Sans Medium',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              */ /*const Row(
-                children: [
-                  Space(24, isHorizontal: true),
-                  Text(
-                    'Customize ',
-                    style: TextStyle(
-                      color: Color(0xFF4C4C4C),
-                      fontSize: 12,
-                      fontFamily: 'Jost',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  Icon(
-                    Icons.keyboard_arrow_down_sharp,
-                    size: 27,
-                    color: Color(0xFFFA6E00),
-                  ),
-                ],
-              )*/ /*
-            ],
-          ),*/
-          //  Space(1, isHorizontal: true),
           IconButton(
             icon: Icon(
               Icons.keyboard_arrow_down_sharp,
               size: 35,
             ),
-
             onPressed: () {
               setState(() {
                 if (widget.productDetails.quantity! > 1) {
                   widget.productDetails.quantity =
                       widget.productDetails.quantity! - 1;
                   updateTotalPrice(widget.productDetails);
-                  calculateTotalAmount(widget.productDetails);
                 }
               });
             },
-            // weight: 1000,
             color: Color(0xFFFA6E00),
           ),
           Container(
@@ -1341,21 +914,17 @@ class _MenuItemInCartState extends State<MenuItemInCart> {
               Icons.keyboard_arrow_up_sharp,
               size: 35,
             ),
-
             onPressed: () {
               setState(() {
                 if (widget.productDetails.quantity! < 10) {
                   widget.productDetails.quantity =
                       widget.productDetails.quantity! + 1;
                   updateTotalPrice(widget.productDetails);
-                  calculateTotalAmount(widget.productDetails);
                 }
               });
             },
-            // weight: 1000,
             color: Color(0xFFFA6E00),
           ),
-          //const Space(1, isHorizontal: true),
           Text(
             'Rs ${widget.productDetails.totalPrice}',
             overflow: TextOverflow.ellipsis,
