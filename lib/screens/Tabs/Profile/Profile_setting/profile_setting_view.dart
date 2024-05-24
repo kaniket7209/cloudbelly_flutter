@@ -1978,8 +1978,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 },
                 child: BackdropFilter(
                   filter: ImageFilter.blur(
-                    sigmaX: context.watch<TransitionEffect>().blurSigma,
-                    sigmaY: context.watch<TransitionEffect>().blurSigma,
+                    //: context.watch<TransitionEffect>().blurSigma,
+                    //sigmaY: context.watch<TransitionEffect>().blurSigma,
                   ),
                   child: Container(
                     color: Colors.transparent, // Transparent color

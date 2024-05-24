@@ -26,7 +26,7 @@ class UserDetail {
     return UserDetail(
         userID: json['_id'],
         userName: json['email'],
-        hNo: address['hno'] ?? 'No address found',
+        hNo: json['store_name']?? "Store name not present ",
         lat: address['latitude']?.toString() ?? "26.744729",
     long: address['longitude']?.toString() ?? "88.4114101",
     addressType: address['type'] ?? "Not known",

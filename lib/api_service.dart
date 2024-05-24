@@ -1715,17 +1715,17 @@ class Auth with ChangeNotifier {
 
 class TransitionEffect with ChangeNotifier {
   //bool _isModalButtomSheetActive = false;
-  double _blurSigma = 0;
+  //double _blurSigma = 0;
 
   // bool get isModalButtomSheetActive => _isModalButtomSheetActive;
 
-  double get blurSigma => _blurSigma;
+  //double get blurSigma => _blurSigma;
 
   void setBlurSigma(blurSigma) {
     if (blurSigma < 4) {
-      _blurSigma = 0;
+   //   _blurSigma = 0;
     } else {
-      _blurSigma = blurSigma;
+//_blurSigma = blurSigma;
     }
     notifyListeners();
   }

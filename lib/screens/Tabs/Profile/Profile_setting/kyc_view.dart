@@ -279,6 +279,9 @@ class _KycViewState extends State<KycView> {
                 ),
               ],
               Space(3.h),
+              Container(
+                color: Colors.transparent, // Transparent color
+              ),
               TouchableOpacity(
                 onTap: () {
                   context.read<TransitionEffect>().setBlurSigma(5.0);
@@ -408,24 +411,6 @@ class _KycViewState extends State<KycView> {
                         ),
                       ],
                     ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  // Handle tap on the area around the BackdropFilter
-                  print('Tapped outside of the modal bottom sheet');
-                  // You can add any logic here, such as dismissing the modal bottom sheet
-                  // For example:
-                  // Navigator.of(context).pop();
-                },
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: context.watch<TransitionEffect>().blurSigma,
-                    sigmaY: context.watch<TransitionEffect>().blurSigma,
-                  ),
-                  child: Container(
-                    color: Colors.transparent, // Transparent color
                   ),
                 ),
               )

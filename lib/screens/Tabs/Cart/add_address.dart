@@ -34,7 +34,7 @@ class AddAddressBottomSheet {
         return PopScope(
           canPop: true,
           onPopInvoked: (_) {
-            context.read<TransitionEffect>().setBlurSigma(0);
+            //context.read<TransitionEffect>().set(0);
           },
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -180,7 +180,7 @@ class _AddAddressViewState extends State<AddAddressView> {
           Navigator.pop(context);
           if (response == "Delivery details updated successfully") {
             Navigator.pop(context);
-            context.read<TransitionEffect>().setBlurSigma(0);
+            //context.read<TransitionEffect>().set(0);
             Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (context) => ViewCart()));
           } else {
