@@ -28,8 +28,10 @@ import 'dart:ui' as ui;
 
 class BulkOrderSheet extends StatefulWidget {
   final List<SupplierBulkOrder> bulkOrders;
+  final bool bidWon;
 
-  const BulkOrderSheet({super.key, required this.bulkOrders});
+  const BulkOrderSheet(
+      {super.key, required this.bulkOrders, required this.bidWon});
 
   @override
   State<BulkOrderSheet> createState() => _BulkOrderSheetState();
@@ -38,11 +40,10 @@ class BulkOrderSheet extends StatefulWidget {
 class _BulkOrderSheetState extends State<BulkOrderSheet> {
   List<UserDetail> users = [];
 
-  late bool _bidWon=false;
+  late bool _bidWon = false;
 
   late bool _placeBid = false;
   late List<SupplierBulkOrder> _bulkOrders = [];
-
 
   late Map<String, dynamic> userAddressDetails = {
     'businessName': '',
@@ -238,7 +239,9 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   Widget _buildBody() {
     switch (activeFlag) {
       case 0:
-        return _bulkOrderItemSheet();
+        return widget.bidWon
+            ? _bidWonCheckListSection()
+            : _bulkOrderItemSheet();
       case 1:
         return _deliveryRoute();
       case 2:
@@ -246,6 +249,133 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
       default:
         return _bulkOrderItemSheet(); // Default case if the flag is out of expected range
     }
+  }
+
+  Widget _bidWonCheckListSection() {
+    return Column(
+      crossAxisAlignment: cros,
+      children: [
+        Space(1.h),
+        GestureDetector(
+          onTap: () {
+            print('Im tapped');
+            setState(() {
+              activeFlag = 1;
+            });
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            // crossAxisAlignment: CrossAxisAlignment,// Set mainAxisSize to min
+            children: [
+              const Text(
+                'Delivery route',
+                style: TextStyle(
+                  color: Color(0xFF094B60),
+                  fontSize: 12,
+                  fontFamily: 'Product Sans',
+                  fontWeight: FontWeight.w700,
+                  // height: 0.14,
+                  letterSpacing: 0.36,
+                ),
+              ),
+              Space(isHorizontal: true, 2.w),
+              Icon(
+                Icons.double_arrow_outlined,
+                size: 16,
+                color: Color(0xFFFA6E00),
+              ),
+            ],
+          ),
+        ),
+        Space(1.h),
+        Text(
+          'Congratulations! You have won the bid #cb-01-24-07-sil',
+          style: const TextStyle(
+            color: Color(0xFF094B60),
+            fontSize: 25,
+            fontFamily: 'Jost',
+            fontWeight: FontWeight.w500,
+            // height: 0.06,
+            letterSpacing: 0.54,
+          ),
+        ),
+        Space(2.h),
+        Text(
+          'Let\'s get prepared',
+          style: const TextStyle(
+            color: Color(0xFF094B60),
+            fontSize: 25,
+            fontFamily: 'Jost',
+            fontWeight: FontWeight.w500,
+            // height: 0.06,
+            letterSpacing: 0.54,
+          ),
+        ),
+        Center(
+            child: GestureDetector(
+          onTap: () {
+            setState(() {
+              _placeBid = true;
+              submitSupplierBid();
+            });
+          },
+          child: Container(
+            height: 45,
+            margin: EdgeInsets.symmetric(horizontal: 1.h),
+            decoration: ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                    offset: Offset(5, 6),
+                    spreadRadius: 0.1,
+                    color: Color.fromRGBO(232, 128, 55, 0.5),
+                    blurRadius: 10)
+              ],
+              color: const Color.fromRGBO(250, 110, 0, 1),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 10,
+                  cornerSmoothing: 1,
+                ),
+              ),
+            ),
+            child: Center(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Submit your bid',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w700,
+                    height: 0,
+                    letterSpacing: 0.30,
+                  ),
+                ),
+                _placeBid
+                    ? Space(
+                        2.h,
+                        isHorizontal: true,
+                      )
+                    : SizedBox(),
+                _placeBid
+                    ? SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.grey,
+                        ))
+                    : SizedBox()
+              ],
+            )),
+          ),
+        )),
+        Space(1.h)
+      ],
+    );
+    ;
   }
 
   Duration duration = Duration(hours: 3, minutes: 45, seconds: 4);
@@ -636,7 +766,10 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                           BulkOrderItem(
                             itemDetails: _bulkOrders[index],
                           ),
-                          Space(3.h, isHorizontal: true,),
+                          Space(
+                            3.h,
+                            isHorizontal: true,
+                          ),
                         ],
                       ),
                   ],
