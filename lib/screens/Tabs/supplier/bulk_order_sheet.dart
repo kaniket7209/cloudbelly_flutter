@@ -54,6 +54,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   CameraPosition? cameraPosition;
   Position? _currentPosition;
   List<Placemark> placeMarks = [];
+  late List<int> checkedBoxes = [1, 2, 3];
   String? area;
   String? address;
   late List<Marker> _markers = [];
@@ -62,6 +63,11 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   TOastNotification toastNotification = TOastNotification();
 
   // late bool _isLoading = true;
+  late Map<int, Map<String, dynamic>> _orderPreparation = {
+    1: {'key': 1, 'value': "Start packing before 12pm", 'checked': false},
+    2: {'key': 2, 'value': "Check the Quality", 'checked': false},
+    3: {'key': 3, 'value': "Ready For Delivery", 'checked': false},
+  };
 
   @override
   void initState() {
@@ -215,6 +221,71 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     return localMarkers;
   }
 
+  bool _isEnabled(int key) {
+    if (key == 1) {
+      return true;
+    }
+    return _orderPreparation[key - 1]!['checked'];
+  }
+
+  Widget orderPreparationCheckbox(String title, String count) {
+    return Center(
+        child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Text('${count}/3',
+                style: TextStyle(
+                  color: Color.fromRGBO(232, 128, 55, 1),
+                  fontSize: 14,
+                  fontFamily: 'Product Sans',
+                  fontWeight: FontWeight.w700,
+                  // height: 0.14,
+                  letterSpacing: 0.36,
+                )),
+            Space(
+              2.h,
+              isHorizontal: true,
+            ),
+            Text(
+              title,
+              style: TextStyle(
+                color: Color(0xFF094B60),
+                fontSize: 14,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w400,
+                // height: 0.14,
+                letterSpacing: 0.36,
+              ),
+            ),
+          ],
+        ),
+        Transform.scale(
+          scale: 1.5, // Adjust the scale to change the size
+          child: Checkbox(
+            fillColor: MaterialStateProperty.resolveWith((states) {
+              if (states.contains(MaterialState.selected)) {
+                return Color.fromRGBO(250, 110, 0, 1); // Active color
+              }
+              return Colors.grey.withOpacity(0.3); // Inactive color
+            }),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            side: BorderSide.none,
+            value: _orderPreparation[int.parse(count)]!['checked'],
+            onChanged: _isEnabled(int.parse(count))
+                ? (bool? val) {
+                    _orderPreparation[int.parse(count)]!['checked'] = val;
+                    setState(() {});
+                  }
+                : null,
+          ),
+        )
+      ],
+    ));
+  }
+
   Future<void> getUsersDetails() async {
     for (int i = 0; i < _bulkOrders.length; i++) {
       userIDs += _bulkOrders[i].userIDs;
@@ -252,75 +323,75 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   }
 
   Widget _bidWonCheckListSection() {
-    return Column(
-      crossAxisAlignment: cros,
-      children: [
-        Space(1.h),
-        GestureDetector(
-          onTap: () {
-            print('Im tapped');
-            setState(() {
-              activeFlag = 1;
-            });
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            // crossAxisAlignment: CrossAxisAlignment,// Set mainAxisSize to min
-            children: [
-              const Text(
-                'Delivery route',
-                style: TextStyle(
-                  color: Color(0xFF094B60),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans',
-                  fontWeight: FontWeight.w700,
-                  // height: 0.14,
-                  letterSpacing: 0.36,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Space(1.h),
+          GestureDetector(
+            onTap: () {
+              print('Im tapped');
+              setState(() {
+                activeFlag = 1;
+              });
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              // crossAxisAlignment: CrossAxisAlignment,// Set mainAxisSize to min
+              children: [
+                const Text(
+                  'Delivery route',
+                  style: TextStyle(
+                    color: Color(0xFF094B60),
+                    fontSize: 12,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.w700,
+                    // height: 0.14,
+                    letterSpacing: 0.36,
+                  ),
                 ),
-              ),
-              Space(isHorizontal: true, 2.w),
-              Icon(
-                Icons.double_arrow_outlined,
-                size: 16,
-                color: Color(0xFFFA6E00),
-              ),
-            ],
+                Space(isHorizontal: true, 2.w),
+                Icon(
+                  Icons.double_arrow_outlined,
+                  size: 16,
+                  color: Color(0xFFFA6E00),
+                ),
+              ],
+            ),
           ),
-        ),
-        Space(1.h),
-        Text(
-          'Congratulations! You have won the bid #cb-01-24-07-sil',
-          style: const TextStyle(
-            color: Color(0xFF094B60),
-            fontSize: 25,
-            fontFamily: 'Jost',
-            fontWeight: FontWeight.w500,
-            // height: 0.06,
-            letterSpacing: 0.54,
+          Space(1.h),
+          Text(
+            'Congratulations! You have won the bid #cb-01-24-07-sil',
+            style: const TextStyle(
+              color: Color(0xFF094B60),
+              fontSize: 25,
+              fontFamily: 'Jost',
+              fontWeight: FontWeight.w500,
+              // height: 0.06,
+              letterSpacing: 0.54,
+            ),
           ),
-        ),
-        Space(2.h),
-        Text(
-          'Let\'s get prepared',
-          style: const TextStyle(
-            color: Color(0xFF094B60),
-            fontSize: 25,
-            fontFamily: 'Jost',
-            fontWeight: FontWeight.w500,
-            // height: 0.06,
-            letterSpacing: 0.54,
+          Space(1.h),
+          Text(
+            'Let\'s get prepared',
+            style: const TextStyle(
+              color: Color(0xFF094B60),
+              fontSize: 14,
+              fontFamily: 'Jost',
+              fontWeight: FontWeight.w500,
+              // height: 0.06,
+              letterSpacing: 0.54,
+            ),
           ),
-        ),
-        Center(
-            child: GestureDetector(
-          onTap: () {
-            setState(() {
-              _placeBid = true;
-              submitSupplierBid();
-            });
-          },
-          child: Container(
+          orderPreparationCheckbox('Start packing before 12am', '1'),
+          Space(1.h),
+          orderPreparationCheckbox('Check the quality', '2'),
+          Space(1.h),
+          orderPreparationCheckbox('Out for delivery', '3'),
+          Space(2.h),
+          Container(
             height: 45,
             margin: EdgeInsets.symmetric(horizontal: 1.h),
             decoration: ShapeDecoration(
@@ -328,10 +399,16 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                 BoxShadow(
                     offset: Offset(5, 6),
                     spreadRadius: 0.1,
-                    color: Color.fromRGBO(232, 128, 55, 0.5),
+                    color: _orderPreparation.values
+                            .every((item) => item['checked'] == true)
+                        ? Color.fromRGBO(232, 128, 55, 0.5)
+                        : Colors.black12,
                     blurRadius: 10)
               ],
-              color: const Color.fromRGBO(250, 110, 0, 1),
+              color: _orderPreparation.values
+                      .every((item) => item['checked'] == true)
+                  ? Color.fromRGBO(250, 110, 0, 1)
+                  : Colors.grey,
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius(
                   cornerRadius: 10,
@@ -344,7 +421,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Submit your bid',
+                  'Proceed to deliver',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -354,26 +431,73 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                     letterSpacing: 0.30,
                   ),
                 ),
-                _placeBid
-                    ? Space(
-                        2.h,
-                        isHorizontal: true,
-                      )
-                    : SizedBox(),
-                _placeBid
-                    ? SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.grey,
-                        ))
-                    : SizedBox()
               ],
             )),
           ),
-        )),
-        Space(1.h)
-      ],
+          Space(2.h)
+
+          // Center(
+          //     child: GestureDetector(
+          //   onTap: () {
+          //     setState(() {
+          //       _placeBid = true;
+          //       submitSupplierBid();
+          //     });
+          //   },
+          //   child: Container(
+          //     height: 45,
+          //     margin: EdgeInsets.symmetric(horizontal: 1.h),
+          //     decoration: ShapeDecoration(
+          //       shadows: [
+          //         BoxShadow(
+          //             offset: Offset(5, 6),
+          //             spreadRadius: 0.1,
+          //             color: Color.fromRGBO(232, 128, 55, 0.5),
+          //             blurRadius: 10)
+          //       ],
+          //       color: const Color.fromRGBO(250, 110, 0, 1),
+          //       shape: SmoothRectangleBorder(
+          //         borderRadius: SmoothBorderRadius(
+          //           cornerRadius: 10,
+          //           cornerSmoothing: 1,
+          //         ),
+          //       ),
+          //     ),
+          //     child: Center(
+          //         child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Text(
+          //           'Submit your bid',
+          //           style: TextStyle(
+          //             color: Colors.white,
+          //             fontSize: 16,
+          //             fontFamily: 'Product Sans',
+          //             fontWeight: FontWeight.w700,
+          //             height: 0,
+          //             letterSpacing: 0.30,
+          //           ),
+          //         ),
+          //         _placeBid
+          //             ? Space(
+          //                 2.h,
+          //                 isHorizontal: true,
+          //               )
+          //             : SizedBox(),
+          //         _placeBid
+          //             ? SizedBox(
+          //                 height: 20,
+          //                 width: 20,
+          //                 child: CircularProgressIndicator(
+          //                   color: Colors.grey,
+          //                 ))
+          //             : SizedBox()
+          //       ],
+          //     )),
+          //   ),
+          // )),,
+        ],
+      ),
     );
     ;
   }

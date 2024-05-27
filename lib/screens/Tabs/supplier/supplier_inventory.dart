@@ -258,7 +258,19 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                               letterSpacing: 0.36,
                             ),
                           ),
-                          Checkbox(
+
+                          Transform.scale(
+                            scale: 1.5, // Adjust the scale to change the size
+                            child: Checkbox(
+                              fillColor: MaterialStateProperty.resolveWith((states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return Color.fromRGBO(250, 110, 0, 1); // Active color
+                                }
+                                return Colors.grey.withOpacity(0.3); // Inactive color
+                              }),
+                              shape:
+                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                              side: BorderSide.none,
                               value: _orderPreparationCheckbox,
                               onChanged: (var val) {
                                 setState(() {
@@ -266,7 +278,9 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                                     _orderPreparationStatus += 1;
                                   _orderPreparationCheckbox = true;
                                 });
-                              })
+                              },
+                            ),
+                          )
                         ],
                       )),
                     ))
