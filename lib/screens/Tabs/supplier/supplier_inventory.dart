@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloudbelly_app/screens/Tabs/supplier/delivery_map.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,7 +39,8 @@ class SupplierInventory extends StatefulWidget {
 class _SupplierInventoryState extends State<SupplierInventory> {
   // bool _isSyncLoading = false;
   List<dynamic> lowStockItems = [];
-
+  late bool _bidWon = true;
+  late bool _prepareOrderClicked = false;
   List<dynamic> allStocks = [];
   List<dynamic> nearExpiryItems = [];
   List<dynamic> stocksYouMayNeed = [];
@@ -47,7 +49,13 @@ class _SupplierInventoryState extends State<SupplierInventory> {
 
   late List<SupplierBulkOrder> _bulkOrderItems = [];
 
-  late bool _bidWon=false;
+  late bool _orderPreparationCheckbox = false;
+  late int _orderPreparationStatus = 1;
+  late Map<int, Map<String, dynamic>> _orderPreparation = {
+    1: {'key': 1, 'value': "Start packing before 12pm", 'checked': false},
+    2: {'key': 2, 'value': "Check the Quality", 'checked': false},
+    3: {'key': 3, 'value': "Ready For Delivery", 'checked': false},
+  };
 
   String iframeUrl = "";
   var _iframeController;
@@ -120,7 +128,7 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'New Bulk Order',
+                      _bidWon ? 'Congratulations' : 'New Bulk Order',
                       style: const TextStyle(
                         color: Color(0xFF094B60),
                         fontSize: 25,
@@ -150,8 +158,9 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                       customButtomSheetSection(
                           context,
                           BulkOrderSheet(
-                            bulkOrders: _bulkOrderItems,
-                          ));
+                              bulkOrders: _bulkOrderItems, bidWon: true)
+                        // OrderDeliveryMap(bulkOrders: _bulkOrderItems);
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
@@ -188,60 +197,185 @@ class _SupplierInventoryState extends State<SupplierInventory> {
               for (int index = 0; index < _bulkOrderItems.length; index++)
                 Row(
                   children: [
-                    index==0? Space(2.h, isHorizontal: true,):SizedBox(),
+                    index == 0
+                        ? Space(
+                            2.h,
+                            isHorizontal: true,
+                          )
+                        : SizedBox(),
                     BulkOrderItem(
                       itemDetails: _bulkOrderItems[index],
-
                     ),
-                    Space(3.h, isHorizontal: true,)
+                    Space(
+                      3.h,
+                      isHorizontal: true,
+                    )
                   ],
                 ),
             ],
           ),
           Space(2.h),
-          TouchableOpacity(
-            onTap: () {
-              context.read<TransitionEffect>().setBlurSigma(5.0);
-              customButtomSheetSection(
-                  context,
-                  BulkOrderSheet(
-                    bulkOrders: _bulkOrderItems,
-                  ));
-            },
-            child: Center(
-                child: Container(
-              height: 45,
-              margin: EdgeInsets.symmetric(horizontal: 1.h),
-              decoration: ShapeDecoration(
-                shadows: [
-                  BoxShadow(
-                      offset: Offset(5, 6),
-                      spreadRadius: 0.1,
-                      color: Color.fromRGBO(232, 128, 55, 0.5),
-                      blurRadius: 10)
-                ],
-                color: const Color.fromRGBO(250, 110, 0, 1),
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 10,
-                    cornerSmoothing: 1,
-                  ),
+          _bidWon
+              ? _prepareOrderClicked
+                  ? Center(
+                      child: Container(
+                      height: 45,
+                      margin: EdgeInsets.symmetric(horizontal: 1.h),
+                      decoration: ShapeDecoration(
+                        shadows: [
+                          BoxShadow(
+                              offset: Offset(5, 6),
+                              spreadRadius: 0.1,
+                              color: Color.fromRGBO(162, 210, 167, 0.6),
+                              blurRadius: 10)
+                        ],
+                        color: Colors.white,
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 10,
+                            cornerSmoothing: 1,
+                          ),
+                        ),
+                      ),
+                      child: Center(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text('${_orderPreparationStatus}/3',
+                              style: TextStyle(
+                                color: Color.fromRGBO(232, 128, 55, 1),
+                                fontSize: 14,
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.w700,
+                                // height: 0.14,
+                                letterSpacing: 0.36,
+                              )),
+                          Text(
+                            '${_orderPreparation[_orderPreparationStatus]!['value']}',
+                            style: TextStyle(
+                              color: Color(0xFF094B60),
+                              fontSize: 14,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w400,
+                              // height: 0.14,
+                              letterSpacing: 0.36,
+                            ),
+                          ),
+
+                          Transform.scale(
+                            scale: 1.5, // Adjust the scale to change the size
+                            child: Checkbox(
+                              fillColor: MaterialStateProperty.resolveWith((states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return Color.fromRGBO(250, 110, 0, 1); // Active color
+                                }
+                                return Colors.grey.withOpacity(0.3); // Inactive color
+                              }),
+                              shape:
+                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                              side: BorderSide.none,
+                              value: _orderPreparationCheckbox,
+                              onChanged: (var val) {
+                                setState(() {
+                                  if (_orderPreparationStatus < 3)
+                                    _orderPreparationStatus += 1;
+                                  _orderPreparationCheckbox = true;
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      )),
+                    ))
+                  : TouchableOpacity(
+                      onTap: () {
+                        setState(() {
+                          _prepareOrderClicked = true;
+                        });
+                      },
+                      child: Center(
+                          child: Container(
+                        height: 45,
+                        margin: EdgeInsets.symmetric(horizontal: 1.h),
+                        decoration: ShapeDecoration(
+                          shadows: [
+                            BoxShadow(
+                                offset: Offset(5, 6),
+                                spreadRadius: 0.1,
+                                color: Color.fromRGBO(232, 128, 55, 0.5),
+                                blurRadius: 10)
+                          ],
+                          color: const Color.fromRGBO(250, 110, 0, 1),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 10,
+                              cornerSmoothing: 1,
+                            ),
+                          ),
+                        ),
+                        child: Center(
+                            child: _prepareOrderClicked
+                                ? Row(
+                                    children: [
+                                      Text(
+                                          '${_orderPreparationStatus.toString}/3')
+                                    ],
+                                  )
+                                : Text(
+                                    'Prepare Your Order',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w700,
+                                      height: 0,
+                                      letterSpacing: 0.30,
+                                    ),
+                                  )),
+                      )),
+                    )
+              : TouchableOpacity(
+                  onTap: () {
+                    context.read<TransitionEffect>().setBlurSigma(5.0);
+                    customButtomSheetSection(
+                        context,
+                        BulkOrderSheet(
+                            bulkOrders: _bulkOrderItems, bidWon: _bidWon));
+                  },
+                  child: Center(
+                      child: Container(
+                    height: 45,
+                    margin: EdgeInsets.symmetric(horizontal: 1.h),
+                    decoration: ShapeDecoration(
+                      shadows: [
+                        BoxShadow(
+                            offset: Offset(5, 6),
+                            spreadRadius: 0.1,
+                            color: Color.fromRGBO(232, 128, 55, 0.5),
+                            blurRadius: 10)
+                      ],
+                      color: const Color.fromRGBO(250, 110, 0, 1),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 10,
+                          cornerSmoothing: 1,
+                        ),
+                      ),
+                    ),
+                    child: Center(
+                        child: Text(
+                      _bidWon ? 'Prepare Your Order' : 'Place your bid',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w700,
+                        height: 0,
+                        letterSpacing: 0.30,
+                      ),
+                    )),
+                  )),
                 ),
-              ),
-              child: Center(
-                  child: Text(
-                'Place your bid',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontFamily: 'Product Sans',
-                  fontWeight: FontWeight.w700,
-                  height: 0,
-                  letterSpacing: 0.30,
-                ),
-              )),
-            )),
-          ),
           Space(1.h)
         ],
       ),

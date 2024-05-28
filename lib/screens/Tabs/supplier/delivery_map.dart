@@ -28,18 +28,18 @@ import '../../../widgets/touchableOpacity.dart';
 import 'components/components.dart';
 import 'dart:ui' as ui;
 
-class BulkOrderSheet extends StatefulWidget {
+class OrderDeliveryMap extends StatefulWidget {
   final List<SupplierBulkOrder> bulkOrders;
   final bool bidWon;
 
-  const BulkOrderSheet(
+  const OrderDeliveryMap(
       {super.key, required this.bulkOrders, required this.bidWon});
 
   @override
-  State<BulkOrderSheet> createState() => _BulkOrderSheetState();
+  State<OrderDeliveryMap> createState() => OrderDeliveryMapState();
 }
 
-class _BulkOrderSheetState extends State<BulkOrderSheet> {
+class OrderDeliveryMapState extends State<OrderDeliveryMap> {
   List<UserDetail> users = [];
 
   late bool _bidWon = false;
@@ -52,7 +52,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     'addressDetails': ''
   };
 
-  // late
+  late bool _isLoading = false;
   late int activeFlag = 0;
   late bool _reduceMapHeight = false;
   CameraPosition? cameraPosition;
@@ -215,6 +215,9 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   }
 
   Future<Set<Marker>> setMapMarkers() async {
+    print('Inside set map markers');
+    _isLoading = true;
+    setState(() {});
     Set<Marker> localMarkers = {};
 
     for (int i = 0; i < users.length; i++) {
@@ -247,6 +250,9 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
       }
     }
 
+    setState(() {
+      _isLoading = false;
+    });
     return localMarkers;
   }
 
@@ -256,8 +262,6 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     }
     return _orderPreparation[key - 1]!['checked'];
   }
-
-
 
   Widget orderPreparationCheckbox(String title, String count) {
     return Center(
@@ -364,21 +368,21 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   final ScrollController _controller = ScrollController();
 
   Widget _buildBody() {
-    switch (activeFlag) {
-      case 0:
-        return widget.bidWon
-            ? _bidWonCheckListSection()
-            : _bulkOrderItemSheet();
-      case 1:
-        // return OrderDeliveryMap(bulkOrders: widget.bulkOrders);
-        return _deliveryRoute();
-      case 2:
-        return _bidSuccessful();
-      case 3:
-        return IndividualOrderBill();
-      default:
-        return _bulkOrderItemSheet(); // Default case if the flag is out of expected range
-    }
+    //   switch (activeFlag) {
+    //     case 0:
+    //       return widget.bidWon
+    //           ? _bidWonCheckListSection()
+    //           : _bulkOrderItemSheet();
+    //     case 1:
+    //     // return OrderDeliveryMap(bulkOrders: widget.bulkOrders);
+    return _deliveryRoute();
+    //   case 2:
+    //     return _bidSuccessful();
+    //   case 3:
+    //     return IndividualOrderBill();
+    //   default:
+    //     return _bulkOrderItemSheet(); // Default case if the flag is out of expected range
+    // }
   }
 
   Widget _bidWonCheckListSection() {
@@ -561,60 +565,62 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // margin: EdgeInsets.symmetric(horizontal: 2.h),
-      padding: EdgeInsets.only(
-        top: 2.h,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      decoration: const ShapeDecoration(
-        color: Colors.white,
-        shape: SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius.only(
-            topLeft: SmoothRadius(
-              cornerRadius: 35,
-              cornerSmoothing: 1,
+    return _isLoading
+        ? SizedBox()
+        : Container(
+            // margin: EdgeInsets.symmetric(horizontal: 2.h),
+            padding: EdgeInsets.only(
+              top: 2.h,
+              bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            topRight: SmoothRadius(
-              cornerRadius: 35,
-              cornerSmoothing: 1,
-            ),
-          ),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TouchableOpacity(
-              onTap: () {
-                context.read<TransitionEffect>().setBlurSigma(0);
-                return Navigator.of(context).pop();
-              },
-              child: Center(
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 1.h,
-                    horizontal: 3.w,
+            decoration: const ShapeDecoration(
+              color: Colors.white,
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.only(
+                  topLeft: SmoothRadius(
+                    cornerRadius: 35,
+                    cornerSmoothing: 1,
                   ),
-                  width: 65,
-                  height: 6,
-                  decoration: ShapeDecoration(
-                    color: const Color(0xFFFA6E00),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
+                  topRight: SmoothRadius(
+                    cornerRadius: 35,
+                    cornerSmoothing: 1,
                   ),
                 ),
               ),
             ),
-            _buildBody()
-          ],
-        ),
-      ),
-    );
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TouchableOpacity(
+                    onTap: () {
+                      context.read<TransitionEffect>().setBlurSigma(0);
+                      return Navigator.of(context).pop();
+                    },
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 1.h,
+                          horizontal: 3.w,
+                        ),
+                        width: 65,
+                        height: 6,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFFA6E00),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  _buildBody()
+                ],
+              ),
+            ),
+          );
   }
 
   Widget _bulkOrderItemSheet() {
@@ -798,7 +804,8 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                     future: setMapMarkers(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return googleMap(snapshot);
+                        return CircularProgressIndicator();
+                        // return googleMap(snapshot);
                       } else if (snapshot.hasError) {
                         // return Center(child: Text('Error loading markers'));
                         // Log the error to your console or debug log
@@ -812,6 +819,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                           child: Text(''),
                         );
                       } else {
+                        print('inisde extreme else');
                         return googleMap(snapshot);
                       }
                     },
