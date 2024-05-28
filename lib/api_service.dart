@@ -40,10 +40,12 @@ class Auth with ChangeNotifier {
   List<dynamic> followings = [];
   String userType = '';*/
   List<dynamic> menuList = [];
+  bool showBanner = false;
   Map<String, dynamic>? userData = UserPreferences.getUser();
   String logo_url = '';
   String baseUrl = "https://app.cloudbelly.in/";
   String? fcmToken = '';
+  List itemAdd = [];
 
   // get user_logo_url {
   //   notifyListeners();
@@ -64,6 +66,13 @@ class Auth with ChangeNotifier {
   // Auth._internal();
   void getToken(String? token) {
     fcmToken = token;
+    notifyListeners();
+  }
+
+  bannerTogger(item) {
+    showBanner = !showBanner;
+    itemAdd.add(item);
+    print("showing banner");
     notifyListeners();
   }
 
@@ -139,8 +148,8 @@ class Auth with ChangeNotifier {
             'latitude': DataMap['location']['latitude'] ?? '',
             'longitude': DataMap['location']['longitude'] ?? '',
           },
-        if(DataMap['address'] != null)
-          'address' :{
+        if (DataMap['address'] != null)
+          'address': {
             "location": DataMap['address']['location'],
             "latitude": DataMap['address']['latitude'],
             "longitude": DataMap['address']['longitude'],
@@ -208,8 +217,8 @@ class Auth with ChangeNotifier {
         'store_availability': DataMap['store_availability'] ?? false,
         'pan_number': DataMap['pan_number'] ?? '',
         'aadhar_number': DataMap['aadhar_number'] ?? '',
-        if(DataMap['address'] != null)
-          'address' :{
+        if (DataMap['address'] != null)
+          'address': {
             "location": DataMap['address']['location'],
             "latitude": DataMap['address']['latitude'],
             "longitude": DataMap['address']['longitude'],
@@ -308,8 +317,8 @@ class Auth with ChangeNotifier {
             'latitude': DataMap['location']['latitude'] ?? '',
             'longitude': DataMap['location']['longitude'] ?? '',
           },
-        if(DataMap['address'] != null)
-          'address' :{
+        if (DataMap['address'] != null)
+          'address': {
             "location": DataMap['address']['location'],
             "latitude": DataMap['address']['latitude'],
             "longitude": DataMap['address']['longitude'],
@@ -641,6 +650,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
   Future<String> email(email) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
@@ -665,6 +675,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
   Future<String> contactNumber(contact_number) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
@@ -714,6 +725,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
   Future<String> addressUpdate(Map<String, dynamic> addressModel) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
@@ -738,6 +750,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
   Future<String> storeSetup2(
       pan_number, aadhar_number, fssai_licence_document) async {
     final String url = 'https://app.cloudbelly.in/update-user';
@@ -1723,7 +1736,7 @@ class TransitionEffect with ChangeNotifier {
 
   void setBlurSigma(blurSigma) {
     if (blurSigma < 4) {
-   //   _blurSigma = 0;
+      //   _blurSigma = 0;
     } else {
 //_blurSigma = blurSigma;
     }

@@ -683,7 +683,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                         ),
                       ),
                       const Text(
-                        'Extra chrges may apply',
+                        'Extra charges may apply',
                         style: TextStyle(
                           color: Color(0xFFF7F7F7),
                           fontSize: 12,

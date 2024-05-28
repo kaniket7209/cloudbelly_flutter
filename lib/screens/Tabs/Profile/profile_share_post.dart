@@ -1,46 +1,36 @@
-
 import 'dart:developer';
 
 import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/models/model.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/share_profile_post_item.dart';
+import 'package:cloudbelly_app/widgets/space.dart';
+import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
-import 'package:cloudbelly_app/widgets/space.dart';
-import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 
-class PostsScreen extends StatefulWidget {
-  static const routeName = '/home/your-posts-screen';
-
-  const PostsScreen({Key? key}) : super(key: key);
+class ProfileSharePost extends StatefulWidget {
+  static const routeName = '/home/profile-posts-screen';
+  const ProfileSharePost({super.key});
 
   @override
-  State<PostsScreen> createState() => _PostsScreenState();
+  State<ProfileSharePost> createState() => _ProfileSharePostState();
 }
 
-class _PostsScreenState extends State<PostsScreen> {
+class _ProfileSharePostState extends State<ProfileSharePost> {
   bool _didChanged = true;
   List<dynamic> data = [];
   int? index;
   String? userId;
-  String? type;
-  String? isSelfProfile;
-  UserModel? userModel;
 
   @override
   void didChangeDependencies() {
     if (_didChanged) {
       final Map<String, dynamic> arguments =
-          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       data = arguments['data'] as List<dynamic>;
       // data = data.reversed.toList();
       index = arguments['index'] as int;
       userId = arguments['userId'] as String;
-      isSelfProfile = arguments['isSelfProfile'] as String;
-      if(arguments['type'] == "not self"){
-        userModel = arguments['userModel'] as UserModel;
-      }
       print("index:: $index");
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToPost();
@@ -71,8 +61,8 @@ class _PostsScreenState extends State<PostsScreen> {
   Future<void> _refreshFeed() async {
     final Data = await Provider.of<Auth>(context, listen: false).getFeed(userId) as List<dynamic>;
 
-    Navigator.of(context).pushReplacementNamed(PostsScreen.routeName,
-        arguments: {'data': Data, 'index': 0, "userId" : userId , "userModel" : userModel , "type":type ,"isSelfProfile":isSelfProfile});
+    Navigator.of(context).pushReplacementNamed(ProfileSharePost.routeName,
+        arguments: {'data': Data, 'index': 0, "userId" : userId});
   }
 
   void _scrollToPost() {
@@ -86,7 +76,6 @@ class _PostsScreenState extends State<PostsScreen> {
       curve: Curves.ease,
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,13 +133,10 @@ class _PostsScreenState extends State<PostsScreen> {
                   // print(item);
                   bool _isMultiple = item['multiple_files'] != null &&
                       item['multiple_files'].length != 0;
-                  log("item:: $item");
-                  return PostItem(
+                  log("item:: $userId");
+                  return ShareProfilePostItem(
                     isMultiple: _isMultiple,
                     data: item,
-                    userModel: userModel ?? UserModel(),
-                    isSharePost: isSelfProfile ?? "",
-                    isProfilePost: true,
                     userId: userId,
                   );
                 }).toList(),

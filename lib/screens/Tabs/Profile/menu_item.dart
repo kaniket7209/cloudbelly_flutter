@@ -172,6 +172,17 @@ class _MenuItemState extends State<MenuItem> {
                   left: 2.5.h,
                   child: TouchableOpacity(
                     onTap: () async {
+                      print("gaurav");
+                      print(Provider.of<Auth>(context, listen: false)
+                          .userData?['user_id']);
+                      if (Provider.of<Auth>(context, listen: false)
+                              .userData?['user_id'] !=
+                          widget.data['user_id']) {
+                        Provider.of<Auth>(context, listen: false)
+                            .bannerTogger(widget.data);
+                        return;
+                      }
+                      print(widget.data);
                       // ignore: use_build_context_synchronously
                       final url =
                           await updateProductImageSheet(context, widget.data);

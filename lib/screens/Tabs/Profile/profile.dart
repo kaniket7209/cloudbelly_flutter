@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:cloudbelly_app/screens/Login/login_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
@@ -17,6 +18,7 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/edit_profile.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu_item.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/profile_share_post.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_share_view.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
@@ -161,7 +163,8 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    Provider.of<Auth>(context, listen: false).userData = UserPreferences.getUser();
+    Provider.of<Auth>(context, listen: false).userData =
+        UserPreferences.getUser();
     _getFeed();
     _getMenu();
     userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
@@ -207,7 +210,9 @@ class _ProfileState extends State<Profile> {
                                   text: '',
                                   ic: Icons.qr_code,
                                   onTap: () {
-                                    print(Provider.of<Auth>(context, listen: false).userData?['profile_photo']);
+                                    print(Provider.of<Auth>(context,
+                                            listen: false)
+                                        .userData?['profile_photo']);
                                     context
                                         .read<TransitionEffect>()
                                         .setBlurSigma(5.0);
@@ -265,7 +270,11 @@ class _ProfileState extends State<Profile> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileSettingView()));
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const ProfileSettingView()));
                                       },
                                       child: Container(
                                         width: 40,
@@ -799,6 +808,8 @@ class _ProfileState extends State<Profile> {
                                                     return FeedWidget(
                                                         index: index,
                                                         fulldata: feedList,
+                                                        type: "self",
+                                                        isSelfProfile: "Yes",
                                                         userId: Provider.of<
                                                                     Auth>(
                                                                 context,
@@ -821,11 +832,11 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
 
+                      // ignore: avoid_unnecessary_containers
                     ],
                   ),
                 ],
               ),
-              
             ],
           ),
         ),
@@ -1059,13 +1070,18 @@ class FeedWidget extends StatelessWidget {
     required this.fulldata,
     required this.index,
     required this.userId,
+    required this.type,
+    required this.isSelfProfile,
+    this.userModel,
   });
 
   final int index;
-
+  final UserModel? userModel;
   final dynamic data;
   final dynamic fulldata;
   final String userId;
+  final String type;
+  final String isSelfProfile;
   CarouselController buttonCarouselController = CarouselController();
 
   @override
@@ -1080,8 +1096,22 @@ class FeedWidget extends StatelessWidget {
         print("fullData:: $fulldata");
         final Data = await Provider.of<Auth>(context, listen: false)
             .getFeed(userId) as List<dynamic>;
-        Navigator.of(context).pushNamed(PostsScreen.routeName,
-            arguments: {'data': Data, 'index': index,"userId":userId});
+        print("userId:: $userId");
+        Navigator.of(context).pushNamed(PostsScreen.routeName, arguments: {
+          'data': Data,
+          'index': index,
+          "userId": userId,
+          "userModel": userModel,
+          "type": type,
+          "isSelfProfile": isSelfProfile
+        });
+
+        /*  if(type == "self"){
+        }else{
+          Navigator.of(context).pushNamed(PostsScreen.routeName,
+              arguments: {'data': Data, 'index': index,"userId":userId});
+        }*/
+
         //  print("data:: $fulldata");
       },
       child: Stack(
@@ -1202,7 +1232,6 @@ class CommonButtonProfile extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6)),
                   ),
                 ),
-                
               ],
             ),
           ],

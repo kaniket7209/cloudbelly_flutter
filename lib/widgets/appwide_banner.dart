@@ -26,15 +26,22 @@ class _AppwideBannerState extends State<AppwideBanner>
         constraints: const BoxConstraints(
           maxWidth: 800, // Set the maximum width to 800
         ),
-        child:  Provider.of<Auth>(context, listen: true).userData?['cover_image']  != null || Provider.of<Auth>(context, listen: true).userData?['cover_image'] == ''
+        child: Provider.of<Auth>(context, listen: true)
+                        .userData?['cover_image'] !=
+                    null ||
+                Provider.of<Auth>(context, listen: true)
+                        .userData?['cover_image'] ==
+                    ''
             ? Container(
                 width: 100.w,
                 height: widget.height == 300 ? 30.h : widget.height,
                 decoration: ShapeDecoration(
-                  color: Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+                  color: Provider.of<Auth>(context, listen: false)
+                              .userData?['user_type'] ==
                           UserType.Vendor.name
                       ? const Color(0xFFB1D9D8)
-                      : Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+                      : Provider.of<Auth>(context, listen: false)
+                                  .userData?['user_type'] ==
                               UserType.Supplier.name
                           ? const Color(0xFFA3DC76)
                           : const Color(0xFFFFE2FF),
@@ -66,7 +73,8 @@ class _AppwideBannerState extends State<AppwideBanner>
                       bottomRight:
                           SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
                   child: Image.network(
-                    Provider.of<Auth>(context, listen: true).userData?['cover_image'],
+                    Provider.of<Auth>(context, listen: true)
+                        .userData?['cover_image'],
                     fit: BoxFit.cover,
                     loadingBuilder: GlobalVariables().loadingBuilderForImage,
                     errorBuilder: GlobalVariables().ErrorBuilderForImage,
