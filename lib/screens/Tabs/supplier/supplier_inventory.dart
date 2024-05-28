@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloudbelly_app/screens/Tabs/supplier/delivery_map.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
@@ -157,7 +158,9 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                       customButtomSheetSection(
                           context,
                           BulkOrderSheet(
-                              bulkOrders: _bulkOrderItems, bidWon: _bidWon));
+                              bulkOrders: _bulkOrderItems, bidWon: true)
+                        // OrderDeliveryMap(bulkOrders: _bulkOrderItems);
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
