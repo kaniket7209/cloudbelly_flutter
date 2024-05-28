@@ -68,7 +68,7 @@ class _DashBoardState extends State<DashBoard>
                                 text: 'notification',
                                 ic: Icons.notifications_outlined,
                                 onTap: () {
-                                  Navigator.of(context).pushNamed('/map');
+                                  // Navigator.of(context).pushNamed('/map');
                                 },
                               ),
                               Container(width: 40.w, child: StoreLogoWidget()),
@@ -274,7 +274,7 @@ class StoreLogoWidget extends StatelessWidget {
                     Provider.of<Auth>(context, listen: false)
                                 .userData?['user_type'] ==
                             UserType.Vendor.name
-                        ? BoxShadow(
+                        ? const BoxShadow(
                             offset: Offset(0, 4),
                             color: Color.fromRGBO(31, 111, 109, 0.6),
                             blurRadius: 20,
@@ -282,15 +282,15 @@ class StoreLogoWidget extends StatelessWidget {
                         : Provider.of<Auth>(context, listen: false)
                                     .userData?['user_type'] ==
                                 UserType.Supplier.name
-                            ? BoxShadow(
+                            ? const BoxShadow(
                                 offset: Offset(0, 4),
-                                color: Color.fromRGBO(163, 220, 118, 1),
+                                color: Color.fromRGBO(163, 220, 118, 0.6),
                                 // rgba(163, 220, 118, 1)
                                 blurRadius: 20,
                               )
-                            : BoxShadow(
+                            : const BoxShadow(
                                 offset: Offset(0, 4),
-                                color: Color.fromRGBO(188, 115, 188, 1),
+                                color: Color.fromRGBO(188, 115, 188, 0.6),
                                 // rgba(163, 220, 118, 1)
                                 blurRadius: 20,
                               ),
