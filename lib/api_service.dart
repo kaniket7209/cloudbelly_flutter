@@ -139,8 +139,8 @@ class Auth with ChangeNotifier {
             'latitude': DataMap['location']['latitude'] ?? '',
             'longitude': DataMap['location']['longitude'] ?? '',
           },
-        if(DataMap['address'] != null)
-          'address' :{
+        if (DataMap['address'] != null)
+          'address': {
             "location": DataMap['address']['location'],
             "latitude": DataMap['address']['latitude'],
             "longitude": DataMap['address']['longitude'],
@@ -208,8 +208,8 @@ class Auth with ChangeNotifier {
         'store_availability': DataMap['store_availability'] ?? false,
         'pan_number': DataMap['pan_number'] ?? '',
         'aadhar_number': DataMap['aadhar_number'] ?? '',
-        if(DataMap['address'] != null)
-          'address' :{
+        if (DataMap['address'] != null)
+          'address': {
             "location": DataMap['address']['location'],
             "latitude": DataMap['address']['latitude'],
             "longitude": DataMap['address']['longitude'],
@@ -308,8 +308,8 @@ class Auth with ChangeNotifier {
             'latitude': DataMap['location']['latitude'] ?? '',
             'longitude': DataMap['location']['longitude'] ?? '',
           },
-        if(DataMap['address'] != null)
-          'address' :{
+        if (DataMap['address'] != null)
+          'address': {
             "location": DataMap['address']['location'],
             "latitude": DataMap['address']['latitude'],
             "longitude": DataMap['address']['longitude'],
@@ -502,8 +502,6 @@ class Auth with ChangeNotifier {
       notifyListeners();
 
       print(jsonDecode(response.body));
-      // int code = response.statusCode;
-      // return code.toString();
       return jsonDecode(response.body);
     } catch (error) {
       notifyListeners();
@@ -592,6 +590,32 @@ class Auth with ChangeNotifier {
     }
   }
 
+  Future<String> addInventoryToCart(List<dynamic> itemList) async {
+    final String url = '${baseUrl}cart/add';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "items": itemList
+    };
+    print("requestBody:: $requestBody");
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+      print("response:: ${response.body}");
+
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
   Future<String> storeName(store_name) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
@@ -641,6 +665,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
   Future<String> email(email) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
@@ -665,6 +690,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
   Future<String> contactNumber(contact_number) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
@@ -714,6 +740,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
   Future<String> addressUpdate(Map<String, dynamic> addressModel) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
@@ -738,6 +765,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
   Future<String> storeSetup2(
       pan_number, aadhar_number, fssai_licence_document) async {
     final String url = 'https://app.cloudbelly.in/update-user';

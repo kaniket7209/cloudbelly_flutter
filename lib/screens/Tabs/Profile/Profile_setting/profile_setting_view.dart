@@ -1232,8 +1232,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                         fontSize: 30,
                         fontFamily: 'Jost',
                         fontWeight: FontWeight.w600,
-                        height: 0.03,
-                        letterSpacing: 3,
+                        height: 20/30,
+                        letterSpacing: 0.03,
                       ),
                     ),
                   ),
@@ -1334,9 +1334,13 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 3.h,
               ),
               if (userDetails?['user_type'] == UserType.Customer.name) ...[
-                TextWidgetStoreSetup(label: 'Enter email'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextWidgetStoreSetup(label: 'Enter email'),
+                ),
                 Space(1.h),
                 Container(
+                  height: 45,
                   // rgba(165, 200, 199, 1),
                   decoration: ShapeDecoration(
                     shadows: [
@@ -1766,23 +1770,27 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextWidgetStoreSetup(label: 'Store availability'),
-                    Container(
-                      height: 01, // Adjust the scale factor to adjust the height
-                      child: CupertinoSwitch(
-                        thumbColor: _switchValue == true
-                            ? const Color(0xFF4DAB4B)
-                            : const Color(0xFFF82E52),
-                        activeColor: _switchValue == true
-                            ? const Color(0xFFBFFC9A)
-                            : const Color(0xFFF82E52).withOpacity(0.5),
-                        trackColor: const Color(0xFFF82E52).withOpacity(0.5),
-                        value: _switchValue ?? false,
-                        onChanged: (value) {
-                          setState(() {
-                            _switchValue = value;
-                          });
-                          submitStoreAvailability();
-                        },
+                    SizedBox(
+                      height: 18,
+                      width: 36,// Adjust the scale factor to adjust the height
+                      child: Transform.scale(
+                        scale: 0.75,
+                        child: CupertinoSwitch(
+                          thumbColor: _switchValue == true
+                              ? const Color(0xFF4DAB4B)
+                              : const Color(0xFFF82E52),
+                          activeColor: _switchValue == true
+                              ? const Color(0xFFBFFC9A)
+                              : const Color(0xFFF82E52).withOpacity(0.5),
+                          trackColor: const Color(0xFFF82E52).withOpacity(0.5),
+                          value: _switchValue ?? false,
+                          onChanged: (value) {
+                            setState(() {
+                              _switchValue = value;
+                            });
+                            submitStoreAvailability();
+                          },
+                        ),
                       ),
                     ),
                   ],
@@ -1820,7 +1828,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               : const Color(0xFFA5C8C799),
                           shape: const SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius.all(SmoothRadius(
-                                cornerRadius: 10, cornerSmoothing: 1)),
+                                cornerRadius: 09, cornerSmoothing: 1)),
                           ),
                         ),
                         child: const Icon(
@@ -1906,7 +1914,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               : const Color(0xFFA5C8C799),
                           shape: const SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius.all(SmoothRadius(
-                                cornerRadius: 10, cornerSmoothing: 1)),
+                                cornerRadius: 09, cornerSmoothing: 1)),
                           ),
                         ),
                         child: const Icon(

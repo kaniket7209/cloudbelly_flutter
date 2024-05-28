@@ -14,7 +14,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import '../supplier/components/components.dart';
 
 class BellyMartBottomSheet {
-  Future<dynamic> BellyMartSheet(BuildContext context) {
+  Future<dynamic> BellyMartSheet(BuildContext context,List<dynamic> stocksYouMayNeed) {
     return showModalBottomSheet(
       // useSafeArea: true,
 
@@ -73,7 +73,7 @@ class BellyMartBottomSheet {
                             ),
                           ),
                         ),
-                        const BellyMartView(),
+                        BellyMartView(stocksYouMayNeed: stocksYouMayNeed,),
                       ],
                     ),
                   ),
@@ -88,7 +88,8 @@ class BellyMartBottomSheet {
 }
 
 class BellyMartView extends StatefulWidget {
-  const BellyMartView({super.key});
+  List<dynamic>? stocksYouMayNeed;
+  BellyMartView({super.key,this.stocksYouMayNeed});
 
   @override
   State<BellyMartView> createState() => _BellyMartViewState();
@@ -310,7 +311,7 @@ class _BellyMartViewState extends State<BellyMartView> {
           const Space(35),
           AppWideButton(
             onTap: () {
-              StocksYouMayNeedBottomSheet().StocksYouMayNeedSheet(context);
+              StocksYouMayNeedBottomSheet().StocksYouMayNeedSheet(context,widget.stocksYouMayNeed ?? []);
             },
             num: 2,
             txt: 'Ready to buy at the lowest price?',

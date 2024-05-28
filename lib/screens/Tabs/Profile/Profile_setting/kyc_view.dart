@@ -114,6 +114,7 @@ class _KycViewState extends State<KycView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: const Color(0xFFFFFFFF),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 05.h),
           child: Column(

@@ -136,6 +136,7 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: const Color(0xFFFFFFFF),
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 05.h),

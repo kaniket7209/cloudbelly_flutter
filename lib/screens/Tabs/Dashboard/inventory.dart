@@ -323,7 +323,7 @@ class _InventoryState extends State<Inventory> {
                     color:  const Color.fromRGBO(10, 76, 97, 1),
                     onTap: () async {
                       context.read<TransitionEffect>().setBlurSigma(5.0);
-                      BellyMartBottomSheet().BellyMartSheet(context);
+                      BellyMartBottomSheet().BellyMartSheet(context,stocksYouMayNeed);
                       /*AppWideLoadingBanner().loadingBanner(context);
 
                       final data =

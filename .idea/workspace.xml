@@ -11,7 +11,6 @@
   <component name="ChangeListManager">
     <list default="true" id="02fb6a08-6e3a-426b-9d24-81a9fbe6379c" name="Changes" comment="- issues resolved">
       <change afterPath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/sucess_sheet.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/api_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/api_service.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/bellyMart_sheet.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Dashboard/bellyMart_sheet.dart" afterDir="false" />
@@ -102,7 +101,7 @@
     "git-widget-placeholder": "renish",
     "io.flutter.reload.alreadyRun": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Admin/OneDrive/Desktop/cloudbelly_flutter-cb_orders/cloudbelly_flutter-cb_orders",
+    "last_opened_file_path": "D:/renish/CustomerApp/CustomerApp",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -190,7 +189,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714886541076</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="- issues resolved">
+      <option name="closed" value="true" />
+      <created>1715781278230</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1715781278230</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
