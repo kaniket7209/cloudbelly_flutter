@@ -36,14 +36,18 @@ class PostItem extends StatefulWidget {
     super.key,
     required bool isMultiple,
     required this.data,
+    required this.isSharePost,
     this.userId,
+    this.userModel,
     this.isProfilePost = true,
   }) : _isMultiple = isMultiple;
 
   final bool _isMultiple;
   bool isProfilePost;
+  final String isSharePost;
   final data;
   final String? userId;
+  UserModel? userModel;
 
   @override
   State<PostItem> createState() => _PostItemState();
@@ -180,7 +184,7 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
-    print("who is user:: ${widget.isProfilePost}");
+    print("who is user:: ${widget.data['store_name']}");
     bool shouldShowIcon = widget.isProfilePost ||
         (!widget.isProfilePost &&
             Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
@@ -256,6 +260,7 @@ class _PostItemState extends State<PostItem> {
                             ),
                             child: Center(
                               child: Text(
+                                widget.isSharePost == "No" ? widget.userModel?.storeName![0]:
                                 widget.isProfilePost
                                     ? Provider.of<Auth>(context, listen: true)
                                                 .userData !=
@@ -324,6 +329,7 @@ class _PostItemState extends State<PostItem> {
                               cornerSmoothing: 1,
                             ),
                             child: Image.network(
+                              widget.isSharePost == "No" ? widget.userModel?.profilePhoto:
                               widget.isProfilePost
                                   ? Provider.of<Auth>(context, listen: false)
                                       .logo_url
@@ -341,6 +347,7 @@ class _PostItemState extends State<PostItem> {
                 SizedBox(
                   width: 37.w,
                   child: Text(
+                    widget.isSharePost == "No" ? widget.userModel?.storeName:
                     widget.isProfilePost
                         ? Provider.of<Auth>(context, listen: false)
                             .userData!['store_name']

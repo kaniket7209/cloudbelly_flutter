@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:cloudbelly_app/screens/Tabs/Profile/profile_share_post.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -183,6 +184,7 @@ class MyApp extends StatelessWidget {
               WelcomeScreen.routeName: (context) => WelcomeScreen(),
               Tabs.routeName: (context) => Tabs(),
               PostsScreen.routeName: (context) => PostsScreen(),
+              ProfileSharePost.routeName: (context) => ProfileSharePost(),
               GraphsScreen.routeName: (context) => GraphsScreen(),
               ViewCart.routeName: (context) => ViewCart(),
             },

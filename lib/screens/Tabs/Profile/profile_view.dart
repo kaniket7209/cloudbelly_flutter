@@ -798,6 +798,9 @@ void _loadAllData() {
                                                       // You can replace this container with your custom item widget
                                                       return FeedWidget(
                                                           index: index,
+                                                          isSelfProfile: "No",
+                                                          type: "not self",
+                                                          userModel: userList.first,
                                                           userId: widget.userIdList.first,
                                                           fulldata: feedList,
                                                           data:
