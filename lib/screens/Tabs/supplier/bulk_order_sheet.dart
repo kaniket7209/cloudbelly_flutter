@@ -69,6 +69,9 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     3: {'key': 3, 'value': "Ready For Delivery", 'checked': false},
   };
 
+  final _controllers = List.generate(4, (index) => TextEditingController());
+  final _focusNodes = List.generate(4, (index) => FocusNode());
+
   @override
   void initState() {
     super.initState();
@@ -76,6 +79,15 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     _bulkOrders = widget.bulkOrders.map((order) => order.clone()).toList();
     _checkLocationPermission();
     getUsersDetails();
+  }
+
+  void _onChanged(String value, int index) {
+    if (value.length == 1 && index < 3) {
+      FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+    }
+    if (value.isEmpty && index > 0) {
+      FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
+    }
   }
 
   Future<void> submitSupplierBid() async {
@@ -286,6 +298,30 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     ));
   }
 
+  Widget orderOtpSection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(4, (index) {
+        return Container(
+          width: 50,
+          margin: EdgeInsets.symmetric(horizontal: 5),
+          child: TextField(
+            controller: _controllers[index],
+            focusNode: _focusNodes[index],
+            keyboardType: TextInputType.number,
+            textAlign: TextAlign.center,
+            maxLength: 1,
+            decoration: InputDecoration(
+              counterText: '',
+              border: OutlineInputBorder(),
+            ),
+            onChanged: (value) => _onChanged(value, index),
+          ),
+        );
+      }),
+    );
+  }
+
   Future<void> getUsersDetails() async {
     for (int i = 0; i < _bulkOrders.length; i++) {
       userIDs += _bulkOrders[i].userIDs;
@@ -317,6 +353,8 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
         return _deliveryRoute();
       case 2:
         return _bidSuccessful();
+      case 3:
+        return orderOtpSection();
       default:
         return _bulkOrderItemSheet(); // Default case if the flag is out of expected range
     }
@@ -329,37 +367,29 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Space(1.h),
-          GestureDetector(
-            onTap: () {
-              print('Im tapped');
-              setState(() {
-                activeFlag = 1;
-              });
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              // crossAxisAlignment: CrossAxisAlignment,// Set mainAxisSize to min
-              children: [
-                const Text(
-                  'Delivery route',
-                  style: TextStyle(
-                    color: Color(0xFF094B60),
-                    fontSize: 12,
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.w700,
-                    // height: 0.14,
-                    letterSpacing: 0.36,
-                  ),
-                ),
-                Space(isHorizontal: true, 2.w),
-                Icon(
-                  Icons.double_arrow_outlined,
-                  size: 16,
-                  color: Color(0xFFFA6E00),
-                ),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            // crossAxisAlignment: CrossAxisAlignment,// Set mainAxisSize to min
+            children: [
+              // const Text(
+              //   'Delivery route',
+              //   style: TextStyle(
+              //     color: Color(0xFF094B60),
+              //     fontSize: 12,
+              //     fontFamily: 'Product Sans',
+              //     fontWeight: FontWeight.w700,
+              //     // height: 0.14,
+              //     letterSpacing: 0.36,
+              //   ),
+              // ),
+              // Space(isHorizontal: true, 2.w),
+              Icon(
+                Icons.double_arrow_outlined,
+                size: 16,
+                color: Color(0xFFFA6E00),
+              ),
+            ],
           ),
           Space(1.h),
           Text(
@@ -391,111 +421,58 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
           Space(1.h),
           orderPreparationCheckbox('Out for delivery', '3'),
           Space(2.h),
-          Container(
-            height: 45,
-            margin: EdgeInsets.symmetric(horizontal: 1.h),
-            decoration: ShapeDecoration(
-              shadows: [
-                BoxShadow(
-                    offset: Offset(5, 6),
-                    spreadRadius: 0.1,
-                    color: _orderPreparation.values
-                            .every((item) => item['checked'] == true)
-                        ? Color.fromRGBO(232, 128, 55, 0.5)
-                        : Colors.black12,
-                    blurRadius: 10)
-              ],
-              color: _orderPreparation.values
-                      .every((item) => item['checked'] == true)
-                  ? Color.fromRGBO(250, 110, 0, 1)
-                  : Colors.grey,
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius(
-                  cornerRadius: 10,
-                  cornerSmoothing: 1,
-                ),
-              ),
-            ),
-            child: Center(
-                child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Proceed to deliver',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                    letterSpacing: 0.30,
+          GestureDetector(
+            onTap: () {
+              print('tap tap');
+              setState(() {
+                activeFlag = 1;
+              });
+            },
+            child: Container(
+              height: 45,
+              margin: EdgeInsets.symmetric(horizontal: 1.h),
+              decoration: ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                      offset: Offset(5, 6),
+                      spreadRadius: 0.1,
+                      color: _orderPreparation.values
+                              .every((item) => item['checked'] == true)
+                          ? Color.fromRGBO(232, 128, 55, 0.5)
+                          : Colors.black12,
+                      blurRadius: 10)
+                ],
+                color: _orderPreparation.values
+                        .every((item) => item['checked'] == true)
+                    ? Color.fromRGBO(250, 110, 0, 1)
+                    : Colors.grey,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 10,
+                    cornerSmoothing: 1,
                   ),
                 ),
-              ],
-            )),
+              ),
+              child: Center(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Proceed to deliver',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w700,
+                      height: 0,
+                      letterSpacing: 0.30,
+                    ),
+                  ),
+                ],
+              )),
+            ),
           ),
           Space(2.h)
-
-          // Center(
-          //     child: GestureDetector(
-          //   onTap: () {
-          //     setState(() {
-          //       _placeBid = true;
-          //       submitSupplierBid();
-          //     });
-          //   },
-          //   child: Container(
-          //     height: 45,
-          //     margin: EdgeInsets.symmetric(horizontal: 1.h),
-          //     decoration: ShapeDecoration(
-          //       shadows: [
-          //         BoxShadow(
-          //             offset: Offset(5, 6),
-          //             spreadRadius: 0.1,
-          //             color: Color.fromRGBO(232, 128, 55, 0.5),
-          //             blurRadius: 10)
-          //       ],
-          //       color: const Color.fromRGBO(250, 110, 0, 1),
-          //       shape: SmoothRectangleBorder(
-          //         borderRadius: SmoothBorderRadius(
-          //           cornerRadius: 10,
-          //           cornerSmoothing: 1,
-          //         ),
-          //       ),
-          //     ),
-          //     child: Center(
-          //         child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Text(
-          //           'Submit your bid',
-          //           style: TextStyle(
-          //             color: Colors.white,
-          //             fontSize: 16,
-          //             fontFamily: 'Product Sans',
-          //             fontWeight: FontWeight.w700,
-          //             height: 0,
-          //             letterSpacing: 0.30,
-          //           ),
-          //         ),
-          //         _placeBid
-          //             ? Space(
-          //                 2.h,
-          //                 isHorizontal: true,
-          //               )
-          //             : SizedBox(),
-          //         _placeBid
-          //             ? SizedBox(
-          //                 height: 20,
-          //                 width: 20,
-          //                 child: CircularProgressIndicator(
-          //                   color: Colors.grey,
-          //                 ))
-          //             : SizedBox()
-          //       ],
-          //     )),
-          //   ),
-          // )),,
         ],
       ),
     );
@@ -520,6 +497,12 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   @override
   void dispose() {
     timer?.cancel();
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    for (var focusNode in _focusNodes) {
+      focusNode.dispose();
+    }
     super.dispose();
   }
 
@@ -860,49 +843,66 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
                 fontFamily: 'Product Sans',
                 color: Color.fromRGBO(10, 76, 97, 1))),
         Space(2.h),
-        Container(
-          padding: EdgeInsets.only(left: 20, top: 20),
-          width: double.infinity,
-          decoration: BoxDecoration(
-              color: Color.fromRGBO(243, 246, 240, 1),
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(35), topRight: Radius.circular(35))),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Items needed',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Jost',
-                    color: Color.fromRGBO(10, 76, 97, 1)),
-              ),
-              Space(2.h),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+        widget.bidWon
+            ? SizedBox(
+                child: Column(
                   children: [
-                    for (int index = 0; index < _bulkOrders.length; index++)
-                      Row(
+                    Text("Enter OTP",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Jost',
+                            color: Color.fromRGBO(10, 76, 97, 1)))
+                  ],
+                ),
+              )
+            : Container(
+                padding: EdgeInsets.only(left: 20, top: 20),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    color: Color.fromRGBO(243, 246, 240, 1),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(35),
+                        topRight: Radius.circular(35))),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Items needed',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Jost',
+                          color: Color.fromRGBO(10, 76, 97, 1)),
+                    ),
+                    Space(2.h),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          BulkOrderItem(
-                            itemDetails: _bulkOrders[index],
-                          ),
-                          Space(
-                            3.h,
-                            isHorizontal: true,
-                          ),
+                          for (int index = 0;
+                              index < _bulkOrders.length;
+                              index++)
+                            Row(
+                              children: [
+                                BulkOrderItem(
+                                  itemDetails: _bulkOrders[index],
+                                ),
+                                Space(
+                                  3.h,
+                                  isHorizontal: true,
+                                ),
+                              ],
+                            ),
                         ],
                       ),
+                    ),
+                    Space(2.h)
                   ],
                 ),
               ),
-              Space(2.h)
-            ],
-          ),
-        )
+        orderOtpSection()
       ],
     );
   }
