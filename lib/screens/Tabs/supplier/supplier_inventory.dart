@@ -39,7 +39,7 @@ class SupplierInventory extends StatefulWidget {
 class _SupplierInventoryState extends State<SupplierInventory> {
   // bool _isSyncLoading = false;
   List<dynamic> lowStockItems = [];
-  late bool _bidWon = true;
+  late bool _bidWon = false;
   late bool _prepareOrderClicked = false;
   List<dynamic> allStocks = [];
   List<dynamic> nearExpiryItems = [];
@@ -62,14 +62,26 @@ class _SupplierInventoryState extends State<SupplierInventory> {
 
   bool _deliveryRouteClicked = false;
 
+  // Get the current time
+  late DateTime _currentTime = DateTime.now();
+  late bool isBetweenNoonAndMidnight =
+      _currentTime.hour >= 11 && _currentTime.hour < 24;
   @override
   void initState() {
+    if (isBetweenNoonAndMidnight) {
+      _bidWon = true;
+          print('Yes bid won');
+    }
+
+    setState(() {});
+
     print('Init state called');
     String temp = _generateTokenAndLaunchDashboard();
     nearExpiryItems = [];
     _setWebviewController(temp);
     // _getUserData();
     getBulkOrderList();
+
     super.initState();
   }
 
@@ -159,8 +171,8 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                           context,
                           BulkOrderSheet(
                               bulkOrders: _bulkOrderItems, bidWon: true)
-                        // OrderDeliveryMap(bulkOrders: _bulkOrderItems);
-                      );
+                          // OrderDeliveryMap(bulkOrders: _bulkOrderItems);
+                          );
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
@@ -202,7 +214,7 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                             2.h,
                             isHorizontal: true,
                           )
-                        : SizedBox(),
+                        : const SizedBox(),
                     BulkOrderItem(
                       itemDetails: _bulkOrderItems[index],
                     ),
@@ -222,7 +234,7 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                       height: 45,
                       margin: EdgeInsets.symmetric(horizontal: 1.h),
                       decoration: ShapeDecoration(
-                        shadows: [
+                        shadows: const [
                           BoxShadow(
                               offset: Offset(5, 6),
                               spreadRadius: 0.1,
@@ -261,18 +273,20 @@ class _SupplierInventoryState extends State<SupplierInventory> {
                               letterSpacing: 0.36,
                             ),
                           ),
-
                           Transform.scale(
                             scale: 1.5, // Adjust the scale to change the size
                             child: Checkbox(
-                              fillColor: MaterialStateProperty.resolveWith((states) {
+                              fillColor:
+                                  MaterialStateProperty.resolveWith((states) {
                                 if (states.contains(MaterialState.selected)) {
-                                  return Color.fromRGBO(250, 110, 0, 1); // Active color
+                                  return Color.fromRGBO(
+                                      250, 110, 0, 1); // Active color
                                 }
-                                return Colors.grey.withOpacity(0.3); // Inactive color
+                                return Colors.grey
+                                    .withOpacity(0.3); // Inactive color
                               }),
-                              shape:
-                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6)),
                               side: BorderSide.none,
                               value: _orderPreparationCheckbox,
                               onChanged: (var val) {

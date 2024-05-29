@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/models/supplier_bulk_order.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-
 import '../models/user_detail.dart';
 
 Future<List<SupplierBulkOrder>> getBulkOrderData(String userId) async {
