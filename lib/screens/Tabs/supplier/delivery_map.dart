@@ -453,7 +453,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
         Space(2.h),
         Row(
           children: [
-            Icon(
+            const Icon(
               Icons.location_on,
               color: Color.fromRGBO(250, 110, 0, 1),
               size: 28,
@@ -464,7 +464,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
             ),
             Text(
               _isDataLoading ? '' : _userOrderDetails.businessName,
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Jost',
@@ -474,7 +474,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
         ),
         Space(0.5.h),
         Text(_isDataLoading ? '' : _userOrderDetails.businessName,
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
                 fontFamily: 'Product Sans',
@@ -485,7 +485,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Enter OTP",
+                    const Text("Enter OTP",
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -499,7 +499,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                           1.h,
                           isHorizontal: true,
                         ),
-                        Text("Verified",
+                        const Text("Verified",
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -512,7 +512,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                             fillColor:
                                 MaterialStateProperty.resolveWith((states) {
                               if (states.contains(MaterialState.selected)) {
-                                return Color.fromRGBO(
+                                return const Color.fromRGBO(
                                     250, 110, 0, 1); // Active color
                               }
                               return Colors.grey
@@ -536,7 +536,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                             height: 45,
                             margin: EdgeInsets.symmetric(horizontal: 1.h),
                             decoration: ShapeDecoration(
-                              shadows: [
+                              shadows: const [
                                 BoxShadow(
                                     offset: Offset(5, 6),
                                     spreadRadius: 0.1,
@@ -551,7 +551,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                                 ),
                               ),
                             ),
-                            child: Center(
+                            child: const Center(
                                 child: Text(
                               'Delivered',
                               style: TextStyle(
@@ -576,7 +576,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                               height: 45,
                               margin: EdgeInsets.symmetric(horizontal: 1.h),
                               decoration: ShapeDecoration(
-                                shadows: [
+                                shadows: const [
                                   BoxShadow(
                                       offset: Offset(5, 6),
                                       spreadRadius: 0.1,
@@ -591,7 +591,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                                   ),
                                 ),
                               ),
-                              child: Center(
+                              child: const Center(
                                   child: Text(
                                 'Generate Bill',
                                 style: TextStyle(
@@ -613,9 +613,9 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                 ),
               )
             : Container(
-                padding: EdgeInsets.only(left: 20, top: 20),
+                padding: const EdgeInsets.only(left: 20, top: 20),
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: Color.fromRGBO(243, 246, 240, 1),
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(35),
@@ -623,7 +623,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Items needed',
                       style: TextStyle(
                           fontSize: 20,
@@ -634,7 +634,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                     Space(2.h),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Row(
+                      child: _isDataLoading?const SizedBox(): Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           for (int index = 0;
