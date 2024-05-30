@@ -83,12 +83,13 @@ class UserCartInfo {
   });
 
   factory UserCartInfo.fromJson(Map<String, dynamic> json) {
+    print('Value is '+json['qty'].toString());
     return UserCartInfo(
       itemName: json['item_name'],
-      quantity: json['qty'],
-      shelfLife: json['shelf_life'],
+      quantity: int.parse(json['qty'].toString()),
+      shelfLife: json['shelf_life'].toString(),
       unitType: json['unit_type'],
-      imageUrl: json['image_url'],
+      imageUrl: json['image_url'] ?? '',
     );
   }
 
@@ -125,7 +126,7 @@ class UserOrderDeliveryDetail {
       id: json['_id'],
       businessName: json['address']['hno'],
       addressDetails: json['address']['landmark'] + json['address']['pincode'],
-      cartInfoList: UserCartInfo.fromJsonToList(json['cart_info'][0]['items']),
+        cartInfoList: UserCartInfo.fromJsonToList(json['cart_info'][0]['items']),
     );
   }
 

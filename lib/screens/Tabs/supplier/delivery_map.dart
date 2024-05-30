@@ -51,6 +51,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     'businessName': '',
     'addressDetails': ''
   };
+
   late LatLng _currentLocation;
   late bool _isMapLoading = false;
   late bool _isDataLoading = true;
@@ -116,25 +117,56 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     getUsersDetails();
   }
 
+  late bool otpCorrect = false;
+  late bool verifyingOtp = false;
+
   void _onChanged(String value, int index) {
+    setState(() {
+      verifyingOtp = true;
+    });
     if (value.length == 1 && index < 3) {
       FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
     }
+
     if (value.isEmpty && index > 0) {
       FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
     }
 
     // Update container size based on OTP input
-    if (_controllers.any((controller) => controller.text.isNotEmpty)) {
-      setState(() {
-        print('Yes');
-        _reduceMapHeight = true; // Reduced size
+    setState(() {
+      _reduceMapHeight =
+          _controllers.any((controller) => controller.text.isNotEmpty);
+    });
+
+    // Check if it's the fourth box and has a value
+    if (index == 3 && value.isNotEmpty) {
+      // Unfocus the current input field to hide the keyboard
+      _focusNodes[index].unfocus();
+
+      // Delay setting _reduceMapHeight to false after removing focus
+      // Delay setting _reduceMapHeight to false after removing focus
+      Timer(Duration(milliseconds: 200), () {
+        setState(() {
+          _reduceMapHeight = false; // Original size
+
+          // Check if all input boxes contain "0000"
+          String otp = _controllers.map((controller) => controller.text).join();
+          if (otp == '0000') {
+            setState(() {
+              verifyingOtp = false;
+              otpCorrect = true;
+            });
+          } else {
+            setState(() {
+              verifyingOtp = false;
+              otpCorrect = false;
+            });
+          }
+        });
       });
-    } else {
-      print('No');
-      setState(() {
-        _reduceMapHeight = false; // Original size
-      });
+
+      // Move focus to the next widget (could be any other focusable widget)
+      FocusScope.of(context).requestFocus(FocusNode());
     }
   }
 
@@ -254,6 +286,16 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     return _orderPreparation[key - 1]!['checked'];
   }
 
+  bool _isCursorActive = false;
+
+  void _updateMapHeight(bool hasFocus) {
+    setState(() {
+      _isCursorActive = hasFocus;
+      _reduceMapHeight = _isCursorActive ||
+          _controllers.any((controller) => controller.text.isNotEmpty);
+    });
+  }
+
   Widget orderOtpSection() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -261,19 +303,24 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
         return Container(
             width: 50,
             margin: EdgeInsets.symmetric(horizontal: 5),
-            child: TextField(
-              controller: _controllers[index],
-              focusNode: _focusNodes[index],
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              maxLength: 1,
-              decoration: InputDecoration(
-                counterText: '',
-                filled: true, // This property enables filling the text box
-                fillColor: Color.fromRGBO(
-                    198, 239, 161, 1), // Change this to the desired color
+            child: Focus(
+              onFocusChange: (hasFocus) {
+                _updateMapHeight(hasFocus);
+              },
+              child: TextField(
+                controller: _controllers[index],
+                focusNode: _focusNodes[index],
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                maxLength: 1,
+                decoration: InputDecoration(
+                  counterText: '',
+                  filled: true, // This property enables filling the text box
+                  fillColor: Color.fromRGBO(
+                      198, 239, 161, 1), // Change this to the desired color
+                ),
+                onChanged: (value) => _onChanged(value, index),
               ),
-              onChanged: (value) => _onChanged(value, index),
             ));
       }),
     );
@@ -402,7 +449,8 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
         Stack(children: [
           Container(
             clipBehavior: Clip.hardEdge,
-            height: MediaQuery.of(context).size.height / 2,
+            height:
+                MediaQuery.of(context).size.height / (_reduceMapHeight ? 4 : 2),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -499,32 +547,47 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                           1.h,
                           isHorizontal: true,
                         ),
-                        const Text("Verified",
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Jost',
-                                color: Color.fromRGBO(250, 110, 0, 1))),
+                        verifyingOtp
+                            ? CircularProgressIndicator()
+                            : otpCorrect
+                                ? Text("Verified",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Jost',
+                                        color: Colors.green))
+                                : Text("Incorrect otp",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Jost',
+                                        color: Colors.red)),
                         Space(0.5.h),
-                        Transform.scale(
-                          scale: 0.8, // Adjust the scale to change the size
-                          child: Checkbox(
-                            fillColor:
-                                MaterialStateProperty.resolveWith((states) {
-                              if (states.contains(MaterialState.selected)) {
-                                return const Color.fromRGBO(
-                                    250, 110, 0, 1); // Active color
-                              }
-                              return Colors.grey
-                                  .withOpacity(0.3); // Inactive color
-                            }),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6)),
-                            side: BorderSide.none,
-                            value: true,
-                            onChanged: (var val) {},
-                          ),
-                        )
+                        otpCorrect
+                            ? Transform.scale(
+                                scale:
+                                    0.8, // Adjust the scale to change the size
+                                child: Checkbox(
+                                  fillColor: MaterialStateProperty.resolveWith(
+                                      (states) {
+                                    if (states
+                                        .contains(MaterialState.selected)) {
+                                      return  Colors.green; // Active color
+                                    }
+                                    return Colors.grey
+                                        .withOpacity(0.3); // Inactive color
+                                  }),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6)),
+                                  side: BorderSide.none,
+                                  value: true,
+                                  onChanged: (var val) {},
+                                ),
+                              )
+                            : Icon(
+                                Icons.warning,
+                                color: Colors.amber,
+                              )
                       ],
                     ),
                     Space(1.h),
@@ -634,26 +697,29 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                     Space(2.h),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: _isDataLoading?const SizedBox(): Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          for (int index = 0;
-                              index < _userOrderDetails.cartInfoList.length;
-                              index++)
-                            Row(
+                      child: _isDataLoading
+                          ? const SizedBox()
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                CartOrderItem(
-                                  cartDetails:
-                                      _userOrderDetails.cartInfoList[index],
-                                ),
-                                Space(
-                                  3.h,
-                                  isHorizontal: true,
-                                ),
+                                for (int index = 0;
+                                    index <
+                                        _userOrderDetails.cartInfoList.length;
+                                    index++)
+                                  Row(
+                                    children: [
+                                      CartOrderItem(
+                                        cartDetails: _userOrderDetails
+                                            .cartInfoList[index],
+                                      ),
+                                      Space(
+                                        3.h,
+                                        isHorizontal: true,
+                                      ),
+                                    ],
+                                  ),
                               ],
                             ),
-                        ],
-                      ),
                     ),
                     Space(2.h)
                   ],
