@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
-
-import 'package:cloudbelly_app/models/user_detail.dart';
-import 'package:cloudbelly_app/screens/Tabs/supplier/delivery_map.dart';
 import 'package:cloudbelly_app/screens/Tabs/supplier/individual_order_bill.dart';
+import 'package:location/location.dart' as loc;
+import 'package:cloudbelly_app/models/user_detail.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -14,7 +13,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart' as perm;
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -51,22 +51,25 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     'businessName': '',
     'addressDetails': ''
   };
-
-  late bool _isLoading = false;
+  late LatLng _currentLocation;
+  late bool _isMapLoading = false;
+  late bool _isDataLoading = true;
   late int activeFlag = 0;
   late bool _reduceMapHeight = false;
   CameraPosition? cameraPosition;
   Position? _currentPosition;
+  late Set<Marker> _mapMarkers = {};
+  loc.Location _location = loc.Location();
   List<Placemark> placeMarks = [];
   late List<int> checkedBoxes = [1, 2, 3];
   String? area;
   String? address;
-  late List<Marker> _markers = [];
+  late Set<Marker> _initialMarkers = {};
   GoogleMapController? _mapController;
   late List<String> userIDs = [];
   TOastNotification toastNotification = TOastNotification();
+  late UserOrderDeliveryDetail _userOrderDetails;
 
-  // late bool _isLoading = true;
   late Map<int, Map<String, dynamic>> _orderPreparation = {
     1: {'key': 1, 'value': "Start packing before 12pm", 'checked': false},
     2: {'key': 2, 'value': "Check the Quality", 'checked': false},
@@ -76,12 +79,40 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
   final _controllers = List.generate(4, (index) => TextEditingController());
   final _focusNodes = List.generate(4, (index) => FocusNode());
 
+  Widget _buildBody() {
+    switch (activeFlag) {
+      case 0:
+        return _deliveryRoute();
+      case 1:
+        return IndividualOrderBill();
+      default:
+        return _deliveryRoute(); // Default case if the flag is out of expected range
+    }
+  }
+
+  Future<void> getCartInfoForUser(String userId) async {
+    setState(() {
+      _isDataLoading = true;
+    });
+    _userOrderDetails = await getUserCartInfo(userId);
+    if (_userOrderDetails != null) {
+      setState(() {
+        _userOrderDetails = _userOrderDetails;
+        _isDataLoading = false;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
     // Create a deep copy of the list and its items
     _bulkOrders = widget.bulkOrders.map((order) => order.clone()).toList();
+    getCartInfoForUser(_bulkOrders[0].userIDs[0]);
+    // print('Hello user ids'+ _bulkOrders[0].userIDs.toString());
     _checkLocationPermission();
+    // _getCurrentLocation();
     getUsersDetails();
   }
 
@@ -104,43 +135,6 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
       setState(() {
         _reduceMapHeight = false; // Original size
       });
-    }
-  }
-
-  Future<void> submitSupplierBid() async {
-    bool foundValidPrice = false;
-
-    for (int i = 0; i < _bulkOrders.length; i++) {
-      if (_bulkOrders[i].price > 0) {
-        print('Yes my price is greater than 0 ' +
-            _bulkOrders[i].price.toString());
-
-        Map<String, dynamic> bidData = {
-          "supplier_id":
-              Provider.of<Auth>(context, listen: false).userData!['user_id'],
-          "bids": SupplierBulkOrder.toJsonList(_bulkOrders)
-        };
-        int statusCode = await placeSupplierBid(bidData);
-
-        if (statusCode == 200) {
-          setState(() {
-            activeFlag = 2;
-            startTimer();
-          });
-        }
-        foundValidPrice = true;
-        break;
-      }
-    }
-
-    if (!foundValidPrice) {
-      setState(() {
-        _placeBid = false;
-      });
-
-      // Show error toast if no valid price was found
-      toastNotification.showErrorToast(
-          context, "No valid price found for any bulk order.");
     }
   }
 
@@ -215,10 +209,10 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
   }
 
   Future<Set<Marker>> setMapMarkers() async {
+    late Set<Marker> localMarkers = {};
     print('Inside set map markers');
-    _isLoading = true;
+    _isMapLoading = true;
     setState(() {});
-    Set<Marker> localMarkers = {};
 
     for (int i = 0; i < users.length; i++) {
       final response = await http.get(Uri.parse(users[i].image));
@@ -233,10 +227,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
 
         Marker marker = Marker(
           onTap: () {
-            print('Im tapped');
-            userAddressDetails['businessName'] = users[i].hNo;
-            userAddressDetails['addressDetails'] = users[i].detailedAddress;
-            setState(() {});
+            getCartInfoForUser(users[i].userID);
           },
           icon: await getCustomMarker(users[i].image),
           anchor: Offset(0.5, 0.5),
@@ -251,7 +242,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     }
 
     setState(() {
-      _isLoading = false;
+      _isMapLoading = false;
     });
     return localMarkers;
   }
@@ -261,64 +252,6 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
       return true;
     }
     return _orderPreparation[key - 1]!['checked'];
-  }
-
-  Widget orderPreparationCheckbox(String title, String count) {
-    return Center(
-        child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Text('${count}/3',
-                style: TextStyle(
-                  color: Color.fromRGBO(232, 128, 55, 1),
-                  fontSize: 14,
-                  fontFamily: 'Product Sans',
-                  fontWeight: FontWeight.w700,
-                  // height: 0.14,
-                  letterSpacing: 0.36,
-                )),
-            Space(
-              2.h,
-              isHorizontal: true,
-            ),
-            Text(
-              title,
-              style: TextStyle(
-                color: Color(0xFF094B60),
-                fontSize: 14,
-                fontFamily: 'Product Sans',
-                fontWeight: FontWeight.w400,
-                // height: 0.14,
-                letterSpacing: 0.36,
-              ),
-            ),
-          ],
-        ),
-        Transform.scale(
-          scale: 1.5, // Adjust the scale to change the size
-          child: Checkbox(
-            fillColor: MaterialStateProperty.resolveWith((states) {
-              if (states.contains(MaterialState.selected)) {
-                return Color.fromRGBO(250, 110, 0, 1); // Active color
-              }
-              return Colors.grey.withOpacity(0.3); // Inactive color
-            }),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-            side: BorderSide.none,
-            value: _orderPreparation[int.parse(count)]!['checked'],
-            onChanged: _isEnabled(int.parse(count))
-                ? (bool? val) {
-                    _orderPreparation[int.parse(count)]!['checked'] = val;
-                    setState(() {});
-                  }
-                : null,
-          ),
-        )
-      ],
-    ));
   }
 
   Widget orderOtpSection() {
@@ -355,183 +288,48 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     if (users != null) {
       userAddressDetails['businessName'] = users[0].hNo;
       userAddressDetails['addressDetails'] = users[0].detailedAddress;
+
+      _mapMarkers = await setMapMarkers();
+      if (_mapMarkers.isNotEmpty) {
+        _isMapLoading = false;
+      }
     }
   }
 
   Future<void> _checkLocationPermission() async {
-    PermissionStatus permission = await Permission.locationWhenInUse.status;
-    if (permission != PermissionStatus.granted) {
-      await Permission.locationWhenInUse.request();
+    perm.PermissionStatus permission =
+        await perm.Permission.locationWhenInUse.status;
+    if (permission != perm.PermissionStatus.granted) {
+      await perm.Permission.locationWhenInUse.request();
     }
   }
 
-  final ScrollController _controller = ScrollController();
+  Future<void> _getCurrentLocation() async {
+    setState(() {
+      _isMapLoading = true;
+    });
 
-  Widget _buildBody() {
-    //   switch (activeFlag) {
-    //     case 0:
-    //       return widget.bidWon
-    //           ? _bidWonCheckListSection()
-    //           : _bulkOrderItemSheet();
-    //     case 1:
-    //     // return OrderDeliveryMap(bulkOrders: widget.bulkOrders);
-    return _deliveryRoute();
-    //   case 2:
-    //     return _bidSuccessful();
-    //   case 3:
-    //     return IndividualOrderBill();
-    //   default:
-    //     return _bulkOrderItemSheet(); // Default case if the flag is out of expected range
-    // }
-  }
-
-  Widget _bidWonCheckListSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Space(1.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            // crossAxisAlignment: CrossAxisAlignment,// Set mainAxisSize to min
-            children: [
-              // const Text(
-              //   'Delivery route',
-              //   style: TextStyle(
-              //     color: Color(0xFF094B60),
-              //     fontSize: 12,
-              //     fontFamily: 'Product Sans',
-              //     fontWeight: FontWeight.w700,
-              //     // height: 0.14,
-              //     letterSpacing: 0.36,
-              //   ),
-              // ),
-              // Space(isHorizontal: true, 2.w),
-              Icon(
-                Icons.double_arrow_outlined,
-                size: 16,
-                color: Color(0xFFFA6E00),
-              ),
-            ],
-          ),
-          Space(1.h),
-          Text(
-            'Congratulations! You have won the bid #cb-01-24-07-sil',
-            style: const TextStyle(
-              color: Color(0xFF094B60),
-              fontSize: 25,
-              fontFamily: 'Jost',
-              fontWeight: FontWeight.w500,
-              // height: 0.06,
-              letterSpacing: 0.54,
-            ),
-          ),
-          Space(1.h),
-          Text(
-            'Let\'s get prepared',
-            style: const TextStyle(
-              color: Color(0xFF094B60),
-              fontSize: 14,
-              fontFamily: 'Jost',
-              fontWeight: FontWeight.w500,
-              // height: 0.06,
-              letterSpacing: 0.54,
-            ),
-          ),
-          Text(
-            'Let\'s get prepared',
-            style: const TextStyle(
-              color: Color(0xFF094B60),
-              fontSize: 14,
-              fontFamily: 'Jost',
-              fontWeight: FontWeight.w500,
-              // height: 0.06,
-              letterSpacing: 0.54,
-            ),
-          ),
-          orderPreparationCheckbox('Start packing before 12am', '1'),
-          Space(1.h),
-          orderPreparationCheckbox('Check the quality', '2'),
-          Space(1.h),
-          orderPreparationCheckbox('Out for delivery', '3'),
-          Space(2.h),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                activeFlag = 1;
-              });
-            },
-            child: Container(
-              height: 45,
-              margin: EdgeInsets.symmetric(horizontal: 1.h),
-              decoration: ShapeDecoration(
-                shadows: [
-                  BoxShadow(
-                      offset: Offset(5, 6),
-                      spreadRadius: 0.1,
-                      color: _orderPreparation.values
-                              .every((item) => item['checked'] == true)
-                          ? Color.fromRGBO(232, 128, 55, 0.5)
-                          : Colors.black12,
-                      blurRadius: 10)
-                ],
-                color: _orderPreparation.values
-                        .every((item) => item['checked'] == true)
-                    ? Color.fromRGBO(250, 110, 0, 1)
-                    : Colors.grey,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 10,
-                    cornerSmoothing: 1,
-                  ),
-                ),
-              ),
-              child: Center(
-                  child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Proceed to deliver',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.w700,
-                      height: 0,
-                      letterSpacing: 0.30,
-                    ),
-                  ),
-                ],
-              )),
-            ),
-          ),
-          Space(2.h)
-        ],
-      ),
-    );
-    ;
-  }
-
-  Duration duration = Duration(hours: 3, minutes: 45, seconds: 4);
-  Timer? timer;
-
-  void startTimer() {
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (duration.inSeconds == 0) {
-        timer.cancel();
-      } else {
+    try {
+      loc.LocationData _locationData = await _location.getLocation();
+      if (_locationData.latitude != null) {
         setState(() {
-          duration -= Duration(seconds: 1);
+          _currentLocation =
+              LatLng(_locationData.latitude!, _locationData.longitude!);
+          _initialMarkers.add(
+            Marker(
+              markerId: MarkerId('currentLocation'),
+              position: _currentLocation,
+              infoWindow: InfoWindow(title: 'Current Location'),
+            ),
+          );
+          _isMapLoading = false;
         });
       }
-    });
+    } catch (e) {}
   }
 
   @override
   void dispose() {
-    timer?.cancel();
     for (var controller in _controllers) {
       controller.dispose();
     }
@@ -541,13 +339,13 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     super.dispose();
   }
 
-  Widget googleMap(snapshot) {
+  Widget googleMap() {
     return GoogleMap(
       myLocationButtonEnabled: true,
       zoomControlsEnabled: true,
       myLocationEnabled: true,
       scrollGesturesEnabled: true,
-      markers: snapshot.data ?? {},
+      markers: _isMapLoading ? _initialMarkers : _mapMarkers,
       onMapCreated: (GoogleMapController controller) {
         _mapController = controller;
       },
@@ -565,210 +363,35 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading
-        ? SizedBox()
-        : Container(
-            // margin: EdgeInsets.symmetric(horizontal: 2.h),
-            padding: EdgeInsets.only(
-              top: 2.h,
-              bottom: MediaQuery.of(context).viewInsets.bottom,
+    return Container(
+      // margin: EdgeInsets.symmetric(horizontal: 2.h),
+      padding: EdgeInsets.only(
+        top: 2.h,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      decoration: const ShapeDecoration(
+        color: Colors.white,
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.only(
+            topLeft: SmoothRadius(
+              cornerRadius: 35,
+              cornerSmoothing: 1,
             ),
-            decoration: const ShapeDecoration(
-              color: Colors.white,
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius.only(
-                  topLeft: SmoothRadius(
-                    cornerRadius: 35,
-                    cornerSmoothing: 1,
-                  ),
-                  topRight: SmoothRadius(
-                    cornerRadius: 35,
-                    cornerSmoothing: 1,
-                  ),
-                ),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TouchableOpacity(
-                    onTap: () {
-                      context.read<TransitionEffect>().setBlurSigma(0);
-                      return Navigator.of(context).pop();
-                    },
-                    child: Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 1.h,
-                          horizontal: 3.w,
-                        ),
-                        width: 65,
-                        height: 6,
-                        decoration: ShapeDecoration(
-                          color: const Color(0xFFFA6E00),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  _buildBody()
-                ],
-              ),
-            ),
-          );
-  }
-
-  Widget _bulkOrderItemSheet() {
-    return Column(
-      children: [
-        Space(1.h),
-        GestureDetector(
-          onTap: () {
-            print('Im tapped');
-            setState(() {
-              activeFlag = 1;
-            });
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            mainAxisSize: MainAxisSize.max,
-            // crossAxisAlignment: CrossAxisAlignment,// Set mainAxisSize to min
-            children: [
-              const Text(
-                'Delivery route',
-                style: TextStyle(
-                  color: Color(0xFF094B60),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans',
-                  fontWeight: FontWeight.w700,
-                  // height: 0.14,
-                  letterSpacing: 0.36,
-                ),
-              ),
-              Space(isHorizontal: true, 2.w),
-              Icon(
-                Icons.double_arrow_outlined,
-                size: 16,
-                color: Color(0xFFFA6E00),
-              ),
-            ],
-          ),
-        ),
-        Space(1.h),
-        Row(
-          children: [
-            Space(
-              1.h,
-              isHorizontal: true,
-            ),
-            Text(
-              'New Bulk Order',
-              style: const TextStyle(
-                color: Color(0xFF094B60),
-                fontSize: 25,
-                fontFamily: 'Jost',
-                fontWeight: FontWeight.w500,
-                // height: 0.06,
-                letterSpacing: 0.54,
-              ),
-            ),
-          ],
-        ),
-        Container(
-          height: 30.h,
-          child: Scrollbar(
-            interactive: true,
-            thumbVisibility: true,
-            // Set to true to always show scrollbar
-            controller: _controller,
-            // Pass the controller
-            child: ListView.builder(
-              controller: _controller,
-              // Pass the controller to the ListView as well
-              itemCount: _bulkOrders.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    index == 0 ? Space(2.h) : SizedBox(),
-                    BulkOrderSectionItem(
-                      itemDetails: _bulkOrders[index],
-                    ),
-                    index == 0 ? Space(2.h) : SizedBox(),
-                    index > 0 ? Space(2.h) : SizedBox(),
-                  ],
-                );
-              },
+            topRight: SmoothRadius(
+              cornerRadius: 35,
+              cornerSmoothing: 1,
             ),
           ),
         ),
-        Space(2.h),
-        Center(
-            child: GestureDetector(
-          onTap: () {
-            setState(() {
-              _placeBid = true;
-              submitSupplierBid();
-            });
-          },
-          child: Container(
-            height: 45,
-            margin: EdgeInsets.symmetric(horizontal: 1.h),
-            decoration: ShapeDecoration(
-              shadows: [
-                BoxShadow(
-                    offset: Offset(5, 6),
-                    spreadRadius: 0.1,
-                    color: Color.fromRGBO(232, 128, 55, 0.5),
-                    blurRadius: 10)
-              ],
-              color: const Color.fromRGBO(250, 110, 0, 1),
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius(
-                  cornerRadius: 10,
-                  cornerSmoothing: 1,
-                ),
-              ),
-            ),
-            child: Center(
-                child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Submit your bid',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                    letterSpacing: 0.30,
-                  ),
-                ),
-                _placeBid
-                    ? Space(
-                        2.h,
-                        isHorizontal: true,
-                      )
-                    : SizedBox(),
-                _placeBid
-                    ? SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.grey,
-                        ))
-                    : SizedBox()
-              ],
-            )),
-          ),
-        )),
-        Space(1.h)
-      ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [_buildBody()],
+        ),
+      ),
     );
   }
 
@@ -776,12 +399,10 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Space(2.h),
         Stack(children: [
           Container(
             clipBehavior: Clip.hardEdge,
-            height:
-                MediaQuery.of(context).size.height / (_reduceMapHeight ? 3 : 2),
+            height: MediaQuery.of(context).size.height / 2,
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -798,33 +419,9 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height / 3,
-                  width: MediaQuery.of(context).size.width - 10,
-                  child: FutureBuilder<Set<Marker>>(
-                    future: setMapMarkers(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
-                        // return googleMap(snapshot);
-                      } else if (snapshot.hasError) {
-                        // return Center(child: Text('Error loading markers'));
-                        // Log the error to your console or debug log
-                        debugPrint('Error loading markers: ${snapshot.error}');
-                        print('Error loading markers: ${snapshot.error}');
-
-                        // Optionally, assert in development mode to catch unexpected errors
-                        assert(
-                            false, 'Error loading markers: ${snapshot.error}');
-                        return Center(
-                          child: Text(''),
-                        );
-                      } else {
-                        print('inisde extreme else');
-                        return googleMap(snapshot);
-                      }
-                    },
-                  ),
-                ),
+                    height: MediaQuery.of(context).size.height / 3,
+                    width: MediaQuery.of(context).size.width - 10,
+                    child: _isMapLoading ? SizedBox() : googleMap()),
               ),
             ),
           ),
@@ -856,7 +453,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
         Space(2.h),
         Row(
           children: [
-            Icon(
+            const Icon(
               Icons.location_on,
               color: Color.fromRGBO(250, 110, 0, 1),
               size: 28,
@@ -866,8 +463,8 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
               isHorizontal: true,
             ),
             Text(
-              userAddressDetails['businessName'],
-              style: TextStyle(
+              _isDataLoading ? '' : _userOrderDetails.businessName,
+              style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Jost',
@@ -876,8 +473,8 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
           ],
         ),
         Space(0.5.h),
-        Text(userAddressDetails['addressDetails'],
-            style: TextStyle(
+        Text(_isDataLoading ? '' : _userOrderDetails.businessName,
+            style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
                 fontFamily: 'Product Sans',
@@ -888,7 +485,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Enter OTP",
+                    const Text("Enter OTP",
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -896,14 +493,13 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                             color: Color.fromRGBO(10, 76, 97, 1))),
                     Space(1.h),
                     orderOtpSection(),
-                    Space(1.h),
                     Row(
                       children: [
                         Space(
                           1.h,
                           isHorizontal: true,
                         ),
-                        Text("Verified",
+                        const Text("Verified",
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -916,7 +512,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                             fillColor:
                                 MaterialStateProperty.resolveWith((states) {
                               if (states.contains(MaterialState.selected)) {
-                                return Color.fromRGBO(
+                                return const Color.fromRGBO(
                                     250, 110, 0, 1); // Active color
                               }
                               return Colors.grey
@@ -931,7 +527,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                         )
                       ],
                     ),
-                    Space(4.h),
+                    Space(1.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -940,7 +536,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                             height: 45,
                             margin: EdgeInsets.symmetric(horizontal: 1.h),
                             decoration: ShapeDecoration(
-                              shadows: [
+                              shadows: const [
                                 BoxShadow(
                                     offset: Offset(5, 6),
                                     spreadRadius: 0.1,
@@ -955,7 +551,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                                 ),
                               ),
                             ),
-                            child: Center(
+                            child: const Center(
                                 child: Text(
                               'Delivered',
                               style: TextStyle(
@@ -973,14 +569,14 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                activeFlag = 3;
+                                activeFlag = 1;
                               });
                             },
                             child: Container(
                               height: 45,
                               margin: EdgeInsets.symmetric(horizontal: 1.h),
                               decoration: ShapeDecoration(
-                                shadows: [
+                                shadows: const [
                                   BoxShadow(
                                       offset: Offset(5, 6),
                                       spreadRadius: 0.1,
@@ -995,7 +591,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                                   ),
                                 ),
                               ),
-                              child: Center(
+                              child: const Center(
                                   child: Text(
                                 'Generate Bill',
                                 style: TextStyle(
@@ -1017,9 +613,9 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                 ),
               )
             : Container(
-                padding: EdgeInsets.only(left: 20, top: 20),
+                padding: const EdgeInsets.only(left: 20, top: 20),
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: Color.fromRGBO(243, 246, 240, 1),
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(35),
@@ -1027,7 +623,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Items needed',
                       style: TextStyle(
                           fontSize: 20,
@@ -1038,16 +634,17 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                     Space(2.h),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Row(
+                      child: _isDataLoading?const SizedBox(): Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           for (int index = 0;
-                              index < _bulkOrders.length;
+                              index < _userOrderDetails.cartInfoList.length;
                               index++)
                             Row(
                               children: [
-                                BulkOrderItem(
-                                  itemDetails: _bulkOrders[index],
+                                CartOrderItem(
+                                  cartDetails:
+                                      _userOrderDetails.cartInfoList[index],
                                 ),
                                 Space(
                                   3.h,
@@ -1063,96 +660,6 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                 ),
               ),
       ],
-    );
-  }
-
-  Widget _bidSuccessful() {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final hours = twoDigits(duration.inHours);
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4.h, vertical: 4.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Your bid has been placed successfully',
-            style: const TextStyle(
-              color: Color(0xFF094B60),
-              fontSize: 25,
-              fontFamily: 'PT Sans',
-              fontWeight: FontWeight.w700,
-              // height: 0.06,
-              letterSpacing: 0.54,
-            ),
-          ),
-          Space(1.h),
-          const Text(
-            'We will notify you if you win the orders in',
-            style: TextStyle(
-              color: Color(0xFF094B60),
-              fontSize: 12,
-              fontFamily: 'PT Sans',
-              fontWeight: FontWeight.w400,
-              // height: 0.06,
-              letterSpacing: 0.54,
-            ),
-          ),
-          Space(3.h),
-          const Center(
-            child: Text(
-              'Countdown :',
-              style: TextStyle(
-                color: Color.fromRGBO(250, 110, 0, 1),
-                fontSize: 12,
-                fontFamily: 'PT Sans',
-                fontWeight: FontWeight.w700,
-                // height: 0.06,
-                letterSpacing: 0.54,
-              ),
-            ),
-          ),
-          Space(1.h),
-          Center(
-            child: IntrinsicWidth(
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 1.h),
-                decoration: ShapeDecoration(
-                  color: Colors.white,
-                  shadows: [
-                    BoxShadow(
-                        offset: Offset(0, 8),
-                        spreadRadius: 0,
-                        color: Color.fromRGBO(162, 210, 167, 0.38),
-                        blurRadius: 20)
-                  ],
-                  // color: const Color.fromRGBO(250, 110, 0, 1),
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius(
-                      cornerRadius: 10,
-                      cornerSmoothing: 1,
-                    ),
-                  ),
-                ),
-                child: Center(
-                    child: Text(
-                  '$hours:$minutes:$seconds',
-                  style: TextStyle(
-                    color: Color.fromRGBO(10, 76, 97, 1),
-                    fontSize: 12,
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.w400,
-                    height: 0,
-                    letterSpacing: 0.30,
-                  ),
-                )),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

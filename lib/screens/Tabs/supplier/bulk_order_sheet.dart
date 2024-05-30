@@ -73,39 +73,14 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     3: {'key': 3, 'value': "Ready For Delivery", 'checked': false},
   };
 
-  final _controllers = List.generate(4, (index) => TextEditingController());
-  final _focusNodes = List.generate(4, (index) => FocusNode());
 
   @override
   void initState() {
     super.initState();
-    // Create a deep copy of the list and its items
     _bulkOrders = widget.bulkOrders.map((order) => order.clone()).toList();
-    _checkLocationPermission();
     getUsersDetails();
   }
 
-  void _onChanged(String value, int index) {
-    if (value.length == 1 && index < 3) {
-      FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
-    }
-    if (value.isEmpty && index > 0) {
-      FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
-    }
-
-    // Update container size based on OTP input
-    if (_controllers.any((controller) => controller.text.isNotEmpty)) {
-      setState(() {
-        print('Yes');
-        _reduceMapHeight = true; // Reduced size
-      });
-    } else {
-      print('No');
-      setState(() {
-        _reduceMapHeight = false; // Original size
-      });
-    }
-  }
 
   Future<void> submitSupplierBid() async {
     bool foundValidPrice = false;
@@ -144,111 +119,8 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     }
   }
 
-  Future<BitmapDescriptor> getCustomMarker(String imageUrl) async {
-    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
-    final Canvas canvas = Canvas(pictureRecorder);
-    final double radius = 50; // Radius of the circle for the marker
 
-    // Paint for the circle
-    final Paint circlePaint = Paint()..color = Colors.white;
 
-    // Paint for the image
-    final Paint imagePaint = Paint();
-
-    // Load the image from network
-    final ui.Image image = await loadImageFromNetwork(imageUrl);
-
-    // Create a circle path to clip the image
-    final Path clipPath = Path()
-      ..addOval(
-          Rect.fromCircle(center: Offset(radius, radius), radius: radius));
-
-    canvas.clipPath(clipPath);
-
-    // Draw the circle
-    canvas.drawCircle(Offset(radius, radius), radius, circlePaint);
-
-    // Calculate the image position to center it inside the circle
-    double imgWidth = image.width.toDouble();
-    double imgHeight = image.height.toDouble();
-    double aspectRatio = imgWidth / imgHeight;
-
-    double targetWidth, targetHeight;
-    if (aspectRatio > 1.0) {
-      targetHeight = radius * 2;
-      targetWidth = targetHeight * aspectRatio;
-    } else {
-      targetWidth = radius * 2;
-      targetHeight = targetWidth / aspectRatio;
-    }
-
-    // Draw the image centered in the circle
-    canvas.drawImageRect(
-      image,
-      Rect.fromLTRB(0, 0, imgWidth, imgHeight),
-      Rect.fromLTWH(radius - targetWidth / 2, radius - targetHeight / 2,
-          targetWidth, targetHeight),
-      imagePaint,
-    );
-
-    // Convert canvas to image
-    final ui.Image img =
-        await pictureRecorder.endRecording().toImage(50 * 2, 50 * 2);
-    final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
-
-    // Convert image to BitmapDescriptor
-    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
-  }
-
-  Future<ui.Image> loadImageFromNetwork(String imageUrl) async {
-    // Fetch the image via HTTP
-    final http.Response responseData = await http.get(Uri.parse(imageUrl));
-    // Obtain the image data
-    final Uint8List bytes = responseData.bodyBytes;
-
-    // Decode the image to the required format
-    final ui.Codec codec = await ui.instantiateImageCodec(bytes);
-    final ui.FrameInfo frameInfo = await codec.getNextFrame();
-
-    // Return the image
-    return frameInfo.image;
-  }
-
-  Future<Set<Marker>> setMapMarkers() async {
-    Set<Marker> localMarkers = {};
-
-    for (int i = 0; i < users.length; i++) {
-      final response = await http.get(Uri.parse(users[i].image));
-      if (response.statusCode == 200) {
-        final bytes = response.bodyBytes;
-        final compressedBytes = await FlutterImageCompress.compressWithList(
-          bytes,
-          minHeight: 100,
-          minWidth: 100,
-          quality: 70,
-        );
-
-        Marker marker = Marker(
-          onTap: () {
-            print('Im tapped');
-            userAddressDetails['businessName'] = users[i].hNo;
-            userAddressDetails['addressDetails'] = users[i].detailedAddress;
-            setState(() {});
-          },
-          icon: await getCustomMarker(users[i].image),
-          anchor: Offset(0.5, 0.5),
-          markerId: MarkerId(users[i].userID),
-          position:
-              LatLng(double.parse(users[i].lat), double.parse(users[i].long)),
-          infoWindow: InfoWindow(title: users[i].userName),
-        );
-
-        localMarkers.add(marker);
-      }
-    }
-
-    return localMarkers;
-  }
 
   bool _isEnabled(int key) {
     if (key == 1) {
@@ -317,30 +189,6 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     ));
   }
 
-  Widget orderOtpSection() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: List.generate(4, (index) {
-        return Container(
-            width: 50,
-            margin: EdgeInsets.symmetric(horizontal: 5),
-            child: TextField(
-              controller: _controllers[index],
-              focusNode: _focusNodes[index],
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              maxLength: 1,
-              decoration: InputDecoration(
-                counterText: '',
-                filled: true, // This property enables filling the text box
-                fillColor: Color.fromRGBO(
-                    198, 239, 161, 1), // Change this to the desired color
-              ),
-              onChanged: (value) => _onChanged(value, index),
-            ));
-      }),
-    );
-  }
 
   Future<void> getUsersDetails() async {
     for (int i = 0; i < _bulkOrders.length; i++) {
@@ -354,12 +202,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     }
   }
 
-  Future<void> _checkLocationPermission() async {
-    PermissionStatus permission = await Permission.locationWhenInUse.status;
-    if (permission != PermissionStatus.granted) {
-      await Permission.locationWhenInUse.request();
-    }
-  }
+
 
   final ScrollController _controller = ScrollController();
 
@@ -370,8 +213,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
             ? _bidWonCheckListSection()
             : _bulkOrderItemSheet();
       case 1:
-        // return OrderDeliveryMap(bulkOrders: widget.bulkOrders);
-        return _deliveryRoute();
+        return OrderDeliveryMap(bulkOrders: widget.bulkOrders, bidWon: widget.bidWon);
       case 2:
         return _bidSuccessful();
       case 3:
@@ -389,53 +231,54 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
         children: [
           Space(1.h),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            // crossAxisAlignment: CrossAxisAlignment,// Set mainAxisSize to min
             children: [
-              // const Text(
-              //   'Delivery route',
-              //   style: TextStyle(
-              //     color: Color(0xFF094B60),
-              //     fontSize: 12,
-              //     fontFamily: 'Product Sans',
-              //     fontWeight: FontWeight.w700,
-              //     // height: 0.14,
-              //     letterSpacing: 0.36,
-              //   ),
-              // ),
-              // Space(isHorizontal: true, 2.w),
-              Icon(
-                Icons.double_arrow_outlined,
-                size: 16,
-                color: Color(0xFFFA6E00),
+              Expanded(
+                child: Text(
+                  'Congratulations! You have won the bid #cb-01-24-07-sil',
+                  style: const TextStyle(
+                    color: Color(0xFF094B60),
+                    fontSize: 25,
+                    fontFamily: 'Jost',
+                    fontWeight: FontWeight.w500,
+                    // height: 0.06,
+                    letterSpacing: 0.54,
+                  ),
+                ),
               ),
+              TouchableOpacity(
+                  onTap: () {
+                    // context.read<TransitionEffect>().setBlurSigma(5.0);
+                    // customButtomSheetSection(
+                    //     context,
+                    //     BulkOrderSheet(
+                    //         bulkOrders: _bulkOrderItems, bidWon: true)
+                    //   // OrderDeliveryMap(bulkOrders: _bulkOrderItems);
+                    // );
+                  },
+                  child: Row(
+                    children: [
+                      const Text(
+                        'See all',
+                        style: TextStyle(
+                          color: Color(0xFF094B60),
+                          fontSize: 12,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w700,
+                          // height: 0.14,
+                          letterSpacing: 0.36,
+                        ),
+                      ),
+                      Space(isHorizontal: true, 2.w),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 13,
+                        color: Color(0xFFFA6E00),
+                      ),
+                    ],
+                  )),
             ],
           ),
           Space(1.h),
-          Text(
-            'Congratulations! You have won the bid #cb-01-24-07-sil',
-            style: const TextStyle(
-              color: Color(0xFF094B60),
-              fontSize: 25,
-              fontFamily: 'Jost',
-              fontWeight: FontWeight.w500,
-              // height: 0.06,
-              letterSpacing: 0.54,
-            ),
-          ),
-          Space(1.h),
-          Text(
-            'Let\'s get prepared',
-            style: const TextStyle(
-              color: Color(0xFF094B60),
-              fontSize: 14,
-              fontFamily: 'Jost',
-              fontWeight: FontWeight.w500,
-              // height: 0.06,
-              letterSpacing: 0.54,
-            ),
-          ),
           Text(
             'Let\'s get prepared',
             style: const TextStyle(
@@ -528,36 +371,9 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
   @override
   void dispose() {
     timer?.cancel();
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var focusNode in _focusNodes) {
-      focusNode.dispose();
-    }
     super.dispose();
   }
 
-  Widget googleMap(snapshot) {
-    return GoogleMap(
-      myLocationButtonEnabled: true,
-      zoomControlsEnabled: true,
-      myLocationEnabled: true,
-      scrollGesturesEnabled: true,
-      markers: snapshot.data ?? {},
-      onMapCreated: (GoogleMapController controller) {
-        _mapController = controller;
-      },
-      initialCameraPosition: CameraPosition(
-        target: LatLng(
-          double.parse(users.isNotEmpty ? users[0].lat : '0'),
-          double.parse(users.isNotEmpty ? users[0].long : '0'),
-        ),
-        zoom: 12,
-        bearing: 10,
-        tilt: 30,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -766,297 +582,6 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
     );
   }
 
-  Widget _deliveryRoute() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Space(2.h),
-        Stack(children: [
-          Container(
-            clipBehavior: Clip.hardEdge,
-            height:
-                MediaQuery.of(context).size.height / (_reduceMapHeight ? 3 : 2),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 20,
-                  offset: const Offset(0, 5),
-                  color: Colors.black.withOpacity(0.2),
-                ),
-              ],
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height / 3,
-                  width: MediaQuery.of(context).size.width - 10,
-                  child: FutureBuilder<Set<Marker>>(
-                    future: setMapMarkers(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return googleMap(snapshot);
-                      } else if (snapshot.hasError) {
-                        // return Center(child: Text('Error loading markers'));
-                        // Log the error to your console or debug log
-                        debugPrint('Error loading markers: ${snapshot.error}');
-                        print('Error loading markers: ${snapshot.error}');
-
-                        // Optionally, assert in development mode to catch unexpected errors
-                        assert(
-                            false, 'Error loading markers: ${snapshot.error}');
-                        return Center(
-                          child: Text(''),
-                        );
-                      } else {
-                        return googleMap(snapshot);
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            right: 2.h,
-            top: 2.h,
-            child: CustomIconButton(
-              // color: Colors.white,
-              // boxColor: Color.fromRGBO(250, 110, 0, 1),
-              text: 'back',
-              ic: Icons.arrow_back_ios_new_outlined,
-              onTap: () {
-                setState(() {
-                  activeFlag = 0;
-                });
-              },
-            ),
-          )
-        ]),
-        Space(2.h),
-        Text(
-          'DELIVERY LOCATION',
-          style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Product Sans',
-              color: Color.fromRGBO(10, 76, 97, 1)),
-        ),
-        Space(2.h),
-        Row(
-          children: [
-            Icon(
-              Icons.location_on,
-              color: Color.fromRGBO(250, 110, 0, 1),
-              size: 28,
-            ),
-            Space(
-              1.h,
-              isHorizontal: true,
-            ),
-            Text(
-              userAddressDetails['businessName'],
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Jost',
-                  color: Color.fromRGBO(10, 76, 97, 1)),
-            ),
-          ],
-        ),
-        Space(0.5.h),
-        Text(userAddressDetails['addressDetails'],
-            style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                fontFamily: 'Product Sans',
-                color: Color.fromRGBO(10, 76, 97, 1))),
-        Space(2.h),
-        widget.bidWon
-            ? SizedBox(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Enter OTP",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Jost',
-                            color: Color.fromRGBO(10, 76, 97, 1))),
-                    Space(1.h),
-                    orderOtpSection(),
-                    Space(1.h),
-                    Row(
-                      children: [
-                        Space(
-                          1.h,
-                          isHorizontal: true,
-                        ),
-                        Text("Verified",
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Jost',
-                                color: Color.fromRGBO(250, 110, 0, 1))),
-                        Space(0.5.h),
-                        Transform.scale(
-                          scale: 0.8, // Adjust the scale to change the size
-                          child: Checkbox(
-                            fillColor:
-                                MaterialStateProperty.resolveWith((states) {
-                              if (states.contains(MaterialState.selected)) {
-                                return Color.fromRGBO(
-                                    250, 110, 0, 1); // Active color
-                              }
-                              return Colors.grey
-                                  .withOpacity(0.3); // Inactive color
-                            }),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6)),
-                            side: BorderSide.none,
-                            value: true,
-                            onChanged: (var val) {},
-                          ),
-                        )
-                      ],
-                    ),
-                    Space(4.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 45,
-                            margin: EdgeInsets.symmetric(horizontal: 1.h),
-                            decoration: ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                    offset: Offset(5, 6),
-                                    spreadRadius: 0.1,
-                                    color: Color.fromRGBO(232, 128, 55, 0.5),
-                                    blurRadius: 10)
-                              ],
-                              color: const Color.fromRGBO(250, 110, 0, 1),
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 10,
-                                  cornerSmoothing: 1,
-                                ),
-                              ),
-                            ),
-                            child: Center(
-                                child: Text(
-                              'Delivered',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.w700,
-                                height: 0,
-                                letterSpacing: 0.30,
-                              ),
-                            )),
-                          ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                activeFlag = 3;
-                              });
-                            },
-                            child: Container(
-                              height: 45,
-                              margin: EdgeInsets.symmetric(horizontal: 1.h),
-                              decoration: ShapeDecoration(
-                                shadows: [
-                                  BoxShadow(
-                                      offset: Offset(5, 6),
-                                      spreadRadius: 0.1,
-                                      color: Color.fromRGBO(157, 157, 157, 0.5),
-                                      blurRadius: 10)
-                                ],
-                                color: const Color.fromRGBO(64, 64, 64, 1),
-                                shape: SmoothRectangleBorder(
-                                  borderRadius: SmoothBorderRadius(
-                                    cornerRadius: 10,
-                                    cornerSmoothing: 1,
-                                  ),
-                                ),
-                              ),
-                              child: Center(
-                                  child: Text(
-                                'Generate Bill',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.w700,
-                                  height: 0,
-                                  letterSpacing: 0.30,
-                                ),
-                              )),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    Space(2.h),
-                  ],
-                ),
-              )
-            : Container(
-                padding: EdgeInsets.only(left: 20, top: 20),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    color: Color.fromRGBO(243, 246, 240, 1),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(35),
-                        topRight: Radius.circular(35))),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Items needed',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Jost',
-                          color: Color.fromRGBO(10, 76, 97, 1)),
-                    ),
-                    Space(2.h),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          for (int index = 0;
-                              index < _bulkOrders.length;
-                              index++)
-                            Row(
-                              children: [
-                                BulkOrderItem(
-                                  itemDetails: _bulkOrders[index],
-                                ),
-                                Space(
-                                  3.h,
-                                  isHorizontal: true,
-                                ),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ),
-                    Space(2.h)
-                  ],
-                ),
-              ),
-      ],
-    );
-  }
 
   Widget _bidSuccessful() {
     String twoDigits(int n) => n.toString().padLeft(2, '0');

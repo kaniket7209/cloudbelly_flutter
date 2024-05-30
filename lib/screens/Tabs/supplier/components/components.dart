@@ -27,6 +27,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:async';
 
+import '../../../../models/user_detail.dart';
+
 class BulkOrderSectionItem extends StatefulWidget {
   final SupplierBulkOrder itemDetails;
 
@@ -176,10 +178,10 @@ class _BulkOrderSectionItemState extends State<BulkOrderSectionItem> {
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       // Adjusted padding
-                      // suffixText: '/-',
-                      // prefixStyle: TextStyle(color: Color(0xFF094B60)),
-                      // prefixText: 'Rs-',
-                      // prefixIconColor: Color(0xFF094B60),
+                      suffixText: '/-',
+                      prefixStyle: TextStyle(color: Color(0xFF094B60)),
+                      prefixText: 'Rs-',
+                      prefixIconColor: Color(0xFF094B60),
                     ),
                   ),
                 ),
@@ -847,3 +849,72 @@ class BulkOrderItem extends StatelessWidget {
   }
 }
 //
+
+//region User Cart Order Item widget
+class CartOrderItem extends StatelessWidget {
+  final UserCartInfo cartDetails;
+
+  const CartOrderItem({super.key, required this.cartDetails});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.all(1),
+          decoration: ShapeDecoration(
+            shadows: const [
+              BoxShadow(
+                offset: Offset(0, 8),
+                color: Color.fromRGBO(162, 210, 167, 0.6),
+                // rgba
+                blurRadius: 25,
+              )
+            ],
+            color: Colors.white,
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 15,
+                cornerSmoothing: 1,
+              ),
+            ),
+          ),
+          child: ImageWidgetInventory(
+            height: 40,
+            radius: 10,
+            url: cartDetails.imageUrl,
+          ),
+        ),
+        Space(1.h),
+        Text(
+          cartDetails.itemName.replaceAll(' ', '\n'),
+          style: const TextStyle(
+            color: Color(0xFF094B60),
+            fontSize: 12,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.w600,
+            // height: 0.06,
+            letterSpacing: 0.54,
+          ),
+        ),
+        Text(
+          '${cartDetails.quantity} ${cartDetails.unitType}',
+          style: const TextStyle(
+            color: const Color.fromRGBO(250, 110, 0, 1),
+            // background: rgba(250, 110, 0, 1);
+            fontSize: 12,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.w600,
+            // height: 0.06,
+            letterSpacing: 0.54,
+          ),
+        )
+      ],
+    );
+  }
+}
+//
+
+
+
