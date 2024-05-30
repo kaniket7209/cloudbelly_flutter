@@ -33,17 +33,13 @@ class OrderDeliveryMap extends StatefulWidget {
   final bool bidWon;
 
   const OrderDeliveryMap(
-      {super.key, required this.bulkOrders,  required this.bidWon});
+      {super.key, required this.bulkOrders, required this.bidWon});
 
   @override
   State<OrderDeliveryMap> createState() => OrderDeliveryMapState();
 }
 
 class OrderDeliveryMapState extends State<OrderDeliveryMap> {
-
-
-
-
   List<UserDetail> users = [];
 
   late bool _bidWon = false;
@@ -56,22 +52,23 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     'addressDetails': ''
   };
   late LatLng _currentLocation;
-  late bool _isLoading = false;
+  late bool _isMapLoading = false;
+  late bool _isDataLoading = true;
   late int activeFlag = 0;
   late bool _reduceMapHeight = false;
   CameraPosition? cameraPosition;
   Position? _currentPosition;
-  late Set<Marker> _mapMarkers={};
+  late Set<Marker> _mapMarkers = {};
   loc.Location _location = loc.Location();
   List<Placemark> placeMarks = [];
   late List<int> checkedBoxes = [1, 2, 3];
   String? area;
   String? address;
-  late Set<Marker> _initialMarkers={};
+  late Set<Marker> _initialMarkers = {};
   GoogleMapController? _mapController;
   late List<String> userIDs = [];
   TOastNotification toastNotification = TOastNotification();
-
+  late UserOrderDeliveryDetail _userOrderDetails;
 
   late Map<int, Map<String, dynamic>> _orderPreparation = {
     1: {'key': 1, 'value': "Start packing before 12pm", 'checked': false},
@@ -93,12 +90,27 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     }
   }
 
+  Future<void> getCartInfoForUser(String userId) async {
+    setState(() {
+      _isDataLoading = true;
+    });
+    _userOrderDetails = await getUserCartInfo(userId);
+    if (_userOrderDetails != null) {
+      setState(() {
+        _userOrderDetails = _userOrderDetails;
+        _isDataLoading = false;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+
     // Create a deep copy of the list and its items
     _bulkOrders = widget.bulkOrders.map((order) => order.clone()).toList();
+    getCartInfoForUser(_bulkOrders[0].userIDs[0]);
+    // print('Hello user ids'+ _bulkOrders[0].userIDs.toString());
     _checkLocationPermission();
     // _getCurrentLocation();
     getUsersDetails();
@@ -125,7 +137,6 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
       });
     }
   }
-
 
   Future<BitmapDescriptor> getCustomMarker(String imageUrl) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
@@ -200,9 +211,8 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
   Future<Set<Marker>> setMapMarkers() async {
     late Set<Marker> localMarkers = {};
     print('Inside set map markers');
-    _isLoading = true;
+    _isMapLoading = true;
     setState(() {});
-
 
     for (int i = 0; i < users.length; i++) {
       final response = await http.get(Uri.parse(users[i].image));
@@ -217,10 +227,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
 
         Marker marker = Marker(
           onTap: () {
-            print('Im tapped');
-            userAddressDetails['businessName'] = users[i].hNo;
-            userAddressDetails['addressDetails'] = users[i].detailedAddress;
-            setState(() {});
+            getCartInfoForUser(users[i].userID);
           },
           icon: await getCustomMarker(users[i].image),
           anchor: Offset(0.5, 0.5),
@@ -235,7 +242,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     }
 
     setState(() {
-      _isLoading = false;
+      _isMapLoading = false;
     });
     return localMarkers;
   }
@@ -246,6 +253,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     }
     return _orderPreparation[key - 1]!['checked'];
   }
+
   Widget orderOtpSection() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -272,8 +280,6 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
   }
 
   Future<void> getUsersDetails() async {
-
-
     for (int i = 0; i < _bulkOrders.length; i++) {
       userIDs += _bulkOrders[i].userIDs;
     }
@@ -283,17 +289,16 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
       userAddressDetails['businessName'] = users[0].hNo;
       userAddressDetails['addressDetails'] = users[0].detailedAddress;
 
-      _mapMarkers=await  setMapMarkers();
-      if(_mapMarkers.isNotEmpty){
-        _isLoading=false;
+      _mapMarkers = await setMapMarkers();
+      if (_mapMarkers.isNotEmpty) {
+        _isMapLoading = false;
       }
     }
   }
 
-
-
   Future<void> _checkLocationPermission() async {
-    perm.PermissionStatus permission = await perm.Permission.locationWhenInUse.status;
+    perm.PermissionStatus permission =
+        await perm.Permission.locationWhenInUse.status;
     if (permission != perm.PermissionStatus.granted) {
       await perm.Permission.locationWhenInUse.request();
     }
@@ -301,12 +306,12 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
 
   Future<void> _getCurrentLocation() async {
     setState(() {
-      _isLoading=true;
+      _isMapLoading = true;
     });
 
     try {
       loc.LocationData _locationData = await _location.getLocation();
-      if(_locationData.latitude!=null) {
+      if (_locationData.latitude != null) {
         setState(() {
           _currentLocation =
               LatLng(_locationData.latitude!, _locationData.longitude!);
@@ -317,20 +322,11 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
               infoWindow: InfoWindow(title: 'Current Location'),
             ),
           );
-          _isLoading=false;
+          _isMapLoading = false;
         });
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
-
-
-
-
-
-
-
-
 
   @override
   void dispose() {
@@ -349,7 +345,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
       zoomControlsEnabled: true,
       myLocationEnabled: true,
       scrollGesturesEnabled: true,
-      markers:_isLoading?_initialMarkers: _mapMarkers,
+      markers: _isMapLoading ? _initialMarkers : _mapMarkers,
       onMapCreated: (GoogleMapController controller) {
         _mapController = controller;
       },
@@ -367,40 +363,37 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
-            // margin: EdgeInsets.symmetric(horizontal: 2.h),
-            padding: EdgeInsets.only(
-              top: 2.h,
-              bottom: MediaQuery.of(context).viewInsets.bottom,
+    return Container(
+      // margin: EdgeInsets.symmetric(horizontal: 2.h),
+      padding: EdgeInsets.only(
+        top: 2.h,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      decoration: const ShapeDecoration(
+        color: Colors.white,
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.only(
+            topLeft: SmoothRadius(
+              cornerRadius: 35,
+              cornerSmoothing: 1,
             ),
-            decoration: const ShapeDecoration(
-              color: Colors.white,
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius.only(
-                  topLeft: SmoothRadius(
-                    cornerRadius: 35,
-                    cornerSmoothing: 1,
-                  ),
-                  topRight: SmoothRadius(
-                    cornerRadius: 35,
-                    cornerSmoothing: 1,
-                  ),
-                ),
-              ),
+            topRight: SmoothRadius(
+              cornerRadius: 35,
+              cornerSmoothing: 1,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildBody()
-                ],
-              ),
-            ),
-          );
+          ),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [_buildBody()],
+        ),
+      ),
+    );
   }
-
 
   Widget _deliveryRoute() {
     return Column(
@@ -409,8 +402,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
         Stack(children: [
           Container(
             clipBehavior: Clip.hardEdge,
-            height:
-                MediaQuery.of(context).size.height / 2,
+            height: MediaQuery.of(context).size.height / 2,
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -427,10 +419,9 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height / 3,
-                  width: MediaQuery.of(context).size.width - 10,
-                  child: _isLoading?SizedBox(): googleMap()
-                ),
+                    height: MediaQuery.of(context).size.height / 3,
+                    width: MediaQuery.of(context).size.width - 10,
+                    child: _isMapLoading ? SizedBox() : googleMap()),
               ),
             ),
           ),
@@ -472,7 +463,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
               isHorizontal: true,
             ),
             Text(
-              userAddressDetails['businessName'],
+              _isDataLoading ? '' : _userOrderDetails.businessName,
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -482,7 +473,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
           ],
         ),
         Space(0.5.h),
-        Text(userAddressDetails['addressDetails'],
+        Text(_isDataLoading ? '' : _userOrderDetails.businessName,
             style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
@@ -578,7 +569,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                activeFlag=1;
+                                activeFlag = 1;
                               });
                             },
                             child: Container(
@@ -647,12 +638,13 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           for (int index = 0;
-                              index < _bulkOrders.length;
+                              index < _userOrderDetails.cartInfoList.length;
                               index++)
                             Row(
                               children: [
-                                BulkOrderItem(
-                                  itemDetails: _bulkOrders[index],
+                                CartOrderItem(
+                                  cartDetails:
+                                      _userOrderDetails.cartInfoList[index],
                                 ),
                                 Space(
                                   3.h,
@@ -670,5 +662,4 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
       ],
     );
   }
-
 }

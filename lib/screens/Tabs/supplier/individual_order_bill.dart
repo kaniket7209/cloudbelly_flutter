@@ -2,6 +2,8 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../../models/user_detail.dart';
+import '../../../services/supplier_services.dart';
 import '../../../widgets/space.dart';
 class IndividualOrderBill extends StatefulWidget {
   const IndividualOrderBill({super.key});
@@ -11,6 +13,27 @@ class IndividualOrderBill extends StatefulWidget {
 }
 
 class _IndividualOrderBillState extends State<IndividualOrderBill> {
+
+ late UserOrderDeliveryDetail  _userOrderDetails;
+ late bool _isLoading=true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getCartInfoForUser();
+    super.initState();
+  }
+
+  Future<void> getCartInfoForUser() async{
+    _userOrderDetails= await getUserCartInfo('bla bla');
+    if(_userOrderDetails!=null){
+      setState(() {
+        _userOrderDetails=_userOrderDetails;
+        _isLoading=false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,6 +41,7 @@ class _IndividualOrderBillState extends State<IndividualOrderBill> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _isLoading?SizedBox(): Text(_userOrderDetails.cartInfoList[0].itemName),
           Space(2.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

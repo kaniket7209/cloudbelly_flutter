@@ -65,12 +65,15 @@ class _SupplierInventoryState extends State<SupplierInventory> {
   // Get the current time
   late DateTime _currentTime = DateTime.now();
   late bool isBetweenNoonAndMidnight =
-      _currentTime.hour >= 11 && _currentTime.hour < 24;
+      _currentTime.hour >= 15 && _currentTime.hour < 24;
   @override
   void initState() {
     if (isBetweenNoonAndMidnight) {
       _bidWon = true;
           print('Yes bid won');
+    }
+    else{
+      print('Oops i lost');
     }
 
     setState(() {});

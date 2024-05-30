@@ -7,6 +7,8 @@ import '../models/user_detail.dart';
 
 Future<List<SupplierBulkOrder>> getBulkOrderData(String userId) async {
   var apiUrl = 'https://app.cloudbelly.in/cart/get';
+
+  print('Bulk Order data user id is- '+ userId);
   Map<String, dynamic> requestBody = {
     'user_id': userId,
   };
@@ -35,7 +37,44 @@ Future<List<SupplierBulkOrder>> getBulkOrderData(String userId) async {
   return [];
 }
 
+Future<UserOrderDeliveryDetail> getUserCartInfo(String userId) async {
+  var apiUrl = 'https://app.cloudbelly.in/cart/user-info';
+ // for(int i=0;i<userIds.length;i++){
+ //
+ // }
+
+
+  Map<String, dynamic> requestBody = {
+    "user_id":userId
+  };
+  // Convert the request body to JSON
+  String requestBodyJson = jsonEncode(requestBody);
+
+  // try {
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    body: requestBodyJson,
+  );
+  print('Response is ' + response.statusCode.toString());
+  if (response.statusCode == 200) {
+    final jsonData = json.decode(response.body);
+    print(jsonData.toString());
+    return UserOrderDeliveryDetail.fromJson(jsonData['data'][0]);
+  } else {
+    throw Exception('Failed to fetch data');
+  }
+  // } catch (error) {
+  throw Exception('Error: ');
+  // }
+}
+
+
 Future<List<UserDetail>> getUsersDetailsByUserIDs(List<String> userIds) async {
+  print('user IDs are '+userIds.toString());
   var apiUrl = 'https://app.cloudbelly.in/get-user-info';
   print(apiUrl.toString());
   print(userIds.toString());
