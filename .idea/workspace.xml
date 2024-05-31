@@ -11,6 +11,9 @@
   <component name="ChangeListManager">
     <list default="true" id="02fb6a08-6e3a-426b-9d24-81a9fbe6379c" name="Changes" comment="- issues resolved">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/local.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/supplier/delivery_map.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/supplier/delivery_map.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -31,7 +34,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="renish" />
+        <entry key="$PROJECT_DIR$" value="google_sign-add" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -93,7 +96,7 @@
     &quot;git-widget-placeholder&quot;: &quot;sagar__dev__copy&quot;,
     &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/USER/Documents/GitHub/cloudbelly_flutter&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/USER/Documents/GitHub/cloudbelly_flutter/lib/screens/Tabs/supplier&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
@@ -103,11 +106,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\USER\Documents\GitHub\cloudbelly_flutter\lib\screens\Tabs\supplier" />
+      <recent name="C:\Users\USER\Documents\GitHub\cloudbelly_flutter\lib\services" />
+      <recent name="C:\Users\USER\Documents\GitHub\cloudbelly_flutter\lib\models" />
       <recent name="D:\cloudbelly_flutter-cb_orders\cloudbelly_flutter-cb_orders\assets\images" />
       <recent name="D:\cloudbelly_flutter-cb_orders\cloudbelly_flutter-cb_orders\assets\icons" />
-      <recent name="D:\cloudbelly_flutter-cb_orders\cloudbelly_flutter-cb_orders\android\app" />
-      <recent name="D:\cloudbelly_flutter-cb_orders\cloudbelly_flutter-cb_orders\android" />
-      <recent name="D:\cloudbelly_flutter-cb_orders\cloudbelly_flutter-cb_orders\android\app\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\cloudbelly_flutter-cb_orders\cloudbelly_flutter-cb_orders\lib\services" />

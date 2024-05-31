@@ -100,6 +100,8 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
       setState(() {
         _userOrderDetails = _userOrderDetails;
         _isDataLoading = false;
+
+        _otpValFlag = 0;
       });
     }
   }
@@ -117,12 +119,11 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     getUsersDetails();
   }
 
-  late bool otpCorrect = false;
-  late bool verifyingOtp = false;
+  late int _otpValFlag = 0;
 
   void _onChanged(String value, int index) {
     setState(() {
-      verifyingOtp = true;
+      _otpValFlag = 1;
     });
     if (value.length == 1 && index < 3) {
       FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
@@ -148,18 +149,16 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
       Timer(Duration(milliseconds: 200), () {
         setState(() {
           _reduceMapHeight = false; // Original size
-
           // Check if all input boxes contain "0000"
           String otp = _controllers.map((controller) => controller.text).join();
           if (otp == '0000') {
             setState(() {
-              verifyingOtp = false;
-              otpCorrect = true;
+              _otpValFlag = 3;
             });
           } else {
             setState(() {
-              verifyingOtp = false;
-              otpCorrect = false;
+              _otpValFlag = 2;
+              clearOtpInputBox();
             });
           }
         });
@@ -167,6 +166,12 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
 
       // Move focus to the next widget (could be any other focusable widget)
       FocusScope.of(context).requestFocus(FocusNode());
+    }
+  }
+
+  void clearOtpInputBox() {
+    for (var controller in _controllers) {
+      controller.clear();
     }
   }
 
@@ -226,6 +231,81 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
     return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 
+  Widget otpValidation(int otpValFlag) {
+    switch (otpValFlag) {
+      case 0:
+        return SizedBox();
+
+      //if otp is under validation
+      case 1:
+        return Row(
+          children: [
+            Text(
+              'validating otp',
+              style: TextStyle(color: Colors.grey),
+            ),
+            Space(
+              2.h,
+              isHorizontal: true,
+            ),
+            SizedBox(
+                height: 10,
+                width: 10,
+                child: CircularProgressIndicator(
+                  color: Colors.grey,
+                  strokeWidth: 2,
+                  strokeAlign: 1,
+                ))
+          ],
+        );
+      //if otp is invalid
+      case 2:
+        return Row(
+          children: [
+            Space(
+              1.h,
+              isHorizontal: true,
+            ),
+            Text('Otp is invalid',
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Jost',
+                    color: Colors.red)),
+          ],
+        );
+      case 3:
+        //if otp is valid
+        return Row(children: [
+          Space(
+            1.h,
+            isHorizontal: true,
+          ),
+          Text("Verified",
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Jost',
+                  color: Colors.green)),
+          Space(
+            0.5.h,
+            isHorizontal: true,
+          ),
+          Container(
+              decoration: BoxDecoration(
+                  color: Colors.green, borderRadius: BorderRadius.circular(20)),
+              child: Icon(
+                Icons.done,
+                size: 15,
+                color: Colors.white,
+              ))
+        ]);
+
+      default:
+        return SizedBox();
+    }
+  }
+
   Future<ui.Image> loadImageFromNetwork(String imageUrl) async {
     // Fetch the image via HTTP
     final http.Response responseData = await http.get(Uri.parse(imageUrl));
@@ -260,6 +340,11 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
         Marker marker = Marker(
           onTap: () {
             getCartInfoForUser(users[i].userID);
+            clearOtpInputBox();
+            setState(() {
+              _reduceMapHeight = false;
+            });
+            _focusNodes[0].requestFocus();
           },
           icon: await getCustomMarker(users[i].image),
           anchor: Offset(0.5, 0.5),
@@ -310,6 +395,7 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
               child: TextField(
                 controller: _controllers[index],
                 focusNode: _focusNodes[index],
+                enabled: _otpValFlag == 3 ? false : true,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 maxLength: 1,
@@ -410,33 +496,39 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // margin: EdgeInsets.symmetric(horizontal: 2.h),
-      padding: EdgeInsets.only(
-        top: 2.h,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      decoration: const ShapeDecoration(
-        color: Colors.white,
-        shape: SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius.only(
-            topLeft: SmoothRadius(
-              cornerRadius: 35,
-              cornerSmoothing: 1,
-            ),
-            topRight: SmoothRadius(
-              cornerRadius: 35,
-              cornerSmoothing: 1,
+    return GestureDetector(
+      onTap: (){
+          FocusScope.of(context).unfocus();// Unfocus all text fields when tapping outside
+
+      },
+      child: Container(
+        // margin: EdgeInsets.symmetric(horizontal: 2.h),
+        padding: EdgeInsets.only(
+          top: 2.h,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        decoration: const ShapeDecoration(
+          color: Colors.white,
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius.only(
+              topLeft: SmoothRadius(
+                cornerRadius: 35,
+                cornerSmoothing: 1,
+              ),
+              topRight: SmoothRadius(
+                cornerRadius: 35,
+                cornerSmoothing: 1,
+              ),
             ),
           ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_buildBody()],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [_buildBody()],
+          ),
         ),
       ),
     );
@@ -541,56 +633,9 @@ class OrderDeliveryMapState extends State<OrderDeliveryMap> {
                             color: Color.fromRGBO(10, 76, 97, 1))),
                     Space(1.h),
                     orderOtpSection(),
-                    Row(
-                      children: [
-                        Space(
-                          1.h,
-                          isHorizontal: true,
-                        ),
-                        verifyingOtp
-                            ? CircularProgressIndicator()
-                            : otpCorrect
-                                ? Text("Verified",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        fontFamily: 'Jost',
-                                        color: Colors.green))
-                                : Text("Incorrect otp",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        fontFamily: 'Jost',
-                                        color: Colors.red)),
-                        Space(0.5.h),
-                        otpCorrect
-                            ? Transform.scale(
-                                scale:
-                                    0.8, // Adjust the scale to change the size
-                                child: Checkbox(
-                                  fillColor: MaterialStateProperty.resolveWith(
-                                      (states) {
-                                    if (states
-                                        .contains(MaterialState.selected)) {
-                                      return  Colors.green; // Active color
-                                    }
-                                    return Colors.grey
-                                        .withOpacity(0.3); // Inactive color
-                                  }),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(6)),
-                                  side: BorderSide.none,
-                                  value: true,
-                                  onChanged: (var val) {},
-                                ),
-                              )
-                            : Icon(
-                                Icons.warning,
-                                color: Colors.amber,
-                              )
-                      ],
-                    ),
-                    Space(1.h),
+                    _otpValFlag == 0 ? Space(2.h) : Space(1.h),
+                    otpValidation(_otpValFlag),
+                    _otpValFlag == 0 ? Space(2.h) : Space(1.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
