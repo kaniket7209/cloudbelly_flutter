@@ -79,6 +79,7 @@ class _ShareProfilePostItemState extends State<ShareProfilePostItem> {
 
   void getProductDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
+    print(widget.data + "gaurav");
     List<dynamic> productIds = widget.data['menu_items'];
     productDetails = await Provider.of<Auth>(context, listen: false)
         .getProductDetails(productIds)
@@ -87,7 +88,7 @@ class _ShareProfilePostItemState extends State<ShareProfilePostItem> {
       Navigator.of(context).pop();
       context.read<TransitionEffect>().setBlurSigma(5.0);
       FeedBottomSheet()
-          .ProductsInPostSheet(context, widget.data, _isLiked, value);
+          .ProductsInPostSheet(context, widget.data, _isLiked, value, "");
       return [];
     });
 

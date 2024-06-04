@@ -5,6 +5,7 @@ import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
+import 'package:cloudbelly_app/screens/Tabs/Cart/view_cart.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/customer_widgets_profile.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/menu_item.dart';
@@ -983,11 +984,12 @@ class _ProfileViewState extends State<ProfileView> {
                                             ]),
                                       ),
                                     ),
+                                    Space(10.h),
                                   ],
                                 ),
-                                Provider.of<Auth>(context).showBanner
+                                (Provider.of<Auth>(context).itemAdd.length != 0)
                                     ? Positioned(
-                                        bottom: 120,
+                                        bottom: 40,
                                         left: 0,
                                         child: Container(
                                           margin: EdgeInsets.symmetric(
@@ -1040,13 +1042,22 @@ class _ProfileViewState extends State<ProfileView> {
                                               ),
                                               TouchableOpacity(
                                                 onTap: () {
-                                                  // Provider.of<ViewCartProvider>(context, listen: false)
-                                                  //     .getProductList(Provider.of<Auth>(context).itemAdd);
+                                                  Provider.of<ViewCartProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .getProductList(
+                                                          Provider.of<Auth>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .itemAdd);
                                                   context
                                                       .read<TransitionEffect>()
                                                       .setBlurSigma(0);
-                                                  // Navigator.push(context,
-                                                  //     // MaterialPageRoute(builder: (context) => ViewCart()));
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ViewCart()));
                                                 },
                                                 child: Container(
                                                   height: 41,

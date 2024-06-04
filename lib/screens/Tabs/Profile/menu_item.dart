@@ -2,6 +2,7 @@
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -169,38 +170,150 @@ class _MenuItemState extends State<MenuItem> {
                     )),
                 Positioned(
                   bottom: 2,
-                  left: 2.5.h,
-                  child: TouchableOpacity(
-                    onTap: () async {
-                      print("gaurav");
-                      print(Provider.of<Auth>(context, listen: false)
-                          .userData?['user_id']);
-                      if (Provider.of<Auth>(context, listen: false)
-                              .userData?['user_id'] !=
-                          widget.data['user_id']) {
-                        Provider.of<Auth>(context, listen: false)
-                            .bannerTogger(widget.data);
-                        return;
-                      }
-                      print(widget.data);
-                      // ignore: use_build_context_synchronously
-                      final url =
-                          await updateProductImageSheet(context, widget.data);
-                      print("url: $url");
-                      if (url != '') {
-                        setState(() {
-                          widget.data['images'] = [url];
-                          print(url);
-                        });
-                      }
-                    },
-                    child: ButtonWidgetHomeScreen(
-                        radius: 4,
-                        isActive: true,
-                        height: 2.5.h,
-                        width: 15.w,
-                        txt: 'ADD'),
-                  ),
+                  left: (Provider.of<Auth>(context)
+                              .itemAdd
+                              .where(
+                                (element) => element.id == widget.data["_id"],
+                              )
+                              .length ==
+                          0)
+                      ? 2.5.h
+                      : 0.h,
+                  child: (Provider.of<Auth>(context)
+                              .itemAdd
+                              .where(
+                                (element) => element.id == widget.data["_id"],
+                              )
+                              .length ==
+                          0)
+                      ? TouchableOpacity(
+                          onTap: () async {
+                            print(widget.data);
+                            print(Provider.of<Auth>(context, listen: false)
+                                .userData?['user_id']);
+                            if (Provider.of<Auth>(context, listen: false)
+                                    .userData?['user_id'] !=
+                                widget.data['user_id']) {
+                              Provider.of<Auth>(context, listen: false)
+                                  .bannerTogger(
+                                      ProductDetails.fromJson(widget.data));
+                              return;
+                            }
+                            print(widget.data);
+                            // ignore: use_build_context_synchronously
+                            final url = await updateProductImageSheet(
+                                context, widget.data);
+                            print("url: $url");
+                            if (url != '') {
+                              setState(() {
+                                widget.data['images'] = [url];
+                                print(url);
+                              });
+                            }
+                          },
+                          child: ButtonWidgetHomeScreen(
+                              radius: 4,
+                              isActive: true,
+                              height: 2.5.h,
+                              width: 15.w,
+                              txt: 'ADD'))
+                      : Row(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Provider.of<Auth>(context, listen: false)
+                                    .removeItem(
+                                        ProductDetails.fromJson(widget.data));
+                              },
+                              child: Container(
+                                height: 30,
+                                width: 30,
+                                decoration: ShapeDecoration(
+                                  color: const Color(0xFFFA6E00),
+                                  shape: SmoothRectangleBorder(
+                                    borderRadius: SmoothBorderRadius(
+                                      cornerRadius: 12,
+                                      cornerSmoothing: 1,
+                                    ),
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    '-',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w700,
+                                      height: 0,
+                                      letterSpacing: 0.14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Space(
+                              12,
+                              isHorizontal: true,
+                            ),
+                            Text(
+                              Provider.of<Auth>(context)
+                                  .itemAdd
+                                  .lastWhere(
+                                    (element) =>
+                                        element.id == widget.data["_id"],
+                                  )
+                                  .quantity
+                                  .toString(),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.w700,
+                                height: 0,
+                                letterSpacing: 0.14,
+                              ),
+                            ),
+                            const Space(
+                              16,
+                              isHorizontal: true,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Provider.of<Auth>(context, listen: false)
+                                    .addItem(
+                                        ProductDetails.fromJson(widget.data));
+                              },
+                              child: Container(
+                                height: 30,
+                                width: 30,
+                                decoration: ShapeDecoration(
+                                  color: const Color(0xFFFA6E00),
+                                  shape: SmoothRectangleBorder(
+                                    borderRadius: SmoothBorderRadius(
+                                      cornerRadius: 12,
+                                      cornerSmoothing: 1,
+                                    ),
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    '+',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 25,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w700,
+                                      height: 0,
+                                      letterSpacing: 0.14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                 ),
               ],
             )

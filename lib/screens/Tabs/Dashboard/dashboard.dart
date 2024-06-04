@@ -68,6 +68,9 @@ class _DashBoardState extends State<DashBoard>
                                 text: 'notification',
                                 ic: Icons.notifications_outlined,
                                 onTap: () {
+                                  Navigator.of(context)
+                                      .pushNamed('/notifications');
+
                                   // Navigator.of(context).pushNamed('/map');
                                 },
                               ),

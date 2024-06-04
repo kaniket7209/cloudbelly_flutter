@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, unused_field
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:cloudbelly_app/NotificationScree.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
@@ -43,7 +44,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           : userType == UserType.Supplier.name
               ? Icons.laptop
               : Icons.search,
-      Icons.shopping_cart_outlined,
+      Icons.notifications_outlined,
       Icons.person,
       // Icons.brightness_1,
     ];
@@ -54,7 +55,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           : userType == UserType.Supplier.name
               ? 'Dashboard'
               : 'Search',
-      'Cart',
+      'Notifications',
       'Profile',
       // 'Account',
     ];
@@ -67,7 +68,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               : const SearchView(),
 
       // UploadPage(),
-      const Cart(),
+      const NotificationScreen(),
       const Profile(),
     ];
     _hideBottomBarAnimationController =
@@ -105,12 +106,13 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       // resizeToAvoidBottomInset: false,
-      backgroundColor: Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
-              UserType.Vendor.name
-          ? const Color.fromRGBO(234, 245, 247, 1)
-          : userType == UserType.Supplier.name
-              ? const Color(0xFFF6FFEE)
-              : const Color.fromRGBO(255, 248, 255, 1),
+      backgroundColor:
+          Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+                  UserType.Vendor.name
+              ? const Color.fromRGBO(234, 245, 247, 1)
+              : userType == UserType.Supplier.name
+                  ? const Color(0xFFF6FFEE)
+                  : const Color.fromRGBO(255, 248, 255, 1),
 
       body: pages[_selectedIndex],
       floatingActionButton: FloatingActionButton(
@@ -144,7 +146,9 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           List<String> url = await Provider.of<Auth>(context, listen: false)
               .pickMultipleImagesAndUpoad();
           List<dynamic> menuList =
-              await Provider.of<Auth>(context, listen: false).getMenu(Provider.of<Auth>(context, listen: false).userData?['user_id']);
+              await Provider.of<Auth>(context, listen: false).getMenu(
+                  Provider.of<Auth>(context, listen: false)
+                      .userData?['user_id']);
           Navigator.of(context).pop();
           if (url.length == 0) {
             TOastNotification()
@@ -191,7 +195,8 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                   )
                 ],
                 //  color: Color.fromRGBO(84, 166, 193, 1),
-                color: Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+                color: Provider.of<Auth>(context, listen: false)
+                            .userData?['user_type'] ==
                         UserType.Vendor.name
                     ? const Color.fromRGBO(84, 166, 193, 1)
                     : userType == UserType.Supplier.name

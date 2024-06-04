@@ -8,6 +8,7 @@ import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/model.dart';
+import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
 import 'package:cloudbelly_app/screens/Tabs/Feed/feed_bottom_sheet.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
@@ -95,15 +96,19 @@ class _PostItemState extends State<PostItem> {
 
   void getProductDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
+    print("Full data");
+    print(widget.data);
     List<dynamic> productIds = widget.data['menu_items'];
     productDetails = await Provider.of<Auth>(context, listen: false)
         .getProductDetails(productIds)
         .then((value) {
       print("details:: $value");
       Navigator.of(context).pop();
+      Provider.of<ViewCartProvider>(context, listen: false)
+          .setSellterId(widget.data["user_id"]);
       context.read<TransitionEffect>().setBlurSigma(5.0);
-      FeedBottomSheet()
-          .ProductsInPostSheet(context, widget.data, _isLiked, value);
+      FeedBottomSheet().ProductsInPostSheet(
+          context, widget.data, _isLiked, value, widget.data['user_id']);
       return [];
     });
 
@@ -128,7 +133,6 @@ class _PostItemState extends State<PostItem> {
         print("Unexpected data type: $element");
       }
       setState(() {});
-
     });
     // print(_likeData);
 
@@ -172,7 +176,8 @@ class _PostItemState extends State<PostItem> {
 
   bool checkFollow() {
     String id = widget.isProfilePost ? "" : widget.data['user_id'];
-    List<dynamic> temp = Provider.of<Auth>(context, listen: false).userData?['followings'] ?? [];
+    List<dynamic> temp =
+        Provider.of<Auth>(context, listen: false).userData?['followings'] ?? [];
     for (var user in temp) {
       if (user['user_id'] == id) {
         _isFollowing = true;
@@ -260,32 +265,35 @@ class _PostItemState extends State<PostItem> {
                             ),
                             child: Center(
                               child: Text(
-                                widget.isSharePost == "No" ? widget.userModel?.storeName![0]:
-                                widget.isProfilePost
-                                    ? Provider.of<Auth>(context, listen: true)
-                                                .userData !=
-                                            null
+                                widget.isSharePost == "No"
+                                    ? widget.userModel?.storeName![0]
+                                    : widget.isProfilePost
                                         ? Provider.of<Auth>(context,
-                                                    listen: true)
-                                                .userData!['store_name']
-                                                .isNotEmpty
+                                                        listen: true)
+                                                    .userData !=
+                                                null
                                             ? Provider.of<Auth>(context,
-                                                    listen: true)
-                                                .userData!['store_name'][0]
-                                                .toUpperCase()
-                                            : Provider.of<Auth>(context,
-                                    listen: true)
-                                    .userData!['store_name'][0]
-                                    .toUpperCase()
-                                        : widget.data['store_name'] != null &&
-                                                widget.data['store_name']
+                                                        listen: true)
+                                                    .userData!['store_name']
                                                     .isNotEmpty
-                                            ? widget.data['store_name'][0]
-                                                .toUpperCase()
-                                            : widget.data['store_name'][0]
-                                    .toUpperCase()
-                                    : widget.data['store_name'][0]
-                                    .toUpperCase(),
+                                                ? Provider.of<Auth>(context,
+                                                        listen: true)
+                                                    .userData!['store_name'][0]
+                                                    .toUpperCase()
+                                                : Provider.of<Auth>(context,
+                                                        listen: true)
+                                                    .userData!['store_name'][0]
+                                                    .toUpperCase()
+                                            : widget.data['store_name'] !=
+                                                        null &&
+                                                    widget.data['store_name']
+                                                        .isNotEmpty
+                                                ? widget.data['store_name'][0]
+                                                    .toUpperCase()
+                                                : widget.data['store_name'][0]
+                                                    .toUpperCase()
+                                        : widget.data['store_name'][0]
+                                            .toUpperCase(),
                                 style: const TextStyle(fontSize: 20),
                               ),
                             )),
@@ -329,11 +337,13 @@ class _PostItemState extends State<PostItem> {
                               cornerSmoothing: 1,
                             ),
                             child: Image.network(
-                              widget.isSharePost == "No" ? widget.userModel?.profilePhoto:
-                              widget.isProfilePost
-                                  ? Provider.of<Auth>(context, listen: false)
-                                      .logo_url
-                                  : widget.data['profile_photo'],
+                              widget.isSharePost == "No"
+                                  ? widget.userModel?.profilePhoto
+                                  : widget.isProfilePost
+                                      ? Provider.of<Auth>(context,
+                                              listen: false)
+                                          .logo_url
+                                      : widget.data['profile_photo'],
                               fit: BoxFit.cover,
                               loadingBuilder:
                                   GlobalVariables().loadingBuilderForImage,
@@ -347,11 +357,12 @@ class _PostItemState extends State<PostItem> {
                 SizedBox(
                   width: 37.w,
                   child: Text(
-                    widget.isSharePost == "No" ? widget.userModel?.storeName:
-                    widget.isProfilePost
-                        ? Provider.of<Auth>(context, listen: false)
-                            .userData!['store_name']
-                        : widget.data['store_name'],
+                    widget.isSharePost == "No"
+                        ? widget.userModel?.storeName
+                        : widget.isProfilePost
+                            ? Provider.of<Auth>(context, listen: false)
+                                .userData!['store_name']
+                            : widget.data['store_name'],
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -688,14 +699,13 @@ class _PostItemState extends State<PostItem> {
                       // padding: EdgeInsets.only(left: 10),
                       // pa
                       onPressed: () async {
-                         print( "abcds:: ${widget.userId}");
+                        print("abcds:: ${widget.userId}");
                         String code = '';
 
                         code = widget.isProfilePost
                             ? await Provider.of<Auth>(context, listen: false)
                                 .likePost(
-                                    widget.data['id'],
-                                    widget.userId ?? "")
+                                    widget.data['id'], widget.userId ?? "")
                             : await Provider.of<Auth>(context, listen: false)
                                 .likePost(
                                     widget.data['id'], widget.data['user_id']);
@@ -1088,7 +1098,6 @@ class _PostItemState extends State<PostItem> {
               ],
             ),
           ),
-          
         ],
       ),
     );
@@ -1169,7 +1178,6 @@ class _PostItemState extends State<PostItem> {
                         final Data =
                             await Provider.of<Auth>(context, listen: false)
                                 .getFeed(widget.data['id']) as List<dynamic>;
-
 
                         Navigator.of(context).pushReplacementNamed(
                             PostsScreen.routeName,

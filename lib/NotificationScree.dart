@@ -1,0 +1,320 @@
+import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/assets.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class NotificationScreen extends StatefulWidget {
+  const NotificationScreen({Key? key}) : super(key: key);
+
+  @override
+  _NotificationScreenState createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends State<NotificationScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _fetchNotifications();
+  }
+
+  Future<void> _fetchNotifications() async {
+    try {
+      await Provider.of<Auth>(context, listen: false).getNotificationList();
+    } catch (error) {
+      print('Failed to fetch notifications: $error');
+    }
+  }
+
+  String formatItems(List<dynamic> items) {
+    return items
+        .map((item) => '${item['name']} x ${item['quantity']}')
+        .join(', ');
+  }
+
+  String timeAgo(String d) {
+    final DateFormat formatter =
+        DateFormat('EEE, dd MMM yyyy HH:mm:ss \'GMT\'');
+    var date = formatter.parseUtc(d);
+    final Duration difference = DateTime.now().difference(date);
+
+    if (difference.inSeconds < 20) {
+      return 'just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} minute${difference.inMinutes == 1 ? '' : 's'} ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} day${difference.inDays == 1 ? '' : 's'} ago';
+    } else if (difference.inDays < 30) {
+      final int weeks = (difference.inDays / 7).floor();
+      return '$weeks week${weeks == 1 ? '' : 's'} ago';
+    } else if (difference.inDays < 365) {
+      final int months = (difference.inDays / 30).floor();
+      return '$months month${months == 1 ? '' : 's'} ago';
+    } else {
+      final int years = (difference.inDays / 365).floor();
+      return '$years year${years == 1 ? '' : 's'} ago';
+    }
+  }
+
+  Widget buildNotificationList(
+      String title, List<Map<String, dynamic>> notifications, bool isAccpted) {
+    return notifications.isEmpty
+        ? Container()
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  title,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: notifications.length,
+                itemBuilder: (context, index) {
+                  final notification = notifications[index];
+                  return Container(
+                      margin:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      padding: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 7,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Row(children: [
+                        CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(notification['seller_logo']),
+                          radius: 20,
+                        ),
+                        SizedBox(width: 16.0),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${notification['store_name']} ordered for RS ${notification['total_price']}",
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                formatItems(notification['items']),
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    timeAgo(notification['created_date']),
+                                    style: TextStyle(
+                                      fontSize: 10.0,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  GestureDetector(
+                                      onTap: () async {
+                                        print(notification);
+                                        if (notification != null &&
+                                            notification['location'] != null &&
+                                            notification['location']
+                                                    ['latitude'] !=
+                                                null) {
+                                          final String googleMapsUrl =
+                                              'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
+
+                                          if (await canLaunchUrl(
+                                              Uri.parse(googleMapsUrl))) {
+                                            await launchUrl(
+                                                Uri.parse(googleMapsUrl));
+                                          } else {
+                                            throw 'Could not open the map.';
+                                          }
+                                        }
+                                      },
+                                      child: Icon(
+                                        Icons.directions,
+                                        size: 16,
+                                      ))
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        notification['status'] != 'delivered'
+                            ? Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: Colors.red,
+                                    ),
+                                    child: Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await Provider.of<Auth>(context,
+                                              listen: false)
+                                          .acceptOrder(
+                                              notification['_id'],
+                                              notification['user_id'],
+                                              notification[
+                                                  'order_from_user_id']);
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: Colors.green,
+                                      ),
+                                      child: Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Container(),
+                      ]));
+                },
+              ),
+            ],
+          );
+  }
+
+  Widget buildSocialNotificationList(String title, List notifications) {
+    return notifications.isEmpty
+        ? Container()
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  title,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: notifications.length,
+                itemBuilder: (context, index) {
+                  final notification = notifications[index];
+                  return Container(
+                    margin:
+                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    padding: EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 7,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: AssetImage(Assets.appIcon),
+                          radius: 20,
+                        ),
+                        SizedBox(width: 16.0),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                notification['notification']['title'],
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                timeAgo(notification['timestamp']),
+                                style: TextStyle(
+                                  fontSize: 10.0,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              Text(
+                                notification['notification']['body'],
+                                style: TextStyle(
+                                  fontSize: 10.0,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Notifications')),
+      body: Consumer<Auth>(
+        builder: (context, itemProvider, child) {
+          return itemProvider.orderDetails.isNotEmpty
+              ? ListView(
+                  children: [
+                    buildSocialNotificationList(
+                        'Social', itemProvider.notificationDetails),
+                    (itemProvider.userData?['user_type'] ?? '') == 'Vendor'
+                        ? buildNotificationList('Accepted Orders',
+                            itemProvider.acceptedOrders, false)
+                        : Container(),
+                    (itemProvider.userData?['user_type'] ?? '') == 'Vendor'
+                        ? buildNotificationList('Incoming Orders',
+                            itemProvider.incomingOrders, true)
+                        : Container(),
+                    (itemProvider.userData?['user_type'] ?? '') == 'Vendor'
+                        ? buildNotificationList('Completed Orders',
+                            itemProvider.completedOrders, false)
+                        : Container(),
+                  ],
+                )
+              : Center(child: Text('No notifications available'));
+        },
+      ),
+    );
+  }
+}

@@ -19,7 +19,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class FeedBottomSheet {
   Future<dynamic> ProductsInPostSheet(BuildContext context, dynamic data,
-      bool isLiked, List<ProductDetails> productList) {
+      bool isLiked, List<ProductDetails> productList, userId) {
     print("length:: ${productList.length}");
     return showModalBottomSheet(
       // useSafeArea: true,

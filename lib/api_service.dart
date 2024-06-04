@@ -45,7 +45,17 @@ class Auth with ChangeNotifier {
   String logo_url = '';
   String baseUrl = "https://app.cloudbelly.in/";
   String? fcmToken = '';
-  List itemAdd = [];
+  List<ProductDetails> itemAdd = [];
+  List notificationDetails = [];
+  List<Map<String, dynamic>> orderDetails = [];
+
+  // Assume your API response provides this status categorization
+  List<Map<String, dynamic>> get acceptedOrders =>
+      orderDetails.where((order) => order['status'] == 'accepted').toList();
+  List<Map<String, dynamic>> get incomingOrders =>
+      orderDetails.where((order) => order['status'] == 'Submitted').toList();
+  List<Map<String, dynamic>> get completedOrders =>
+      orderDetails.where((order) => order['status'] == 'delivered').toList();
 
   // get user_logo_url {
   //   notifyListeners();
@@ -63,6 +73,52 @@ class Auth with ChangeNotifier {
     'Accept-Encoding': 'gzip, deflate, br'
   };
 
+  Future<void> acceptOrder(
+      String orderId, String userId, String order_from) async {
+    // final response = await http.post(
+    //   Uri.parse("https://app.cloudbelly.in/order/accept"),
+    //   headers: headers,
+    //   body: jsonEncode({
+    //     "user_id": userId,
+    //     "order_from_user_id": order_from,
+    //     "order_id": orderId
+    //   }),
+    // );
+    // print(response.body);
+    // if (response.statusCode == 200) {
+    // Find the order and move it to acceptedOrders
+    final order = orderDetails.indexWhere((order) => order['_id'] == orderId);
+    print("prder is");
+    print(order);
+    // acceptedOrders.add(incomingOrders[order]);
+    // incomingOrders.removeAt(order);
+    orderDetails[order]['status'] = 'accepted';
+    print(incomingOrders);
+    print(acceptedOrders);
+    notifyListeners();
+    // } else {
+    //   throw Exception('Failed to accept order');
+    // }
+  }
+
+  Future<void> markOrderAsDelivered(String orderId) async {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/order/mark-as-delivered"),
+      headers: headers,
+      body: jsonEncode({"order_id": orderId}),
+    );
+    if (response.statusCode == 200) {
+      // Find the order and move it to completedOrders
+      final order =
+          acceptedOrders.firstWhere((order) => order['id'] == orderId);
+      acceptedOrders.remove(order);
+      completedOrders.add(order);
+      notifyListeners();
+    } else {
+      throw Exception('Failed to mark order as delivered');
+    }
+  }
+
   // Auth._internal();
   void getToken(String? token) {
     fcmToken = token;
@@ -71,8 +127,70 @@ class Auth with ChangeNotifier {
 
   bannerTogger(item) {
     showBanner = !showBanner;
+    print(item.toString());
+    item.quantity = 1;
     itemAdd.add(item);
     print("showing banner");
+    notifyListeners();
+  }
+
+  Future<void> getNotificationList() async {
+    try {
+      final response = await http.post(
+        Uri.parse("https://app.cloudbelly.in/get-notification"),
+        headers: {
+          'Content-Type': 'application/json',
+          // Add other necessary headers here
+        },
+        body: jsonEncode({"user_id": userData?['user_id'] ?? ""}),
+      );
+      final orders = await http.post(
+        Uri.parse("https://app.cloudbelly.in/order/get"),
+        headers: {
+          'Content-Type': 'application/json',
+          // Add other necessary headers here
+        },
+        body: jsonEncode({"order_from_user_id": userData?['user_id'] ?? ""}),
+      );
+
+      orderDetails = List<Map<String, dynamic>>.from(jsonDecode(orders.body));
+      if (response.statusCode == 200) {
+        var notif = List<Map<String, dynamic>>.from(jsonDecode(response.body));
+        print("notif");
+        print(notif);
+        notificationDetails = notif
+            .where((element) =>
+                element['msg']['type'] != 'order' &&
+                element['msg']['type'] != 'payment' &&
+                element['msg']['type'] != 'delivery')
+            .toList();
+        notifyListeners();
+        print(notificationDetails);
+      } else {
+        // Handle errors appropriately
+        throw Exception('Failed to load notifications');
+      }
+    } catch (error) {
+      // Handle network errors, etc.
+      throw error;
+    }
+    notifyListeners();
+  }
+
+  removeItem(item) {
+    int idx = itemAdd.indexWhere((element) => element.id == item.id);
+    itemAdd[idx].quantity = (itemAdd[idx]?.quantity ?? 0) - 1;
+    if ((itemAdd[idx].quantity ?? 0) <= 0) {
+      itemAdd.removeAt(idx);
+    }
+    notifyListeners();
+  }
+
+  addItem(item) {
+    int idx = itemAdd.indexWhere((element) => element.id == item.id);
+    itemAdd[idx].quantity = (itemAdd[idx]?.quantity ?? 0) + 1;
+    // var p =  ProductDetails(itemAdd[idx]);
+    print(json.encode(itemAdd));
     notifyListeners();
   }
 
@@ -1497,13 +1615,15 @@ class Auth with ChangeNotifier {
   }
 
   Future<dynamic> createProductOrder(
-      List<dynamic> list, AddressModel? addressModel) async {
+      List<dynamic> list, AddressModel? addressModel, String userId) async {
     print("list:: $list");
     final String url = '${baseUrl}order/create';
+    print(userData?['user_id']);
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
       "user_id": userData?['user_id'] ?? "",
       "items": list,
+      "order_from_user_id": userId,
       "location": addressModel,
     };
 
@@ -1529,16 +1649,18 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<dynamic> submitOrder(String? orderId, String? paymentMode) async {
+  Future<dynamic> submitOrder(String? orderId, String? paymentMode, id) async {
     final String url = '${baseUrl}order/submit';
-
+    final String url2 = '${baseUrl}order/paid';
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {};
     requestBody = {
       'user_id': userData?['user_id'] ?? "",
       'order_id': orderId,
-      'payment_mode': paymentMode,
+      "order_from_user_id": id,
+      'payment_mode': "upi",
     };
+    print(requestBody);
 
     try {
       final response = await http.post(
@@ -1546,7 +1668,15 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
+
+      final response2 = await http.post(
+        Uri.parse(url2),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
       print("jsonResponse:: ${response.body}");
+      print("jsonResponse:: ${response2.body}");
+
       return jsonDecode((response.body));
     } catch (error) {
       // Handle exceptions

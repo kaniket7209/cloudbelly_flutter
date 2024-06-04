@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:cloudbelly_app/NotificationScree.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_share_post.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -46,13 +47,12 @@ void main() async {
   await FirebaseMessaging.instance.setAutoInitEnabled(true);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FlutterLocalNotificationsPlugin().initialize(
-    const InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-    ),
-    onDidReceiveNotificationResponse: (NotificationResponse? notificationResponse){
-         print("notificationResponse:: ${notificationResponse?.payload}");
-    }
-  );
+      const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      ), onDidReceiveNotificationResponse:
+          (NotificationResponse? notificationResponse) {
+    print("notificationResponse:: ${notificationResponse?.payload}");
+  });
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     showNotification(message);
     print('Got a message whilst in the foreground!');
@@ -181,6 +181,7 @@ class MyApp extends StatelessWidget {
             routes: {
               LoginScreen.routeName: (context) => LoginScreen(),
               '/map': (context) => MapScreen(),
+              '/notifications': (context) => NotificationScreen(),
               WelcomeScreen.routeName: (context) => WelcomeScreen(),
               Tabs.routeName: (context) => Tabs(),
               PostsScreen.routeName: (context) => PostsScreen(),
