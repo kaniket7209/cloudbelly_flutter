@@ -205,8 +205,8 @@ class _ViewCartState extends State<ViewCart> {
     print("options");
     print(options);
 
-    dynamic response = await Provider.of<Auth>(context, listen: false)
-        .submitOrder(orderId, "Cash", id);
+    // dynamic response = await Provider.of<Auth>(context, listen: false)
+    //     .submitOrder(orderId, "Cash", id);
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
     _razorpay.open(options);
   }
