@@ -139,6 +139,7 @@ class _ViewCartState extends State<ViewCart> {
           .createProductOrder(
               convertedList, context.read<ViewCartProvider>().addressModel, id);
       Navigator.pop(context);
+
       print(response);
       if (response['message'] == 'Order processed successfully') {
         orderId = response['order_id'];
@@ -212,6 +213,8 @@ class _ViewCartState extends State<ViewCart> {
     dynamic response = await Provider.of<Auth>(context, listen: false)
         .submitOrder(orderId, "Cash", id);
     Navigator.pop(context);
+    Navigator.pop(context);
+
     if (response['message'] == "Order submitted successfully") {
       TOastNotification().showSuccesToast(context, response['message']);
     }
@@ -505,6 +508,7 @@ class _ViewCartState extends State<ViewCart> {
 
                           convertedList.add(newItem);
                         });
+                        print(convertedList);
                         createProductOrder();
                       },
                       child: Container(

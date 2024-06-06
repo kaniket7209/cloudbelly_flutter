@@ -1,10 +1,12 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
+import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -179,13 +181,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                   SizedBox(width: 10),
                                   GestureDetector(
                                     onTap: () async {
-                                      await Provider.of<Auth>(context,
-                                              listen: false)
-                                          .acceptOrder(
-                                              notification['_id'],
-                                              notification['user_id'],
-                                              notification[
-                                                  'order_from_user_id']);
+                                      try {
+                                        await Provider.of<Auth>(context,
+                                                listen: false)
+                                            .acceptOrder(
+                                                notification['_id'],
+                                                notification['user_id'],
+                                                notification[
+                                                    'order_from_user_id']);
+                                      } catch (e) {
+                                        TOastNotification().showErrorToast(
+                                            context, e.toString());
+                                      }
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -200,7 +207,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                   ),
                                 ],
                               )
-                            : Container(),
+                            : Container(
+                                padding: EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                decoration: BoxDecoration(
+                                    color: Color(0xff0A4C61),
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Text(
+                                  "Delivered",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10),
+                                ),
+                              ),
                       ]));
                 },
               ),
@@ -290,12 +307,27 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Notifications')),
       body: Consumer<Auth>(
         builder: (context, itemProvider, child) {
           return itemProvider.orderDetails.isNotEmpty
               ? ListView(
                   children: [
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text(
+                        "Notification & Orders",
+                        style: TextStyle(
+                            color: Color(0xff0A4C61),
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 22),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
                     buildSocialNotificationList(
                         'Social', itemProvider.notificationDetails),
                     (itemProvider.userData?['user_type'] ?? '') == 'Vendor'

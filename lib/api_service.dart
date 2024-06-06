@@ -75,30 +75,30 @@ class Auth with ChangeNotifier {
 
   Future<void> acceptOrder(
       String orderId, String userId, String order_from) async {
-    // final response = await http.post(
-    //   Uri.parse("https://app.cloudbelly.in/order/accept"),
-    //   headers: headers,
-    //   body: jsonEncode({
-    //     "user_id": userId,
-    //     "order_from_user_id": order_from,
-    //     "order_id": orderId
-    //   }),
-    // );
-    // print(response.body);
-    // if (response.statusCode == 200) {
-    // Find the order and move it to acceptedOrders
-    final order = orderDetails.indexWhere((order) => order['_id'] == orderId);
-    print("prder is");
-    print(order);
-    // acceptedOrders.add(incomingOrders[order]);
-    // incomingOrders.removeAt(order);
-    orderDetails[order]['status'] = 'accepted';
-    print(incomingOrders);
-    print(acceptedOrders);
-    notifyListeners();
-    // } else {
-    //   throw Exception('Failed to accept order');
-    // }
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/order/accept"),
+      headers: headers,
+      body: jsonEncode({
+        "user_id": userId,
+        "order_from_user_id": order_from,
+        "order_id": orderId
+      }),
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      // Find the order and move it to acceptedOrders
+      final order = orderDetails.indexWhere((order) => order['_id'] == orderId);
+      print("prder is");
+      print(order);
+      // acceptedOrders.add(incomingOrders[order]);
+      // incomingOrders.removeAt(order);
+      orderDetails[order]['status'] = 'accepted';
+      print(incomingOrders);
+      print(acceptedOrders);
+      notifyListeners();
+    } else {
+      throw Exception('Failed to accept order');
+    }
   }
 
   Future<void> markOrderAsDelivered(String orderId) async {
@@ -1620,6 +1620,7 @@ class Auth with ChangeNotifier {
     final String url = '${baseUrl}order/create';
     print(userData?['user_id']);
     // bool _isOK = false;
+
     Map<String, dynamic> requestBody = {
       "user_id": userData?['user_id'] ?? "",
       "items": list,

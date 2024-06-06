@@ -129,33 +129,23 @@ class _ProfileViewState extends State<ProfileView> {
       _isLoading = true;
     });
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey('menuData')) {
-      setState(() {
-        final extractedUserData =
-            json.decode(prefs.getString('menuData')!) as Map<String, dynamic>;
-        print(extractedUserData);
-        menuList = [];
-        menuList.addAll(extractedUserData['menu'] as List<dynamic>);
-        _isLoading = false;
-      });
-    } else {
-      await Provider.of<Auth>(context, listen: false)
-          .getMenu(widget.userIdList.first)
-          .then((menu) {
-        menuList = [];
-        menuList.addAll(menu);
-        _isLoading = false;
-        /* setState(() {
+
+    await Provider.of<Auth>(context, listen: false)
+        .getMenu(widget.userIdList.first)
+        .then((menu) {
+      menuList = [];
+      menuList.addAll(menu);
+      _isLoading = false;
+      /* setState(() {
 
         });*/
-        final menuData = json.encode(
-          {
-            'menu': menu,
-          },
-        );
-        prefs.setString('menuData', menuData);
-      });
-    }
+      final menuData = json.encode(
+        {
+          'menu': menu,
+        },
+      );
+      prefs.setString('menuData', menuData);
+    });
     for (var item in menuList) {
       if (item.containsKey('category')) {
         String category = item['category'];
@@ -801,6 +791,23 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     setState(
                                                                         () {
                                                                       _activeButtonIndex =
+                                                                          2;
+                                                                    });
+                                                                  },
+                                                                  child:
+                                                                      CommonButtonProfile(
+                                                                    isActive:
+                                                                        _activeButtonIndex ==
+                                                                            2,
+                                                                    txt: 'Menu',
+                                                                    width: 52,
+                                                                  ),
+                                                                ),
+                                                                TouchableOpacity(
+                                                                  onTap: () {
+                                                                    setState(
+                                                                        () {
+                                                                      _activeButtonIndex =
                                                                           3;
                                                                     });
                                                                   },
@@ -973,10 +980,11 @@ class _ProfileViewState extends State<ProfileView> {
                                                               )),
                                               if (_activeButtonIndex == 2)
                                                 Menu(
-                                                  isLoading: _isLoading,
-                                                  menuList: menuList,
-                                                  categories: categories,
-                                                ),
+                                                    isLoading: _isLoading,
+                                                    menuList: menuList,
+                                                    categories: categories,
+                                                    user: widget
+                                                        .userIdList.first),
                                               if (_activeButtonIndex == 3)
                                                 const Text('Feature Pending'),
                                               if (_activeButtonIndex == 4)
@@ -987,115 +995,6 @@ class _ProfileViewState extends State<ProfileView> {
                                     Space(10.h),
                                   ],
                                 ),
-                                (Provider.of<Auth>(context).itemAdd.length != 0)
-                                    ? Positioned(
-                                        bottom: 40,
-                                        left: 0,
-                                        child: Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 7.w),
-                                          width: 80.w,
-                                          height: 75,
-                                          decoration: GlobalVariables()
-                                              .ContainerDecoration(
-                                            offset: const Offset(3, 6),
-                                            blurRadius: 20,
-                                            shadowColor: const Color.fromRGBO(
-                                                179, 108, 179, 0.5),
-                                            boxColor: const Color.fromRGBO(
-                                                123, 53, 141, 1),
-                                            cornerRadius: 20,
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    '${Provider.of<Auth>(context).itemAdd.length} Items   |   Rs ',
-                                                    style: const TextStyle(
-                                                      color: Color(0xFFF7F7F7),
-                                                      fontSize: 16,
-                                                      fontFamily: 'Jost',
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  const Text(
-                                                    'Extra charges may apply',
-                                                    style: TextStyle(
-                                                      color: Color(0xFFF7F7F7),
-                                                      fontSize: 12,
-                                                      fontFamily: 'Jost',
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              TouchableOpacity(
-                                                onTap: () {
-                                                  Provider.of<ViewCartProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .getProductList(
-                                                          Provider.of<Auth>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .itemAdd);
-                                                  context
-                                                      .read<TransitionEffect>()
-                                                      .setBlurSigma(0);
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ViewCart()));
-                                                },
-                                                child: Container(
-                                                  height: 41,
-                                                  width: 113,
-                                                  decoration: ShapeDecoration(
-                                                    color: const Color.fromRGBO(
-                                                        84, 166, 193, 1),
-                                                    shape:
-                                                        SmoothRectangleBorder(
-                                                      borderRadius:
-                                                          SmoothBorderRadius(
-                                                        cornerRadius: 12,
-                                                        cornerSmoothing: 1,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  child: const Center(
-                                                    child: Text(
-                                                      'View Cart',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 14,
-                                                        fontFamily:
-                                                            'Product Sans',
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        height: 0,
-                                                        letterSpacing: 0.14,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : Container(),
                               ],
                             ),
                           ],
