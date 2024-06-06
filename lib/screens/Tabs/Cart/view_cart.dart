@@ -170,6 +170,18 @@ class _ViewCartState extends State<ViewCart> {
   //   print("successResponse:: ${response.data.toString()}");
   //   submitOrder();
   // }
+
+  getprice() {
+    var sum = 0.0;
+    Provider.of<ViewCartProvider>(context, listen: false)
+        .productList
+        .forEach((element) {
+      String? totalPrice = element.price;
+      sum += double.parse(totalPrice ?? '0.0');
+    });
+    return sum;
+  }
+
   void openCheckout(orderId) async {
     print("In side open");
     var id = Provider.of<ViewCartProvider>(context, listen: false).SellterId;
@@ -182,7 +194,7 @@ class _ViewCartState extends State<ViewCart> {
     }
     var options = {
       'key': 'rzp_live_Aq1zY9rLf3Fw1H',
-      'amount': 100,
+      'amount': getprice(),
       'name': temp[0]['bank_name'],
       'description': 'Fine T-Shirt',
       'retry': {'enabled': true, 'max_count': 1},
@@ -195,8 +207,8 @@ class _ViewCartState extends State<ViewCart> {
 
     dynamic response = await Provider.of<Auth>(context, listen: false)
         .submitOrder(orderId, "Cash", id);
-    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
-    // _razorpay.open(options);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
+    _razorpay.open(options);
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
