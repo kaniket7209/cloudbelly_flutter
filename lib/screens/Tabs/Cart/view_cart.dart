@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
@@ -144,6 +145,7 @@ class _ViewCartState extends State<ViewCart> {
       if (response['message'] == 'Order processed successfully') {
         orderId = response['order_id'];
         TOastNotification().showSuccesToast(context, response['message']);
+        print("orderId  ${orderId}");
         openCheckout(orderId);
       } else {
         TOastNotification().showErrorToast(context, response['error']);
@@ -152,70 +154,72 @@ class _ViewCartState extends State<ViewCart> {
     }
   }
 
-  // void openCheckout() async {
-  //   var options = {
-  //     'key': 'rzp_test_1DP5mmOlF5G5ag',
-  //     'amount': 100,
-  //     'name': 'Acme Corp.',
-  //     'description': 'Fine T-Shirt',
-  //     'retry': {'enabled': true, 'max_count': 1},
-  //     'send_sms_hash': true,
-  //     'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
-  //   };
-  //   _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
-  //   _razorpay.open(options);
-  // }
-
-  // void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-  //   print("successResponse:: ${response.data.toString()}");
-  //   submitOrder();
-  // }
-
-  getprice() {
-    var sum = 0.0;
-    Provider.of<ViewCartProvider>(context, listen: false)
-        .productList
-        .forEach((element) {
-      String? totalPrice = element.price;
-      sum += double.parse(totalPrice ?? '0.0');
-    });
-    return sum;
-  }
-
   void openCheckout(orderId) async {
-    print("In side open");
-    var id = Provider.of<ViewCartProvider>(context, listen: false).SellterId;
-    final temp =
-        await Provider.of<Auth>(context, listen: false).getUserInfo([id]);
-    print("temp is");
-    print(temp);
-    if (temp.length == 0 || temp[0]['bank_name'] == null) {
-      return;
-    }
     var options = {
-      'key': 'rzp_live_Aq1zY9rLf3Fw1H',
+      'key': 'rzp_live_zG8UgbGuAOMyoC',
       'amount': getprice(),
-      'name': temp[0]['bank_name'],
-      'description': 'Fine T-Shirt',
+      'name': 'Cloudbelly ',
+      'description': 'Order Id - $orderId',
       'retry': {'enabled': true, 'max_count': 1},
       'send_sms_hash': true,
-      'order_id': orderId,
-      'prefill': {'email': temp[0]['email'], "contact": "7003988299"},
+      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
     };
-    print("options");
-    print(options);
-
-    // dynamic response = await Provider.of<Auth>(context, listen: false)
-    //     .submitOrder(orderId, "Cash", id);
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
     _razorpay.open(options);
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
     print("successResponse:: ${response.data.toString()}");
-
     submitOrder();
   }
+
+  getprice() {
+    var sum = 30.0;
+    Provider.of<ViewCartProvider>(context, listen: false)
+        .productList
+        .forEach((element) {
+      String? totalPrice = element.price;
+      sum += double.parse(totalPrice ?? '0.0');
+    });
+    sum = sum*100;
+    print("getprice res $sum");
+    return sum.toInt();
+  }
+
+  // void openCheckout(orderId) async {
+  //   print("In side open");
+  //   var id = Provider.of<ViewCartProvider>(context, listen: false).SellterId;
+  //   final temp =
+  //       await Provider.of<Auth>(context, listen: false).getUserInfo([id]);
+  //   print("temp is");
+  //   print(temp);
+  //   if (temp.length == 0 || temp[0]['bank_name'] == null) {
+  //     return;
+  //   }
+  //   var options = {
+  //     'key': 'rzp_live_Aq1zY9rLf3Fw1H',
+  //     'amount': getprice(),
+  //     'name': temp[0]['bank_name'],
+  //     'description': 'Fine T-Shirt',
+  //     'retry': {'enabled': true, 'max_count': 1},
+  //     'send_sms_hash': true,
+  //     'order_id': orderId,
+  //     'prefill': {'email': temp[0]['email'], "contact": "7003988299"},
+  //   };
+  //   print("options");
+  //   print(options);
+
+  //   // dynamic response = await Provider.of<Auth>(context, listen: false)
+  //   //     .submitOrder(orderId, "Cash", id);
+  //   _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
+  //   _razorpay.open(options);
+  // }
+
+  // void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
+  //   print("successResponse:: ${response.data.toString()}");
+
+  //   submitOrder();
+  // }
 
   void submitOrder() async {
     print("hdjnvd");
@@ -417,12 +421,13 @@ class _ViewCartState extends State<ViewCart> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Space(32),
+                const Space(20),
                 Consumer<ViewCartProvider>(
                     builder: (context, notifiyer, child) {
                   return Container(
+       
                       padding: EdgeInsets.only(
-                          top: 2.5.h, left: 4.w, right: 4.w, bottom: 1.h),
+                          top: 0.h, left: 4.w, right: 4.w, bottom: 2.7.h),
                       decoration: GlobalVariables().ContainerDecoration(
                           offset: const Offset(0, 4),
                           blurRadius: 15,
@@ -440,7 +445,7 @@ class _ViewCartState extends State<ViewCart> {
                             );
                           }));
                 }),
-                Space(1.h),
+                // Space(1.h),
                 const Space(33),
                 const Space(16),
                 PriceWidget(
@@ -483,7 +488,7 @@ class _ViewCartState extends State<ViewCart> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Rs $totalAmount',
+                          'Rs ${totalAmount+totalAmount*0.05 + 30+ 15 }',
                           style: const TextStyle(
                             color: Color(0xFFF7F7F7),
                             fontSize: 16,
@@ -708,9 +713,34 @@ class _PriceWidgetState extends State<PriceWidget> {
               ),
             ],
           ),
-          Space(2),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Packing Charge ",
+                style: TextStyle(
+                  color: Color(0xFF2E0536),
+                  fontSize: 12,
+                  fontFamily: 'Product Sans Medium',
+                  fontWeight: FontWeight.w400,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Color(0xFF2E0536),
+                ),
+              ),
+              Text(
+                "Rs 15",
+                style: TextStyle(
+                  color: Color(0xFF383838),
+                  fontSize: 14,
+                  fontFamily: 'Jost',
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          Space(10),
           Text(
-            "Avail free delivery as you rank in our first 100 customers",
+            "Save Rs 10 on delivery fee by ordering above Rs 159",
             style: TextStyle(
               color: Color(0xFFD382E3),
               fontSize: 10,
@@ -752,8 +782,8 @@ class _PriceWidgetState extends State<PriceWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Govt Taxes & Other Charges",
+              const Text(
+                " 5% Govt Taxes & Other Charges",
                 style: TextStyle(
                   color: Color(0xFF2E0536),
                   fontSize: 12,
@@ -764,8 +794,8 @@ class _PriceWidgetState extends State<PriceWidget> {
                 ),
               ),
               Text(
-                "Rs 0",
-                style: TextStyle(
+                "Rs ${widget.totalAmount * 0.05}",
+                style: const TextStyle(
                   color: Color(0xFF383838),
                   fontSize: 14,
                   fontFamily: 'Jost',
@@ -792,7 +822,7 @@ class _PriceWidgetState extends State<PriceWidget> {
                 ),
               ),
               Text(
-                "Rs ${widget.totalAmount + 30}",
+                "Rs ${widget.totalAmount+widget.totalAmount*0.05 + 30 +15 }",
                 style: const TextStyle(
                   color: Color(0xFFFA6E00),
                   fontSize: 16,
