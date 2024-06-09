@@ -877,107 +877,98 @@ class _MenuState extends State<Menu> {
     return Container(
       width: 90.w,
       height: 90.h,
-      child: Column(children: [
-        widget._isLoading == true
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : widget.menuList.length == 0
-                ? Container(
-                    height: 10.h,
-                    child: const Center(child: Text('No items in Menu')),
-                  )
-                : Stack(
-                    children: [
-                      Container(
-                        height: 90.h,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    child: Row(
-                                      children: [
-                                        for (int i = 0;
-                                            i < widget.categories.length;
-                                            i++)
-                                          TouchableOpacity(
-                                            onTap: () {
-                                              setState(() {
-                                                _iscategorySearch = true;
-                                                _searchOn = true;
-                                                _controller.text =
-                                                    widget.categories[i];
-                                              });
-                                            },
-                                            child: Container(
-                                              margin:
-                                                  EdgeInsets.only(right: 5.w),
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 1.h,
-                                                  horizontal: 5.w),
-                                              decoration: BoxDecoration(
-                                                color: const Color.fromRGBO(
-                                                    112, 186, 210, 1),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                      offset: Offset(6, 6),
-                                                      // spreadRadius: 0.5,
-                                                      color: Color(0xFF70BAD2)
-                                                          .withOpacity(0.6),
-                                                      blurRadius: 10)
-                                                ],
-                                              ),
-                                              /* decoration: GlobalVariables()
-                                                .ContainerDecoration(
-                                                    offset: const Offset(5, 6),
-                                                    blurRadius: 10,
-                                                    shadowColor: const Color.fromRGBO(72, 138, 136, 0.5),
-                                                    boxColor: const Color.fromRGBO(
-                                                        112, 186, 210, 1),
-                                                    cornerRadius: 10,
-                                            
-                                            ),*/
-                                              child: Center(
-                                                child: Text(
-                                                  widget.categories[i],
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 14,
-                                                    fontFamily: 'Product Sans',
-                                                    fontWeight: FontWeight.w700,
-                                                    height: 0,
-                                                    letterSpacing: 0.14,
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              widget._isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : widget.menuList.isEmpty
+                      ? Container(
+                          height: 10.h,
+                          child: const Center(child: Text('No items in Menu')),
+                        )
+                      : Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: Row(
+                                        children: [
+                                          for (int i = 0;
+                                              i < widget.categories.length;
+                                              i++)
+                                            TouchableOpacity(
+                                              onTap: () {
+                                                setState(() {
+                                                  _iscategorySearch = true;
+                                                  _searchOn = true;
+                                                  _controller.text =
+                                                      widget.categories[i];
+                                                });
+                                              },
+                                              child: Container(
+                                                margin:
+                                                    EdgeInsets.only(right: 5.w),
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 1.h,
+                                                    horizontal: 5.w),
+                                                decoration: BoxDecoration(
+                                                  color: const Color.fromRGBO(
+                                                      112, 186, 210, 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                        offset: Offset(6, 6),
+                                                        color: Color(0xFF70BAD2)
+                                                            .withOpacity(0.6),
+                                                        blurRadius: 10)
+                                                  ],
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    widget.categories[i],
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 14,
+                                                      fontFamily:
+                                                          'Product Sans',
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      height: 0,
+                                                      letterSpacing: 0.14,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              const Space(22),
-                              Container(
-                                width: double.infinity,
-                                height: 40,
-                                decoration:
-                                    GlobalVariables().ContainerDecoration(
-                                  offset: const Offset(0, 4),
-                                  blurRadius: 0,
-                                  shadowColor: Colors.white,
-                                  boxColor:
-                                      const Color.fromRGBO(239, 255, 254, 1),
-                                  cornerRadius: 10,
-                                ),
-                                child: Row(
+                                const Space(22),
+                                Container(
+                                  width: double.infinity,
+                                  height: 40,
+                                  decoration:
+                                      GlobalVariables().ContainerDecoration(
+                                    offset: const Offset(0, 4),
+                                    blurRadius: 0,
+                                    shadowColor: Colors.white,
+                                    boxColor:
+                                        const Color.fromRGBO(239, 255, 254, 1),
+                                    cornerRadius: 10,
+                                  ),
+                                  child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
@@ -1021,20 +1012,17 @@ class _MenuState extends State<Menu> {
                                                   _iscategorySearch = false;
                                                   _searchOn = true;
                                                 });
-                                                if (newv == '')
+                                                if (newv == '') {
                                                   setState(() {
                                                     _searchOn = false;
                                                   });
+                                                }
                                               },
                                               cursorColor:
                                                   const Color(0xFFFA6E00)),
                                         ),
                                       ),
                                       const Spacer(),
-                                      /*const Space(
-                                      30,
-                                      isHorizontal: true,
-                                    ),*/
                                       TouchableOpacity(
                                         onTap: () {
                                           setState(() {
@@ -1050,142 +1038,134 @@ class _MenuState extends State<Menu> {
                                             color: Color(0xFFFA6E00),
                                           ),
                                         ),
-                                      )
-                                    ]),
-                              ),
-                              Space(1.h),
-                              if (_iscategorySearch && _searchOn)
-                                for (int index = 0;
-                                    index < widget.menuList.length;
-                                    index++)
-                                  if (widget.menuList[index]['category']
-                                      .toString()
-                                      .contains(_controller.text))
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Space(1.h),
+                                if (_iscategorySearch && _searchOn)
+                                  for (int index = 0;
+                                      index < widget.menuList.length;
+                                      index++)
+                                    if (widget.menuList[index]['category']
+                                        .toString()
+                                        .contains(_controller.text))
+                                      MenuItem(data: widget.menuList[index]),
+                                if (!_iscategorySearch && _searchOn)
+                                  for (int index = 0;
+                                      index < widget.menuList.length;
+                                      index++)
+                                    if (widget.menuList[index]['name']
+                                        .toString()
+                                        .toLowerCase()
+                                        .contains(
+                                            _controller.text.toLowerCase()))
+                                      MenuItem(data: widget.menuList[index]),
+                                if (!_searchOn)
+                                  for (int index = 0;
+                                      index < widget.menuList.length;
+                                      index++)
                                     MenuItem(data: widget.menuList[index]),
-                              if (!_iscategorySearch && _searchOn)
-                                for (int index = 0;
-                                    index < widget.menuList.length;
-                                    index++)
-                                  if (widget.menuList[index]['name']
-                                      .toString()
-                                      .toLowerCase()
-                                      .contains(_controller.text.toLowerCase()))
-                                    MenuItem(data: widget.menuList[index]),
-                              if (!_searchOn)
-                                for (int index = 0;
-                                    index < widget.menuList.length;
-                                    index++)
-                                  MenuItem(data: widget.menuList[index]),
-                              Space(8.h)
-                            ],
+                                Space(2.h),
+                              ],
+                            ),
+                          ),
+                        ),
+            ],
+          ),
+          if (Provider.of<Auth>(context).itemAdd.isNotEmpty)
+            Positioned(
+              bottom: 40,
+              left: 0,
+              right: 0,
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 7.w),
+                width: 80.w,
+                height: 75,
+                decoration: GlobalVariables().ContainerDecoration(
+                  offset: const Offset(3, 6),
+                  blurRadius: 20,
+                  shadowColor: const Color.fromRGBO(179, 108, 179, 0.5),
+                  boxColor: const Color.fromRGBO(123, 53, 141, 1),
+                  cornerRadius: 20,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${Provider.of<Auth>(context).itemAdd.length}  Items   | ${Provider.of<Auth>(context).Tpice}  Rs ',
+                          style: const TextStyle(
+                            color: Color(0xFFF7F7F7),
+                            fontSize: 16,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Text(
+                          'Extra charges may apply',
+                          style: TextStyle(
+                            color: Color(0xFFF7F7F7),
+                            fontSize: 12,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                    TouchableOpacity(
+                      onTap: () {
+                        Provider.of<ViewCartProvider>(context, listen: false)
+                            .getProductList(
+                                Provider.of<Auth>(context, listen: false)
+                                    .itemAdd);
+                        Provider.of<ViewCartProvider>(context, listen: false)
+                            .setSellterId(widget.user);
+                        context.read<TransitionEffect>().setBlurSigma(0);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ViewCart(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 41,
+                        width: 113,
+                        decoration: ShapeDecoration(
+                          color: const Color.fromRGBO(84, 166, 193, 1),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 12,
+                              cornerSmoothing: 1,
+                            ),
+                          ),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'View Cart',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w700,
+                              height: 0,
+                              letterSpacing: 0.14,
+                            ),
                           ),
                         ),
                       ),
-                      (Provider.of<Auth>(context).itemAdd.length != 0)
-                          ? Positioned(
-                              bottom: 0,
-                              left: 0,
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 7.w),
-                                width: 80.w,
-                                height: 75,
-                                decoration:
-                                    GlobalVariables().ContainerDecoration(
-                                  offset: const Offset(3, 6),
-                                  blurRadius: 20,
-                                  shadowColor:
-                                      const Color.fromRGBO(179, 108, 179, 0.5),
-                                  boxColor:
-                                      const Color.fromRGBO(123, 53, 141, 1),
-                                  cornerRadius: 20,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '${Provider.of<Auth>(context).itemAdd.length}  Items   | ${Provider.of<Auth>(context).Tpice}  Rs ',
-                                          style: const TextStyle(
-                                            color: Color(0xFFF7F7F7),
-                                            fontSize: 16,
-                                            fontFamily: 'Jost',
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        const Text(
-                                          'Extra charges may apply',
-                                          style: TextStyle(
-                                            color: Color(0xFFF7F7F7),
-                                            fontSize: 12,
-                                            fontFamily: 'Jost',
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    TouchableOpacity(
-                                      onTap: () {
-                                        Provider.of<ViewCartProvider>(context,
-                                                listen: false)
-                                            .getProductList(Provider.of<Auth>(
-                                                    context,
-                                                    listen: false)
-                                                .itemAdd);
-                                        Provider.of<ViewCartProvider>(context,
-                                                listen: false)
-                                            .setSellterId(widget.user);
-                                        context
-                                            .read<TransitionEffect>()
-                                            .setBlurSigma(0);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ViewCart()));
-                                      },
-                                      child: Container(
-                                        height: 41,
-                                        width: 113,
-                                        decoration: ShapeDecoration(
-                                          color: const Color.fromRGBO(
-                                              84, 166, 193, 1),
-                                          shape: SmoothRectangleBorder(
-                                            borderRadius: SmoothBorderRadius(
-                                              cornerRadius: 12,
-                                              cornerSmoothing: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: const Center(
-                                          child: Text(
-                                            'View Cart',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14,
-                                              fontFamily: 'Product Sans',
-                                              fontWeight: FontWeight.w700,
-                                              height: 0,
-                                              letterSpacing: 0.14,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                    ],
-                  ),
-      ]),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
