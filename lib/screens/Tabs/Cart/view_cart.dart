@@ -68,7 +68,9 @@ class _ViewCartState extends State<ViewCart> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
-    calculateTotalAmount();
+    setState(() {
+      calculateTotalAmount();
+    });
   }
 
   @override
@@ -101,15 +103,19 @@ class _ViewCartState extends State<ViewCart> {
   }
 
   void calculateTotalAmount() {
-    setState(() {
-      totalAmount = context
-          .read<ViewCartProvider>()
-          .productList
-          .fold<double>(0.0, (sum, item) {
-        final totalPrice = double.tryParse(item.totalPrice ?? "0") ?? 0.0;
-        return sum + totalPrice;
-      });
+    totalAmount =
+        context.read<ViewCartProvider>().productList.fold(0.0, (sum, item) {
+      // Ensure price and quantity are not null and parse correctly
+      int quantity = item.quantity ?? 0;
+      double price = double.tryParse(item.price ?? '0') ?? 0.0;
+
+      double totalPrice = quantity * price;
+
+      return sum + totalPrice;
     });
+
+    print(totalAmount);
+    setState(() {});
   }
 
   void getAddressDetails() async {

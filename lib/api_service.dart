@@ -1325,7 +1325,7 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-
+      print(response.body);
       return {
         'body': jsonDecode((response.body)),
         'code': response.statusCode,
