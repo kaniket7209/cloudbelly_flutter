@@ -876,6 +876,7 @@ class _MenuState extends State<Menu> {
   Widget build(BuildContext context) {
     return Container(
       width: 90.w,
+      height: 90.h,
       child: Column(children: [
         widget._isLoading == true
             ? const Center(
@@ -889,48 +890,51 @@ class _MenuState extends State<Menu> {
                 : Stack(
                     children: [
                       Container(
-                        height: 60.h,
-                        child: ListView(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: Row(
-                                    children: [
-                                      for (int i = 0;
-                                          i < widget.categories.length;
-                                          i++)
-                                        TouchableOpacity(
-                                          onTap: () {
-                                            setState(() {
-                                              _iscategorySearch = true;
-                                              _searchOn = true;
-                                              _controller.text =
-                                                  widget.categories[i];
-                                            });
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.only(right: 5.w),
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 1.h, horizontal: 5.w),
-                                            decoration: BoxDecoration(
-                                              color: const Color.fromRGBO(
-                                                  112, 186, 210, 1),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    offset: Offset(6, 6),
-                                                    // spreadRadius: 0.5,
-                                                    color: Color(0xFF70BAD2)
-                                                        .withOpacity(0.6),
-                                                    blurRadius: 10)
-                                              ],
-                                            ),
-                                            /* decoration: GlobalVariables()
+                        height: 90.h,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 8),
+                                    child: Row(
+                                      children: [
+                                        for (int i = 0;
+                                            i < widget.categories.length;
+                                            i++)
+                                          TouchableOpacity(
+                                            onTap: () {
+                                              setState(() {
+                                                _iscategorySearch = true;
+                                                _searchOn = true;
+                                                _controller.text =
+                                                    widget.categories[i];
+                                              });
+                                            },
+                                            child: Container(
+                                              margin:
+                                                  EdgeInsets.only(right: 5.w),
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 1.h,
+                                                  horizontal: 5.w),
+                                              decoration: BoxDecoration(
+                                                color: const Color.fromRGBO(
+                                                    112, 186, 210, 1),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      offset: Offset(6, 6),
+                                                      // spreadRadius: 0.5,
+                                                      color: Color(0xFF70BAD2)
+                                                          .withOpacity(0.6),
+                                                      blurRadius: 10)
+                                                ],
+                                              ),
+                                              /* decoration: GlobalVariables()
                                                 .ContainerDecoration(
                                                     offset: const Offset(5, 6),
                                                     blurRadius: 10,
@@ -940,142 +944,146 @@ class _MenuState extends State<Menu> {
                                                     cornerRadius: 10,
                                             
                                             ),*/
-                                            child: Center(
-                                              child: Text(
-                                                widget.categories[i],
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w700,
-                                                  height: 0,
-                                                  letterSpacing: 0.14,
+                                              child: Center(
+                                                child: Text(
+                                                  widget.categories[i],
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                    fontFamily: 'Product Sans',
+                                                    fontWeight: FontWeight.w700,
+                                                    height: 0,
+                                                    letterSpacing: 0.14,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const Space(22),
-                            Container(
-                              width: double.infinity,
-                              height: 40,
-                              decoration: GlobalVariables().ContainerDecoration(
-                                offset: const Offset(0, 4),
-                                blurRadius: 0,
-                                shadowColor: Colors.white,
-                                boxColor:
-                                    const Color.fromRGBO(239, 255, 254, 1),
-                                cornerRadius: 10,
-                              ),
-                              child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Space(12, isHorizontal: true),
-                                    const Icon(
-                                      Icons.search,
-                                      color: Color(0xFFFA6E00),
-                                    ),
-                                    const Space(12, isHorizontal: true),
-                                    Center(
-                                      child: Container(
-                                        width: 60.w,
-                                        child: TextField(
-                                            controller: _controller,
-                                            readOnly: false,
-                                            maxLines: null,
-                                            style: const TextStyle(
-                                              color: Color(0xFF094B60),
-                                              fontSize: 14,
-                                              fontFamily: 'Product Sans',
-                                              fontWeight: FontWeight.w400,
-                                              letterSpacing: 0.42,
-                                            ),
-                                            textInputAction:
-                                                TextInputAction.done,
-                                            decoration: const InputDecoration(
-                                              hintText: 'Search',
-                                              hintStyle: TextStyle(
+                              const Space(22),
+                              Container(
+                                width: double.infinity,
+                                height: 40,
+                                decoration:
+                                    GlobalVariables().ContainerDecoration(
+                                  offset: const Offset(0, 4),
+                                  blurRadius: 0,
+                                  shadowColor: Colors.white,
+                                  boxColor:
+                                      const Color.fromRGBO(239, 255, 254, 1),
+                                  cornerRadius: 10,
+                                ),
+                                child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Space(12, isHorizontal: true),
+                                      const Icon(
+                                        Icons.search,
+                                        color: Color(0xFFFA6E00),
+                                      ),
+                                      const Space(12, isHorizontal: true),
+                                      Center(
+                                        child: Container(
+                                          width: 60.w,
+                                          child: TextField(
+                                              controller: _controller,
+                                              readOnly: false,
+                                              maxLines: null,
+                                              style: const TextStyle(
                                                 color: Color(0xFF094B60),
                                                 fontSize: 14,
                                                 fontFamily: 'Product Sans',
                                                 fontWeight: FontWeight.w400,
                                                 letterSpacing: 0.42,
                                               ),
-                                              contentPadding:
-                                                  EdgeInsets.only(bottom: 10),
-                                              border: InputBorder.none,
-                                            ),
-                                            onChanged: (newv) {
-                                              setState(() {
-                                                _iscategorySearch = false;
-                                                _searchOn = true;
-                                              });
-                                              if (newv == '')
+                                              textInputAction:
+                                                  TextInputAction.done,
+                                              decoration: const InputDecoration(
+                                                hintText: 'Search',
+                                                hintStyle: TextStyle(
+                                                  color: Color(0xFF094B60),
+                                                  fontSize: 14,
+                                                  fontFamily: 'Product Sans',
+                                                  fontWeight: FontWeight.w400,
+                                                  letterSpacing: 0.42,
+                                                ),
+                                                contentPadding:
+                                                    EdgeInsets.only(bottom: 10),
+                                                border: InputBorder.none,
+                                              ),
+                                              onChanged: (newv) {
                                                 setState(() {
-                                                  _searchOn = false;
+                                                  _iscategorySearch = false;
+                                                  _searchOn = true;
                                                 });
-                                            },
-                                            cursorColor:
-                                                const Color(0xFFFA6E00)),
+                                                if (newv == '')
+                                                  setState(() {
+                                                    _searchOn = false;
+                                                  });
+                                              },
+                                              cursorColor:
+                                                  const Color(0xFFFA6E00)),
+                                        ),
                                       ),
-                                    ),
-                                    const Spacer(),
-                                    /*const Space(
+                                      const Spacer(),
+                                      /*const Space(
                                       30,
                                       isHorizontal: true,
                                     ),*/
-                                    TouchableOpacity(
-                                      onTap: () {
-                                        setState(() {
-                                          _searchOn = false;
-                                          _controller.clear();
-                                        });
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 1.w),
-                                        child: const Icon(
-                                          Icons.cancel,
-                                          color: Color(0xFFFA6E00),
+                                      TouchableOpacity(
+                                        onTap: () {
+                                          setState(() {
+                                            _searchOn = false;
+                                            _controller.clear();
+                                          });
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 1.w),
+                                          child: const Icon(
+                                            Icons.cancel,
+                                            color: Color(0xFFFA6E00),
+                                          ),
                                         ),
-                                      ),
-                                    )
-                                  ]),
-                            ),
-                            Space(1.h),
-                            if (_iscategorySearch && _searchOn)
-                              for (int index = 0;
-                                  index < widget.menuList.length;
-                                  index++)
-                                if (widget.menuList[index]['category']
-                                    .toString()
-                                    .contains(_controller.text))
+                                      )
+                                    ]),
+                              ),
+                              Space(1.h),
+                              if (_iscategorySearch && _searchOn)
+                                for (int index = 0;
+                                    index < widget.menuList.length;
+                                    index++)
+                                  if (widget.menuList[index]['category']
+                                      .toString()
+                                      .contains(_controller.text))
+                                    MenuItem(data: widget.menuList[index]),
+                              if (!_iscategorySearch && _searchOn)
+                                for (int index = 0;
+                                    index < widget.menuList.length;
+                                    index++)
+                                  if (widget.menuList[index]['name']
+                                      .toString()
+                                      .toLowerCase()
+                                      .contains(_controller.text.toLowerCase()))
+                                    MenuItem(data: widget.menuList[index]),
+                              if (!_searchOn)
+                                for (int index = 0;
+                                    index < widget.menuList.length;
+                                    index++)
                                   MenuItem(data: widget.menuList[index]),
-                            if (!_iscategorySearch && _searchOn)
-                              for (int index = 0;
-                                  index < widget.menuList.length;
-                                  index++)
-                                if (widget.menuList[index]['name']
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(_controller.text.toLowerCase()))
-                                  MenuItem(data: widget.menuList[index]),
-                            if (!_searchOn)
-                              for (int index = 0;
-                                  index < widget.menuList.length;
-                                  index++)
-                                MenuItem(data: widget.menuList[index]),
-                          ],
+                              Space(8.h)
+                            ],
+                          ),
                         ),
                       ),
                       (Provider.of<Auth>(context).itemAdd.length != 0)
                           ? Positioned(
-                              bottom: 50,
+                              bottom: 0,
                               left: 0,
                               child: Container(
                                 margin: EdgeInsets.symmetric(horizontal: 7.w),
