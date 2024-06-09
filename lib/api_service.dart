@@ -127,7 +127,7 @@ class Auth with ChangeNotifier {
 
   bannerTogger(item) {
     showBanner = !showBanner;
-    print(item.toString());
+    print("item.toString() ${item.toString()}");
     item.quantity = 1;
     itemAdd.add(item);
     print("showing banner");
@@ -179,7 +179,7 @@ class Auth with ChangeNotifier {
 
   removeItem(item) {
     int idx = itemAdd.indexWhere((element) => element.id == item.id);
-    itemAdd[idx].quantity = (itemAdd[idx]?.quantity ?? 0) - 1;
+    itemAdd[idx].quantity = (itemAdd[idx].quantity ?? 0) - 1;
     if ((itemAdd[idx].quantity ?? 0) <= 0) {
       itemAdd.removeAt(idx);
     }
@@ -188,7 +188,7 @@ class Auth with ChangeNotifier {
 
   addItem(item) {
     int idx = itemAdd.indexWhere((element) => element.id == item.id);
-    itemAdd[idx].quantity = (itemAdd[idx]?.quantity ?? 0) + 1;
+    itemAdd[idx].quantity = (itemAdd[idx].quantity ?? 0) + 1;
     // var p =  ProductDetails(itemAdd[idx]);
     print(json.encode(itemAdd));
     notifyListeners();
@@ -227,7 +227,7 @@ class Auth with ChangeNotifier {
       'user_type': userProfileData?['user_type'] ?? 'Vendor',
     };
     print("userDtat:: $userData");
-    await UserPreferences.setUser(userData ?? {});
+    await UserPreferences.setUser(userData);
     userData = UserPreferences.getUser();
     print("userDtat:: $userData");
     notifyListeners();

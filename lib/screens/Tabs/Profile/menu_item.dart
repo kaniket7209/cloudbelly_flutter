@@ -22,10 +22,13 @@ class MenuItem extends StatefulWidget {
   @override
   State<MenuItem> createState() => _MenuItemState();
 }
+// Function to calculate total items and total price
 
 class _MenuItemState extends State<MenuItem> {
   @override
   Widget build(BuildContext context) {
+
+
     TextEditingController _controller =
         TextEditingController(text: widget.data['description']);
     return Container(
@@ -115,7 +118,7 @@ class _MenuItemState extends State<MenuItem> {
                   height: 11.h,
                   width: 24.w,
                   decoration: ShapeDecoration(
-                    shadows: [
+                    shadows: const [
                       BoxShadow(
                         color: Color(0x7FB1D9D8),
                         blurRadius: 6,
@@ -131,7 +134,7 @@ class _MenuItemState extends State<MenuItem> {
                       ),
                     ),
                   ),
-                  child: (widget.data['images'] as List<dynamic>).length != 0
+                  child: (widget.data['images'] as List<dynamic>).isNotEmpty
                       ? ClipSmoothRect(
                           radius: SmoothBorderRadius(
                             cornerRadius: 24,
@@ -158,7 +161,7 @@ class _MenuItemState extends State<MenuItem> {
                         color:
                             widget.data['VEG'] ? Color(0xFF4CF910) : Colors.red,
                         shape: OvalBorder(),
-                        shadows: [
+                        shadows: const [
                           BoxShadow(
                             color: Color(0x7FB1D9D8),
                             blurRadius: 6,
@@ -171,24 +174,22 @@ class _MenuItemState extends State<MenuItem> {
                 Positioned(
                   bottom: 2,
                   left: (Provider.of<Auth>(context)
-                              .itemAdd
-                              .where(
-                                (element) => element.id == widget.data["_id"],
-                              )
-                              .length ==
-                          0)
+                          .itemAdd
+                          .where(
+                            (element) => element.id == widget.data["_id"],
+                          )
+                          .isEmpty)
                       ? 2.5.h
                       : 0.h,
                   child: (Provider.of<Auth>(context)
-                              .itemAdd
-                              .where(
-                                (element) => element.id == widget.data["_id"],
-                              )
-                              .length ==
-                          0)
+                          .itemAdd
+                          .where(
+                            (element) => element.id == widget.data["_id"],
+                          )
+                          .isEmpty)
                       ? TouchableOpacity(
                           onTap: () async {
-                            print(widget.data);
+                            print("widget.data ${widget.data}");
                             print(Provider.of<Auth>(context, listen: false)
                                 .userData?['user_id']);
                             if (Provider.of<Auth>(context, listen: false)
@@ -321,6 +322,7 @@ class _MenuItemState extends State<MenuItem> {
         ));
   }
 
+ 
   Future<String> updateProductImageSheet(
       BuildContext context, dynamic data) async {
     String url = '';
@@ -369,10 +371,10 @@ class _MenuItemState extends State<MenuItem> {
                       ),
                     ),
                     Space(6.h),
-                    Text(
+                    const Text(
                       'Upload product Photo',
                       style: TextStyle(
-                        color: const Color(0xFF094B60),
+                        color: Color(0xFF094B60),
                         fontSize: 26,
                         fontFamily: 'Jost',
                         fontWeight: FontWeight.w600,
@@ -430,6 +432,7 @@ class _MenuItemState extends State<MenuItem> {
         );
       },
     );
+
     return url;
   }
 }

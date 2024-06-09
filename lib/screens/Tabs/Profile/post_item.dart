@@ -656,8 +656,8 @@ class _PostItemState extends State<PostItem> {
                             Color.fromRGBO(254, 209, 112, 1)
                           ],
                         ),
-                        shadows: [
-                          const BoxShadow(
+                        shadows: const [
+                          BoxShadow(
                             offset: Offset(0, 4),
                             color: Color.fromRGBO(0, 0, 0, 0.25),
                             blurRadius: 4,
