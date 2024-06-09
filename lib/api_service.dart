@@ -143,7 +143,6 @@ class Auth with ChangeNotifier {
       var quantity = element.quantity ?? 0;
       String priceString = element.price ?? '0';
       double price = (double.parse(priceString) * quantity) ?? 0.0;
-      print(price);
       sum = sum + price;
     });
     Tpice = sum;
