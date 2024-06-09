@@ -41,6 +41,7 @@ class Auth with ChangeNotifier {
   String userType = '';*/
   List<dynamic> menuList = [];
   bool showBanner = false;
+  var Tpice;
   Map<String, dynamic>? userData = UserPreferences.getUser();
   String logo_url = '';
   String baseUrl = "https://app.cloudbelly.in/";
@@ -125,13 +126,31 @@ class Auth with ChangeNotifier {
     notifyListeners();
   }
 
-  bannerTogger(item) {
+  bannerTogger(ProductDetails item) {
     showBanner = !showBanner;
     print("item.toString() ${item.toString()}");
     item.quantity = 1;
+    item.totalPrice = item.price;
     itemAdd.add(item);
     print("showing banner");
+    getprice();
     notifyListeners();
+  }
+
+  getprice() {
+    var sum = 0.0;
+    itemAdd.forEach((element) {
+      var quantity = element.quantity ?? 0;
+      String priceString = element.price ?? '0';
+      double price = (double.parse(priceString) * quantity) ?? 0.0;
+      print(price);
+      sum = sum + price;
+    });
+    Tpice = sum;
+    print("sum is");
+    print(sum);
+    notifyListeners();
+    // return sum;
   }
 
   Future<void> getNotificationList() async {
@@ -183,14 +202,28 @@ class Auth with ChangeNotifier {
     if ((itemAdd[idx].quantity ?? 0) <= 0) {
       itemAdd.removeAt(idx);
     }
+    getprice();
+
     notifyListeners();
   }
 
-  addItem(item) {
+  addItem(ProductDetails item) {
     int idx = itemAdd.indexWhere((element) => element.id == item.id);
     itemAdd[idx].quantity = (itemAdd[idx].quantity ?? 0) + 1;
+    var quantity = itemAdd[idx].quantity ?? 0; // Default to 0 if null
+
+// Use a default value of '0' if itemAdd[idx].price is null
+    String priceString = itemAdd[idx].price ?? '0';
+    double price =
+        double.tryParse(priceString) ?? 0.0; // Default to 0.0 if parsing fails
+    itemAdd[idx].totalPrice = price.toString();
+    print(item.toJson());
+
     // var p =  ProductDetails(itemAdd[idx]);
     print(json.encode(itemAdd));
+    print(item.totalPrice);
+    getprice();
+
     notifyListeners();
   }
 

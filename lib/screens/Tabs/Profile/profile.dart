@@ -871,14 +871,6 @@ class _MenuState extends State<Menu> {
 
   bool _iscategorySearch = false;
   bool _searchOn = false;
-  getprice() {
-    var sum = 0.0;
-    Provider.of<Auth>(context, listen: false).itemAdd.forEach((element) {
-      String? totalPrice = element.price;
-      sum += double.parse(totalPrice ?? '0.0');
-    });
-    return sum;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -897,7 +889,7 @@ class _MenuState extends State<Menu> {
                 : Stack(
                     children: [
                       Container(
-                        height: 50.h,
+                        height: 60.h,
                         child: ListView(
                           children: [
                             Padding(
@@ -1111,7 +1103,7 @@ class _MenuState extends State<Menu> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          '${Provider.of<Auth>(context).itemAdd.length}  Items   | ${getprice()}  Rs ',
+                                          '${Provider.of<Auth>(context).itemAdd.length}  Items   | ${Provider.of<Auth>(context).Tpice}  Rs ',
                                           style: const TextStyle(
                                             color: Color(0xFFF7F7F7),
                                             fontSize: 16,
