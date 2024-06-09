@@ -193,20 +193,15 @@ class _ViewCartState extends State<ViewCart> {
       return;
     }
     var options = {
-      'key': 'rzp_live_Aq1zY9rLf3Fw1H',
-      'amount': getprice(),
-      'name': temp[0]['bank_name'],
+      'key': 'rzp_live_zG8UgbGuAOMyoC',
+      // 'amount': getprice(),
+      // 'name': temp[0]['bank_name'],
       'description': 'Fine T-Shirt',
       'retry': {'enabled': true, 'max_count': 1},
       'send_sms_hash': true,
       'order_id': orderId,
-      'prefill': {'email': temp[0]['email'], "contact": "7003988299"},
+      // 'prefill': {'email': temp[0]['email'], "contact": "7003988299"},
     };
-    print("options");
-    print(options);
-
-    // dynamic response = await Provider.of<Auth>(context, listen: false)
-    //     .submitOrder(orderId, "Cash", id);
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
     _razorpay.open(options);
   }
