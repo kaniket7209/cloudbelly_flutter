@@ -15,8 +15,8 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MenuItem extends StatefulWidget {
-  MenuItem({super.key, required this.data});
-
+  MenuItem({super.key, required this.data, required this.scroll});
+  var scroll;
   dynamic data;
 
   @override
@@ -27,8 +27,6 @@ class MenuItem extends StatefulWidget {
 class _MenuItemState extends State<MenuItem> {
   @override
   Widget build(BuildContext context) {
-
-
     TextEditingController _controller =
         TextEditingController(text: widget.data['description']);
     return Container(
@@ -282,6 +280,16 @@ class _MenuItemState extends State<MenuItem> {
                             ),
                             InkWell(
                               onTap: () {
+                                if (widget.scroll != null) {
+                                  print("scrolling");
+                                  print(widget.scroll.position.maxScrollExtent);
+                                  widget.scroll.animateTo(
+                                    1000.0,
+                                    duration: Duration(milliseconds: 500),
+                                    curve: Curves.easeInOut,
+                                  );
+                                }
+
                                 Provider.of<Auth>(context, listen: false)
                                     .addItem(
                                         ProductDetails.fromJson(widget.data));
@@ -322,7 +330,6 @@ class _MenuItemState extends State<MenuItem> {
         ));
   }
 
- 
   Future<String> updateProductImageSheet(
       BuildContext context, dynamic data) async {
     String url = '';

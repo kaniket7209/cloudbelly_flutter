@@ -48,6 +48,7 @@ class _ProfileViewState extends State<ProfileView> {
   List<UserModel> userList = [];
   bool _isFollowing = false;
   bool _isLoad = false;
+  ScrollController t1 = new ScrollController();
 
   bool checkFollow() {
     String id = widget.userIdList.first;
@@ -212,6 +213,7 @@ class _ProfileViewState extends State<ProfileView> {
         onLoading: _loading,
         child: userList.isNotEmpty
             ? SingleChildScrollView(
+                controller: t1,
                 child: _isLoad == false
                     ? Container(
                         constraints: const BoxConstraints(
@@ -982,6 +984,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                 Menu(
                                                     isLoading: _isLoading,
                                                     menuList: menuList,
+                                                    scroll: t1,
                                                     categories: categories,
                                                     user: widget
                                                         .userIdList.first),

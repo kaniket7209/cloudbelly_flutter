@@ -96,6 +96,7 @@ class _ProfileState extends State<Profile> {
   }
 
   bool _isLoading = false;
+  ScrollController t1 = new ScrollController();
   List<String> categories = [];
   String userType = "";
   Map<String, dynamic>? userData;
@@ -184,6 +185,7 @@ class _ProfileState extends State<Profile> {
       enablePullUp: false,
       onLoading: _loading,
       child: SingleChildScrollView(
+        controller: t1,
         child: Container(
           constraints: const BoxConstraints(
             maxWidth: 800, // Set your maximum width here
@@ -822,10 +824,10 @@ class _ProfileState extends State<Profile> {
                                                 )),
                                 if (_activeButtonIndex == 2)
                                   Menu(
-                                    isLoading: _isLoading,
-                                    menuList: menuList,
-                                    categories: categories,
-                                  ),
+                                      isLoading: _isLoading,
+                                      menuList: menuList,
+                                      categories: categories,
+                                      scroll: t1),
                                 if (_activeButtonIndex == 3)
                                   const Text('Feature Pending'),
                                 if (_activeButtonIndex == 4)
@@ -854,8 +856,9 @@ class Menu extends StatefulWidget {
     required this.menuList,
     required this.categories,
     this.user,
+    required this.scroll,
   }) : _isLoading = isLoading;
-
+  final scroll;
   final bool _isLoading;
   final List menuList;
   final List<String> categories;
@@ -1050,7 +1053,9 @@ class _MenuState extends State<Menu> {
                                     if (widget.menuList[index]['category']
                                         .toString()
                                         .contains(_controller.text))
-                                      MenuItem(data: widget.menuList[index]),
+                                      MenuItem(
+                                          data: widget.menuList[index],
+                                          scroll: widget.scroll),
                                 if (!_iscategorySearch && _searchOn)
                                   for (int index = 0;
                                       index < widget.menuList.length;
@@ -1060,12 +1065,16 @@ class _MenuState extends State<Menu> {
                                         .toLowerCase()
                                         .contains(
                                             _controller.text.toLowerCase()))
-                                      MenuItem(data: widget.menuList[index]),
+                                      MenuItem(
+                                          data: widget.menuList[index],
+                                          scroll: widget.scroll),
                                 if (!_searchOn)
                                   for (int index = 0;
                                       index < widget.menuList.length;
                                       index++)
-                                    MenuItem(data: widget.menuList[index]),
+                                    MenuItem(
+                                        data: widget.menuList[index],
+                                        scroll: widget.scroll),
                                 Space(2.h),
                               ],
                             ),
