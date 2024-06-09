@@ -282,8 +282,8 @@ class _ProfileState extends State<Profile> {
                                         width: 40,
                                         height: 40,
                                         decoration: ShapeDecoration(
-                                          shadows: [
-                                            const BoxShadow(
+                                          shadows: const [
+                                            BoxShadow(
                                               offset: Offset(0, 4),
                                               color: Color.fromRGBO(
                                                   31, 111, 109, 0.5),
@@ -1083,7 +1083,7 @@ class _MenuState extends State<Menu> {
                       ),
                       (Provider.of<Auth>(context).itemAdd.length != 0)
                           ? Positioned(
-                              bottom: 40,
+                              bottom: 50,
                               left: 0,
                               child: Container(
                                 margin: EdgeInsets.symmetric(horizontal: 7.w),
@@ -1111,7 +1111,7 @@ class _MenuState extends State<Menu> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          '${Provider.of<Auth>(context).itemAdd.length} Items   | ${getprice()}  Rs ',
+                                          '${Provider.of<Auth>(context).itemAdd.length}  Items   | ${getprice()}  Rs ',
                                           style: const TextStyle(
                                             color: Color(0xFFF7F7F7),
                                             fontSize: 16,
