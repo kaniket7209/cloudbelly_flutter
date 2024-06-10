@@ -5,6 +5,7 @@ import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
@@ -136,15 +137,16 @@ class _PaymentOptionsState extends State<PaymentOptions> {
   Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: const Color.fromRGBO(46, 5, 54, 1),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
+      shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+        cornerRadius: 35,
+        cornerSmoothing: 1,
+      )),
       title: isPaymentConfirmed
-          ?  Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          ? Column(
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
-                Text(
+                const Text(
                   'Thank you,\nYour order has\n been placed.',
                   style: TextStyle(
                     fontSize: 25,
@@ -208,35 +210,39 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   },
                   child: Center(
                     child: Container(
-                      // padding: const EdgeInsets.symmetric(
-                      //     vertical: 0, horizontal: 20), // Adjust the padding as needed
                       width: 130,
                       height: 5,
                       decoration: ShapeDecoration(
                         color: const Color(0xFFFA6E00),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
+                        shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                          cornerRadius: 12,
+                          cornerSmoothing: 1,
+                        )),
                       ),
                     ),
                   ),
                 ),
-                Space(1.h),
+                SizedBox(height: 10),
               ],
             ),
       content: isPaymentConfirmed
           ? Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Lottie.asset('assets/Animation - 1718049075869.json',
+                    width: 350, height: 150),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
+                        horizontal: 10, vertical: 10),
+                    shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                      cornerRadius: 12,
+                      cornerSmoothing: 1,
+                    )),
                   ),
                   onPressed: () {
                     // Add track order functionality here
@@ -255,9 +261,11 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                     backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 30, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
+                    shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                      cornerRadius: 12,
+                      cornerSmoothing: 1,
+                    )),
                   ),
                   onPressed: () {
                     // Add continue shopping functionality here
@@ -363,11 +371,8 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                     backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 30, vertical: 15),
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                        cornerRadius: 15,
-                        cornerSmoothing: 1,
-                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   onPressed: pickPaymentScreenshot,
@@ -396,12 +401,9 @@ class _PaymentOptionsState extends State<PaymentOptions> {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                        cornerRadius: 15,
-                        cornerSmoothing: 1,
-                      ),
-                    ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
             ),
             onPressed: uploadPaymentScreenshot,
             child: const Text(
@@ -424,9 +426,11 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
+        shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(
+          cornerRadius: 35,
+          cornerSmoothing: 1,
+        )),
         title: Row(
           children: [
             IconButton(
@@ -452,9 +456,11 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
                 side: const BorderSide(color: Colors.black),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                  cornerRadius: 12,
+                  cornerSmoothing: 1,
+                )),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
