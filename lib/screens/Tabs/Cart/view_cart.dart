@@ -139,68 +139,74 @@ class _PaymentOptionsState extends State<PaymentOptions> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+
     return AlertDialog(
-      // insetPadding: EdgeInsets.all(5),
       backgroundColor: const Color.fromRGBO(46, 5, 54, 1),
       shape: SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius(
-        cornerRadius: 35,
-        cornerSmoothing: 1,
-      )),
-      title: isPaymentConfirmed
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Thank you,\nYour order has\n been placed.',
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+        borderRadius: SmoothBorderRadius(
+          cornerRadius: 35,
+          cornerSmoothing: 1,
+        ),
+      ),
+      title: buildTitle(context),
+      content: buildContent(context),
+      actions: buildActions(context),
+    );
+  }
+
+  Widget buildTitle(BuildContext context) {
+    return isPaymentConfirmed
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Thank you,\nYour order has\n been placed.',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontFamily: 'Product Sans',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                // SizedBox(height: 10),
-                const Text(
-                  'Your payment is yet to be verified',
-                  style: TextStyle(fontSize: 10, color: Colors.white),
+              ),
+              const Text(
+                'Your payment is yet to be verified',
+                style: TextStyle(fontSize: 10, color: Colors.white),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  final phoneNumber = widget.prepData['phone'];
+                  final url = 'tel:$phoneNumber';
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Could not launch phone call')),
+                    );
+                  }
+                },
+                child: CircleAvatar(
+                  backgroundColor: const Color(0xFFFA6E00),
+                  child: Image.asset('assets/images/Phone.png'),
                 ),
-                GestureDetector(
-                  onTap: () async {
-                    final phoneNumber = widget.prepData['phone'];
-                    final url = 'tel:$phoneNumber';
-                    if (await canLaunch(url)) {
-                      await launch(url);
-                    } else {
-                      TOastNotification().showErrorToast(
-                          context, 'Could not launch phone call');
-                    }
-                  },
-                  child: CircleAvatar(
-                    backgroundColor: const Color(0xFFFA6E00),
-                    child: Image.asset('assets/images/Phone.png'),
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                
-                Row(
-                  
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(right: 27),
-                      child: IconButton(
-                        icon:
-                            Image.asset('assets/images/back_double_arrow.png'),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    child: IconButton(
+                      icon: Image.asset('assets/images/back_double_arrow.png'),
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
-                    const Text(
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 30),
+                    child: const Text(
                       'Scan to pay',
                       style: TextStyle(
                         fontSize: 25,
@@ -209,229 +215,239 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                         fontFamily: 'Product Sans',
                       ),
                     ),
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Center(
-                    child: Container(
-                      width: 130,
-                      height: 5,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFFFA6E00),
-                        shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Center(
+                  child: Container(
+                    width: 130,
+                    height: 5,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFFFA6E00),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
                           cornerRadius: 12,
                           cornerSmoothing: 1,
-                        )),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-              ],
-            ),
-      content: isPaymentConfirmed
-          ? Column(
-            
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                
-                Lottie.asset('assets/Animation - 1718049075869.json',
-                    width: 350, height: 150),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 10),
-                    shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius(
-                      cornerRadius: 12,
-                      cornerSmoothing: 1,
-                    )),
-                  ),
-                  onPressed: () {
-                    // Add track order functionality here
-                  },
-                  child: const Text(
-                    'Track order',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    
-                    backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
-                    shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius(
-                      cornerRadius: 12,
-                      cornerSmoothing: 1,
-                    )),
-                  ),
-                  onPressed: () {
-                    // Add continue shopping functionality here
-                  },
-                  child: const Text(
-                    'Continue shopping',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            )
-          : Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 40.0,right: 40.0),
-                      
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Name - ${widget.prepData['store_name']}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 4), // Add space between lines
-                          Text(
-                            'Order No - ${widget.prepData['order_no']}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: GestureDetector(
-                        onTap: () async {
-                          final phoneNumber = widget.prepData['phone'];
-                          final url = 'tel:$phoneNumber';
-                          if (await canLaunch(url)) {
-                            await launch(url);
-                          } else {
-                            TOastNotification().showErrorToast(
-                                context, 'Could not launch phone call');
-                          }
-                        },
-                        child: CircleAvatar(
-                          backgroundColor:const Color(0xFFFA6E00),
-                          child: Image.asset('assets/images/Phone.png'),
                         ),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                if (qrCode != null)
-                  Image.memory(
-                    qrCode!,
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.contain,
                   ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.sellerUpi,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.copy, color: Colors.white),
-                      onPressed: () {
-                        Clipboard.setData(
-                            ClipboardData(text: widget.sellerUpi));
-                        TOastNotification().showSuccesToast(
-                            context, 'UPI ID copied to clipboard');
-                      },
-                    ),
-                  ],
                 ),
-                const SizedBox(height: 20),
-                Container(
-                  width: 55.w,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 15),
-                      shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius(
+              ),
+              // const SizedBox(height: 10),
+              Space(1.h)
+            ],
+          );
+  }
+
+  Widget buildContent(BuildContext context) {
+    return isPaymentConfirmed
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Add your Lottie animation asset here
+              // Lottie.asset('assets/Animation - 1718049075869.json',
+              //     width: 350, height: 150),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
                       cornerRadius: 12,
                       cornerSmoothing: 1,
-                    )),
-                    ),
-                    onPressed: pickPaymentScreenshot,
-                    child: const Text(
-                      'Upload screenshot',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
                   ),
                 ),
-                if (paymentScreenshot != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      'Screenshot selected: ${paymentScreenshot!.name}',
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                onPressed: () {
+                  // Add track order functionality here
+                },
+                child: const Text(
+                  'Track order',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 12,
+                      cornerSmoothing: 1,
                     ),
                   ),
-              ],
-            ),
-      actions: [
-        if (!isPaymentConfirmed)
-          Padding(
-            padding: const EdgeInsets.only(right: 23.0),
-            child: SizedBox(
+                ),
+                onPressed: () {
+                  // Add continue shopping functionality here
+                },
+                child: const Text(
+                  'Continue shopping',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          )
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Name - ${widget.prepData['store_name']}',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4), // Add space between lines
+                        Text(
+                          'Order No - ${widget.prepData['order_no']}',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 40.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        final phoneNumber = widget.prepData['phone'];
+                        final url = 'tel:$phoneNumber';
+                        if (await canLaunch(url)) {
+                          await launch(url);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Could not launch phone call')),
+                          );
+                        }
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: const Color(0xFFFA6E00),
+                        child: Image.asset('assets/images/Phone.png'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              if (qrCode != null)
+                Image.memory(
+                  qrCode!,
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.contain,
+                ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.sellerUpi,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.copy, color: Colors.white),
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: widget.sellerUpi));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('UPI ID copied to clipboard')),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                  ),
+                  onPressed: () => pickPaymentScreenshot(),
+                  child: const Text(
+                    'Upload screenshot',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              if (paymentScreenshot != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    'Screenshot selected: ${paymentScreenshot!.name}',
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ),
+            ],
+          );
+  }
+
+  List<Widget> buildActions(BuildContext context) {
+    return !isPaymentConfirmed
+        ? [
+            SizedBox(
              
-              // alignment:Alignment.bottomCenter,
-              width: 55.w,
+              width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
                   shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                          cornerRadius: 12,
-                          cornerSmoothing: 1,
-                        )),
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 12,
+                      cornerSmoothing: 1,
+                    ),
+                  ),
                 ),
-                onPressed: uploadPaymentScreenshot,
+                onPressed: () => uploadPaymentScreenshot(),
                 child: const Text(
                   'Transferred, notify the seller',
                   style: TextStyle(
@@ -442,9 +458,23 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                 ),
               ),
             ),
-          ),
-      ],
-    );
+            Row(
+              children: [
+                Container(
+                  child: const Text(
+                    '**Third party payment is not allowed',
+                    style: TextStyle(
+                      fontSize: 8,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Space(1.h)
+          ]
+        : [];
   }
 }
 
@@ -517,7 +547,8 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   side: const BorderSide(color: Colors.black),
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(
                     cornerRadius: 15,
@@ -540,7 +571,7 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
             ),
             const SizedBox(height: 20),
             Container(
-               width: screenWidth * 0.5,
+              width: screenWidth * 0.5,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
