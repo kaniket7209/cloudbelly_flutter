@@ -159,19 +159,29 @@ class _PaymentOptionsState extends State<PaymentOptions> {
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Thank you,\nYour order has\n been placed.',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontFamily: 'Product Sans',
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+              const Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Thank you,\nYour order has\n been placed.',
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        'Your payment is yet to be verified',
+                        style: TextStyle(fontSize: 10, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              const Text(
-                'Your payment is yet to be verified',
-                style: TextStyle(fontSize: 10, color: Colors.white),
-              ),
+              Space(2.h),
               GestureDetector(
                 onTap: () async {
                   final phoneNumber = widget.prepData['phone'];
@@ -189,7 +199,6 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   child: Image.asset('assets/images/Phone.png'),
                 ),
               ),
-              const SizedBox(height: 20),
             ],
           )
         : Column(
@@ -250,54 +259,64 @@ class _PaymentOptionsState extends State<PaymentOptions> {
             mainAxisSize: MainAxisSize.min,
             children: [
               // Add your Lottie animation asset here
-              // Lottie.asset('assets/Animation - 1718049075869.json',
-              //     width: 350, height: 150),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius(
-                      cornerRadius: 12,
-                      cornerSmoothing: 1,
+              Lottie.asset('assets/Animation - 1718049075869.json',
+                  width: 200, height: 150),
+              // const SizedBox(height: 20),
+              Space(2.h),
+              Container(
+                width: 55.w,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 1,
+                      ),
                     ),
                   ),
-                ),
-                onPressed: () {
-                  // Add track order functionality here
-                },
-                child: const Text(
-                  'Track order',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                  onPressed: () {
+                    // Add track order functionality here
+                  },
+                  
+                  child: const Text(
+                    'Track order',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius(
-                      cornerRadius: 12,
-                      cornerSmoothing: 1,
+              Space(2.h),
+              Container(
+                width: 55.w,
+               
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 1,
+                      ),
                     ),
                   ),
-                ),
-                onPressed: () {
-                  // Add continue shopping functionality here
-                },
-                child: const Text(
-                  'Continue shopping',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                  onPressed: () {
+                    // Add continue shopping functionality here
+                  },
+                  child: const Text(
+                    'Continue shopping',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
