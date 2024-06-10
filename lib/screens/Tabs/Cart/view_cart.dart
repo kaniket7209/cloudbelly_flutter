@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:ffi';
+
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:cloudbelly_app/prefrence_helper.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:image_picker/image_picker.dart';
@@ -135,7 +138,9 @@ class _PaymentOptionsState extends State<PaymentOptions> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return AlertDialog(
+      // insetPadding: EdgeInsets.all(5),
       backgroundColor: const Color.fromRGBO(46, 5, 54, 1),
       shape: SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius(
@@ -144,7 +149,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
       )),
       title: isPaymentConfirmed
           ? Column(
-              // crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'Thank you,\nYour order has\n been placed.',
@@ -155,8 +160,8 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
+                // SizedBox(height: 10),
+                const Text(
                   'Your payment is yet to be verified',
                   style: TextStyle(fontSize: 10, color: Colors.white),
                 ),
@@ -172,7 +177,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                     }
                   },
                   child: CircleAvatar(
-                    backgroundColor: Colors.orange,
+                    backgroundColor: const Color(0xFFFA6E00),
                     child: Image.asset('assets/images/Phone.png'),
                   ),
                 ),
@@ -182,11 +187,13 @@ class _PaymentOptionsState extends State<PaymentOptions> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                
                 Row(
+                  
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.only(right: 25),
+                      padding: const EdgeInsets.only(right: 27),
                       child: IconButton(
                         icon:
                             Image.asset('assets/images/back_double_arrow.png'),
@@ -228,8 +235,10 @@ class _PaymentOptionsState extends State<PaymentOptions> {
             ),
       content: isPaymentConfirmed
           ? Column(
+            
               mainAxisSize: MainAxisSize.min,
               children: [
+                
                 Lottie.asset('assets/Animation - 1718049075869.json',
                     width: 350, height: 150),
                 const SizedBox(height: 20),
@@ -258,6 +267,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    
                     backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 30, vertical: 15),
@@ -283,20 +293,23 @@ class _PaymentOptionsState extends State<PaymentOptions> {
             )
           : Column(
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
+                      padding: const EdgeInsets.only(left: 40.0,right: 40.0),
+                      
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Name - ${widget.prepData['store_name']}',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 15,
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
                             ),
@@ -305,7 +318,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                           Text(
                             'Order No - ${widget.prepData['order_no']}',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 15,
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
                             ),
@@ -314,7 +327,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 20.0),
+                      padding: const EdgeInsets.only(right: 10.0),
                       child: GestureDetector(
                         onTap: () async {
                           final phoneNumber = widget.prepData['phone'];
@@ -327,7 +340,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                           }
                         },
                         child: CircleAvatar(
-                          backgroundColor: Colors.orange,
+                          backgroundColor:const Color(0xFFFA6E00),
                           child: Image.asset('assets/images/Phone.png'),
                         ),
                       ),
@@ -342,9 +355,9 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                     height: 200,
                     fit: BoxFit.contain,
                   ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       widget.sellerUpi,
@@ -355,7 +368,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.copy, color: Colors.orange),
+                      icon: const Icon(Icons.copy, color: Colors.white),
                       onPressed: () {
                         Clipboard.setData(
                             ClipboardData(text: widget.sellerUpi));
@@ -366,22 +379,27 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                Container(
+                  width: 55.w,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 15),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                      cornerRadius: 12,
+                      cornerSmoothing: 1,
+                    )),
                     ),
-                  ),
-                  onPressed: pickPaymentScreenshot,
-                  child: const Text(
-                    'Upload screenshot',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                    onPressed: pickPaymentScreenshot,
+                    child: const Text(
+                      'Upload screenshot',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -397,21 +415,31 @@ class _PaymentOptionsState extends State<PaymentOptions> {
             ),
       actions: [
         if (!isPaymentConfirmed)
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-            ),
-            onPressed: uploadPaymentScreenshot,
-            child: const Text(
-              'Transferred, notify the seller',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.only(right: 23.0),
+            child: SizedBox(
+             
+              // alignment:Alignment.bottomCenter,
+              width: 55.w,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+                  shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                          cornerRadius: 12,
+                          cornerSmoothing: 1,
+                        )),
+                ),
+                onPressed: uploadPaymentScreenshot,
+                child: const Text(
+                  'Transferred, notify the seller',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ),
@@ -420,85 +448,126 @@ class _PaymentOptionsState extends State<PaymentOptions> {
   }
 }
 
+// show payment method section
 void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
     orderId, String sellerUpi, Map<String, dynamic> prepData) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
+      final double screenWidth = MediaQuery.of(context).size.width;
       return AlertDialog(
+        backgroundColor: const Color.fromRGBO(46, 5, 54, 1),
         shape: SmoothRectangleBorder(
             borderRadius: SmoothBorderRadius(
           cornerRadius: 35,
           cornerSmoothing: 1,
         )),
-        title: Row(
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_rounded),
-              onPressed: () => Navigator.of(context).pop(),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: IconButton(
+                    icon: Image.asset('assets/images/back_double_arrow.png'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+                // const SizedBox(width: 20),
+
+                const Text(
+                  'Payment',
+                  style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Product Sans",
+                      color: Colors.white),
+                ),
+              ],
             ),
-            const SizedBox(width: 10),
-            const Text(
-              'Payment',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Center(
+                child: Container(
+                  width: 100,
+                  height: 5,
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFFFA6E00),
+                    shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                      cornerRadius: 12,
+                      cornerSmoothing: 1,
+                    )),
+                  ),
+                ),
               ),
             ),
+            Space(2.h),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                side: const BorderSide(color: Colors.black),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius(
-                  cornerRadius: 12,
-                  cornerSmoothing: 1,
-                )),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Add cash on delivery functionality here
-              },
-              child: const Text(
-                'Cash on delivery',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
+            Container(
+              width: screenWidth * 0.5,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  side: const BorderSide(color: Colors.black),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                    cornerRadius: 15,
+                    cornerSmoothing: 1,
+                  )),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  // Add cash on delivery functionality here
+                },
+                child: const Text(
+                  'Cash on delivery',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            Container(
+               width: screenWidth * 0.5,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+                  shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                    cornerRadius: 15,
+                    cornerSmoothing: 1,
+                  )),
                 ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                openPaymentOptions(
-                    context, orderId, sellerUpi, orderFromUserId, prepData);
-              },
-              child: const Text(
-                'Pay directly to kitchen',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  openPaymentOptions(
+                      context, orderId, sellerUpi, orderFromUserId, prepData);
+                },
+                child: const Text(
+                  'Pay directly to kitchen',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
+            Space(4.h)
           ],
         ),
       );

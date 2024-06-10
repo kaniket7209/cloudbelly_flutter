@@ -76,6 +76,7 @@ dependencies:
   google_sign_in: ^6.2.1
   qr_flutter: ^4.1.0
   location: ^6.0.2
+  smooth_corner: ^1.1.0
   # multiple_images_picker: ^1.0.1
 
 dev_dependencies:
