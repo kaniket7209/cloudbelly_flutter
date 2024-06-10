@@ -14,7 +14,7 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 85.w,
       child: FutureBuilder(
         future: Provider.of<Auth>(context, listen: false).getMenu(widget.id),
@@ -36,7 +36,7 @@ class _MenuState extends State<Menu> {
                   //     'Indian delicacies served with tasty gravy, all from your very own kitchen...';
 
                   return data[index]['VEG'] != null
-                      ? MenuItem(data: data[index])
+                      ? MenuItem(data: data[index], scroll: null,)
                       : SizedBox.shrink();
                 });
           } else

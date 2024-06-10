@@ -766,7 +766,7 @@ class _ProfileState extends State<Profile> {
                                                 ]),
                                           ),
                                 //  _isVendor ? Space(1.h) : Space(0.h),
-                                Space(20),
+                                const Space(20),
                                 if (_activeButtonIndex == 1)
                                   Center(
                                       // width:
@@ -889,9 +889,9 @@ class _MenuState extends State<Menu> {
                       child: CircularProgressIndicator(),
                     )
                   : widget.menuList.isEmpty
-                      ? Container(
-                          height: 10.h,
-                          child: const Center(child: Text('No items in Menu')),
+                      ? const SizedBox(
+                          // height: 10.h,
+                          child: Center(child: Text('No items in Menu')),
                         )
                       : Expanded(
                           child: SingleChildScrollView(
@@ -902,7 +902,7 @@ class _MenuState extends State<Menu> {
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(bottom: 8),
+                                      padding: const EdgeInsets.only(bottom: 15),
                                       child: Row(
                                         children: [
                                           for (int i = 0;
@@ -930,9 +930,9 @@ class _MenuState extends State<Menu> {
                                                       BorderRadius.circular(10),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                        offset: Offset(6, 6),
-                                                        color: Color(0xFF70BAD2)
-                                                            .withOpacity(0.6),
+                                                        offset: const Offset(5, 5),
+                                                        color:const Color.fromRGBO(112, 186, 210, 1)
+                                                            .withOpacity(0.5),
                                                         blurRadius: 10)
                                                   ],
                                                 ),
@@ -958,7 +958,7 @@ class _MenuState extends State<Menu> {
                                     ),
                                   ),
                                 ),
-                                const Space(22),
+                                const Space(12),
                                 Container(
                                   width: double.infinity,
                                   height: 40,

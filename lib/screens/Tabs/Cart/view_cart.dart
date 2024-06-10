@@ -1,6 +1,10 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
+import 'package:cloudbelly_app/prefrence_helper.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
@@ -17,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,6 +44,481 @@ void initiateUpiPayment(
 }
 
 AddressModel? addressModel = AddressModel();
+
+class PaymentOptions extends StatefulWidget {
+  final String userId;
+  final String orderFromUserId;
+  final String orderId;
+  final double amount;
+  final String sellerUpi;
+  final Map<String, dynamic> prepData;
+
+  PaymentOptions({
+    required this.userId,
+    required this.orderFromUserId,
+    required this.orderId,
+    required this.amount,
+    required this.sellerUpi,
+    required this.prepData,
+  });
+
+  @override
+  _PaymentOptionsState createState() => _PaymentOptionsState();
+}
+
+class _PaymentOptionsState extends State<PaymentOptions> {
+  Uint8List? qrCode;
+  XFile? paymentScreenshot;
+  bool isPaymentConfirmed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchQrCode();
+  }
+
+  Future<void> fetchQrCode() async {
+    print("Fetching QR code...");
+    const String url = 'https://app.cloudbelly.in/order/upi';
+    final payload = {
+      'user_id': widget.userId,
+      'order_from_user_id': widget.orderFromUserId,
+      'order_id': widget.orderId,
+      'amount': widget.amount.toString()
+    };
+
+    try {
+      print("Sending request to $url with payload: $payload");
+      final response = await http.post(Uri.parse(url),
+          body: jsonEncode(payload),
+          headers: {'Content-Type': 'application/json'});
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        setState(() {
+          qrCode = response.bodyBytes;
+        });
+        print("QR code fetched successfully");
+      } else {
+        print('Failed to load QR code: ${response.reasonPhrase}');
+        TOastNotification().showErrorToast(
+            context, 'Failed to load QR code: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error fetching QR code: $e');
+    }
+  }
+
+  Future<void> uploadPaymentScreenshot() async {
+    if (paymentScreenshot == null) {
+      return;
+    }
+    TOastNotification()
+        .showSuccesToast(context, 'Payment confirmed successfully.');
+    print("Payment screenshot uploaded");
+    setState(() {
+      isPaymentConfirmed = true;
+    });
+  }
+
+  Future<void> pickPaymentScreenshot() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      paymentScreenshot = image;
+    });
+    print("Payment screenshot selected: ${image?.name}");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: const Color.fromRGBO(46, 5, 54, 1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      title: isPaymentConfirmed
+          ?  Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                
+                Text(
+                  'Thank you,\nYour order has\n been placed.',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontFamily: 'Product Sans',
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Your payment is yet to be verified',
+                  style: TextStyle(fontSize: 10, color: Colors.white),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    final phoneNumber = widget.prepData['phone'];
+                    final url = 'tel:$phoneNumber';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      TOastNotification().showErrorToast(
+                          context, 'Could not launch phone call');
+                    }
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.orange,
+                    child: Image.asset('assets/images/Phone.png'),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(right: 25),
+                      child: IconButton(
+                        icon:
+                            Image.asset('assets/images/back_double_arrow.png'),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ),
+                    const Text(
+                      'Scan to pay',
+                      style: TextStyle(
+                        fontSize: 25,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Center(
+                    child: Container(
+                      // padding: const EdgeInsets.symmetric(
+                      //     vertical: 0, horizontal: 20), // Adjust the padding as needed
+                      width: 130,
+                      height: 5,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFFFA6E00),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Space(1.h),
+              ],
+            ),
+      content: isPaymentConfirmed
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  onPressed: () {
+                    // Add track order functionality here
+                  },
+                  child: const Text(
+                    'Track order',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  onPressed: () {
+                    // Add continue shopping functionality here
+                  },
+                  child: const Text(
+                    'Continue shopping',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Name - ${widget.prepData['store_name']}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 4), // Add space between lines
+                          Text(
+                            'Order No - ${widget.prepData['order_no']}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20.0),
+                      child: GestureDetector(
+                        onTap: () async {
+                          final phoneNumber = widget.prepData['phone'];
+                          final url = 'tel:$phoneNumber';
+                          if (await canLaunch(url)) {
+                            await launch(url);
+                          } else {
+                            TOastNotification().showErrorToast(
+                                context, 'Could not launch phone call');
+                          }
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Colors.orange,
+                          child: Image.asset('assets/images/Phone.png'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                if (qrCode != null)
+                  Image.memory(
+                    qrCode!,
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.contain,
+                  ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      widget.sellerUpi,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.copy, color: Colors.orange),
+                      onPressed: () {
+                        Clipboard.setData(
+                            ClipboardData(text: widget.sellerUpi));
+                        TOastNotification().showSuccesToast(
+                            context, 'UPI ID copied to clipboard');
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 15,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                  ),
+                  onPressed: pickPaymentScreenshot,
+                  child: const Text(
+                    'Upload screenshot',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                if (paymentScreenshot != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      'Screenshot selected: ${paymentScreenshot!.name}',
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ),
+              ],
+            ),
+      actions: [
+        if (!isPaymentConfirmed)
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 15,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+            ),
+            onPressed: uploadPaymentScreenshot,
+            child: const Text(
+              'Transferred, notify the seller',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
+    orderId, String sellerUpi, Map<String, dynamic> prepData) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        title: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back_rounded),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'Payment',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                side: const BorderSide(color: Colors.black),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Add cash on delivery functionality here
+              },
+              child: const Text(
+                'Cash on delivery',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                openPaymentOptions(
+                    context, orderId, sellerUpi, orderFromUserId, prepData);
+              },
+              child: const Text(
+                'Pay directly to kitchen',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+void openPaymentOptions(BuildContext context, String orderId, String sellerUpi,
+    String orderFromUserId, Map<String, dynamic> prepData) {
+  print("Opening payment options with context: $context");
+  var userData = UserPreferences.getUser();
+  print("User data for payment: ${jsonEncode(userData)}");
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return PaymentOptions(
+        userId: userData?['user_id'] ?? "",
+        orderFromUserId: orderFromUserId,
+        orderId: orderId,
+        amount: 100.0, // Replace with actual amount if needed
+        sellerUpi: sellerUpi,
+        prepData: prepData,
+      );
+    },
+  );
+}
 
 class ViewCart extends StatefulWidget {
   static const routeName = '/view-cart';
@@ -68,6 +548,7 @@ class _ViewCartState extends State<ViewCart> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
     setState(() {
       calculateTotalAmount();
     });
@@ -142,17 +623,20 @@ class _ViewCartState extends State<ViewCart> {
     } else {
       AppWideLoadingBanner().loadingBanner(context);
       var id = Provider.of<ViewCartProvider>(context, listen: false).SellterId;
-      response = await Provider.of<Auth>(context, listen: false)
+      var response = await Provider.of<Auth>(context, listen: false)
           .createProductOrder(
               convertedList, context.read<ViewCartProvider>().addressModel, id);
-      Navigator.pop(context);
 
-      print(response);
+      print("create order response $response");
       if (response['message'] == 'Order processed successfully') {
-        orderId = response['order_id'];
-        TOastNotification().showSuccesToast(context, response['message']);
-        print("orderId  ${orderId}");
-        openCheckout(orderId);
+        var orderId = response['order_id'];
+        var sellerUpi = response['data']['seller_upi'];
+        var prepData = response['data'];
+        print("sellerUpi  $sellerUpi");
+        Navigator.pop(context);
+
+        // Show payment method selection
+        showPaymentMethodSelection(context, id, orderId, sellerUpi, prepData);
       } else {
         TOastNotification().showErrorToast(context, response['error']);
       }
@@ -160,18 +644,22 @@ class _ViewCartState extends State<ViewCart> {
     }
   }
 
-  void openCheckout(orderId) async {
+  void openCheckout() async {
     var options = {
-      'key': 'rzp_live_zG8UgbGuAOMyoC',
+      'key': 'rzp_live_ILgsfZCZoFIKMb',
       'amount': getprice(),
       'name': 'Cloudbelly ',
-      'description': 'Order Id - $orderId',
+      'description': 'Fine T-Shirt',
       'retry': {'enabled': true, 'max_count': 1},
       'send_sms_hash': true,
       'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
     };
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
-    _razorpay.open(options);
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      print("Error opening Razorpay: $e");
+      TOastNotification().showErrorToast(context, "Error opening Razorpay: $e");
+    }
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
@@ -188,6 +676,7 @@ class _ViewCartState extends State<ViewCart> {
       sum += double.parse(totalPrice ?? '0.0');
     });
     sum = sum * 100;
+
     print("getprice res $sum");
     return sum.toInt();
   }
@@ -262,6 +751,12 @@ class _ViewCartState extends State<ViewCart> {
 
   @override
   Widget build(BuildContext context) {
+    var id = Provider.of<ViewCartProvider>(context, listen: false).SellterId;
+    // final temp = Provider.of<Auth>(context, listen: false).getUserInfo([id]);
+
+    // print('storetemp  ${temp[0]['store_name']}');
+
+    print("id  $id");
     return Scaffold(
       backgroundColor: const Color.fromRGBO(254, 247, 254, 1),
       body: SingleChildScrollView(
@@ -311,7 +806,7 @@ class _ViewCartState extends State<ViewCart> {
                       SizedBox(
                         width: 60.w,
                         child: const Text(
-                          'Geeta’s Kitchen',
+                          'Cart',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -324,7 +819,7 @@ class _ViewCartState extends State<ViewCart> {
                       )
                     ],
                   ),
-                  Space(0.5.h),
+                  // Space(0.5.h),
                   Container(
                     width: double.infinity,
                     decoration: const ShapeDecoration(
@@ -672,7 +1167,7 @@ class _PriceWidgetState extends State<PriceWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 "Item Total",
                 style: TextStyle(
                   color: Color(0xFF2E0536),
@@ -692,8 +1187,8 @@ class _PriceWidgetState extends State<PriceWidget> {
               ),
             ],
           ),
-          Space(6),
-          Row(
+          const Space(6),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
@@ -718,7 +1213,7 @@ class _PriceWidgetState extends State<PriceWidget> {
               ),
             ],
           ),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
@@ -743,8 +1238,8 @@ class _PriceWidgetState extends State<PriceWidget> {
               ),
             ],
           ),
-          Space(10),
-          Text(
+          const Space(10),
+          const Text(
             "Save Rs 10 on delivery fee by ordering above Rs 159",
             style: TextStyle(
               color: Color(0xFFD382E3),
@@ -753,12 +1248,12 @@ class _PriceWidgetState extends State<PriceWidget> {
               fontWeight: FontWeight.w400,
             ),
           ),
-          Space(5.5),
-          Divider(
+          const Space(5.5),
+          const Divider(
             color: Color(0xFFBB5104),
             thickness: 0.5,
           ),
-          Space(14.5),
+          const Space(14.5),
           // Row(
           //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
           //   children: [
@@ -799,7 +1294,7 @@ class _PriceWidgetState extends State<PriceWidget> {
                 ),
               ),
               Text(
-                "Rs ${widget.totalAmount * 0.05}",
+                'Rs ${(widget.totalAmount * 0.05).toStringAsFixed(2)}',
                 style: const TextStyle(
                   color: Color(0xFF383838),
                   fontSize: 14,
@@ -809,8 +1304,8 @@ class _PriceWidgetState extends State<PriceWidget> {
               ),
             ],
           ),
-          Space(20),
-          Divider(
+          const Space(20),
+          const Divider(
             color: Color(0xFFBB5104),
             thickness: 0.5,
           ),
@@ -859,11 +1354,11 @@ class policyWidgetCart extends StatelessWidget {
             shadowColor: const Color.fromRGBO(188, 115, 188, 0.2),
             boxColor: Colors.white,
             cornerRadius: 25),
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               //If you cancel within 60 seconds of placing your
               children: [
                 Text(
@@ -886,7 +1381,7 @@ class policyWidgetCart extends StatelessWidget {
                 ),
               ],
             ),
-            const Text(
+            Text(
               'order, a 100% refund will be issued. NO refund for cancellations made after 60 seconds.',
               style: TextStyle(
                 color: Color(0xFF383838),
@@ -895,8 +1390,8 @@ class policyWidgetCart extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
             ),
-            const Space(10),
-            const Text(
+            Space(10),
+            Text(
               'Avoid cancellation as it leads to food wastage.',
               style: TextStyle(
                 color: Color(0xFFB549CA),
@@ -934,7 +1429,7 @@ class policyWidgetCart extends StatelessWidget {
 }
 
 class MenuItemInCart extends StatefulWidget {
-  MenuItemInCart({
+  const MenuItemInCart({
     super.key,
     required this.productDetails,
     required this.onQuantityChanged,
@@ -956,8 +1451,9 @@ class _MenuItemInCartState extends State<MenuItemInCart> {
 
     // Assign the calculated total price to the product
     product.totalPrice = totalPrice.toString();
-
+    print("totalPrice is ${product.totalPrice}");
     setState(() {
+      widget.productDetails.totalPrice = product.totalPrice;
       widget.onQuantityChanged();
     });
   }
@@ -1017,7 +1513,7 @@ class _MenuItemInCartState extends State<MenuItemInCart> {
             ),
           ),
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.keyboard_arrow_down_sharp,
               size: 35,
             ),
@@ -1030,7 +1526,7 @@ class _MenuItemInCartState extends State<MenuItemInCart> {
                 }
               });
             },
-            color: Color(0xFFFA6E00),
+            color: const Color(0xFFFA6E00),
           ),
           Container(
             height: 33,
@@ -1054,7 +1550,7 @@ class _MenuItemInCartState extends State<MenuItemInCart> {
             ),
           ),
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.keyboard_arrow_up_sharp,
               size: 35,
             ),
@@ -1067,10 +1563,11 @@ class _MenuItemInCartState extends State<MenuItemInCart> {
                 }
               });
             },
-            color: Color(0xFFFA6E00),
+            color: const Color(0xFFFA6E00),
           ),
           Text(
-            'Rs ${widget.productDetails.totalPrice}',
+            // 'Rs ${widget.productDetails.price}/item',
+            'Rs ${widget.productDetails.totalPrice}', // commenting because now unable to do default check issue
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               color: Color(0xFFFA6E00),

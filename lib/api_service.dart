@@ -1090,51 +1090,6 @@ class Auth with ChangeNotifier {
     }
   }
 
-  // Future<dynamic> getSheetUrl() async {
-  //   final String url = 'https://app.cloudbelly.in/inventory/get-sheet';
-
-  //   final Map<String, dynamic> requestBody = {
-  //     'user_id': user_id,
-  //     'user_email': user_email, //email id here
-  //   };
-
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(url),
-  //       headers: headers,
-  //       body: jsonEncode(requestBody),
-  //     );
-  //     print(jsonDecode((response.body)));
-
-  //     return jsonDecode((response.body));
-  //   } catch (error) {
-  //     // Handle exceptions
-  //     return '-1';
-  //   }
-  // }
-
-  // Future<dynamic> SyncInventory() async {
-  //   final String url = 'https://app.cloudbelly.in/inventory/sync';
-
-  //   final Map<String, dynamic> requestBody = {
-  //     'user_id': user_id,
-  //     'user_email': user_email, //email id here
-  //   };
-
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(url),
-  //       headers: headers,
-  //       body: jsonEncode(requestBody),
-  //     );
-  //     print(response.body);
-
-  //     return jsonDecode((response.body));
-  //   } catch (error) {
-  //     // Handle exceptions
-  //     return '-1';
-  //   }
-  // }
 
   Future<String> createPost(List<String> list, List<String> tags,
       String caption, List<dynamic> selectedMenuList) async {
@@ -1290,7 +1245,7 @@ class Auth with ChangeNotifier {
     final String url = 'https://app.cloudbelly.in/follow';
 
     final Map<String, dynamic> requestBody = {
-      "current_user_id": userData?['user_id'] ?? "",
+      "current_user_id": userData?['user_id'] ,
       "profile_user_id": id,
     };
 
@@ -1300,7 +1255,6 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-
       return {
         'body': jsonDecode((response.body)),
         'code': response.statusCode,
@@ -1412,27 +1366,6 @@ class Auth with ChangeNotifier {
     }
   }
 
-  // Future<dynamic> getInventoryData() async {
-  //   final String url = 'https://app.cloudbelly.in/inventory/data';
-
-  //   // bool _isOK = false;
-  //   Map<String, dynamic> requestBody = {
-  //     "user_id": user_id,
-  //   };
-
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(url),
-  //       headers: headers,
-  //       body: jsonEncode(requestBody),
-  //     );
-
-  //     return jsonDecode((response.body));
-  //   } catch (error) {
-  //     // Handle exceptions
-  //     return '-1';
-  //   }
-  // }
 
   Future<String> commentPost(String id, String comment) async {
     final String url = 'https://app.cloudbelly.in/update-posts';
@@ -1679,6 +1612,38 @@ class Auth with ChangeNotifier {
       print("error:$error");
       notifyListeners();
       return null;
+    }
+  }
+
+// for getting upi
+ Future<dynamic> getSellerQr(String? orderId, id,amount) async {
+    final String url = '${baseUrl}order/upi';
+  
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {};
+    requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      'order_id': orderId,
+      "order_from_user_id": id,
+      'amount': amount,
+    };
+    print(requestBody);
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+      
+      print("jsonResponse:: ${response.body}");
+     
+
+      return jsonDecode((response.body));
+    } catch (error) {
+      // Handle exceptions
+      return '-1';
     }
   }
 
