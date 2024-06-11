@@ -74,19 +74,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
                   title,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
               ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: notifications.length,
                 itemBuilder: (context, index) {
                   final notification = notifications[index];
                   return Container(
                       margin:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                      padding: EdgeInsets.all(16.0),
+                          const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      padding: const EdgeInsets.all(16.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(15.0),
@@ -128,9 +128,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 children: [
                                   Text(
                                     timeAgo(notification['created_date']),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 10.0,
-                                      color: Colors.grey,
+
+                                      color: Color(0xFFFA6E00),
                                     ),
                                   ),
                                   SizedBox(
@@ -329,7 +330,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       height: 12,
                     ),
                     buildSocialNotificationList(
-                        'Social', itemProvider.notificationDetails),
+                        'Socials', itemProvider.notificationDetails),
                     (itemProvider.userData?['user_type'] ?? '') == 'Vendor'
                         ? buildNotificationList('Accepted Orders',
                             itemProvider.acceptedOrders, false)

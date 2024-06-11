@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
 
 import 'dart:typed_data';
 import 'dart:ui';
@@ -118,12 +119,58 @@ class _PaymentOptionsState extends State<PaymentOptions> {
     if (paymentScreenshot == null) {
       return;
     }
-    TOastNotification()
-        .showSuccesToast(context, 'Payment confirmed successfully.');
-    print("Payment screenshot uploaded");
-    setState(() {
-      isPaymentConfirmed = true;
+
+    final file = File(paymentScreenshot!.path);
+    final url = Uri.parse('https://app.cloudbelly.in/upload');
+
+    final request = http.MultipartRequest('POST', url)
+      ..headers['Accept'] = '*/*'
+      ..headers['User-Agent'] = 'Thunder Client (https://www.thunderclient.com)'
+      ..files.add(await http.MultipartFile.fromPath('file', file.path));
+
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      final responseBody = await response.stream.bytesToString();
+      final responseData = json.decode(responseBody);
+      final s3BucketLink = responseData['file_url']; // Adjust according to your API response structure
+
+      print("Payment screenshot uploaded: $s3BucketLink");
+
+      // Call the verify payment API
+      await verifyPayment(s3BucketLink);
+
+      setState(() {
+        isPaymentConfirmed = true;
+      });
+
+      TOastNotification().showSuccesToast(context, 'Payment confirmed successfully.');
+    } else {
+      print('Failed to upload payment screenshot');
+    }
+  }
+
+  Future<void> verifyPayment(String transactionImageUrl) async {
+    final url = Uri.parse('https://app.cloudbelly.in/order/verify_payment');
+    final body = json.encode({
+     'user_id': widget.userId,
+      'order_from_user_id': widget.orderFromUserId,
+      'order_id': widget.orderId,
+      "amount": widget.amount.toString(),
+      "transaction_image": transactionImageUrl,
     });
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      print('Payment verified successfully');
+    } else {
+      print('Failed to verify payment');
+    }
   }
 
   Future<void> pickPaymentScreenshot() async {
@@ -141,7 +188,10 @@ class _PaymentOptionsState extends State<PaymentOptions> {
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return AlertDialog(
-      backgroundColor: const Color.fromRGBO(46, 5, 54, 1),
+      // backgroundColor: const Color(0xFF2E0536),
+      backgroundColor: Color(0xFF2E0536),
+      
+      
       shape: SmoothRectangleBorder(
         borderRadius: SmoothBorderRadius(
           cornerRadius: 35,
@@ -743,7 +793,9 @@ class _ViewCartState extends State<ViewCart> {
   }
 
   void createProductOrder() async {
+    print("addmodel ${context.read<ViewCartProvider>().addressModel}");
     if (context.read<ViewCartProvider>().addressModel == null) {
+
       TOastNotification().showErrorToast(context, "Please Select Address");
     } else {
       AppWideLoadingBanner().loadingBanner(context);
