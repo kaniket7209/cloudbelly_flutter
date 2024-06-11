@@ -52,11 +52,13 @@ class Auth with ChangeNotifier {
 
   // Assume your API response provides this status categorization
   List<Map<String, dynamic>> get acceptedOrders =>
-      orderDetails.where((order) => order['status'] == 'accepted').toList();
+      orderDetails.where((order) => order['status'] == 'Accepted').toList();
   List<Map<String, dynamic>> get incomingOrders =>
-      orderDetails.where((order) => order['status'] == 'Submitted').toList();
+      orderDetails.where((order) => order['status'] == null).toList();
   List<Map<String, dynamic>> get completedOrders =>
       orderDetails.where((order) => order['status'] == 'delivered').toList();
+  List get paymentDetails =>
+      notificationDetails.where((order) => order['msg']['type'] == 'payment_verification').toList();
 
   // get user_logo_url {
   //   notifyListeners();
@@ -152,48 +154,39 @@ class Auth with ChangeNotifier {
     // return sum;
   }
 
-  Future<void> getNotificationList() async {
-    try {
-      final response = await http.post(
-        Uri.parse("https://app.cloudbelly.in/get-notification"),
-        headers: {
-          'Content-Type': 'application/json',
-          // Add other necessary headers here
-        },
-        body: jsonEncode({"user_id": userData?['user_id'] ?? ""}),
-      );
-      final orders = await http.post(
-        Uri.parse("https://app.cloudbelly.in/order/get"),
-        headers: {
-          'Content-Type': 'application/json',
-          // Add other necessary headers here
-        },
-        body: jsonEncode({"order_from_user_id": userData?['user_id'] ?? ""}),
-      );
-
-      orderDetails = List<Map<String, dynamic>>.from(jsonDecode(orders.body));
-      if (response.statusCode == 200) {
-        var notif = List<Map<String, dynamic>>.from(jsonDecode(response.body));
-        print("notif");
-        print(notif);
-        notificationDetails = notif
-            .where((element) =>
-                element['msg']['type'] != 'order' &&
-                element['msg']['type'] != 'payment' &&
-                element['msg']['type'] != 'delivery')
-            .toList();
-        notifyListeners();
-        print(notificationDetails);
-      } else {
-        // Handle errors appropriately
-        throw Exception('Failed to load notifications');
-      }
-    } catch (error) {
-      // Handle network errors, etc.
-      throw error;
+Future<void> getNotificationList() async {
+  try {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/get-notification"),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({"user_id": userData?['user_id'] ?? ""}),
+    );
+    final orders = await http.post(
+      Uri.parse("https://app.cloudbelly.in/order/get"),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({"order_from_user_id": userData?['user_id'] ?? ""}),
+    );
+    orderDetails = List<Map<String, dynamic>>.from(jsonDecode(orders.body));
+    if (response.statusCode == 200) {
+      var notif = List<Map<String, dynamic>>.from(jsonDecode(response.body));
+      notificationDetails = notif.where((element) => 
+        element['msg']['type'] == 'social' ||
+        element['msg']['type'] == 'payment_verification' ||
+        element['msg']['type'] == 'order' 
+      ).toList();
+      notifyListeners();
+    } else {
+      throw Exception('Failed to load notifications');
     }
-    notifyListeners();
+  } catch (error) {
+    throw error;
   }
+  notifyListeners();
+}
 
   removeItem(item) {
     int idx = itemAdd.indexWhere((element) => element.id == item.id);

@@ -71,7 +71,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return notifications.isEmpty
         ? Container()
         : Column(
-
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
@@ -245,7 +244,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   final notification = displayedNotifications[index];
                   return Container(
                     margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(15.0),
@@ -296,10 +295,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Consumer<Auth>(
         builder: (context, itemProvider, child) {
-          print("itemProvider.userData ${itemProvider.userData}");
           return itemProvider.orderDetails.isNotEmpty
               ? ListView(
                   children: [
@@ -311,15 +308,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       ),
                     ),
                     SizedBox(height: 12),
-                    
                     buildSocialNotificationList('Socials', itemProvider.notificationDetails, showAllSocialNotifications),
-                    // if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
+                    if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
                       buildNotificationList('Accepted Orders', itemProvider.acceptedOrders, showAllOrderNotifications, false),
-                    // if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
+                    if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
                       buildNotificationList('Incoming Orders', itemProvider.incomingOrders, showAllOrderNotifications, true),
-                    // if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
+                    if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
                       buildNotificationList('Completed Orders', itemProvider.completedOrders, showAllOrderNotifications, false),
-                    buildSocialNotificationList('Payment Verification', itemProvider.paymentDetails, showAllSocialNotifications),
                   ],
                 )
               : Center(child: Text('No notifications available'));

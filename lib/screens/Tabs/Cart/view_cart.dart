@@ -159,7 +159,13 @@ class _PaymentOptionsState extends State<PaymentOptions> {
       "amount": widget.amount.toString(),
       "transaction_image": transactionImageUrl,
     });
-
+    print("payloadd  ${json.encode({
+     'user_id': widget.userId,
+      'order_from_user_id': widget.orderFromUserId,
+      'order_id': widget.orderId,
+      "amount": widget.amount.toString(),
+      "transaction_image": transactionImageUrl,
+    })}");
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -209,13 +215,15 @@ class _PaymentOptionsState extends State<PaymentOptions> {
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Thank you,\nYour order has\n been placed.',
+                        'Thank you,\nYour order has\nbeen placed.',
                         style: TextStyle(
                           fontSize: 25,
                           fontFamily: 'Product Sans',
@@ -229,10 +237,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                       ),
                     ],
                   ),
-                ],
-              ),
-              Space(2.h),
-              GestureDetector(
+                   GestureDetector(
                 onTap: () async {
                   final phoneNumber = widget.prepData['phone'];
                   final url = 'tel:$phoneNumber';
@@ -249,32 +254,47 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   child: Image.asset('assets/images/Phone.png'),
                 ),
               ),
-            ],
+       
+                ],
+              ),
+              Space(2.h),
+                  ],
           )
         : Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+              Stack(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    child: IconButton(
-                      icon: Image.asset('assets/images/back_double_arrow.png'),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(left: 30),
-                    child: const Text(
-                      'Scan to pay',
-                      style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Product Sans',
+                  Positioned.directional(
+                    textDirection: TextDirection.ltr,
+                    child: Container(
+                      
+                      child: IconButton(
+                        icon: Image.asset('assets/images/back_double_arrow.png'),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
                   ),
+                  Center(
+                    child: Container(
+                     
+                      // padding: const EdgeInsets.only(left: 30),
+                      child: const Text(
+                        'Scan to pay',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          
+                          fontSize: 25,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                    ),
+                  ),
+                  
+                 
                 ],
               ),
               GestureDetector(
@@ -378,36 +398,33 @@ class _PaymentOptionsState extends State<PaymentOptions> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Name - ${widget.prepData['store_name']}',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Name - ${widget.prepData['store_name']}',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
                         ),
-                        const SizedBox(height: 4), // Add space between lines
-                        Text(
-                          'Order No - ${widget.prepData['order_no']}',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
+                      ),
+                      const SizedBox(height: 4), // Add space between lines
+                      Text(
+                        'Order No - ${widget.prepData['order_no']}',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 40.0),
+                    padding: const EdgeInsets.only(left: 20),
                     child: GestureDetector(
                       onTap: () async {
                         final phoneNumber = widget.prepData['phone'];
@@ -561,51 +578,56 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
           cornerRadius: 35,
           cornerSmoothing: 1,
         )),
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(right: 20),
-                  child: IconButton(
-                    icon: Image.asset('assets/images/back_double_arrow.png'),
-                    onPressed: () => Navigator.of(context).pop(),
+        title: Container(
+       
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
+                children: [
+                  Positioned.directional(
+                    textDirection: TextDirection.ltr,
+                    child: IconButton(
+                      icon: Image.asset('assets/images/back_double_arrow.png'),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
-                ),
-                // const SizedBox(width: 20),
-
-                const Text(
-                  'Payment',
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Product Sans",
-                      color: Colors.white),
-                ),
-              ],
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: Center(
-                child: Container(
-                  width: 100,
-                  height: 5,
-                  decoration: ShapeDecoration(
-                    color: const Color(0xFFFA6E00),
-                    shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius(
-                      cornerRadius: 12,
-                      cornerSmoothing: 1,
-                    )),
+                  // const SizedBox(width: 20),
+          
+                  const Center(
+                    child: Text(
+                      'Payment',
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Product Sans",
+                          color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Center(
+                  child: Container(
+                    width: 100,
+                    height: 5,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFFFA6E00),
+                      shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 1,
+                      )),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Space(2.h),
-          ],
+              Space(2.h),
+            ],
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -793,8 +815,8 @@ class _ViewCartState extends State<ViewCart> {
   }
 
   void createProductOrder() async {
-    print("addmodel ${context.read<ViewCartProvider>().addressModel}");
-    if (context.read<ViewCartProvider>().addressModel == null) {
+    print("addmodel ${context.read<ViewCartProvider>().addressModel?.location}");
+    if (context.read<ViewCartProvider>().addressModel?.location == null) {
 
       TOastNotification().showErrorToast(context, "Please Select Address");
     } else {
