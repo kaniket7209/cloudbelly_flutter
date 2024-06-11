@@ -133,7 +133,8 @@ class _PaymentOptionsState extends State<PaymentOptions> {
     if (response.statusCode == 200) {
       final responseBody = await response.stream.bytesToString();
       final responseData = json.decode(responseBody);
-      final s3BucketLink = responseData['file_url']; // Adjust according to your API response structure
+      final s3BucketLink = responseData[
+          'file_url']; // Adjust according to your API response structure
 
       print("Payment screenshot uploaded: $s3BucketLink");
 
@@ -144,7 +145,8 @@ class _PaymentOptionsState extends State<PaymentOptions> {
         isPaymentConfirmed = true;
       });
 
-      TOastNotification().showSuccesToast(context, 'Payment confirmed successfully.');
+      TOastNotification()
+          .showSuccesToast(context, 'Payment confirmed successfully.');
     } else {
       print('Failed to upload payment screenshot');
     }
@@ -153,19 +155,13 @@ class _PaymentOptionsState extends State<PaymentOptions> {
   Future<void> verifyPayment(String transactionImageUrl) async {
     final url = Uri.parse('https://app.cloudbelly.in/order/verify_payment');
     final body = json.encode({
-     'user_id': widget.userId,
+      'user_id': widget.userId,
       'order_from_user_id': widget.orderFromUserId,
       'order_id': widget.orderId,
-      "amount": widget.amount.toString(),
+      "amount":widget.prepData['amount'],
       "transaction_image": transactionImageUrl,
     });
-    print("payloadd  ${json.encode({
-     'user_id': widget.userId,
-      'order_from_user_id': widget.orderFromUserId,
-      'order_id': widget.orderId,
-      "amount": widget.amount.toString(),
-      "transaction_image": transactionImageUrl,
-    })}");
+
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -196,8 +192,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
     return AlertDialog(
       // backgroundColor: const Color(0xFF2E0536),
       backgroundColor: Color(0xFF2E0536),
-      
-      
+
       shape: SmoothRectangleBorder(
         borderRadius: SmoothBorderRadius(
           cornerRadius: 35,
@@ -215,9 +210,9 @@ class _PaymentOptionsState extends State<PaymentOptions> {
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,28 +232,28 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                       ),
                     ],
                   ),
-                   GestureDetector(
-                onTap: () async {
-                  final phoneNumber = widget.prepData['phone'];
-                  final url = 'tel:$phoneNumber';
-                  if (await canLaunch(url)) {
-                    await launch(url);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Could not launch phone call')),
-                    );
-                  }
-                },
-                child: CircleAvatar(
-                  backgroundColor: const Color(0xFFFA6E00),
-                  child: Image.asset('assets/images/Phone.png'),
-                ),
-              ),
-       
+                  GestureDetector(
+                    onTap: () async {
+                      final phoneNumber = widget.prepData['phone'];
+                      final url = 'tel:$phoneNumber';
+                      if (await canLaunch(url)) {
+                        await launch(url);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('Could not launch phone call')),
+                        );
+                      }
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: const Color(0xFFFA6E00),
+                      child: Image.asset('assets/images/Phone.png'),
+                    ),
+                  ),
                 ],
               ),
               Space(2.h),
-                  ],
+            ],
           )
         : Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -269,22 +264,20 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   Positioned.directional(
                     textDirection: TextDirection.ltr,
                     child: Container(
-                      
                       child: IconButton(
-                        icon: Image.asset('assets/images/back_double_arrow.png'),
+                        icon:
+                            Image.asset('assets/images/back_double_arrow.png'),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
                   ),
                   Center(
                     child: Container(
-                     
                       // padding: const EdgeInsets.only(left: 30),
                       child: const Text(
                         'Scan to pay',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          
                           fontSize: 25,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -293,8 +286,6 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                       ),
                     ),
                   ),
-                  
-                 
                 ],
               ),
               GestureDetector(
@@ -338,8 +329,8 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 15),
                     shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(
                         cornerRadius: 12,
@@ -350,7 +341,6 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   onPressed: () {
                     // Add track order functionality here
                   },
-                  
                   child: const Text(
                     'Track order',
                     style: TextStyle(
@@ -364,7 +354,6 @@ class _PaymentOptionsState extends State<PaymentOptions> {
               Space(2.h),
               Container(
                 width: 55.w,
-               
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
@@ -519,7 +508,6 @@ class _PaymentOptionsState extends State<PaymentOptions> {
     return !isPaymentConfirmed
         ? [
             SizedBox(
-             
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -579,7 +567,6 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
           cornerSmoothing: 1,
         )),
         title: Container(
-       
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -593,7 +580,7 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
                     ),
                   ),
                   // const SizedBox(width: 20),
-          
+
                   const Center(
                     child: Text(
                       'Payment',
@@ -649,6 +636,10 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
                 onPressed: () {
                   Navigator.of(context).pop();
                   // Add cash on delivery functionality here
+                  submitCustomerOrder(
+                      context, orderId, "cod", orderFromUserId, prepData);
+                      
+
                 },
                 child: const Text(
                   'Cash on delivery',
@@ -695,6 +686,36 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
       );
     },
   );
+}
+
+void submitCustomerOrder(
+    BuildContext context,
+    String orderId,
+    String payment_method,
+    String orderFromUserId,
+    Map<String, dynamic> prepData) async {
+  var userData = UserPreferences.getUser();
+  final url = Uri.parse('https://app.cloudbelly.in/order/submit');
+  final body = json.encode({
+    "user_id": userData?['user_id'] ?? "",
+    "order_from_user_id": orderFromUserId,
+    "order_id": orderId,
+    "payment_mode":payment_method
+  });
+
+  final response = await http.post(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: body,
+  );
+
+  if (response.statusCode == 200) {
+    TOastNotification()
+          .showSuccesToast(context, 'Order no ${prepData['order_no']} submitted successfully ');
+    print('Order  submitted successfully');
+  } else {
+    print('Failed to submit order');
+  }
 }
 
 void openPaymentOptions(BuildContext context, String orderId, String sellerUpi,
@@ -815,9 +836,9 @@ class _ViewCartState extends State<ViewCart> {
   }
 
   void createProductOrder() async {
-    print("addmodel ${context.read<ViewCartProvider>().addressModel?.location}");
+    print(
+        "addmodel ${context.read<ViewCartProvider>().addressModel?.location}");
     if (context.read<ViewCartProvider>().addressModel?.location == null) {
-
       TOastNotification().showErrorToast(context, "Please Select Address");
     } else {
       AppWideLoadingBanner().loadingBanner(context);
@@ -1208,6 +1229,7 @@ class _ViewCartState extends State<ViewCart> {
                     ),
                     TouchableOpacity(
                       onTap: () {
+                        convertedList.clear();
                         context
                             .read<ViewCartProvider>()
                             .productList
@@ -1224,7 +1246,7 @@ class _ViewCartState extends State<ViewCart> {
 
                           convertedList.add(newItem);
                         });
-                        print(convertedList);
+                        print("convertedList  $convertedList");
                         createProductOrder();
                       },
                       child: Container(
@@ -1253,42 +1275,7 @@ class _ViewCartState extends State<ViewCart> {
                         ),
                       ),
                     ),
-                    // // UPI Payment Button
-                    // TouchableOpacity(
-                    //   onTap: () {
-                    //     String upiId = '6206630515@paytm'; // Replace with actual UPI ID
-                    //     String name = 'Aniket Kumar Singh'; // Replace with actual vendor name
-                    //     String amount = totalAmount.toString(); // Use the calculated total amount
-                    //     String transactionId = 'transaction_id_123'; // Generate or use actual transaction ID
-                    //     initiateUpiPayment(upiId, name, amount, transactionId);
-                    //   },
-                    //   child: Container(
-                    //     height: 41,
-                    //     padding: const EdgeInsets.symmetric(horizontal: 18),
-                    //     decoration: ShapeDecoration(
-                    //       color: const Color.fromRGBO(84, 166, 193, 1),
-                    //       shape: SmoothRectangleBorder(
-                    //           borderRadius: SmoothBorderRadius(
-                    //         cornerRadius: 12,
-                    //         cornerSmoothing: 1,
-                    //       )),
-                    //     ),
-                    //     child: const Center(
-                    //       child: Text(
-                    //         'Pay with UPI',
-                    //         style: TextStyle(
-                    //           color: Colors.white,
-                    //           fontSize: 14,
-                    //           fontFamily: 'Product Sans',
-                    //           fontWeight: FontWeight.w700,
-                    //           height: 0,
-                    //           letterSpacing: 0.14,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-
-                    // ),
+                    
                   ],
                 ),
               ),
