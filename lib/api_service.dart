@@ -51,10 +51,10 @@ class Auth with ChangeNotifier {
   List<Map<String, dynamic>> orderDetails = [];
 
   // Assume your API response provides this status categorization
+  List<Map<String, dynamic>> get incomingOrders =>
+      orderDetails.where((order) => order['status'] == 'Submitted').toList();
   List<Map<String, dynamic>> get acceptedOrders =>
       orderDetails.where((order) => order['status'] == 'Accepted').toList();
-  List<Map<String, dynamic>> get incomingOrders =>
-      orderDetails.where((order) => order['status'] == null).toList();
   List<Map<String, dynamic>> get completedOrders =>
       orderDetails.where((order) => order['status'] == 'delivered').toList();
   List get paymentDetails =>
@@ -77,38 +77,42 @@ class Auth with ChangeNotifier {
   };
 
   Future<void> acceptOrder(
-      String orderId, String userId, String order_from) async {
+      String orderId, String userId, String orderFrom) async {
     final response = await http.post(
       Uri.parse("https://app.cloudbelly.in/order/accept"),
       headers: headers,
       body: jsonEncode({
         "user_id": userId,
-        "order_from_user_id": order_from,
+        "order_from_user_id": orderFrom,
         "order_id": orderId
       }),
     );
-    print(response.body);
+    print("response.body  ${response.body}");
     if (response.statusCode == 200) {
       // Find the order and move it to acceptedOrders
       final order = orderDetails.indexWhere((order) => order['_id'] == orderId);
       print("prder is");
       print(order);
-      // acceptedOrders.add(incomingOrders[order]);
-      // incomingOrders.removeAt(order);
-      orderDetails[order]['status'] = 'accepted';
-      print(incomingOrders);
-      print(acceptedOrders);
+      acceptedOrders.add(incomingOrders[order]);
+      incomingOrders.removeAt(order);
+      orderDetails[order]['status'] = 'Accepted';
+      print("incomingOrders $incomingOrders");
+      print("acceptedOrders $acceptedOrders");
       notifyListeners();
     } else {
       throw Exception('Failed to accept order');
     }
   }
 
-  Future<void> markOrderAsDelivered(String orderId) async {
+  Future<void> markOrderAsDelivered(String orderId, String userId, String orderFrom) async {
     final response = await http.post(
-      Uri.parse("https://app.cloudbelly.in/order/mark-as-delivered"),
+      Uri.parse("https://app.cloudbelly.in/order/delivered"),
       headers: headers,
-      body: jsonEncode({"order_id": orderId}),
+       body: jsonEncode({
+        "user_id": userId,
+        "order_from_user_id": orderFrom,
+        "order_id": orderId
+      }),
     );
     if (response.statusCode == 200) {
       // Find the order and move it to completedOrders
@@ -175,8 +179,7 @@ Future<void> getNotificationList() async {
       var notif = List<Map<String, dynamic>>.from(jsonDecode(response.body));
       notificationDetails = notif.where((element) => 
         element['msg']['type'] == 'social' ||
-        element['msg']['type'] == 'payment_verification' ||
-        element['msg']['type'] == 'order' 
+        element['msg']['type'] == 'payment_verification' 
       ).toList();
       notifyListeners();
     } else {
