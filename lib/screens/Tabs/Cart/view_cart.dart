@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'dart:typed_data';
+import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'dart:ui';
 import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:flutter/painting.dart';
@@ -30,6 +31,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cloudbelly_app/screens/Tabs/order_page.dart';
 
 String createUpiPaymentUrl(
     String upiId, String name, String amount, String transactionId) {
@@ -158,7 +160,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
       'user_id': widget.userId,
       'order_from_user_id': widget.orderFromUserId,
       'order_id': widget.orderId,
-      "amount":widget.prepData['amount'],
+      "amount": widget.prepData['amount'],
       "transaction_image": transactionImageUrl,
     });
 
@@ -340,6 +342,11 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   ),
                   onPressed: () {
                     // Add track order functionality here
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => OrderPage()),
+                    );
                   },
                   child: const Text(
                     'Track order',
@@ -368,6 +375,8 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   ),
                   onPressed: () {
                     // Add continue shopping functionality here
+                    Navigator.of(context).pop();
+                    
                   },
                   child: const Text(
                     'Continue shopping',
@@ -638,8 +647,6 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
                   // Add cash on delivery functionality here
                   submitCustomerOrder(
                       context, orderId, "cod", orderFromUserId, prepData);
-                      
-
                 },
                 child: const Text(
                   'Cash on delivery',
@@ -700,7 +707,7 @@ void submitCustomerOrder(
     "user_id": userData?['user_id'] ?? "",
     "order_from_user_id": orderFromUserId,
     "order_id": orderId,
-    "payment_mode":payment_method
+    "payment_mode": payment_method
   });
 
   final response = await http.post(
@@ -710,8 +717,8 @@ void submitCustomerOrder(
   );
 
   if (response.statusCode == 200) {
-    TOastNotification()
-          .showSuccesToast(context, 'Order no ${prepData['order_no']} submitted successfully ');
+    TOastNotification().showSuccesToast(
+        context, 'Order no ${prepData['order_no']} submitted successfully ');
     print('Order  submitted successfully');
   } else {
     print('Failed to submit order');
@@ -1275,7 +1282,6 @@ class _ViewCartState extends State<ViewCart> {
                         ),
                       ),
                     ),
-                    
                   ],
                 ),
               ),

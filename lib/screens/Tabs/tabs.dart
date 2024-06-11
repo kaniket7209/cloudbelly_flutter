@@ -6,6 +6,7 @@ import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/cart.dart';
+import 'package:cloudbelly_app/screens/Tabs/order_page.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/screens/Tabs/Search/search_view.dart';
 import 'package:cloudbelly_app/screens/Tabs/supplier/supplier_dashboard.dart';
@@ -43,7 +44,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           ? Icons.laptop
           : userType == UserType.Supplier.name
               ? Icons.laptop
-              : Icons.search,
+              : Icons.history,
       Icons.notifications_outlined,
       Icons.person,
       // Icons.brightness_1,
@@ -54,7 +55,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           ? 'Dashboard'
           : userType == UserType.Supplier.name
               ? 'Dashboard'
-              : 'Search',
+              : 'History',
       'Notifications',
       'Profile',
       // 'Account',
@@ -65,7 +66,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           ? const DashBoard()
           : userType == UserType.Supplier.name
               ? const SupplierDashboard()
-              : const SearchView(),
+              :  OrderPage(),
 
       // UploadPage(),
       const NotificationScreen(),
