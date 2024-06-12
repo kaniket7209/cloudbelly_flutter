@@ -234,7 +234,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                   GestureDetector(
                                   
                                     onTap: () async {
-                                      final phoneNumber = notification['customer_phone'];
+                                      final phoneNumber = notification['phone'];
                                       final url = 'tel:$phoneNumber';
                                       if (await canLaunch(url)) {
                                         await launch(url);
@@ -396,7 +396,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget buildSocialNotificationList(
       String title, List notifications, bool showAll) {
     final List displayedNotifications =
-        showAll ? notifications.take(0).toList() : notifications;
+        showAll
+         ? notifications
+         : notifications.take(3).toList();
     return notifications.isEmpty
         ? Container()
         : Column(
@@ -415,7 +417,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           color: Color(0xff0A4C61),
                           fontWeight: FontWeight.bold),
                     ),
-                    if (notifications.length > 0)
+                    if (notifications.length > 3)
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -443,7 +445,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               .min, // Ensures the row takes up the minimum space needed
                           children: [
                             Text(
-                              showAll ? 'See all' : 'See less',
+                              showAll ? 'See less' : 'See all',
                               style: TextStyle(
                                   color: Color(0xff0A4C61),
                                   fontWeight: FontWeight.bold,
