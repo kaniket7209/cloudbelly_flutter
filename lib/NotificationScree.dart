@@ -1,6 +1,8 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
+import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -34,11 +36,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
 
-  String formatItems(List<dynamic> items) {
-    return items
+ String formatItems(List<dynamic> items) {
+  List<String> formattedItems = [];
+  for (int i = 0; i < items.length; i += 2) {
+    String line = items
+        .skip(i)
+        .take(2)
         .map((item) => '${item['name']} x ${item['quantity']}')
         .join(', ');
+    formattedItems.add(line);
   }
+  return formattedItems.join('\n');
+}
 
   String timeAgo(String d) {
     final DateFormat formatter =
@@ -83,8 +92,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
+                      
                       title,
                       style: const TextStyle(
+                        color:Color(0xff0A4C61),
                           fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     if (notifications.length > 4)
@@ -144,15 +155,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "${notification['store_name']} ordered for RS ${notification['total_price']}",
-                                style: TextStyle(
+                                "${notification['store_name']}  |  Order no - ${notification['order_no']} ",
+                                style: const TextStyle(
                                     fontSize: 14.0,
+                                    fontFamily: 'Product Sans',
+                                    color: Color(0xff0A4C61),
                                     fontWeight: FontWeight.bold),
+                                    
                               ),
+                              Space(1),
                               Text(
                                 formatItems(notification['items']),
                                 style: TextStyle(
-                                    fontSize: 12.0, color: Colors.grey),
+                                    fontSize: 14.0, color: Color(0xff0A4C61),fontWeight: FontWeight.bold),
                               ),
                               Row(
                                 children: [
@@ -188,30 +203,86 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           ),
                         ),
                         notification['status'] == 'Submitted'
-                            ? Row(
+                            ? Column(
                                 children: [
-                                  GestureDetector(
-                                    onTap: () async {
-                                      try {
-                                        await Provider.of<Auth>(context,
-                                                listen: false)
-                                            .acceptOrder(
-                                                notification['_id'],
-                                                notification['user_id'],
-                                                notification[
-                                                    'order_from_user_id']);
-                                      } catch (e) {
-                                        print("${e.toString()}");
-                                      }
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          color: Colors.green),
-                                      child: Icon(Icons.check,
-                                          color: Colors.white),
-                                    ),
+                                  Center(
+                                    child: Text(
+                                        "RS ${notification['total_price']}",
+                                        style: const TextStyle(
+                                            color: Color(0xff0A4C61),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  Space(10),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      // Text("${notification['payment_mode']}",
+                                      //   style: TextStyle(
+                                      //       color: Colors.white, fontSize: 10)),
+                                      
+                                      GestureDetector(
+                                        onTap: () async {
+                                          try {
+                                            await Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .acceptOrder(
+                                                    notification['_id'],
+                                                    notification['user_id'],
+                                                    notification[
+                                                        'order_from_user_id']);
+                                          } catch (e) {
+                                            print("${e.toString()}");
+                                          }
+                                        },
+                                        child: Container(
+                                          width: 30,
+                                          decoration: ShapeDecoration(
+                                            color: const Color(0xFFFD4F4F),
+                                            shape: SmoothRectangleBorder(
+                                                borderRadius:
+                                                    SmoothBorderRadius(
+                                              cornerRadius: 10,
+                                              cornerSmoothing: 1,
+                                            )),
+                                          ),
+                                          child: Image.asset(
+                                              'assets/images/Multiply.png'),
+                                        ),
+                                      ),
+                                      SizedBox(width: 10,),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          try {
+                                            await Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .acceptOrder(
+                                                    notification['_id'],
+                                                    notification['user_id'],
+                                                    notification[
+                                                        'order_from_user_id']);
+                                          } catch (e) {
+                                            print("${e.toString()}");
+                                          }
+                                        },
+                                        child: Container(
+                                          width: 30,
+                                          decoration: ShapeDecoration(
+                                            color: const Color(0xFF1ACD0A),
+                                            shape: SmoothRectangleBorder(
+                                                borderRadius:
+                                                    SmoothBorderRadius(
+                                              cornerRadius: 10,
+                                              cornerSmoothing: 1,
+                                            )),
+                                          ),
+                                          child: Image.asset(
+                                              'assets/images/Done.png'),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               )
@@ -279,7 +350,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     Text(
                       title,
                       style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      
+                          TextStyle(fontSize: 18, color:Color(0xff0A4C61),fontWeight: FontWeight.bold),
                     ),
                     if (notifications.length > 4)
                       GestureDetector(
@@ -324,12 +396,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     child: Row(
                       children: [
                         CircleAvatar(
-                          backgroundImage: notification['msg']
-                                      ['from_profile_photo'] !=
-                                  ''
-                              ? NetworkImage(notification['msg']
-                                  ['from_profile_photo']) as ImageProvider
-                              : AssetImage(Assets.appIcon) ,
+                          backgroundImage:
+                              notification['msg']['from_profile_photo'] != ''
+                                  ? NetworkImage(notification['msg']
+                                      ['from_profile_photo']) as ImageProvider
+                                  : AssetImage(Assets.appIcon),
                           radius: 20,
                         ),
                         SizedBox(width: 16.0),
@@ -394,6 +465,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
                       buildNotificationList(
                           'Accepted Orders',
+
                           itemProvider.acceptedOrders,
                           showAllOrderNotifications,
                           false),
