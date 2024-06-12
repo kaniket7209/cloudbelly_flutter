@@ -245,7 +245,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                           try {
                                             await Provider.of<Auth>(context,
                                                     listen: false)
-                                                .acceptOrder(
+                                                .rejectOrder(
                                                     notification['_id'],
                                                     notification['user_id'],
                                                     notification[

@@ -96,6 +96,26 @@ Future<void> acceptOrder(String orderId, String userId, String orderFrom) async 
     throw Exception('Failed to accept order');
   }
 }
+Future<void> rejectOrder(String orderId, String userId, String orderFrom) async {
+  final response = await http.post(
+    Uri.parse("https://app.cloudbelly.in/order/reject"),
+    headers: headers,
+    body: jsonEncode({
+      "user_id": userId,
+      "order_from_user_id": orderFrom,
+      "order_id": orderId
+    }),
+  );
+  if (response.statusCode == 200) {
+    final orderIndex = orderDetails.indexWhere((order) => order['_id'] == orderId);
+    if (orderIndex != -1) {
+      orderDetails[orderIndex]['status'] = 'Rejected';
+      notifyListeners();
+    }
+  } else {
+    throw Exception('Failed to accept order');
+  }
+}
 
 Future<void> markOrderAsDelivered(String orderId, String userId, String orderFrom) async {
   final response = await http.post(
