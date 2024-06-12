@@ -19,7 +19,9 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   bool showAllSocialNotifications = false;
-  bool showAllOrderNotifications = false;
+  bool showAllAcceptedOrderNotifications = false;
+  bool showAllIncomingOrderNotifications = false;
+  bool showAllCompletedOrderNotifications = false;
   bool showAllPaymentNotifications = false;
 
   @override
@@ -78,8 +80,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget buildNotificationList(String title,
       List<Map<String, dynamic>> notifications, bool showAll, bool isAccepted) {
     final List<Map<String, dynamic>> displayedNotifications = showAll
-        ? notifications
-        : notifications.take(2).toList(); // Changed to 2 for testing
+        ? notifications.take(0).toList()
+        : notifications; // Changed to 2 for testing
 
     // Debug print statements
     print(
@@ -103,7 +105,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                     ),
-                    if (notifications.length > 2) // Changed to 2 for testing
+                    if (notifications.length > 0) // Changed to 2 for testing
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -111,11 +113,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             if (title == 'Socials') {
                               showAllSocialNotifications =
                                   !showAllSocialNotifications;
-                            } else if (title == 'Accepted Orders' ||
-                                title == 'Incoming Orders' ||
-                                title == 'Completed Orders') {
-                              showAllOrderNotifications =
-                                  !showAllOrderNotifications;
+                            } else if (title == 'Accepted Orders') {
+                              showAllAcceptedOrderNotifications =
+                                  !showAllAcceptedOrderNotifications;
+                            } else if (title == 'Incoming Orders') {
+                              showAllIncomingOrderNotifications =
+                                  !showAllIncomingOrderNotifications;
+                            } else if (title == 'Completed Orders') {
+                              showAllCompletedOrderNotifications =
+                                  !showAllCompletedOrderNotifications;
+                            } else if (title == 'Payment Verification') {
+                              showAllPaymentNotifications =
+                                  !showAllPaymentNotifications;
                             }
                           });
                         },
@@ -124,7 +133,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               .min, // Ensures the row takes up the minimum space needed
                           children: [
                             Text(
-                              showAll ? 'See less' : 'See all',
+                              showAll ? 'See all' : 'See less',
                               style: TextStyle(
                                   color: Color(0xff0A4C61),
                                   fontWeight: FontWeight.bold,
@@ -133,7 +142,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             SizedBox(
                                 width:
                                     5), // Add some space between the text and the icon if needed
-                            Image.asset('assets/icons/next_arrow.png',width: 10,),
+                            Image.asset(
+                              'assets/icons/next_arrow.png',
+                              width: 10,
+                            ),
                           ],
                         ),
                       )
@@ -216,7 +228,31 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                         }
                                       }
                                     },
-                                    child: Icon(Icons.directions, size: 16),
+                                    child: Image.asset(
+                                        'assets/images/Navigation.png',width: 30,height: 30,fit: BoxFit.fill,),
+                                  ),
+                                  GestureDetector(
+                                  
+                                    onTap: () async {
+                                      final phoneNumber = notification['customer_phone'];
+                                      final url = 'tel:$phoneNumber';
+                                      if (await canLaunch(url)) {
+                                        await launch(url);
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'Could not launch phone call')),
+                                        );
+                                      }
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 10,
+                                      backgroundColor: const Color(0xFFFA6E00),
+                                      child: Image.asset(
+                                          'assets/images/Phone.png',width: 30,height: 30,fit: BoxFit.fill,),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -304,8 +340,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 ],
                               )
                             : notification['status'] == 'Accepted'
-                                ? Row(
+                                ? Column(
                                     children: [
+                                      Center(
+                                        child: Text(
+                                          "Rs ${notification['amount']}",
+                                          style: const TextStyle(
+                                              fontSize: 15.0,
+                                              fontFamily: 'Product Sans',
+                                              color: Color(0xff0A4C61),
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Space(10),
                                       GestureDetector(
                                         onTap: () async {
                                           try {
@@ -321,13 +368,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                           }
                                         },
                                         child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            color: Colors.blue,
-                                          ),
-                                          child: Icon(Icons.local_shipping,
-                                              color: Colors.white),
+                                          child: Icon(
+                                              Icons.local_shipping_rounded,
+                                              color: Color(0xff0A4C61)),
                                         ),
                                       ),
                                     ],
@@ -353,7 +396,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget buildSocialNotificationList(
       String title, List notifications, bool showAll) {
     final List displayedNotifications =
-        showAll ? notifications : notifications.take(2).toList();
+        showAll ? notifications.take(0).toList() : notifications;
     return notifications.isEmpty
         ? Container()
         : Column(
@@ -372,7 +415,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           color: Color(0xff0A4C61),
                           fontWeight: FontWeight.bold),
                     ),
-                    if (notifications.length > 2)
+                    if (notifications.length > 0)
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -380,11 +423,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             if (title == 'Socials') {
                               showAllSocialNotifications =
                                   !showAllSocialNotifications;
-                            } else if (title == 'Accepted Orders' ||
-                                title == 'Incoming Orders' ||
-                                title == 'Completed Orders') {
-                              showAllOrderNotifications =
-                                  !showAllOrderNotifications;
+                            } else if (title == 'Accepted Orders') {
+                              showAllAcceptedOrderNotifications =
+                                  !showAllAcceptedOrderNotifications;
+                            } else if (title == 'Incoming Orders') {
+                              showAllIncomingOrderNotifications =
+                                  !showAllIncomingOrderNotifications;
+                            } else if (title == 'Completed Orders') {
+                              showAllCompletedOrderNotifications =
+                                  !showAllCompletedOrderNotifications;
+                            } else if (title == 'Payment Verification') {
+                              showAllPaymentNotifications =
+                                  !showAllPaymentNotifications;
                             }
                           });
                         },
@@ -393,7 +443,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               .min, // Ensures the row takes up the minimum space needed
                           children: [
                             Text(
-                              showAll ? 'See less' : 'See all',
+                              showAll ? 'See all' : 'See less',
                               style: TextStyle(
                                   color: Color(0xff0A4C61),
                                   fontWeight: FontWeight.bold,
@@ -402,7 +452,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             SizedBox(
                                 width:
                                     5), // Add some space between the text and the icon if needed
-                            Image.asset('assets/icons/next_arrow.png',width: 10,),
+                            Image.asset(
+                              'assets/icons/next_arrow.png',
+                              width: 10,
+                            ),
                           ],
                         ),
                       )
@@ -505,24 +558,24 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       buildNotificationList(
                           'Accepted Orders',
                           itemProvider.acceptedOrders,
-                          showAllOrderNotifications,
+                          showAllAcceptedOrderNotifications,
                           false),
                     if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
                       buildNotificationList(
                           'Incoming Orders',
                           itemProvider.incomingOrders,
-                          showAllOrderNotifications,
+                          showAllIncomingOrderNotifications,
                           false),
                     if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
                       buildNotificationList(
                           'Completed Orders',
                           itemProvider.completedOrders,
-                          showAllOrderNotifications,
+                          showAllCompletedOrderNotifications,
                           false),
                     buildSocialNotificationList(
                         'Payment Verification',
                         itemProvider.paymentDetails,
-                        showAllSocialNotifications),
+                        showAllPaymentNotifications),
                   ],
                 )
               : Center(child: Text('No notifications available'));
