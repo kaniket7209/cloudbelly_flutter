@@ -35,11 +35,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   String formatItems(List<dynamic> items) {
-    return items.map((item) => '${item['name']} x ${item['quantity']}').join(', ');
+    return items
+        .map((item) => '${item['name']} x ${item['quantity']}')
+        .join(', ');
   }
 
   String timeAgo(String d) {
-    final DateFormat formatter = DateFormat('EEE, dd MMM yyyy HH:mm:ss \'GMT\'');
+    final DateFormat formatter =
+        DateFormat('EEE, dd MMM yyyy HH:mm:ss \'GMT\'');
     var date = formatter.parseUtc(d);
     final Duration difference = DateTime.now().difference(date);
 
@@ -63,201 +66,58 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
 
- Widget buildNotificationList(String title, List<Map<String, dynamic>> notifications, bool showAll, bool isAccepted) {
-  final List<Map<String, dynamic>> displayedNotifications = showAll
-      ? notifications
-      : notifications.take(4).toList();
+  Widget buildNotificationList(String title,
+      List<Map<String, dynamic>> notifications, bool showAll, bool isAccepted) {
+    final List<Map<String, dynamic>> displayedNotifications =
+        showAll ? notifications : notifications.take(4).toList();
 
-  return notifications.isEmpty
-      ? Container()
-      : Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  if (notifications.length > 4)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (title == 'Socials') {
-                            showAllSocialNotifications = !showAllSocialNotifications;
-                          } else {
-                            showAllOrderNotifications = !showAllOrderNotifications;
-                          }
-                        });
-                      },
-                      child: Text(
-                        showAll ? 'See less' : 'See all',
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: displayedNotifications.length,
-              itemBuilder: (context, index) {
-                final notification = displayedNotifications[index];
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(notification['seller_logo']),
-                        radius: 20,
-                      ),
-                      SizedBox(width: 16.0),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "${notification['store_name']} ordered for RS ${notification['total_price']}",
-                              style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              formatItems(notification['items']),
-                              style: TextStyle(fontSize: 12.0, color: Colors.grey),
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  timeAgo(notification['created_date']),
-                                  style: const TextStyle(fontSize: 10.0, color: Color(0xFFFA6E00)),
-                                ),
-                                SizedBox(width: 20),
-                                GestureDetector(
-                                  onTap: () async {
-                                    print(notification);
-                                    if (notification['location'] != null && notification['location']['latitude'] != null) {
-                                      final String googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
-                                      if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
-                                        await launchUrl(Uri.parse(googleMapsUrl));
-                                      } else {
-                                        throw 'Could not open the map.';
-                                      }
-                                    }
-                                  },
-                                  child: Icon(Icons.directions, size: 16),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      notification['status'] == 'Submitted'
-                          ? Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    try {
-                                      await Provider.of<Auth>(context, listen: false).acceptOrder(
-                                          notification['_id'], notification['user_id'], notification['order_from_user_id']);
-                                    } catch (e) {
-                                      print(e.toString());
-                                    }
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.green),
-                                    child: Icon(Icons.check, color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : notification['status'] == 'Accepted'
-                              ? Row(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () async {
-                                        try {
-                                          await Provider.of<Auth>(context, listen: false).markOrderAsDelivered(
-                                              notification['_id'], notification['user_id'], notification['order_from_user_id']);
-                                        } catch (e) {
-                                          print(e.toString());
-                                        }
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.blue),
-                                        child: Icon(Icons.local_shipping, color: Colors.white),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : Container(
-                                  padding: EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                  decoration: BoxDecoration(color: Color(0xff0A4C61), borderRadius: BorderRadius.circular(8)),
-                                  child: Text("Delivered", style: TextStyle(color: Colors.white, fontSize: 10)),
-                                ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ],
-        );
-}
-
-  Widget buildSocialNotificationList(String title, List notifications, bool showAll) {
-    final List displayedNotifications = showAll ? notifications : notifications.take(4).toList();
     return notifications.isEmpty
         ? Container()
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       title,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     if (notifications.length > 4)
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            showAllSocialNotifications = !showAllSocialNotifications;
+                            if (title == 'Socials') {
+                              showAllSocialNotifications =
+                                  !showAllSocialNotifications;
+                            } else {
+                              showAllOrderNotifications =
+                                  !showAllOrderNotifications;
+                            }
                           });
                         },
                         child: Text(
                           showAll ? 'See less' : 'See all',
-                          style: TextStyle(color: Theme.of(context).primaryColor),
+                          style:
+                              TextStyle(color: Theme.of(context).primaryColor),
                         ),
                       ),
                   ],
                 ),
               ),
               ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: displayedNotifications.length,
                 itemBuilder: (context, index) {
                   final notification = displayedNotifications[index];
                   return Container(
-                    margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -274,7 +134,202 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     child: Row(
                       children: [
                         CircleAvatar(
-                          backgroundImage: AssetImage(Assets.appIcon),
+                          backgroundImage:
+                              NetworkImage(notification['seller_logo']),
+                          radius: 20,
+                        ),
+                        SizedBox(width: 16.0),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${notification['store_name']} ordered for RS ${notification['total_price']}",
+                                style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                formatItems(notification['items']),
+                                style: TextStyle(
+                                    fontSize: 12.0, color: Colors.grey),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    timeAgo(notification['created_date']),
+                                    style: const TextStyle(
+                                        fontSize: 10.0,
+                                        color: Color(0xFFFA6E00)),
+                                  ),
+                                  SizedBox(width: 20),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      if (notification['location'] != null &&
+                                          notification['location']
+                                                  ['latitude'] !=
+                                              null) {
+                                        final String googleMapsUrl =
+                                            'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
+                                        if (await canLaunchUrl(
+                                            Uri.parse(googleMapsUrl))) {
+                                          await launchUrl(
+                                              Uri.parse(googleMapsUrl));
+                                        } else {
+                                          throw 'Could not open the map.';
+                                        }
+                                      }
+                                    },
+                                    child: Icon(Icons.directions, size: 16),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        notification['status'] == 'Submitted'
+                            ? Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      try {
+                                        await Provider.of<Auth>(context,
+                                                listen: false)
+                                            .acceptOrder(
+                                                notification['_id'],
+                                                notification['user_id'],
+                                                notification[
+                                                    'order_from_user_id']);
+                                      } catch (e) {
+                                        print("${e.toString()}");
+                                      }
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          color: Colors.green),
+                                      child: Icon(Icons.check,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : notification['status'] == 'Accepted'
+                                ? Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          try {
+                                            await Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .markOrderAsDelivered(
+                                                    notification['_id'],
+                                                    notification['user_id'],
+                                                    notification[
+                                                        'order_from_user_id']);
+                                          } catch (e) {
+                                            print("${e.toString()}");
+                                          }
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              color: Colors.blue),
+                                          child: Icon(Icons.local_shipping,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Container(
+                                    padding: EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                    decoration: BoxDecoration(
+                                        color: Color(0xff0A4C61),
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: Text("Delivered",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 10)),
+                                  ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          );
+  }
+
+  Widget buildSocialNotificationList(
+      String title, List notifications, bool showAll) {
+    final List displayedNotifications =
+        showAll ? notifications : notifications.take(4).toList();
+    return notifications.isEmpty
+        ? Container()
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    if (notifications.length > 4)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            showAllSocialNotifications =
+                                !showAllSocialNotifications;
+                          });
+                        },
+                        child: Text(
+                          showAll ? 'See less' : 'See all',
+                          style:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: displayedNotifications.length,
+                itemBuilder: (context, index) {
+                  final notification = displayedNotifications[index];
+                  print("nott $notification");
+                  return Container(
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 7,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: notification['msg']
+                                      ['from_profile_photo'] !=
+                                  ''
+                              ? NetworkImage(notification['msg']
+                                  ['from_profile_photo']) as ImageProvider
+                              : AssetImage(Assets.appIcon) ,
                           radius: 20,
                         ),
                         SizedBox(width: 16.0),
@@ -284,15 +339,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             children: [
                               Text(
                                 notification['notification']['title'],
-                                style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 timeAgo(notification['timestamp']),
-                                style: TextStyle(fontSize: 10.0, color: Colors.grey),
+                                style: TextStyle(
+                                    fontSize: 10.0, color: Colors.grey),
                               ),
                               Text(
                                 notification['notification']['body'],
-                                style: TextStyle(fontSize: 10.0, color: Colors.grey),
+                                style: TextStyle(
+                                    fontSize: 10.0, color: Colors.grey),
                               ),
                             ],
                           ),
@@ -317,22 +376,43 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ? ListView(
                   children: [
                     SizedBox(height: 20),
-                    Center(
+                    const Center(
                       child: Text(
                         "Notification & Orders",
-                        style: TextStyle(color: Color(0xff0A4C61), fontFamily: 'Jost', fontWeight: FontWeight.w600, fontSize: 22),
+                        style: TextStyle(
+                            color: Color(0xff0A4C61),
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 22),
                       ),
                     ),
-                    SizedBox(height: 12),
-                    
-                    buildSocialNotificationList('Socials', itemProvider.notificationDetails, showAllSocialNotifications),
+                    const SizedBox(height: 12),
+                    buildSocialNotificationList(
+                        'Socials',
+                        itemProvider.notificationDetails,
+                        showAllSocialNotifications),
                     if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
-                      buildNotificationList('Accepted Orders', itemProvider.acceptedOrders, showAllOrderNotifications, false),
+                      buildNotificationList(
+                          'Accepted Orders',
+                          itemProvider.acceptedOrders,
+                          showAllOrderNotifications,
+                          false),
                     if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
-                      buildNotificationList('Incoming Orders', itemProvider.incomingOrders, showAllOrderNotifications, false),
+                      buildNotificationList(
+                          'Incoming Orders',
+                          itemProvider.incomingOrders,
+                          showAllOrderNotifications,
+                          false),
                     if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
-                      buildNotificationList('Completed Orders', itemProvider.completedOrders, showAllOrderNotifications, false),
-                    buildSocialNotificationList('Payment Verification', itemProvider.paymentDetails, showAllSocialNotifications),
+                      buildNotificationList(
+                          'Completed Orders',
+                          itemProvider.completedOrders,
+                          showAllOrderNotifications,
+                          false),
+                    buildSocialNotificationList(
+                        'Payment Verification',
+                        itemProvider.paymentDetails,
+                        showAllSocialNotifications),
                   ],
                 )
               : Center(child: Text('No notifications available'));

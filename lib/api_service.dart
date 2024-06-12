@@ -76,55 +76,47 @@ class Auth with ChangeNotifier {
     'Accept-Encoding': 'gzip, deflate, br'
   };
 
-  Future<void> acceptOrder(
-      String orderId, String userId, String orderFrom) async {
-    final response = await http.post(
-      Uri.parse("https://app.cloudbelly.in/order/accept"),
-      headers: headers,
-      body: jsonEncode({
-        "user_id": userId,
-        "order_from_user_id": orderFrom,
-        "order_id": orderId
-      }),
-    );
-    print("response.body  ${response.body}");
-    if (response.statusCode == 200) {
-      // Find the order and move it to acceptedOrders
-      final order = orderDetails.indexWhere((order) => order['_id'] == orderId);
-      print("prder is");
-      print(order);
-      acceptedOrders.add(incomingOrders[order]);
-      incomingOrders.removeAt(order);
-      orderDetails[order]['status'] = 'Accepted';
-      print("incomingOrders $incomingOrders");
-      print("acceptedOrders $acceptedOrders");
+Future<void> acceptOrder(String orderId, String userId, String orderFrom) async {
+  final response = await http.post(
+    Uri.parse("https://app.cloudbelly.in/order/accept"),
+    headers: headers,
+    body: jsonEncode({
+      "user_id": userId,
+      "order_from_user_id": orderFrom,
+      "order_id": orderId
+    }),
+  );
+  if (response.statusCode == 200) {
+    final orderIndex = orderDetails.indexWhere((order) => order['_id'] == orderId);
+    if (orderIndex != -1) {
+      orderDetails[orderIndex]['status'] = 'Accepted';
       notifyListeners();
-    } else {
-      throw Exception('Failed to accept order');
     }
+  } else {
+    throw Exception('Failed to accept order');
   }
+}
 
-  Future<void> markOrderAsDelivered(String orderId, String userId, String orderFrom) async {
-    final response = await http.post(
-      Uri.parse("https://app.cloudbelly.in/order/delivered"),
-      headers: headers,
-       body: jsonEncode({
-        "user_id": userId,
-        "order_from_user_id": orderFrom,
-        "order_id": orderId
-      }),
-    );
-    if (response.statusCode == 200) {
-      // Find the order and move it to completedOrders
-      final order =
-          acceptedOrders.firstWhere((order) => order['id'] == orderId);
-      acceptedOrders.remove(order);
-      completedOrders.add(order);
+Future<void> markOrderAsDelivered(String orderId, String userId, String orderFrom) async {
+  final response = await http.post(
+    Uri.parse("https://app.cloudbelly.in/order/delivered"),
+    headers: headers,
+    body: jsonEncode({
+      "user_id": userId,
+      "order_from_user_id": orderFrom,
+      "order_id": orderId
+    }),
+  );
+  if (response.statusCode == 200) {
+    final orderIndex = orderDetails.indexWhere((order) => order['_id'] == orderId);
+    if (orderIndex != -1) {
+      orderDetails[orderIndex]['status'] = 'delivered';
       notifyListeners();
-    } else {
-      throw Exception('Failed to mark order as delivered');
     }
+  } else {
+    throw Exception('Failed to mark order as delivered');
   }
+}
 
   // Auth._internal();
   void getToken(String? token) {
