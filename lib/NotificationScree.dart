@@ -77,8 +77,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
 
-  Widget buildNotificationList(String title,
-      List<Map<String, dynamic>> notifications, bool showAll, bool isAccepted) {
+  Widget buildNotificationList(
+      String title,
+      List<Map<String, dynamic>> notifications,
+      bool showAll,
+      bool isAccepted,
+      String user_type) {
     final List<Map<String, dynamic>> displayedNotifications = showAll
         ? notifications.take(0).toList()
         : notifications; // Changed to 2 for testing
@@ -178,7 +182,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       children: [
                         CircleAvatar(
                           backgroundImage:
-                              NetworkImage(notification['seller_logo']),
+                              NetworkImage(notification['buyer_logo']),
                           radius: 20,
                         ),
                         SizedBox(width: 16.0),
@@ -187,7 +191,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "${notification['store_name']}  |  Order no - ${notification['order_no']} ",
+                                "${notification['buyer_store_name']}  |  Order no - ${notification['order_no']}  ( ${notification['payment_mode']} )",
                                 style: const TextStyle(
                                     fontSize: 14.0,
                                     fontFamily: 'Product Sans',
@@ -229,12 +233,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                       }
                                     },
                                     child: Image.asset(
-                                        'assets/images/Navigation.png',width: 30,height: 30,fit: BoxFit.fill,),
+                                      'assets/images/Navigation.png',
+                                      width: 30,
+                                      height: 30,
+                                      fit: BoxFit.fill,
+                                    ),
                                   ),
                                   GestureDetector(
-                                  
                                     onTap: () async {
-                                      final phoneNumber = notification['customer_phone'];
+                                      final phoneNumber =
+                                          notification['customer_phone'];
                                       final url = 'tel:$phoneNumber';
                                       if (await canLaunch(url)) {
                                         await launch(url);
@@ -251,7 +259,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                       radius: 10,
                                       backgroundColor: const Color(0xFFFA6E00),
                                       child: Image.asset(
-                                          'assets/images/Phone.png',width: 30,height: 30,fit: BoxFit.fill,),
+                                        'assets/images/Phone.png',
+                                        width: 30,
+                                        height: 30,
+                                        fit: BoxFit.fill,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -394,11 +406,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget buildSocialNotificationList(
-      String title, List notifications, bool showAll) {
+      String title, List notifications, bool showAll, String user_type) {
     final List displayedNotifications =
-        showAll
-         ? notifications
-         : notifications.take(3).toList();
+        showAll ? notifications : notifications.take(3).toList();
     return notifications.isEmpty
         ? Container()
         : Column(
@@ -413,8 +423,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     Text(
                       title,
                       style: TextStyle(
+                          color: user_type == 'Customer'
+                              ? Color(0xffB232CB)
+                              : Color(0xff0A4C61),
                           fontSize: 18,
-                          color: Color(0xff0A4C61),
+                          // color: Color(0xff0A4C61),
                           fontWeight: FontWeight.bold),
                     ),
                     if (notifications.length > 3)
@@ -504,23 +517,357 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             children: [
                               Text(
                                 notification['notification']['title'],
-                                style: const TextStyle(
+                                style:  TextStyle(
+                                   color: user_type == 'Customer'
+                                        ? Color(0xffB232CB)
+                                        : Color(0xff0A4C61),
                                     fontSize: 12.0,
                                     fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 timeAgo(notification['timestamp']),
                                 style: TextStyle(
-                                    fontSize: 10.0, color: Colors.grey),
+                                    fontSize: 10.0, color: Color(0xFFFA6E00)),
                               ),
                               Text(
                                 notification['notification']['body'],
                                 style: TextStyle(
-                                    fontSize: 10.0, color: Colors.grey),
+                                    color: user_type == 'Customer'
+                                        ? Color(0xffB232CB)
+                                        : Color(0xff0A4C61),
+                                    fontSize: 10.0),
                               ),
                             ],
                           ),
                         ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          );
+  }
+
+  Widget buildCustomerNotificationList(
+      String title,
+      List<Map<String, dynamic>> notifications,
+      bool showAll,
+      bool isAccepted,
+      String user_type) {
+    final List<Map<String, dynamic>> displayedNotifications = showAll
+        ? notifications.take(0).toList()
+        : notifications; // Changed to 2 for testing
+
+    // Debug print statements
+    print(
+        "Title: $title, Notifications Length: ${notifications.length}, ShowAll: $showAll");
+
+    return notifications.isEmpty
+        ? Container()
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                          color: Color(0xff0A4C61),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    if (notifications.length > 0) // Changed to 2 for testing
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            print("Toggling showAll for $title");
+                            if (title == 'Socials') {
+                              showAllSocialNotifications =
+                                  !showAllSocialNotifications;
+                            } else if (title == 'Accepted Orders') {
+                              showAllAcceptedOrderNotifications =
+                                  !showAllAcceptedOrderNotifications;
+                            } else if (title == 'Incoming Orders') {
+                              showAllIncomingOrderNotifications =
+                                  !showAllIncomingOrderNotifications;
+                            } else if (title == 'Completed Orders') {
+                              showAllCompletedOrderNotifications =
+                                  !showAllCompletedOrderNotifications;
+                            } else if (title == 'Payment Verification') {
+                              showAllPaymentNotifications =
+                                  !showAllPaymentNotifications;
+                            }
+                          });
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize
+                              .min, // Ensures the row takes up the minimum space needed
+                          children: [
+                            Text(
+                              showAll ? 'See all' : 'See less',
+                              style: TextStyle(
+                                  color: Color(0xff0A4C61),
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Product Sans'),
+                            ),
+                            SizedBox(
+                                width:
+                                    5), // Add some space between the text and the icon if needed
+                            Image.asset(
+                              'assets/icons/next_arrow.png',
+                              width: 10,
+                            ),
+                          ],
+                        ),
+                      )
+                  ],
+                ),
+              ),
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: displayedNotifications.length,
+                itemBuilder: (context, index) {
+                  final notification = displayedNotifications[index];
+                  return Container(
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 7,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(notification['buyer_logo']),
+                          radius: 20,
+                        ),
+                        SizedBox(width: 16.0),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${notification['buyer_store_name']}  |  Order no - ${notification['order_no']}  ( ${notification['payment_mode']} )",
+                                style: const TextStyle(
+                                    fontSize: 14.0,
+                                    fontFamily: 'Product Sans',
+                                    color: Color(0xff0A4C61),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 1.0),
+                              Text(
+                                formatItems(notification['items']),
+                                style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: Color(0xff0A4C61),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    timeAgo(notification['created_date']),
+                                    style: const TextStyle(
+                                        fontSize: 10.0,
+                                        color: Color(0xFFFA6E00)),
+                                  ),
+                                  SizedBox(width: 20),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      if (notification['location'] != null &&
+                                          notification['location']
+                                                  ['latitude'] !=
+                                              null) {
+                                        final String googleMapsUrl =
+                                            'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
+                                        if (await canLaunchUrl(
+                                            Uri.parse(googleMapsUrl))) {
+                                          await launchUrl(
+                                              Uri.parse(googleMapsUrl));
+                                        } else {
+                                          throw 'Could not open the map.';
+                                        }
+                                      }
+                                    },
+                                    child: Image.asset(
+                                      'assets/images/Navigation.png',
+                                      width: 30,
+                                      height: 30,
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      final phoneNumber =
+                                          notification['customer_phone'];
+                                      final url = 'tel:$phoneNumber';
+                                      if (await canLaunch(url)) {
+                                        await launch(url);
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'Could not launch phone call')),
+                                        );
+                                      }
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 10,
+                                      backgroundColor: const Color(0xFFFA6E00),
+                                      child: Image.asset(
+                                        'assets/images/Phone.png',
+                                        width: 30,
+                                        height: 30,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        notification['status'] == 'Submitted'
+                            ? Column(
+                                children: [
+                                  Center(
+                                    child: Text(
+                                        "RS ${notification['total_price']}",
+                                        style: const TextStyle(
+                                            color: Color(0xff0A4C61),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          try {
+                                            await Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .rejectOrder(
+                                                    notification['_id'],
+                                                    notification['user_id'],
+                                                    notification[
+                                                        'order_from_user_id']);
+                                          } catch (e) {
+                                            print("${e.toString()}");
+                                          }
+                                        },
+                                        child: Container(
+                                          width: 30,
+                                          decoration: ShapeDecoration(
+                                            color: const Color(0xFFFD4F4F),
+                                            shape: SmoothRectangleBorder(
+                                              borderRadius: SmoothBorderRadius(
+                                                cornerRadius: 10,
+                                                cornerSmoothing: 1,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Image.asset(
+                                              'assets/images/Multiply.png'),
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          try {
+                                            await Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .acceptOrder(
+                                                    notification['_id'],
+                                                    notification['user_id'],
+                                                    notification[
+                                                        'order_from_user_id']);
+                                          } catch (e) {
+                                            print("${e.toString()}");
+                                          }
+                                        },
+                                        child: Container(
+                                          width: 30,
+                                          decoration: ShapeDecoration(
+                                            color: const Color(0xFF1ACD0A),
+                                            shape: SmoothRectangleBorder(
+                                              borderRadius: SmoothBorderRadius(
+                                                cornerRadius: 10,
+                                                cornerSmoothing: 1,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Image.asset(
+                                              'assets/images/Done.png'),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            : notification['status'] == 'Accepted'
+                                ? Column(
+                                    children: [
+                                      Center(
+                                        child: Text(
+                                          "Rs ${notification['amount']}",
+                                          style: const TextStyle(
+                                              fontSize: 15.0,
+                                              fontFamily: 'Product Sans',
+                                              color: Color(0xff0A4C61),
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Space(10),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          try {
+                                            await Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .markOrderAsDelivered(
+                                                    notification['_id'],
+                                                    notification['user_id'],
+                                                    notification[
+                                                        'order_from_user_id']);
+                                          } catch (e) {
+                                            print("${e.toString()}");
+                                          }
+                                        },
+                                        child: Container(
+                                          child: Icon(
+                                              Icons.local_shipping_rounded,
+                                              color: Color(0xff0A4C61)),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Container(
+                                    padding: EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                    decoration: BoxDecoration(
+                                        color: Color(0xff0A4C61),
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: Text("Delivered",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 10)),
+                                  ),
                       ],
                     ),
                   );
@@ -537,47 +884,70 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: Consumer<Auth>(
         builder: (context, itemProvider, child) {
           print("itemProvider.userData ${itemProvider.userData}");
-          return itemProvider.orderDetails.isNotEmpty
+          bool hasNotifications = itemProvider.notificationDetails.isNotEmpty ||
+              itemProvider.acceptedOrders.isNotEmpty ||
+              itemProvider.incomingOrders.isNotEmpty ||
+              itemProvider.completedOrders.isNotEmpty ||
+              itemProvider.paymentDetails.isNotEmpty;
+
+          return hasNotifications
               ? ListView(
                   children: [
                     SizedBox(height: 20),
-                    const Center(
+                    Center(
                       child: Text(
                         "Notification & Orders",
                         style: TextStyle(
-                            color: Color(0xff0A4C61),
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 22),
+                          color: (itemProvider.userData?['user_type'] ?? '') ==
+                                  'Customer'
+                              ? Color(0xffB232CB)
+                              : Color(0xff0A4C61),
+                          fontFamily: 'Jost',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 22,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 12),
                     buildSocialNotificationList(
                         'Socials',
                         itemProvider.notificationDetails,
-                        showAllSocialNotifications),
+                        showAllSocialNotifications,
+                        itemProvider.userData?['user_type'] ?? ''),
                     if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
                       buildNotificationList(
                           'Accepted Orders',
                           itemProvider.acceptedOrders,
                           showAllAcceptedOrderNotifications,
-                          false),
+                          false,
+                          itemProvider.userData?['user_type'] ?? ''),
+                    // if ((itemProvider.userData?['user_type'] ?? '') ==
+                    //     'Customer')
+                    //   buildCustomerNotificationList(
+                    //       'Accepted Orders',
+                    //       itemProvider.acceptedOrders,
+                    //       showAllAcceptedOrderNotifications,
+                    //       false,
+                    //       itemProvider.userData?['user_type'] ?? ''),
                     if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
                       buildNotificationList(
                           'Incoming Orders',
                           itemProvider.incomingOrders,
                           showAllIncomingOrderNotifications,
-                          false),
+                          false,
+                          itemProvider.userData?['user_type'] ?? ''),
                     if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
                       buildNotificationList(
                           'Completed Orders',
                           itemProvider.completedOrders,
                           showAllCompletedOrderNotifications,
-                          false),
+                          false,
+                          itemProvider.userData?['user_type'] ?? ''),
                     buildSocialNotificationList(
                         'Payment Verification',
                         itemProvider.paymentDetails,
-                        showAllPaymentNotifications),
+                        showAllPaymentNotifications,
+                        itemProvider.userData?['user_type'] ?? ''),
                   ],
                 )
               : Center(child: Text('No notifications available'));
