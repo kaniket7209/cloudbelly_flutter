@@ -36,18 +36,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
 
- String formatItems(List<dynamic> items) {
-  List<String> formattedItems = [];
-  for (int i = 0; i < items.length; i += 2) {
-    String line = items
-        .skip(i)
-        .take(2)
-        .map((item) => '${item['name']} x ${item['quantity']}')
-        .join(', ');
-    formattedItems.add(line);
+  String formatItems(List<dynamic> items) {
+    List<String> formattedItems = [];
+    for (int i = 0; i < items.length; i += 2) {
+      String line = items
+          .skip(i)
+          .take(2)
+          .map((item) => '${item['name']} x ${item['quantity']}')
+          .join(', ');
+      formattedItems.add(line);
+    }
+    return formattedItems.join('\n');
   }
-  return formattedItems.join('\n');
-}
 
   String timeAgo(String d) {
     final DateFormat formatter =
@@ -77,8 +77,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   Widget buildNotificationList(String title,
       List<Map<String, dynamic>> notifications, bool showAll, bool isAccepted) {
-    final List<Map<String, dynamic>> displayedNotifications =
-        showAll ? notifications : notifications.take(4).toList();
+    final List<Map<String, dynamic>> displayedNotifications = showAll
+        ? notifications
+        : notifications.take(2).toList(); // Changed to 2 for testing
+
+    // Debug print statements
+    print(
+        "Title: $title, Notifications Length: ${notifications.length}, ShowAll: $showAll");
 
     return notifications.isEmpty
         ? Container()
@@ -92,31 +97,46 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      
                       title,
                       style: const TextStyle(
-                        color:Color(0xff0A4C61),
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                          color: Color(0xff0A4C61),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
                     ),
-                    if (notifications.length > 4)
+                    if (notifications.length > 2) // Changed to 2 for testing
                       GestureDetector(
                         onTap: () {
                           setState(() {
+                            print("Toggling showAll for $title");
                             if (title == 'Socials') {
                               showAllSocialNotifications =
                                   !showAllSocialNotifications;
-                            } else {
+                            } else if (title == 'Accepted Orders' ||
+                                title == 'Incoming Orders' ||
+                                title == 'Completed Orders') {
                               showAllOrderNotifications =
                                   !showAllOrderNotifications;
                             }
                           });
                         },
-                        child: Text(
-                          showAll ? 'See less' : 'See all',
-                          style:
-                              TextStyle(color: Theme.of(context).primaryColor),
+                        child: Row(
+                          mainAxisSize: MainAxisSize
+                              .min, // Ensures the row takes up the minimum space needed
+                          children: [
+                            Text(
+                              showAll ? 'See less' : 'See all',
+                              style: TextStyle(
+                                  color: Color(0xff0A4C61),
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Product Sans'),
+                            ),
+                            SizedBox(
+                                width:
+                                    5), // Add some space between the text and the icon if needed
+                            Image.asset('assets/icons/next_arrow.png',width: 10,),
+                          ],
                         ),
-                      ),
+                      )
                   ],
                 ),
               ),
@@ -161,13 +181,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     fontFamily: 'Product Sans',
                                     color: Color(0xff0A4C61),
                                     fontWeight: FontWeight.bold),
-                                    
                               ),
-                              Space(1),
+                              SizedBox(height: 1.0),
                               Text(
                                 formatItems(notification['items']),
                                 style: TextStyle(
-                                    fontSize: 14.0, color: Color(0xff0A4C61),fontWeight: FontWeight.bold),
+                                    fontSize: 14.0,
+                                    color: Color(0xff0A4C61),
+                                    fontWeight: FontWeight.bold),
                               ),
                               Row(
                                 children: [
@@ -213,16 +234,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold)),
                                   ),
-                                  Space(10),
+                                  SizedBox(height: 10),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      // Text("${notification['payment_mode']}",
-                                      //   style: TextStyle(
-                                      //       color: Colors.white, fontSize: 10)),
-                                      
                                       GestureDetector(
                                         onTap: () async {
                                           try {
@@ -242,17 +259,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                           decoration: ShapeDecoration(
                                             color: const Color(0xFFFD4F4F),
                                             shape: SmoothRectangleBorder(
-                                                borderRadius:
-                                                    SmoothBorderRadius(
-                                              cornerRadius: 10,
-                                              cornerSmoothing: 1,
-                                            )),
+                                              borderRadius: SmoothBorderRadius(
+                                                cornerRadius: 10,
+                                                cornerSmoothing: 1,
+                                              ),
+                                            ),
                                           ),
                                           child: Image.asset(
                                               'assets/images/Multiply.png'),
                                         ),
                                       ),
-                                      SizedBox(width: 10,),
+                                      SizedBox(width: 10),
                                       GestureDetector(
                                         onTap: () async {
                                           try {
@@ -272,11 +289,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                           decoration: ShapeDecoration(
                                             color: const Color(0xFF1ACD0A),
                                             shape: SmoothRectangleBorder(
-                                                borderRadius:
-                                                    SmoothBorderRadius(
-                                              cornerRadius: 10,
-                                              cornerSmoothing: 1,
-                                            )),
+                                              borderRadius: SmoothBorderRadius(
+                                                cornerRadius: 10,
+                                                cornerSmoothing: 1,
+                                              ),
+                                            ),
                                           ),
                                           child: Image.asset(
                                               'assets/images/Done.png'),
@@ -305,9 +322,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              color: Colors.blue),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            color: Colors.blue,
+                                          ),
                                           child: Icon(Icons.local_shipping,
                                               color: Colors.white),
                                         ),
@@ -335,7 +353,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget buildSocialNotificationList(
       String title, List notifications, bool showAll) {
     final List displayedNotifications =
-        showAll ? notifications : notifications.take(4).toList();
+        showAll ? notifications : notifications.take(2).toList();
     return notifications.isEmpty
         ? Container()
         : Column(
@@ -349,24 +367,45 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   children: [
                     Text(
                       title,
-                      style:
-                      
-                          TextStyle(fontSize: 18, color:Color(0xff0A4C61),fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Color(0xff0A4C61),
+                          fontWeight: FontWeight.bold),
                     ),
-                    if (notifications.length > 4)
+                    if (notifications.length > 2)
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            showAllSocialNotifications =
-                                !showAllSocialNotifications;
+                            print("Toggling showAll for $title");
+                            if (title == 'Socials') {
+                              showAllSocialNotifications =
+                                  !showAllSocialNotifications;
+                            } else if (title == 'Accepted Orders' ||
+                                title == 'Incoming Orders' ||
+                                title == 'Completed Orders') {
+                              showAllOrderNotifications =
+                                  !showAllOrderNotifications;
+                            }
                           });
                         },
-                        child: Text(
-                          showAll ? 'See less' : 'See all',
-                          style:
-                              TextStyle(color: Theme.of(context).primaryColor),
+                        child: Row(
+                          mainAxisSize: MainAxisSize
+                              .min, // Ensures the row takes up the minimum space needed
+                          children: [
+                            Text(
+                              showAll ? 'See less' : 'See all',
+                              style: TextStyle(
+                                  color: Color(0xff0A4C61),
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Product Sans'),
+                            ),
+                            SizedBox(
+                                width:
+                                    5), // Add some space between the text and the icon if needed
+                            Image.asset('assets/icons/next_arrow.png',width: 10,),
+                          ],
                         ),
-                      ),
+                      )
                   ],
                 ),
               ),
@@ -465,7 +504,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
                       buildNotificationList(
                           'Accepted Orders',
-
                           itemProvider.acceptedOrders,
                           showAllOrderNotifications,
                           false),
