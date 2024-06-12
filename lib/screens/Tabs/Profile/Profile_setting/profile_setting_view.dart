@@ -17,6 +17,7 @@ import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -1767,7 +1768,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   children: [
                     TextWidgetStoreSetup(label: 'Store availability'),
                     Container(
-                      height: 01, // Adjust the scale factor to adjust the height
+                      height:
+                          01, // Adjust the scale factor to adjust the height
                       child: CupertinoSwitch(
                         thumbColor: _switchValue == true
                             ? const Color(0xFF4DAB4B)
@@ -1968,6 +1970,49 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     fontFamily: 'Product Sans',
                     fontWeight: FontWeight.w400),
               ),
+              const Space(24),
+
+              // Add terms and condition and privacy policy
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        _launchURL(
+                            "https://app.cloudbelly.in/terms-and-conditions");
+                      },
+                      child: const Text(
+                        "Terms and Condition",
+                        style: TextStyle(
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                          color: Color(0xFF0A4C61),
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: () {
+                        _launchURL("https://app.cloudbelly.in/privacy-policy");
+                      },
+                      child: const Text(
+                        "Privacy policy",
+                        style: TextStyle(
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                          color: Color(0xFF0A4C61),
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               GestureDetector(
                 onTap: () {
                   // Handle tap on the area around the BackdropFilter
@@ -1978,14 +2023,14 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 },
                 child: BackdropFilter(
                   filter: ImageFilter.blur(
-                    //: context.watch<TransitionEffect>().blurSigma,
-                    //sigmaY: context.watch<TransitionEffect>().blurSigma,
-                  ),
+                      //: context.watch<TransitionEffect>().blurSigma,
+                      //sigmaY: context.watch<TransitionEffect>().blurSigma,
+                      ),
                   child: Container(
                     color: Colors.transparent, // Transparent color
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -2045,5 +2090,13 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
         ),
       ),
     );
+  }
+}
+
+Future<void> _launchURL(String url) async {
+  if (await canLaunchUrl(Uri.parse(url))) {
+    await launchUrl(Uri.parse(url));
+  } else {
+    throw 'Could not launch $url';
   }
 }
