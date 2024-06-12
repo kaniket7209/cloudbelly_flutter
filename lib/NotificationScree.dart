@@ -234,7 +234,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                   GestureDetector(
                                   
                                     onTap: () async {
-                                      final phoneNumber = notification['phone'];
+                                      final phoneNumber = notification['customer_phone'];
                                       final url = 'tel:$phoneNumber';
                                       if (await canLaunch(url)) {
                                         await launch(url);
