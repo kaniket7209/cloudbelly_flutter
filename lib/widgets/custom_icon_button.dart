@@ -1,6 +1,8 @@
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class CustomIconButton extends StatelessWidget {
@@ -19,6 +21,23 @@ class CustomIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool _isVendor =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+            'Vendor';
+    String? userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    Color boxShadowColor;
+
+    if (userType == 'Vendor') {
+      boxShadowColor = const Color.fromRGBO(10, 76, 97, 0.5);
+    } else if (userType == 'Customer') {
+      boxShadowColor = const Color(0xBC73BC).withOpacity(0.5);
+    } else if (userType == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150).withOpacity(0.5);
+    } else {
+      boxShadowColor = const Color.fromRGBO(
+          77, 191, 74, 0.6); // Default color if user_type is none of the above
+    }
     if (color == Colors.cyan) color = Color.fromRGBO(38, 115, 140, 1);
     return TouchableOpacity(
       onTap: onTap as void Function()?,
@@ -29,7 +48,8 @@ class CustomIconButton extends StatelessWidget {
           shadows: [
             BoxShadow(
               offset: Offset(0, 4),
-              color: Color.fromRGBO(31, 111, 109, 0.5),
+              // color: Color.fromRGBO(31, 111, 109, 0.5),
+              color: boxShadowColor,
               blurRadius: 20,
             )
           ],
@@ -55,16 +75,11 @@ class CustomIconButton extends StatelessWidget {
                     ),
                   )
                 : Center(
-                    child: Text(
-                      '<<',
-                      style: TextStyle(
-                        color: Color(0xFFFA6E00),
-                        fontSize: 24,
-                        fontFamily: 'Kavoon',
-                        fontWeight: FontWeight.w900,
-                        height: 0.04,
-                        letterSpacing: 0.66,
-                      ),
+                    child: Image.asset(
+                      'assets/images/back_double_arrow.png',
+                      width:
+                          24, // You can adjust the width and height as needed
+                      height: 24,
                     ),
                   ),
       ),

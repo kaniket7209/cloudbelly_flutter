@@ -194,6 +194,17 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     bool _isFollowing = checkFollow();
+    String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    Color boxShadowColor;
+    if (userType == 'Vendor') {
+      boxShadowColor = const Color.fromRGBO(10, 76, 97, 0.5) ;
+    } else if (userType == 'Customer') {
+      boxShadowColor = const Color(0xBC73BC).withOpacity(0.5);
+    } else if (userType == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150).withOpacity(0.5);
+    } else {
+      boxShadowColor = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+    }
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
@@ -299,17 +310,12 @@ class _ProfileViewState extends State<ProfileView> {
                                                         height: 70,
                                                         width: 70,
                                                         decoration:
-                                                            const ShapeDecoration(
+                                                             ShapeDecoration(
                                                           shadows: [
                                                             BoxShadow(
                                                               offset:
                                                                   Offset(0, 4),
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      31,
-                                                                      111,
-                                                                      109,
-                                                                      0.6),
+                                                              color: boxShadowColor,
                                                               blurRadius: 20,
                                                             )
                                                           ],
@@ -341,16 +347,11 @@ class _ProfileViewState extends State<ProfileView> {
                                                         width: 70,
                                                         decoration:
                                                             ShapeDecoration(
-                                                          shadows: const [
+                                                          shadows:  [
                                                             BoxShadow(
                                                               offset:
                                                                   Offset(0, 4),
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      31,
-                                                                      111,
-                                                                      109,
-                                                                      0.4),
+                                                              color: boxShadowColor,
                                                               blurRadius: 20,
                                                             ),
                                                           ],
@@ -653,7 +654,7 @@ class _ProfileViewState extends State<ProfileView> {
                                               Space(2.h),
                                               userType == UserType.Supplier.name
                                                   ? Container(
-                                                      // height: 6.5.h,
+                                                      
                                                       width: 95.w,
                                                       /* decoration: ShapeDecoration(
                                             shadows: const [
@@ -746,7 +747,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                   : userType ==
                                                           UserType.Customer.name
                                                       ? Container(
-                                                          // height: 6.5.h,
+                                                          
                                                           width: 95.w,
                                                           /* decoration: ShapeDecoration(
                                             shadows: const [
@@ -826,7 +827,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                               ]),
                                                         )
                                                       : Container(
-                                                          // height: 6.5.h,
+                                                        
                                                           width: 95.w,
                                                           /*decoration: ShapeDecoration(
                                             shadows: const [

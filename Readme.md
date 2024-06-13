@@ -1,20 +1,16 @@
-# cloudbelly_app
 
-A new Flutter project.
+# For box -shadow color codes..  (use this  in widget builder)
+String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+Color boxShadowColor;
 
-## Getting Started
+if (userType == 'Vendor') {
+    boxShadowColor = const Color.fromRGBO(10, 76, 97, 0.5);
+} else if (userType == 'Customer') {
+    boxShadowColor = const Color(0xBC73BC).withOpacity(0.5);
+} else if (userType == 'Supplier') {
+    boxShadowColor = Color.fromARGB(0, 115, 188, 150).withOpacity(0.5);
+} else {
+    boxShadowColor = const Color.fromRGBO(
+        77, 191, 74, 0.6); // Default color if user_type is none of the above
+}
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-
-
-//Backdrop filter class created as children of Stack class should be removed along with Stack class  wherever its build throughout the applciation

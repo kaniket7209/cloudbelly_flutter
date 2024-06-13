@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, prefer_is_empty, use_build_context_synchronously, curly_braces_in_flow_control_structures
 
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:cloudbelly_app/api_service.dart';
@@ -232,8 +233,12 @@ class _ProfileState extends State<Profile> {
                                 Row(
                                   children: [
                                     CustomIconButton(
-                                      boxColor:
-                                          const Color.fromRGBO(38, 115, 140, 1),
+                                      boxColor: _isVendor
+                                              ?  Color.fromRGBO(
+                                                  31, 111, 109, 0.5)
+                                                  : Color(0xBC73BC).withOpacity(0.6),
+                                      // boxColor:
+                                      //     const Color.fromRGBO(38, 115, 140, 1),
                                       color: Colors.white,
                                       ic: Icons.add,
                                       onTap: () async {
@@ -284,11 +289,14 @@ class _ProfileState extends State<Profile> {
                                         width: 40,
                                         height: 40,
                                         decoration: ShapeDecoration(
-                                          shadows: const [
+                                          shadows:  [
                                             BoxShadow(
                                               offset: Offset(0, 4),
-                                              color: Color.fromRGBO(
-                                                  31, 111, 109, 0.5),
+                                              
+                                              color: _isVendor
+                                              ?  Color.fromRGBO(
+                                                  31, 111, 109, 0.5)
+                                                  : Color(0xBC73BC).withOpacity(0.6),
                                               blurRadius: 20,
                                             )
                                           ],
@@ -301,42 +309,7 @@ class _ProfileState extends State<Profile> {
                                           ),
                                         ),
                                         child: Icon(Icons.more_horiz),
-                                        /*child: PopupMenuButton<SampleItem>(
-                                          icon: const Icon(Icons.more_horiz),
-                                          initialValue: selectedMenu,
-                                          // Callback that sets the selected popup menu item.
-                                          onSelected: (SampleItem item) async {
-                                            AppWideLoadingBanner()
-                                                .loadingBanner(context);
-
-                                            await Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .logout();
-                                            Navigator.of(context).pop();
-                                            Navigator.of(context)
-                                                .pushReplacementNamed(
-                                                    LoginScreen.routeName);
-                                            setState(() {
-                                              selectedMenu = item;
-                                            });
-                                          },
-                                          itemBuilder: (BuildContext context) =>
-                                              <PopupMenuEntry<SampleItem>>[
-                                            PopupMenuItem<SampleItem>(
-                                              value: SampleItem.itemOne,
-                                              child: Row(
-                                                children: [
-                                                  const Icon(Icons.logout),
-                                                  Space(
-                                                    3.w,
-                                                    isHorizontal: true,
-                                                  ),
-                                                  const Text('Logout'),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        )*/
+                                        
                                       ),
                                     ),
                                   ],
@@ -636,7 +609,7 @@ class _ProfileState extends State<Profile> {
                                       )
                                     : userType == UserType.Customer.name
                                         ? Container(
-                                            // height: 6.5.h,
+                                        
                                             width: 95.w,
                                             /* decoration: ShapeDecoration(
                                           shadows: const [
@@ -777,12 +750,13 @@ class _ProfileState extends State<Profile> {
                                             )
                                           : feedList.length == 0
                                               ? Container(
-                                                  height: 10.h,
+                                                  height: double.infinity,
                                                   child: const Center(
                                                       child: Text(
                                                           'No items in Content')),
                                                 )
                                               : GridView.builder(
+                                               
                                                   physics:
                                                       const NeverScrollableScrollPhysics(),
                                                   // Disable scrolling
@@ -792,8 +766,7 @@ class _ProfileState extends State<Profile> {
 
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 0.8.h,
-                                                      horizontal:
-                                                          _isVendor ? 1.w : 0),
+                                                      horizontal:0),
                                                   gridDelegate:
                                                       SliverGridDelegateWithFixedCrossAxisCount(
                                                     childAspectRatio: 1,
