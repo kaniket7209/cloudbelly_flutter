@@ -1200,18 +1200,14 @@ class FeedWidget extends StatelessWidget {
   final String isSelfProfile;
   CarouselController buttonCarouselController = CarouselController();
 
-  @override
+ @override
   Widget build(BuildContext context) {
-    bool _isVendor =
-        Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
-            'Vendor';
-    // bool _isMultiple =
-    //     data['multiple_files'] != null && data['multiple_files'].length != 0;
+    bool _isVendor = Provider.of<Auth>(context, listen: false).userData?['user_type'] == 'Vendor';
+
     return TouchableOpacity(
       onTap: () async {
         print("fullData:: $fulldata");
-        final Data = await Provider.of<Auth>(context, listen: false)
-            .getFeed(userId) as List<dynamic>;
+        final Data = await Provider.of<Auth>(context, listen: false).getFeed(userId) as List<dynamic>;
         print("userId:: $userId");
         Navigator.of(context).pushNamed(PostsScreen.routeName, arguments: {
           'data': Data,
@@ -1221,51 +1217,58 @@ class FeedWidget extends StatelessWidget {
           "type": type,
           "isSelfProfile": isSelfProfile
         });
-
-        /*  if(type == "self"){
-        }else{
-          Navigator.of(context).pushNamed(PostsScreen.routeName,
-              arguments: {'data': Data, 'index': index,"userId":userId});
-        }*/
-
-        //  print("data:: $fulldata");
       },
       child: Stack(
         children: [
           Hero(
             tag: data['id'],
             child: Container(
-              height: _isVendor ? 100 : 110,
-              width: _isVendor ? 100 : 110,
-              decoration: const ShapeDecoration(
+              height: 110,
+              width: 110,
+              decoration: ShapeDecoration(
                 shadows: [
                   BoxShadow(
-                    offset: Offset(3, 4),
-                    color: Color.fromRGBO(10, 76, 97, 0.31),
-                    blurRadius: 9,
-                  )
+                    offset: const Offset(0, 4),
+                    color: _isVendor ? const Color.fromRGBO(10, 76, 97, 0.31) :  const Color(0xBC73BC).withOpacity(0.6),
+                    blurRadius: 20,
+                  ),
                 ],
-                shape: SmoothRectangleBorder(),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 17,
+                    cornerSmoothing: 1,
+                  ),
+                ),
               ),
               child: ClipSmoothRect(
                 radius: SmoothBorderRadius(
-                  cornerRadius: 17,
+                  cornerRadius: 25,
                   cornerSmoothing: 1,
                 ),
                 child: Image.network(
                   data['file_path'],
                   fit: BoxFit.cover,
-                  loadingBuilder: GlobalVariables().loadingBuilderForImage,
-                  errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                            : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                    return Icon(Icons.error);
+                  },
                 ),
               ),
             ),
           ),
-          if (data['multiple_files'] != null &&
-              data['multiple_files'].length != 0)
+          if (data['multiple_files'] != null && data['multiple_files'].length != 0)
             const Positioned(
-              top: 05,
-              right: 05,
+              top: 5,
+              right: 5,
               child: Icon(
                 Icons.add_to_photos,
                 color: Colors.black, // Change the color as needed
@@ -1276,7 +1279,6 @@ class FeedWidget extends StatelessWidget {
     );
   }
 }
-
 class CommonButtonProfile extends StatelessWidget {
   bool isActive;
   String txt;
@@ -1341,7 +1343,7 @@ class CommonButtonProfile extends StatelessWidget {
                 Container(
                   //  padding: EdgeInsets.only(top: 7),
                   width: width,
-                  height: 5,
+                  height: 4,
                   decoration: ShapeDecoration(
                     color: !isActive ? Colors.white : const Color(0xFFFA6E00),
                     shape: RoundedRectangleBorder(
