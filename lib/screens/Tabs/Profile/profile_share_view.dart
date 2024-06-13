@@ -8,7 +8,9 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uni_links/uni_links.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+//  for QR code sharing (profile)
 class ProfileShareBottomSheet {
   Future<dynamic> AddAddressSheet(BuildContext context) {
     return showModalBottomSheet(
@@ -61,7 +63,7 @@ class ProfileShareBottomSheet {
                             ),
                           ),
                         ),
-                        QrView(),
+                        const QrView(),
                       ],
                     ),
                   ),
@@ -85,20 +87,100 @@ class QrView extends StatefulWidget {
 class _QrViewState extends State<QrView> {
   @override
   Widget build(BuildContext context) {
+    final String userId =
+        Provider.of<Auth>(context, listen: false).userData?['user_id'] ?? '';
+    print(
+        "prof ${Provider.of<Auth>(context, listen: false).userData?['profile_photo']}");
+    final String profileUrl =
+        "https://app.cloudbelly.in/profile?profileId=$userId";
+    final String profilePhoto =
+        Provider.of<Auth>(context, listen: false).userData?['profile_photo'] ??
+            '';
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Space(10),
+        SizedBox(height: 10),
+        Center(
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40),
+              // border: Border.all(color: Colors.black),
+              image: DecorationImage(
+                image: NetworkImage(profilePhoto),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        Center(
+          child: Text(
+            Provider.of<Auth>(context, listen: false).userData?['store_name'] ??
+                '',
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w800,
+              height: 1.2,
+              letterSpacing: 0.35,
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        // Center(
+        //   child: Text(
+        //     Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
+        //     style: const TextStyle(
+        //       color: Colors.black,
+        //       fontSize: 18,
+        //       fontFamily: 'Product Sans',
+        //       fontWeight: FontWeight.w800,
+        //       height: 1.2,
+        //       letterSpacing: 0.35,
+        //     ),
+        //   ),
+        // ),
+        GestureDetector(
+          onTap: () async {
+            final phoneNumber =
+                Provider.of<Auth>(context, listen: false).userData?['phone'] ??
+                    '';
+            final url = 'tel:$phoneNumber';
+            if (await canLaunch(url)) {
+              await launch(url);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Could not launch phone call')),
+              );
+            }
+          },
+          child: CircleAvatar(
+            radius: 10,
+            backgroundColor: const Color(0xFFFA6E00),
+            child: Image.asset(
+              'assets/images/Phone.png',
+              width: 30,
+              height: 30,
+              fit: BoxFit.fill,
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
         Center(
           child: QrImageView(
-            data: 'This is a simple QR code',
+            data: profileUrl,
             version: QrVersions.auto,
             size: 200,
             gapless: false,
+            foregroundColor: const Color.fromARGB(255, 56, 12, 64),
           ),
         ),
-        Space(08),
+        SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
           child: Row(
@@ -109,42 +191,31 @@ class _QrViewState extends State<QrView> {
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
+                    // color: const Color.fromARGB(255, 244, 114, 54),
                     border: Border.all(color: Colors.black),
                   ),
                   child: Text(
-                    "https://app.cloudbelly.in/profile?profileId=${Provider.of<Auth>(context, listen: false).userData?['user_id']}",
+                    profileUrl,
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 18,
                       fontFamily: 'Product Sans',
                       fontWeight: FontWeight.w800,
-                      height: 0,
+                      height: 1.2,
                       letterSpacing: 0.35,
                     ),
                   ),
                 ),
               ),
-              const Space(
-                08,
-                isHorizontal: true,
-              ),
+              SizedBox(width: 8),
               Container(
-                //padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.black),
                 ),
                 child: IconButton(
                   onPressed: () async {
-                    final String userId =
-                        Provider.of<Auth>(context, listen: false)
-                                .userData?['user_id'] ??
-                            '';
-                    final Uri deepLink = Uri.parse(
-                        'https://app.cloudbelly.in/profile?profileId=$userId');
-
-                    Share.share(
-                        "$deepLink");
+                    Share.share(profileUrl);
                   },
                   icon: const Icon(
                     Icons.share,
@@ -155,7 +226,7 @@ class _QrViewState extends State<QrView> {
             ],
           ),
         ),
-        const Space(10),
+        SizedBox(height: 10),
       ],
     );
   }

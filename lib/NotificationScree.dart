@@ -424,7 +424,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       title,
                       style: TextStyle(
                           color: user_type == 'Customer'
-                              ? Color(0xffB232CB)
+                              ? Color.fromARGB(255, 110, 20, 128)
                               : Color(0xff0A4C61),
                           fontSize: 18,
                           // color: Color(0xff0A4C61),
@@ -502,13 +502,23 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                     child: Row(
                       children: [
-                        CircleAvatar(
-                          backgroundImage:
-                              notification['msg']['from_profile_photo'] != ''
+                        Container(
+                          width: 30,
+                        
+                          decoration: BoxDecoration(
+                            
+                            borderRadius: BorderRadius.circular(
+                                8), // Add some border radius if you want rounded corners
+                            image: DecorationImage(
+                              image: notification['msg']
+                                          ['from_profile_photo'] !=
+                                      ''
                                   ? NetworkImage(notification['msg']
                                       ['from_profile_photo']) as ImageProvider
-                                  : AssetImage(Assets.appIcon),
-                          radius: 20,
+                                  : const AssetImage(Assets.appIcon),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                         SizedBox(width: 16.0),
                         Expanded(
@@ -517,9 +527,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             children: [
                               Text(
                                 notification['notification']['title'],
-                                style:  TextStyle(
-                                   color: user_type == 'Customer'
-                                        ? Color(0xffB232CB)
+                                style: TextStyle(
+                                    color: user_type == 'Customer'
+                                        ? Color.fromARGB(255, 110, 20, 128)
                                         : Color(0xff0A4C61),
                                     fontSize: 12.0,
                                     fontWeight: FontWeight.bold),
@@ -533,7 +543,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 notification['notification']['body'],
                                 style: TextStyle(
                                     color: user_type == 'Customer'
-                                        ? Color(0xffB232CB)
+                                        ? Color.fromARGB(255, 110, 20, 128)
                                         : Color(0xff0A4C61),
                                     fontSize: 10.0),
                               ),
@@ -900,7 +910,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         style: TextStyle(
                           color: (itemProvider.userData?['user_type'] ?? '') ==
                                   'Customer'
-                              ? Color(0xffB232CB)
+                              ? Color(0xFF2E0435)
                               : Color(0xff0A4C61),
                           fontFamily: 'Jost',
                           fontWeight: FontWeight.w600,
@@ -921,14 +931,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           showAllAcceptedOrderNotifications,
                           false,
                           itemProvider.userData?['user_type'] ?? ''),
-                    // if ((itemProvider.userData?['user_type'] ?? '') ==
-                    //     'Customer')
-                    //   buildCustomerNotificationList(
-                    //       'Accepted Orders',
-                    //       itemProvider.acceptedOrders,
-                    //       showAllAcceptedOrderNotifications,
-                    //       false,
-                    //       itemProvider.userData?['user_type'] ?? ''),
+                    if ((itemProvider.userData?['user_type'] ?? '') ==
+                        'Customer')
+                      buildCustomerNotificationList(
+                          'Order Tracking',
+                          itemProvider.acceptedOrders,
+                          showAllAcceptedOrderNotifications,
+                          false,
+                          itemProvider.userData?['user_type'] ?? ''),
                     if ((itemProvider.userData?['user_type'] ?? '') == 'Vendor')
                       buildNotificationList(
                           'Incoming Orders',

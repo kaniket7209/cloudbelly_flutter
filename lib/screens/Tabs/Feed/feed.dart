@@ -290,6 +290,7 @@ class StoryItemWidget extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
+                    
                     name[0].toUpperCase(),
                     style: TextStyle(fontSize: 40),
                   ),
