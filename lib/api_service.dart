@@ -49,7 +49,7 @@ class Auth with ChangeNotifier {
   List<ProductDetails> itemAdd = [];
   List notificationDetails = [];
   List<Map<String, dynamic>> orderDetails = [];
-
+  List<Map<String, dynamic>> paymentDetails = [];
   // Assume your API response provides this status categorization
   List<Map<String, dynamic>> get incomingOrders =>
       orderDetails.where((order) => order['status'] == 'Submitted').toList();
@@ -57,8 +57,7 @@ class Auth with ChangeNotifier {
       orderDetails.where((order) => order['status'] == 'Accepted').toList();
   List<Map<String, dynamic>> get completedOrders =>
       orderDetails.where((order) => order['status'] == 'delivered').toList();
-  List get paymentDetails =>
-      notificationDetails.where((order) => order['msg']['type'] == 'payment_verification').toList();
+  List<Map<String, dynamic>> get paymentVerifications => paymentDetails;
 
   // get user_logo_url {
   //   notifyListeners();
@@ -71,72 +70,78 @@ class Auth with ChangeNotifier {
 
   final headers = {
     'Accept': '*/*',
-    'User-Agent': 'PostmanRuntime/7.36.1',
     'Content-Type': 'application/json',
     'Accept-Encoding': 'gzip, deflate, br'
   };
 
-Future<void> acceptOrder(String orderId, String userId, String orderFrom) async {
-  final response = await http.post(
-    Uri.parse("https://app.cloudbelly.in/order/accept"),
-    headers: headers,
-    body: jsonEncode({
-      "user_id": userId,
-      "order_from_user_id": orderFrom,
-      "order_id": orderId
-    }),
-  );
-  if (response.statusCode == 200) {
-    final orderIndex = orderDetails.indexWhere((order) => order['_id'] == orderId);
-    if (orderIndex != -1) {
-      orderDetails[orderIndex]['status'] = 'Accepted';
-      notifyListeners();
+  Future<void> acceptOrder(
+      String orderId, String userId, String orderFrom) async {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/order/accept"),
+      headers: headers,
+      body: jsonEncode({
+        "user_id": userId,
+        "order_from_user_id": orderFrom,
+        "order_id": orderId
+      }),
+    );
+    if (response.statusCode == 200) {
+      final orderIndex =
+          orderDetails.indexWhere((order) => order['_id'] == orderId);
+      if (orderIndex != -1) {
+        orderDetails[orderIndex]['status'] = 'Accepted';
+        notifyListeners();
+      }
+    } else {
+      throw Exception('Failed to accept order');
     }
-  } else {
-    throw Exception('Failed to accept order');
   }
-}
-Future<void> rejectOrder(String orderId, String userId, String orderFrom) async {
-  final response = await http.post(
-    Uri.parse("https://app.cloudbelly.in/order/reject"),
-    headers: headers,
-    body: jsonEncode({
-      "user_id": userId,
-      "order_from_user_id": orderFrom,
-      "order_id": orderId
-    }),
-  );
-  if (response.statusCode == 200) {
-    final orderIndex = orderDetails.indexWhere((order) => order['_id'] == orderId);
-    if (orderIndex != -1) {
-      orderDetails[orderIndex]['status'] = 'Rejected';
-      notifyListeners();
-    }
-  } else {
-    throw Exception('Failed to accept order');
-  }
-}
 
-Future<void> markOrderAsDelivered(String orderId, String userId, String orderFrom) async {
-  final response = await http.post(
-    Uri.parse("https://app.cloudbelly.in/order/delivered"),
-    headers: headers,
-    body: jsonEncode({
-      "user_id": userId,
-      "order_from_user_id": orderFrom,
-      "order_id": orderId
-    }),
-  );
-  if (response.statusCode == 200) {
-    final orderIndex = orderDetails.indexWhere((order) => order['_id'] == orderId);
-    if (orderIndex != -1) {
-      orderDetails[orderIndex]['status'] = 'delivered';
-      notifyListeners();
+  Future<void> rejectOrder(
+      String orderId, String userId, String orderFrom) async {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/order/reject"),
+      headers: headers,
+      body: jsonEncode({
+        "user_id": userId,
+        "order_from_user_id": orderFrom,
+        "order_id": orderId
+      }),
+    );
+    if (response.statusCode == 200) {
+      final orderIndex =
+          orderDetails.indexWhere((order) => order['_id'] == orderId);
+      if (orderIndex != -1) {
+        orderDetails[orderIndex]['status'] = 'Rejected';
+        notifyListeners();
+      }
+    } else {
+      throw Exception('Failed to accept order');
     }
-  } else {
-    throw Exception('Failed to mark order as delivered');
   }
-}
+
+  Future<void> markOrderAsDelivered(
+      String orderId, String userId, String orderFrom) async {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/order/delivered"),
+      headers: headers,
+      body: jsonEncode({
+        "user_id": userId,
+        "order_from_user_id": orderFrom,
+        "order_id": orderId
+      }),
+    );
+    if (response.statusCode == 200) {
+      final orderIndex =
+          orderDetails.indexWhere((order) => order['_id'] == orderId);
+      if (orderIndex != -1) {
+        orderDetails[orderIndex]['status'] = 'delivered';
+        notifyListeners();
+      }
+    } else {
+      throw Exception('Failed to mark order as delivered');
+    }
+  }
 
   // Auth._internal();
   void getToken(String? token) {
@@ -170,38 +175,48 @@ Future<void> markOrderAsDelivered(String orderId, String userId, String orderFro
     // return sum;
   }
 
-Future<void> getNotificationList() async {
-  try {
-    final response = await http.post(
-      Uri.parse("https://app.cloudbelly.in/get-notification"),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({"user_id": userData?['user_id'] ?? ""}),
-    );
-    final orders = await http.post(
-      Uri.parse("https://app.cloudbelly.in/order/get"),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({"order_from_user_id": userData?['user_id'] ?? ""}),
-    );
-    orderDetails = List<Map<String, dynamic>>.from(jsonDecode(orders.body));
-    if (response.statusCode == 200) {
-      var notif = List<Map<String, dynamic>>.from(jsonDecode(response.body));
-      notificationDetails = notif.where((element) => 
-        element['msg']['type'] == 'social' ||
-        element['msg']['type'] == 'payment_verification' 
-      ).toList();
-      notifyListeners();
-    } else {
-      throw Exception('Failed to load notifications');
+  Future<void> getNotificationList() async {
+    try {
+      final response = await http.post(
+        Uri.parse("https://app.cloudbelly.in/get-notification"),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"user_id": userData?['user_id'] ?? ""}),
+      );
+      final orders = await http.post(
+        Uri.parse("https://app.cloudbelly.in/order/get"),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"order_from_user_id": userData?['user_id'] ?? ""}),
+      );
+      orderDetails = List<Map<String, dynamic>>.from(jsonDecode(orders.body));
+      final payments = await http.post(
+        Uri.parse("https://app.cloudbelly.in/payments/get"),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"payment_to_user_id": userData?['user_id'] ?? ""}),
+      );
+      print("payment api${jsonEncode({"payment_to_user_id": userData?['user_id'] ?? ""})}");
+      paymentDetails =
+          List<Map<String, dynamic>>.from(jsonDecode(payments.body));
+      if (response.statusCode == 200) {
+        var notif = List<Map<String, dynamic>>.from(jsonDecode(response.body));
+        notificationDetails = notif
+            .where((element) =>
+                element['msg']['type'] == 'social' )
+            .toList();
+        notifyListeners();
+      } else {
+        throw Exception('Failed to load notifications');
+      }
+    } catch (error) {
+      throw error;
     }
-  } catch (error) {
-    throw error;
+    notifyListeners();
   }
-  notifyListeners();
-}
 
   removeItem(item) {
     int idx = itemAdd.indexWhere((element) => element.id == item.id);
@@ -1098,7 +1113,6 @@ Future<void> getNotificationList() async {
     }
   }
 
-
   Future<String> createPost(List<String> list, List<String> tags,
       String caption, List<dynamic> selectedMenuList) async {
     final String url = 'https://app.cloudbelly.in/metadata/feed';
@@ -1253,7 +1267,7 @@ Future<void> getNotificationList() async {
     final String url = 'https://app.cloudbelly.in/follow';
 
     final Map<String, dynamic> requestBody = {
-      "current_user_id": userData?['user_id'] ,
+      "current_user_id": userData?['user_id'],
       "profile_user_id": id,
     };
 
@@ -1373,7 +1387,6 @@ Future<void> getNotificationList() async {
       return '-1';
     }
   }
-
 
   Future<String> commentPost(String id, String comment) async {
     final String url = 'https://app.cloudbelly.in/update-posts';
@@ -1624,9 +1637,9 @@ Future<void> getNotificationList() async {
   }
 
 // for getting upi
- Future<dynamic> getSellerQr(String? orderId, id,amount) async {
+  Future<dynamic> getSellerQr(String? orderId, id, amount) async {
     final String url = '${baseUrl}order/upi';
-  
+
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {};
     requestBody = {
@@ -1644,9 +1657,7 @@ Future<void> getNotificationList() async {
         body: jsonEncode(requestBody),
       );
 
-      
       print("jsonResponse:: ${response.body}");
-     
 
       return jsonDecode((response.body));
     } catch (error) {
