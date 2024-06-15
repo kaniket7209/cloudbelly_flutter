@@ -127,6 +127,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
     final List<Map<String, dynamic>> displayedNotifications =
         showAll ? notifications : notifications.take(10).toList();
 
+      
+    Color boxShadowColor;
+
+    if (user_type == 'Vendor') {
+      boxShadowColor = const Color(0xff0A4C61);
+    } else if (user_type == 'Customer') {
+      boxShadowColor = const Color(0xffBC73BC);
+    } else if (user_type == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    } else {
+      boxShadowColor = const Color.fromRGBO(
+          77, 191, 74, 0.6); // Default color if user_type is none of the above
+    }
+
+
     return notifications.isEmpty
         ? Container()
         : Column(
@@ -163,8 +178,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         children: [
                           Text(
                             showAll ? 'See less' : 'See all',
-                            style: const TextStyle(
-                                color: Color(0xff0A4C61),
+                            style:  TextStyle(
+                                color: boxShadowColor,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'Product Sans'),
                           ),
@@ -199,11 +214,32 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                     child: Row(
                       children: [
-                        CircleAvatar(
-                          backgroundImage:
-                              NetworkImage(notification['buyer_logo']),
-                          radius: 20,
+                        Container(
+                          width: 35,
+                          height: 35,
+                          
+                          decoration: BoxDecoration(
+                            
+                            boxShadow: const [
+                              
+                              BoxShadow(
+                                color:
+                                    Color(0x591F6F6D), // Color with 35% opacity
+                                blurRadius: 10, // Blur amount
+                                offset: Offset(0, 4), // X and Y offset
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(8),
+                            
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                  notification['buyer_logo']),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
+                        
+                        SizedBox(width: 16.0),
                         SizedBox(width: 16.0),
                         Expanded(
                           child: Column(
@@ -211,10 +247,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             children: [
                               Text(
                                 "${notification['buyer_store_name']}  |  Order no - ${notification['order_no']}  ( ${notification['payment_mode']} )",
-                                style: const TextStyle(
+                                style:  TextStyle(
                                     fontSize: 14.0,
                                     fontFamily: 'Product Sans',
-                                    color: Color(0xff0A4C61),
+                                    color: boxShadowColor,
                                     fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 1.0),
@@ -222,7 +258,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 formatItems(notification['items']),
                                 style: TextStyle(
                                     fontSize: 14.0,
-                                    color: Color(0xff0A4C61),
+                                    color: boxShadowColor,
                                     fontWeight: FontWeight.bold),
                               ),
                               Row(
@@ -499,8 +535,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         Container(
                           width: 35,
                           height: 35,
+                          
                           decoration: BoxDecoration(
-                            boxShadow: [
+                            
+                            boxShadow: const [
+                              
                               BoxShadow(
                                 color:
                                     Color(0x591F6F6D), // Color with 35% opacity
@@ -509,6 +548,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               ),
                             ],
                             borderRadius: BorderRadius.circular(8),
+                            
                             image: DecorationImage(
                               image: NetworkImage(
                                   notification['msg']['from_profile_photo']),
@@ -516,6 +556,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ),
                           ),
                         ),
+                        
                         SizedBox(width: 16.0),
                         Expanded(
                           child: Column(

@@ -85,13 +85,12 @@ class _PaymentOptionsState extends State<PaymentOptions> {
   }
 
   Future<void> fetchQrCode() async {
-    print("Fetching QR code...");
+    print("Fetching QR code... ");
     const String url = 'https://app.cloudbelly.in/order/upi';
     final payload = {
       'user_id': widget.userId,
       'order_from_user_id': widget.orderFromUserId,
-      'order_id': widget.orderId,
-      'amount': widget.amount.toString()
+      'order_id': widget.orderId
     };
 
     try {
@@ -292,6 +291,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
               ),
               GestureDetector(
                 onTap: () {
+                  initState();
                   Navigator.of(context).pop();
                 },
                 child: Center(
@@ -376,7 +376,6 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   onPressed: () {
                     // Add continue shopping functionality here
                     Navigator.of(context).pop();
-                    
                   },
                   child: const Text(
                     'Continue shopping',
@@ -1242,7 +1241,7 @@ class _ViewCartState extends State<ViewCart> {
                             .productList
                             .forEach((element) {
                           String productId = element.id ?? "";
-                          String priceEach = element.totalPrice ?? "";
+                          String priceEach = element.price ?? "";
                           int quantity = element.quantity ?? 0;
 
                           Map<String, dynamic> newItem = {
@@ -1250,10 +1249,10 @@ class _ViewCartState extends State<ViewCart> {
                             'price_each': priceEach,
                             'quantity': quantity,
                           };
-
+                          
                           convertedList.add(newItem);
                         });
-                        print("convertedList  $convertedList");
+                        // print("convertedList  $convertedList");
                         createProductOrder();
                       },
                       child: Container(
