@@ -25,6 +25,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
   bool showAllCompletedOrderNotifications = false;
   bool showAllPaymentNotifications = false;
   int _selectedTabIndex = 0;
+  final PageController _pageController = PageController();
+  final ScrollController _scrollController = ScrollController();
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   // ScrollController t1 = new ScrollController();
@@ -33,6 +35,35 @@ class _NotificationScreenState extends State<NotificationScreen> {
   void initState() {
     super.initState();
     _fetchNotifications();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _selectedTabIndex = index;
+      _pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      _scrollToSelectedTab();
+    });
+  }
+
+  void _scrollToSelectedTab() {
+    // Ensure the selected tab is visible in the scroll view
+    _scrollController.animateTo(
+      _selectedTabIndex *
+          65.0, // Approximate width of each tab, adjust as needed
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   Future<void> _fetchNotifications() async {
@@ -100,80 +131,75 @@ class _NotificationScreenState extends State<NotificationScreen> {
       bool isAccepted,
       String user_type) {
     final List<Map<String, dynamic>> displayedNotifications =
-        showAll ? notifications : notifications.take(2).toList();
-
-    // Debug print statements
-    print(
-        "Title: $title, Notifications Length: ${notifications.length}, ShowAll: $showAll");
+        showAll ? notifications : notifications.take(5).toList();
 
     return notifications.isEmpty
         ? Container()
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                          color: Color(0xff0A4C61),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    if (notifications.length > 2)
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (title == 'Socials') {
-                              showAllSocialNotifications =
-                                  !showAllSocialNotifications;
-                            } else if (title == 'Accepted Orders') {
-                              showAllAcceptedOrderNotifications =
-                                  !showAllAcceptedOrderNotifications;
-                            } else if (title == 'Incoming Orders') {
-                              showAllIncomingOrderNotifications =
-                                  !showAllIncomingOrderNotifications;
-                            } else if (title == 'Completed Orders') {
-                              showAllCompletedOrderNotifications =
-                                  !showAllCompletedOrderNotifications;
-                            } else if (title == 'Payment History') {
-                              showAllPaymentNotifications =
-                                  !showAllPaymentNotifications;
-                            }
-                          });
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              showAll ? 'See less' : 'See all',
-                              style: const TextStyle(
-                                  color: Color(0xff0A4C61),
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Product Sans'),
-                            ),
-                            SizedBox(width: 5),
-                            Image.asset(
-                              'assets/icons/next_arrow.png',
-                              width: 10,
-                            ),
-                          ],
-                        ),
-                      )
-                  ],
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                        color: Colors
+                            .transparent, // comment it if you want to see the title
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  if (notifications.length > 5)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (title == 'Socials') {
+                            showAllSocialNotifications =
+                                !showAllSocialNotifications;
+                          } else if (title == 'Accepted Orders') {
+                            showAllAcceptedOrderNotifications =
+                                !showAllAcceptedOrderNotifications;
+                          } else if (title == 'Incoming Orders') {
+                            showAllIncomingOrderNotifications =
+                                !showAllIncomingOrderNotifications;
+                          } else if (title == 'Completed Orders') {
+                            showAllCompletedOrderNotifications =
+                                !showAllCompletedOrderNotifications;
+                          } else if (title == 'Payment History') {
+                            showAllPaymentNotifications =
+                                !showAllPaymentNotifications;
+                          }
+                        });
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            showAll ? 'See less' : 'See all',
+                            style: const TextStyle(
+                                color: Color(0xff0A4C61),
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Product Sans'),
+                          ),
+                          SizedBox(width: 5),
+                          Image.asset(
+                            'assets/icons/next_arrow.png',
+                            width: 10,
+                          ),
+                        ],
+                      ),
+                    )
+                ],
               ),
               ListView.builder(
+                
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: displayedNotifications.length,
                 itemBuilder: (context, index) {
                   final notification = displayedNotifications[index];
                   return Container(
+                   
                     margin: const EdgeInsets.symmetric(
                         vertical: 8.0, horizontal: 16.0),
                     padding: const EdgeInsets.all(16.0),
@@ -475,6 +501,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   );
                 },
               ),
+          
             ],
           );
   }
@@ -490,16 +517,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
             children: [
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       title,
                       style: TextStyle(
-                          color: user_type == 'Customer'
-                              ? Color.fromARGB(255, 110, 20, 128)
-                              : Color(0xff0A4C61),
+                          // color: user_type == 'Customer'
+                          //     ? Color.fromARGB(255, 110, 20, 128)
+                          //     : Color(0xff0A4C61),
+                          color: Colors.transparent,
                           fontSize: 18,
                           // color: Color(0xff0A4C61),
                           fontWeight: FontWeight.bold),
@@ -551,82 +579,84 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ],
                 ),
               ),
-              ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: displayedNotifications.length,
-                itemBuilder: (context, index) {
-                  final notification = displayedNotifications[index];
-                  print("nott $notification");
-                  return Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 16.0),
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.white.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 7,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                8), // Add some border radius if you want rounded corners
-                            image: DecorationImage(
-                              image: notification['msg']
-                                          ['from_profile_photo'] !=
-                                      ''
-                                  ? NetworkImage(notification['msg']
-                                      ['from_profile_photo']) as ImageProvider
-                                  : const AssetImage(Assets.appIcon),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 16.0),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                notification['notification']['title'],
-                                style: TextStyle(
-                                    color: user_type == 'Customer'
-                                        ? Color.fromARGB(255, 110, 20, 128)
-                                        : Color(0xff0A4C61),
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                timeAgo(notification['timestamp']),
-                                style: TextStyle(
-                                    fontSize: 10.0, color: Color(0xFFFA6E00)),
-                              ),
-                              Text(
-                                notification['notification']['body'],
-                                style: TextStyle(
-                                    color: user_type == 'Customer'
-                                        ? Color.fromARGB(255, 110, 20, 128)
-                                        : Color(0xff0A4C61),
-                                    fontSize: 10.0),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+             ListView.builder(
+  physics: NeverScrollableScrollPhysics(),
+  shrinkWrap: true,
+  itemCount: displayedNotifications.length,
+  itemBuilder: (context, index) {
+    final notification = displayedNotifications[index];
+    print("nott ${notification['msg']['from_profile_photo']}");
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15.0),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.grey.withOpacity(0.2),
+        //     spreadRadius: 1,
+        //     blurRadius: 7,
+        //     offset: Offset(0, 3),
+        //   ),
+        // ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              image: DecorationImage(
+                image: NetworkImage(notification['msg']['from_profile_photo']),
+                fit: BoxFit.cover,
+                onError: (error, stackTrace) {
+                  print('Failed to load image: $error');
                 },
               ),
+            ),
+          ),
+          SizedBox(width: 16.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Text(
+                //   notification['notification']['title'],
+                //   style: TextStyle(
+                //     color: user_type == 'Customer'
+                //         ? Color.fromARGB(255, 110, 20, 128)
+                //         : Color(0xff0A4C61),
+                //     fontSize: 12.0,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
+                Text(
+                  notification['notification']['body'],
+                  style: TextStyle(
+
+                    color: user_type == 'Customer'
+                        ? Color.fromARGB(255, 110, 20, 128)
+                        : Color(0xff0A4C61),
+                        fontWeight: FontWeight.bold,
+                    fontSize: 12.0,
+                  ),
+                ),
+                Text(
+                  timeAgo(notification['timestamp']),
+                  style: TextStyle(fontSize: 10.0, color: Color(0xfffFA6E00)),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  },
+)
+
+            
             ],
           );
   }
@@ -647,6 +677,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       boxShadowColor = const Color.fromRGBO(
           77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Consumer<Auth>(
@@ -664,304 +695,161 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   controller: _refreshController,
                   enablePullDown: true,
                   enablePullUp: false,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 60),
-                        Center(
-                          child: Text(
-                            "Notification & Orders",
-                            style: TextStyle(
-                              color: boxShadowColor,
-                              fontFamily: 'Jost',
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1,
-                              fontSize: 22,
-                            ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 60),
+                      Center(
+                        child: Text(
+                          "Notification & Orders",
+                          style: TextStyle(
+                            color: boxShadowColor,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1,
+                            fontSize: 22,
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedTabIndex = 0;
-                                    });
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Socials',
-                                        style: TextStyle(
-                                          color: _selectedTabIndex == 0
-                                              ? boxShadowColor
-                                              : Colors.grey,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      if (_selectedTabIndex == 0)
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Container(
-                                            margin: EdgeInsets.only(top: 4.0),
-                                            decoration: BoxDecoration(
-                                              color: Color(0xffFA6E00),
-                                              borderRadius: BorderRadius.circular(
-                                                  2.0), // Adjust the radius as needed
-                                            ),
-                                            height: 4.0,
-                                            child: const IntrinsicWidth(
-                                              child: Text(
-                                                'Socials',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors
-                                                      .transparent, // Make text transparent to only use width
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(width: 16),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedTabIndex = 1;
-                                    });
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Incoming Orders',
-                                        style: TextStyle(
-                                          color: _selectedTabIndex == 1
-                                              ? boxShadowColor
-                                              : Colors.grey,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      if (_selectedTabIndex == 1)
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Container(
-                                            margin: EdgeInsets.only(top: 4.0),
-                                            decoration: BoxDecoration(
-                                              color: Color(0xffFA6E00),
-                                              borderRadius: BorderRadius.circular(
-                                                  2.0), // Adjust the radius as needed
-                                            ),
-                                            height: 4.0,
-                                            child: const IntrinsicWidth(
-                                              child: Text(
-                                                'Incoming Orders',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors
-                                                      .transparent, // Make text transparent to only use width
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(width: 16),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedTabIndex = 2;
-                                    });
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Ongoing Orders',
-                                        style: TextStyle(
-                                          color: _selectedTabIndex == 2
-                                              ? boxShadowColor
-                                              : Colors.grey,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      if (_selectedTabIndex == 2)
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Container(
-                                            margin: EdgeInsets.only(top: 4.0),
-                                            decoration: BoxDecoration(
-                                              color: Color(0xffFA6E00),
-                                              borderRadius: BorderRadius.circular(
-                                                  2.0), // Adjust the radius as needed
-                                            ),
-                                            height: 4.0,
-                                            child: const IntrinsicWidth(
-                                              child: Text(
-                                                'Ongoing Orders',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors
-                                                      .transparent, // Make text transparent to only use width
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedTabIndex = 3;
-                                    });
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Completed Orders',
-                                        style: TextStyle(
-                                          color: _selectedTabIndex == 3
-                                              ? boxShadowColor
-                                              : Colors.grey,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      if (_selectedTabIndex == 3)
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Container(
-                                            margin: EdgeInsets.only(top: 4.0),
-                                            decoration: BoxDecoration(
-                                              color: Color(0xffFA6E00),
-                                              borderRadius: BorderRadius.circular(
-                                                  2.0), // Adjust the radius as needed
-                                            ),
-                                            height: 4.0,
-                                            child: const IntrinsicWidth(
-                                              child: Text(
-                                                'Completed Orders',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors
-                                                      .transparent, // Make text transparent to only use width
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(width: 16),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedTabIndex = 4;
-                                    });
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Payment History',
-                                        style: TextStyle(
-                                          color: _selectedTabIndex == 4
-                                              ? boxShadowColor
-                                              : Colors.grey,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      if (_selectedTabIndex == 4)
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Container(
-                                            margin: EdgeInsets.only(top: 4.0),
-                                            decoration: BoxDecoration(
-                                              color: Color(0xffFA6E00),
-                                              borderRadius: BorderRadius.circular(
-                                                  2.0), // Adjust the radius as needed
-                                            ),
-                                            height: 4.0,
-                                            child: const IntrinsicWidth(
-                                              child: Text(
-                                                'Payment History',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors
-                                                      .transparent, // Make text transparent to only use width
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                      ),
+                      const SizedBox(height: 12),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        controller: _scrollController,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            children: [
+                              _buildTabItem('Socials', 0, boxShadowColor),
+                              SizedBox(width: 16),
+                              _buildTabItem(
+                                  'Incoming Orders', 1, boxShadowColor),
+                              SizedBox(width: 16),
+                              _buildTabItem(
+                                  'Ongoing Orders', 2, boxShadowColor),
+                              const SizedBox(width: 16),
+                              _buildTabItem(
+                                  'Completed Orders', 3, boxShadowColor),
+                              SizedBox(width: 16),
+                              _buildTabItem(
+                                  'Payment History', 4, boxShadowColor),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        IndexedStack(
-                          index: _selectedTabIndex,
+                      ),
+                      // const SizedBox(height: 12),
+                      Expanded(
+                       
+                        child: PageView(
+                          controller: _pageController,
+                          onPageChanged: (index) {
+                            setState(() {
+                              _selectedTabIndex = index;
+                              _scrollToSelectedTab();
+                            });
+                          },
                           children: [
-                            buildSocialNotificationList(
+                            _buildPageContent(
+                              buildSocialNotificationList(
                                 'Socials',
                                 itemProvider.notificationDetails,
                                 showAllSocialNotifications,
-                                itemProvider.userData?['user_type'] ?? ''),
-                            buildNotificationList(
+                                itemProvider.userData?['user_type'] ?? '',
+                              ),
+                            ),
+                            _buildPageContent(
+                              buildNotificationList(
                                 'Incoming Orders',
                                 itemProvider.incomingOrders,
                                 showAllIncomingOrderNotifications,
                                 false,
-                                itemProvider.userData?['user_type'] ?? ''),
-                            buildNotificationList(
+                                itemProvider.userData?['user_type'] ?? '',
+                              ),
+                            ),
+                            _buildPageContent(
+                              buildNotificationList(
                                 'Ongoing Orders',
                                 itemProvider.acceptedOrders,
                                 showAllAcceptedOrderNotifications,
                                 true,
-                                itemProvider.userData?['user_type'] ?? ''),
-                            buildNotificationList(
+                                itemProvider.userData?['user_type'] ?? '',
+                              ),
+                            ),
+                            _buildPageContent(
+                              buildNotificationList(
                                 'Completed Orders',
                                 itemProvider.completedOrders,
                                 showAllCompletedOrderNotifications,
                                 false,
-                                itemProvider.userData?['user_type'] ?? ''),
-                            buildNotificationList(
+                                itemProvider.userData?['user_type'] ?? '',
+                              ),
+                            ),
+                            _buildPageContent(
+                              buildNotificationList(
                                 'Payment History',
                                 itemProvider.paymentVerifications,
                                 showAllPaymentNotifications,
                                 false,
-                                itemProvider.userData?['user_type'] ?? ''),
+                                itemProvider.userData?['user_type'] ?? '',
+                              ),
+                            ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 )
-              : Center(child: Text('No notifications available.'));
+              : const Center(child: Text('No notifications available.'));
         },
+      ),
+    );
+  }
+
+  Widget _buildPageContent(Widget content) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(1.0),
+        child: content,
+      ),
+    );
+  }
+
+  Widget _buildTabItem(String title, int index, Color boxShadowColor) {
+    return GestureDetector(
+      onTap: () => _onTabTapped(index),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: _selectedTabIndex == index ? boxShadowColor : Colors.grey,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          if (_selectedTabIndex == index)
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                margin: const EdgeInsets.only(top: 4.0),
+                decoration: BoxDecoration(
+                  color: Color(0xffFA6E00),
+                  borderRadius:
+                      BorderRadius.circular(2.0), // Adjust the radius as needed
+                ),
+                height: 4.0,
+                child: IntrinsicWidth(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors
+                          .transparent, // Make text transparent to only use width
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
