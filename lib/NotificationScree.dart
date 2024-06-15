@@ -81,10 +81,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   String formatItems(List<dynamic> items) {
     List<String> formattedItems = [];
-    for (int i = 0; i < items.length; i += 2) {
+    for (int i = 0; i < items.length; i += 1) {
       String line = items
           .skip(i)
-          .take(2)
+          .take(1)
           .map((item) => '${item['name']} x ${item['quantity']}')
           .join(', ');
       formattedItems.add(line);
@@ -127,7 +127,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     final List<Map<String, dynamic>> displayedNotifications =
         showAll ? notifications : notifications.take(10).toList();
 
-      
     Color boxShadowColor;
 
     if (user_type == 'Vendor') {
@@ -140,7 +139,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
       boxShadowColor = const Color.fromRGBO(
           77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
-
 
     return notifications.isEmpty
         ? Container()
@@ -178,7 +176,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         children: [
                           Text(
                             showAll ? 'See less' : 'See all',
-                            style:  TextStyle(
+                            style: TextStyle(
                                 color: boxShadowColor,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'Product Sans'),
@@ -197,272 +195,504 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 children: List.generate(displayedNotifications.length, (index) {
                   final notification = displayedNotifications[index];
                   return Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 16.0),
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 7,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 35,
-                          height: 35,
-                          
-                          decoration: BoxDecoration(
-                            
-                            boxShadow: const [
-                              
-                              BoxShadow(
-                                color:
-                                    Color(0x591F6F6D), // Color with 35% opacity
-                                blurRadius: 10, // Blur amount
-                                offset: Offset(0, 4), // X and Y offset
-                              ),
-                            ],
-                            borderRadius: BorderRadius.circular(8),
-                            
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                  notification['buyer_logo']),
-                              fit: BoxFit.cover,
-                            ),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: ShapeDecoration(
+                        color: Colors.white,
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 15.0,
+                            cornerSmoothing: 1,
                           ),
                         ),
-                        
-                        SizedBox(width: 16.0),
-                        SizedBox(width: 16.0),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${notification['buyer_store_name']}  |  Order no - ${notification['order_no']}  ( ${notification['payment_mode']} )",
-                                style:  TextStyle(
-                                    fontSize: 14.0,
-                                    fontFamily: 'Product Sans',
-                                    color: boxShadowColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(height: 1.0),
-                              Text(
-                                formatItems(notification['items']),
-                                style: TextStyle(
-                                    fontSize: 14.0,
-                                    color: boxShadowColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    timeAgo(notification['created_date']),
-                                    style: const TextStyle(
-                                        fontSize: 10.0,
-                                        color: Color(0xFFFA6E00)),
-                                  ),
-                                  SizedBox(width: 20),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      if (notification['location'] != null &&
-                                          notification['location']
-                                                  ['latitude'] !=
-                                              null) {
-                                        final String googleMapsUrl =
-                                            'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
-                                        if (await canLaunchUrl(
-                                            Uri.parse(googleMapsUrl))) {
-                                          await launchUrl(
-                                              Uri.parse(googleMapsUrl));
-                                        } else {
-                                          throw 'Could not open the map.';
-                                        }
-                                      }
-                                    },
-                                    child: Image.asset(
-                                      'assets/images/Navigation.png',
-                                      width: 30,
-                                      height: 30,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      final phoneNumber =
-                                          notification['customer_phone'];
-                                      final url = 'tel:$phoneNumber';
-                                      if (await canLaunch(url)) {
-                                        await launch(url);
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                              content: Text(
-                                                  'Could not launch phone call')),
-                                        );
-                                      }
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 10,
-                                      backgroundColor: const Color(0xFFFA6E00),
-                                      child: Image.asset(
-                                        'assets/images/Phone.png',
-                                        width: 30,
-                                        height: 30,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                        shadows: [
+                          BoxShadow(
+                            color: boxShadowColor.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 10,
+                            offset: Offset(0, 3),
                           ),
-                        ),
-                        notification['status'] == 'Submitted'
-                            ? Column(
-                                children: [
-                                  Center(
-                                    child: Text(
-                                        "RS ${notification['total_price']}",
-                                        style: const TextStyle(
-                                            color: Color(0xff0A4C61),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () async {
-                                          try {
-                                            await Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .rejectOrder(
-                                                    notification['_id'],
-                                                    notification['user_id'],
-                                                    notification[
-                                                        'order_from_user_id']);
-                                          } catch (e) {
-                                            print("${e.toString()}");
-                                          }
-                                        },
-                                        child: Container(
-                                          width: 30,
-                                          decoration: ShapeDecoration(
-                                            color: const Color(0xFFFD4F4F),
-                                            shape: SmoothRectangleBorder(
-                                              borderRadius: SmoothBorderRadius(
-                                                cornerRadius: 10,
-                                                cornerSmoothing: 1,
-                                              ),
-                                            ),
-                                          ),
-                                          child: Image.asset(
-                                              'assets/images/Multiply.png'),
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          try {
-                                            await Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .acceptOrder(
-                                                    notification['_id'],
-                                                    notification['user_id'],
-                                                    notification[
-                                                        'order_from_user_id']);
-                                          } catch (e) {
-                                            print("${e.toString()}");
-                                          }
-                                        },
-                                        child: Container(
-                                          width: 30,
-                                          decoration: ShapeDecoration(
-                                            color: const Color(0xFF1ACD0A),
-                                            shape: SmoothRectangleBorder(
-                                              borderRadius: SmoothBorderRadius(
-                                                cornerRadius: 10,
-                                                cornerSmoothing: 1,
-                                              ),
-                                            ),
-                                          ),
-                                          child: Image.asset(
-                                              'assets/images/Done.png'),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            : notification['status'] == 'Accepted'
-                                ? Column(
-                                    children: [
-                                      Center(
-                                        child: Text(
-                                          "Rs ${notification['amount']}",
-                                          style: const TextStyle(
-                                              fontSize: 15.0,
-                                              fontFamily: 'Product Sans',
-                                              color: Color(0xff0A4C61),
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      Space(10),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          try {
-                                            await Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .markOrderAsDelivered(
-                                                    notification['_id'],
-                                                    notification['user_id'],
-                                                    notification[
-                                                        'order_from_user_id']);
-                                          } catch (e) {
-                                            print("${e.toString()}");
-                                          }
-                                        },
-                                        child: Container(
-                                          child: Icon(
-                                              Icons.local_shipping_rounded,
-                                              color: Color(0xff0A4C61)),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : Container(
-                                    padding: EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                    decoration: ShapeDecoration(
-                                      color: Color(0x000000).withOpacity(0.69),
-                                      shape: SmoothRectangleBorder(
-                                          borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 8,
-                                        cornerSmoothing: 1,
-                                      )),
-                                    ),
-                                    child: Text("Delivered",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 10)),
-                                  ),
-                      ],
-                    ),
-                  );
+                        ],
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(2),
+                        child: _buildActionButtons(
+                            notification, isAccepted, boxShadowColor),
+                      )
+                      // child: Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     // Column 1: buyer_logo
+                      //     Container(
+                      //       width: 35,
+                      //       height: 35,
+                      //       decoration: ShapeDecoration(
+                      //         shape: SmoothRectangleBorder(
+                      //           borderRadius: SmoothBorderRadius(
+                      //             cornerRadius: 8,
+                      //             cornerSmoothing: 1,
+                      //           ),
+                      //         ),
+                      //         image: DecorationImage(
+                      //           image: NetworkImage(notification['buyer_logo']),
+                      //           fit: BoxFit.cover,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     SizedBox(width: 16.0),
+                      //     // Column 2: items and created_date
+                      //     Expanded(
+                      //       child: Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+
+                      //           Text(
+                      //             formatItems(notification['items']),
+                      //             style: TextStyle(
+                      //                 fontSize: 14.0,
+                      //                 color: boxShadowColor,
+                      //                 fontWeight: FontWeight.bold),
+                      //           ),
+                      //           Text(
+                      //             timeAgo(notification['created_date']),
+                      //             style: TextStyle(
+                      //                 fontSize: 10.0, color: Color(0xFFFA6E00)),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //     // Column 3: map icon
+                      //     GestureDetector(
+                      //       onTap: () async {
+                      //         if (notification['location'] != null &&
+                      //             notification['location']['latitude'] != null) {
+                      //           final String googleMapsUrl =
+                      //               'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
+                      //           if (await canLaunch(googleMapsUrl)) {
+                      //             await launch(googleMapsUrl);
+                      //           } else {
+                      //             throw 'Could not open the map.';
+                      //           }
+                      //         }
+                      //       },
+                      //       child: Image.asset(
+                      //         'assets/images/Navigation.png',
+                      //         width: 80,
+                      //         height: 80,
+                      //         fit: BoxFit.fill,
+                      //       ),
+                      //     ),
+                      //     // SizedBox(width: 16.0),
+                      //     // Column 4: reject button
+                      //     GestureDetector(
+                      //       onTap: () async {
+                      //         try {
+                      //           await Provider.of<Auth>(context, listen: false)
+                      //               .rejectOrder(
+                      //                   notification['_id'],
+                      //                   notification['user_id'],
+                      //                   notification['order_from_user_id']);
+                      //         } catch (e) {
+                      //           print("${e.toString()}");
+                      //         }
+                      //       },
+                      //       child: Container(
+                      //         width: 30,
+                      //         height: 30,
+                      //         decoration: ShapeDecoration(
+                      //           color: const Color(0xffFD4F4F),
+                      //           shape: SmoothRectangleBorder(
+                      //             borderRadius: SmoothBorderRadius(
+                      //               cornerRadius: 10,
+                      //               cornerSmoothing: 1,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         child: Image.asset('assets/images/Multiply.png'),
+                      //       ),
+                      //     ),
+                      //     SizedBox(width: 16.0),
+                      //     // Column 5: accept button
+                      //     GestureDetector(
+                      //       onTap: () async {
+                      //         try {
+                      //           await Provider.of<Auth>(context, listen: false)
+                      //               .acceptOrder(
+                      //                   notification['_id'],
+                      //                   notification['user_id'],
+                      //                   notification['order_from_user_id']);
+                      //         } catch (e) {
+                      //           print("${e.toString()}");
+                      //         }
+                      //       },
+                      //       child: Container(
+                      //         width: 30,
+                      //         height: 30,
+                      //         decoration: ShapeDecoration(
+                      //           color: boxShadowColor,
+                      //           shape: SmoothRectangleBorder(
+                      //             borderRadius: SmoothBorderRadius(
+                      //               cornerRadius: 10,
+                      //               cornerSmoothing: 1,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         child: Image.asset('assets/images/Done.png'),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+
+                      );
                 }),
               )
             ],
           );
+  }
+
+  Widget _buildActionButtons(Map<String, dynamic> notification, bool isAccepted,
+      Color boxShadowColor) {
+    void handleStatusChange(String newStatus) async {
+      try {
+        await Provider.of<Auth>(context, listen: false).statusChange(
+          notification['_id'],
+          notification['user_id'],
+          notification['order_from_user_id'],
+          newStatus,
+        );
+        setState(() {}); // Trigger UI update
+      } catch (e) {
+        print("${e.toString()}");
+      }
+    }
+
+    if (notification['status'] == 'Submitted') {
+      return Row(
+        children: [
+          // Buyer logo
+          Container(
+            width: 35,
+            height: 35,
+            decoration: ShapeDecoration(
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 8,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              image: DecorationImage(
+                image: NetworkImage(notification['buyer_logo']),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 10.0),
+          // Order details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  formatItems(notification['items']),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: boxShadowColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  timeAgo(notification['created_date']),
+                  style: TextStyle(
+                    fontSize: 10.0,
+                    color: Color(0xffFA6E00),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Map icon
+          GestureDetector(
+            onTap: () async {
+              if (notification['location'] != null &&
+                  notification['location']['latitude'] != null) {
+                final String googleMapsUrl =
+                    'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
+                if (await canLaunch(googleMapsUrl)) {
+                  await launch(googleMapsUrl);
+                } else {
+                  throw 'Could not open the map.';
+                }
+              }
+            },
+            child: Image.asset(
+              'assets/images/Navigation.png',
+              width: 30,
+              height: 30,
+              fit: BoxFit.fill,
+            ),
+          ),
+          SizedBox(width: 10.0),
+          // Reject button
+          GestureDetector(
+            onTap: () async {
+              try {
+                await Provider.of<Auth>(context, listen: false).rejectOrder(
+                    notification['_id'],
+                    notification['user_id'],
+                    notification['order_from_user_id']);
+              } catch (e) {
+                print("${e.toString()}");
+              }
+            },
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFD4F4F),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.close, color: Colors.white, size: 20),
+            ),
+          ),
+          SizedBox(width: 10),
+          // Accept button
+          GestureDetector(
+            onTap: () async {
+              try {
+                await Provider.of<Auth>(context, listen: false).acceptOrder(
+                    notification['_id'],
+                    notification['user_id'],
+                    notification['order_from_user_id']);
+              } catch (e) {
+                print("${e.toString()}");
+              }
+            },
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: boxShadowColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.check, color: Colors.white, size: 20),
+            ),
+          ),
+        ],
+      );
+    } else if (notification['status'] == 'Accepted') {
+      return Row(
+        children: [
+          // Buyer logo
+          Container(
+            width: 35,
+            height: 35,
+            decoration: ShapeDecoration(
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 8,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              image: DecorationImage(
+                image: NetworkImage(notification['buyer_logo']),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 10.0),
+          // Order details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  formatItems(notification['items']),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: boxShadowColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  timeAgo(notification['created_date']),
+                  style: TextStyle(
+                    fontSize: 10.0,
+                    color: Color(0xffFA6E00),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 40),
+          // Complete button
+          GestureDetector(
+            onTap: () => handleStatusChange('Prepared'),
+            child: Container(
+              padding: EdgeInsets.all(10),
+              decoration: ShapeDecoration(
+                color: boxShadowColor,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 10,
+                    cornerSmoothing: 1,
+                  ),
+                ),
+              ),
+              child: Text(
+                'Complete',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (notification['status'] == 'Prepared') {
+      return Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  formatItems(notification['items']),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: boxShadowColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  timeAgo(notification['created_date']),
+                  style: TextStyle(
+                    fontSize: 10.0,
+                    color: Color(0xffFA6E00),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Packed button
+          GestureDetector(
+            onTap: () => handleStatusChange('Packed'),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Color(0xFF0A4C61),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                "Packed",
+                style: TextStyle(color: Colors.white, fontSize: 10),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (notification['status'] == 'Packed') {
+      return Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  formatItems(notification['items']),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: boxShadowColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  timeAgo(notification['created_date']),
+                  style: TextStyle(
+                    fontSize: 10.0,
+                    color: Color(0xffFA6E00),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Out for delivery button
+          GestureDetector(
+            onTap: () => handleStatusChange('Out for delivery'),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Color(0xFF0A4C61),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                "Out for delivery",
+                style: TextStyle(color: Colors.white, fontSize: 10),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (notification['status'] == 'Out for delivery') {
+      return Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  formatItems(notification['items']),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: boxShadowColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  timeAgo(notification['created_date']),
+                  style: TextStyle(
+                    fontSize: 10.0,
+                    color: Color(0xffFA6E00),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Delivered button
+          GestureDetector(
+            onTap: () => handleStatusChange('Delivered'),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Color(0xFF0A4C61),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                "Delivered",
+                style: TextStyle(color: Colors.white, fontSize: 10),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (notification['status'] == 'Delivered') {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: Color(0xFF0A4C61),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          "Completed",
+          style: TextStyle(color: Colors.white, fontSize: 10),
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget buildSocialNotificationList(
@@ -535,11 +765,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         Container(
                           width: 35,
                           height: 35,
-                          
                           decoration: BoxDecoration(
-                            
                             boxShadow: const [
-                              
                               BoxShadow(
                                 color:
                                     Color(0x591F6F6D), // Color with 35% opacity
@@ -548,7 +775,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               ),
                             ],
                             borderRadius: BorderRadius.circular(8),
-                            
                             image: DecorationImage(
                               image: NetworkImage(
                                   notification['msg']['from_profile_photo']),
@@ -556,7 +782,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ),
                           ),
                         ),
-                        
                         SizedBox(width: 16.0),
                         Expanded(
                           child: Column(
@@ -687,8 +912,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             _buildPageContent(
                               buildNotificationList(
                                 'Ongoing Orders',
-                                itemProvider.acceptedOrders +
-                                    itemProvider.completedOrders,
+                                // itemProvider.acceptedOrders +
+                                //     itemProvider.completedOrders,
+                                itemProvider.ongoingOrders,
                                 showAllAcceptedOrderNotifications,
                                 true,
                                 itemProvider.userData?['user_type'] ?? '',

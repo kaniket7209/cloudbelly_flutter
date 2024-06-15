@@ -57,6 +57,9 @@ class Auth with ChangeNotifier {
       orderDetails.where((order) => order['status'] == 'Accepted').toList();
   List<Map<String, dynamic>> get completedOrders =>
       orderDetails.where((order) => order['status'] == 'delivered').toList();
+      List<Map<String, dynamic>> get ongoingOrders =>
+    orderDetails.where((order) => order['status'] == 'Accepted' || order['status'] == 'Prepared' || order['status'] == 'Packed'|| order['status'] == 'Out for delivery' || order['status'] == 'Delivered').toList();
+
   List<Map<String, dynamic>> get paymentVerifications => paymentDetails;
 
   // get user_logo_url {
@@ -96,6 +99,28 @@ class Auth with ChangeNotifier {
       throw Exception('Failed to accept order');
     }
   }
+  Future<void> statusChange(String orderId, String userId, String orderFrom, String status) async {
+  final response = await http.post(
+    Uri.parse("https://app.cloudbelly.in/order/status-change"),
+    headers: headers,
+    body: jsonEncode({
+      "user_id": userId,
+      "order_from_user_id": orderFrom,
+      "order_id": orderId,
+      "status-change": status
+    }),
+  );
+  print(response.body);
+  if (response.statusCode == 200) {
+    final orderIndex = orderDetails.indexWhere((order) => order['_id'] == orderId);
+    if (orderIndex != -1) {
+      orderDetails[orderIndex]['status'] = status; // Update to the correct status
+      notifyListeners();
+    }
+  } else {
+    throw Exception('Failed to change order status');
+  }
+}
 
   Future<void> rejectOrder(
       String orderId, String userId, String orderFrom) async {
