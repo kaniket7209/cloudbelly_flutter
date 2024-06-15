@@ -106,7 +106,7 @@ class _ShareProfilePostItemState extends State<ShareProfilePostItem> {
         _likeData.add({
           'id': element['_id'] ?? 'default_id',
           'name': element['store_name'] ?? 'default_name',
-          'profile_photo': element['profile_photo'] ?? 'default_photo'
+          'profile_photo': element['profile_photo'] ?? 'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg'
         });
         itemsToShow = min(_likeData.length, 2);
       } else {
