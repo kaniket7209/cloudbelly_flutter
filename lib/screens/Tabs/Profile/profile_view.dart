@@ -245,18 +245,20 @@ class _ProfileViewState extends State<ProfileView> {
                                       width: 100.w,
                                       height: 30.h,
                                       decoration: ShapeDecoration(
-                                        color: Provider.of<Auth>(context,
-                                                        listen: false)
-                                                    .userData?['user_type'] ==
-                                                UserType.Vendor.name
-                                            ? const Color(0xFFB1D9D8)
-                                            : Provider.of<Auth>(context,
-                                                                listen: false)
-                                                            .userData?[
-                                                        'user_type'] ==
-                                                    UserType.Supplier.name
-                                                ? const Color(0xFFA3DC76)
-                                                : const Color(0xFFFFE2FF),
+                                         color: userList.first
+                                                                .userType ==
+                                                            UserType.Vendor.name
+                                                        ? const Color.fromRGBO(
+                                                            165, 200, 199, 0.6)
+                                                        : userList.first
+                                                                    .userType ==
+                                                                UserType
+                                                                    .Supplier
+                                                                    .name
+                                                            ? const Color
+                                                                .fromRGBO(77,
+                                                                191, 74, 0.6)
+                                                            :  const Color(0xBC73BC).withOpacity(0.5),
                                         shape: const SmoothRectangleBorder(
                                           borderRadius: SmoothBorderRadius.only(
                                               bottomLeft: SmoothRadius(
@@ -315,7 +317,22 @@ class _ProfileViewState extends State<ProfileView> {
                                                             BoxShadow(
                                                               offset:
                                                                   Offset(0, 4),
-                                                              color: boxShadowColor,
+                                                               color: userList.first
+                                                                .userType ==
+                                                            UserType.Vendor.name
+                                                        ? const Color.fromRGBO(
+                                                            165, 200, 199, 0.6)
+                                                        : userList.first
+                                                                    .userType ==
+                                                                UserType
+                                                                    .Supplier
+                                                                    .name
+                                                            ? const Color
+                                                                .fromRGBO(77,
+                                                                191, 74, 0.6)
+                                                            : const Color
+                                                                .fromRGBO(188,
+                                                                115, 188, 0.6),
                                                               blurRadius: 20,
                                                             )
                                                           ],
@@ -351,13 +368,41 @@ class _ProfileViewState extends State<ProfileView> {
                                                             BoxShadow(
                                                               offset:
                                                                   Offset(0, 4),
-                                                              color: boxShadowColor,
+                                                               color: userList.first
+                                                                .userType ==
+                                                            UserType.Vendor.name
+                                                        ? const Color.fromRGBO(
+                                                            165, 200, 199, 0.6)
+                                                        : userList.first
+                                                                    .userType ==
+                                                                UserType
+                                                                    .Supplier
+                                                                    .name
+                                                            ? const Color
+                                                                .fromRGBO(77,
+                                                                191, 74, 0.6)
+                                                            : const Color
+                                                                .fromRGBO(188,
+                                                                115, 188, 0.6),
                                                               blurRadius: 20,
                                                             ),
                                                           ],
-                                                          color: const Color
-                                                              .fromRGBO(31, 111,
-                                                              109, 0.6),
+                                                          color: userList.first
+                                                                .userType ==
+                                                            UserType.Vendor.name
+                                                        ? const Color.fromRGBO(
+                                                            165, 200, 199, 0.6)
+                                                        : userList.first
+                                                                    .userType ==
+                                                                UserType
+                                                                    .Supplier
+                                                                    .name
+                                                            ? const Color
+                                                                .fromRGBO(77,
+                                                                191, 74, 0.6)
+                                                            : const Color
+                                                                .fromRGBO(188,
+                                                                115, 188, 0.6),
                                                           shape:
                                                               SmoothRectangleBorder(
                                                                   borderRadius:
@@ -602,22 +647,22 @@ class _ProfileViewState extends State<ProfileView> {
                                           shadows: [
                                             BoxShadow(
                                               offset: const Offset(0, 4),
-                                              color: Provider.of<Auth>(context,
-                                                                  listen: false)
-                                                              .userData?[
-                                                          'user_type'] ==
-                                                      UserType.Vendor.name
-                                                  ? const Color.fromRGBO(
-                                                      165, 200, 199, 0.6)
-                                                  : Provider.of<Auth>(context,
-                                                                      listen: false)
-                                                                  .userData?[
-                                                              'user_type'] ==
-                                                          UserType.Supplier.name
-                                                      ? const Color.fromRGBO(
-                                                          77, 191, 74, 0.6)
-                                                      : const Color.fromRGBO(
-                                                          188, 115, 188, 0.6),
+                                               color: userList.first
+                                                                .userType ==
+                                                            UserType.Vendor.name
+                                                        ? const Color.fromRGBO(
+                                                            165, 200, 199, 0.6)
+                                                        : userList.first
+                                                                    .userType ==
+                                                                UserType
+                                                                    .Supplier
+                                                                    .name
+                                                            ? const Color
+                                                                .fromRGBO(77,
+                                                                191, 74, 0.6)
+                                                            : const Color
+                                                                .fromRGBO(188,
+                                                                115, 188, 0.6),
                                               blurRadius: 30,
                                             )
                                           ],

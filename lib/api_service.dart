@@ -160,7 +160,7 @@ Future<void> markOrderAsDelivered(String orderId, String userId, String orderFro
     itemAdd.forEach((element) {
       var quantity = element.quantity ?? 0;
       String priceString = element.price ?? '0';
-      double price = (double.parse(priceString) * quantity) ?? 0.0;
+      double price = (double.parse(priceString) * quantity);
       sum = sum + price;
     });
     Tpice = sum;

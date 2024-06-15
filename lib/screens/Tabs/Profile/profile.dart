@@ -1173,6 +1173,27 @@ class FeedWidget extends StatelessWidget {
   final String isSelfProfile;
   CarouselController buttonCarouselController = CarouselController();
 
+Color getBackgroundColor(String isSelfProfile, bool isVendor) {
+  print("userModel ${userModel?.userType}");
+  var usertype = userModel?.userType;
+  if (isSelfProfile == 'Yes' && isVendor && usertype == 'Vendor') {
+    return const Color.fromRGBO(10, 76, 97, 0.31);
+  } else if (isSelfProfile == 'Yes' && usertype == 'Customer') {
+    return Color(0xBC73BC).withOpacity(0.6);
+  } else if (isSelfProfile == 'Yes'  && usertype == 'Supplier') {
+    return const Color(0xFF4DBF4A);
+  } else if (isSelfProfile == 'No' && usertype == 'Vendor') {
+    return const Color.fromRGBO(10, 76, 97, 0.31);
+  } else if (isSelfProfile == 'No'  && usertype == 'Customer') {
+    return Color(0xBC73BC).withOpacity(0.6);
+  } else if (isSelfProfile == 'No' && usertype == 'Supplier') {
+    return const Color(0xFF4DBF4A);
+  } else {
+    return Colors.grey; // Default color if no conditions match
+  }
+}
+
+
  @override
   Widget build(BuildContext context) {
     bool _isVendor = Provider.of<Auth>(context, listen: false).userData?['user_type'] == 'Vendor';
@@ -1201,8 +1222,9 @@ class FeedWidget extends StatelessWidget {
               decoration: ShapeDecoration(
                 shadows: [
                   BoxShadow(
-                    offset: const Offset(0, 4),
-                    color: _isVendor ? const Color.fromRGBO(10, 76, 97, 0.31) :  const Color(0xBC73BC).withOpacity(0.6),
+                    offset: const Offset(0, 2),
+                    // color: _isVendor ? const Color.fromRGBO(10, 76, 97, 0.31) :  const Color(0xBC73BC).withOpacity(0.6),
+                    color: getBackgroundColor(isSelfProfile, _isVendor),
                     blurRadius: 20,
                   ),
                 ],

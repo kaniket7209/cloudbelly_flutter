@@ -70,7 +70,7 @@ class _PostsScreenState extends State<PostsScreen> {
 
   Future<void> _refreshFeed() async {
     final Data = await Provider.of<Auth>(context, listen: false).getFeed(userId) as List<dynamic>;
-
+print("dataref ${Data}");
     Navigator.of(context).pushReplacementNamed(PostsScreen.routeName,
         arguments: {'data': Data, 'index': 0, "userId" : userId , "userModel" : userModel , "type":type ,"isSelfProfile":isSelfProfile});
   }
