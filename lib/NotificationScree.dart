@@ -8,6 +8,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -1285,6 +1286,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           onPressed: () {
                             showModalBottomSheet(
                               context: context,
+                              barrierColor: Colors.transparent,
+                              // shape: RoundedRectangleBorder(
+                              //   borderRadius: BorderRadius.vertical(
+                              //       top: Radius.circular(30.0)),
+                              // ),
                               isScrollControlled: true,
                               backgroundColor: Colors.transparent,
                               builder: (context) => DraggableScrollableSheet(
@@ -1295,11 +1301,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     ScrollController scrollController) {
                                   return Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.transparent,
+                                      color: Color(
+                                          0xff0A4C61), // Set your desired color here
                                       borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(50.0),
-                                        topRight: Radius.circular(50.0),
+                                        topLeft: Radius.circular(
+                                            30.0), // Consistent with the outer shape
+                                        topRight: Radius.circular(30.0),
                                       ),
+
                                       boxShadow: [
                                         BoxShadow(
                                           color: Color(0xff0A4C61)
@@ -1310,26 +1319,35 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                         ),
                                       ],
                                     ),
-                                    child: Stack(
-                                      children: [
-                                        PaymentScreen(
-                                            scrollController: scrollController),
-                                        Positioned(
-                                          top: 10,
-                                          right: 100,
-                                          child: CircleAvatar(
-                                            radius: 12,
-                                            backgroundColor: Colors.red,
-                                            child: Text(
-                                              '${itemProvider.paymentVerifications.length}',
-                                              style: TextStyle(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(
+                                            30.0), // Consistent with the outer shape
+                                        topRight: Radius.circular(30.0),
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          PaymentScreen(
+                                              scrollController:
+                                                  scrollController),
+                                          Positioned(
+                                            top: 30,
+                                            right: 85,
+                                            child: CircleAvatar(
+                                              radius: 12,
+                                              backgroundColor: Colors.red,
+                                              child: Text(
+                                                '${itemProvider.paymentVerifications.length}',
+                                                style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 14,
-                                                  fontWeight: FontWeight.bold),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
@@ -1376,7 +1394,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           ),
                         ),
                       ),
-                      
                       SizedBox(
                         height: 30,
                       )
@@ -1488,7 +1505,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       backgroundColor: Color(0xff0A4C61),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80.0), // Adjust height as needed
+        preferredSize: Size.fromHeight(70.0), // Adjust height as needed
         child: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -1499,19 +1516,25 @@ class _PaymentScreenState extends State<PaymentScreen> {
           flexibleSpace: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Container(
-                width: 100,
-                height: 5,
-                decoration: ShapeDecoration(
-                  color: const Color(0xFFFA6E00),
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius(
-                      cornerRadius: 12,
-                      cornerSmoothing: 1,
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  width: 100,
+                  height: 5,
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFFFA6E00),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 1,
+                      ),
                     ),
                   ),
                 ),
               ),
+
               SizedBox(height: 8.0), // Adjust spacing as needed
               Text(
                 'Payment Verification',
@@ -1535,10 +1558,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       margin: const EdgeInsets.symmetric(
                           vertical: 8.0, horizontal: 16.0),
                       padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
+                      decoration: ShapeDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(15.0),
-                        boxShadow: [
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 22.0,
+                            cornerSmoothing: 1,
+                          ),
+                        ),
+                        shadows: [
                           BoxShadow(
                             color: Colors.grey.withOpacity(0.2),
                             spreadRadius: 1,
@@ -1551,10 +1579,25 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         children: [
                           Row(
                             children: [
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                    notification['transaction_image'] ?? ''),
-                                radius: 20,
+                              Container(
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Color(
+                                          0x591F6F6D), // Color with 35% opacity
+                                      blurRadius: 10, // Blur amount
+                                      offset: Offset(0, 4), // X and Y offset
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(8),
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        notification['buyer_profile_logo']),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
                               SizedBox(width: 16.0),
                               Expanded(
@@ -1630,7 +1673,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 )
               : Center(
                   child: Text('No payment history available.',
-                      style: TextStyle(color: Colors.white)));
+                      style: TextStyle(color: Colors.white)),
+                );
         },
       ),
     );
