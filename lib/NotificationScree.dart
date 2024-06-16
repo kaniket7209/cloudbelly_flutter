@@ -91,6 +91,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
     return formattedItems.join('\n');
   }
+String oneItem(List<dynamic> items) {
+    List<String> formattedItems = [];
+    for (int i = 0; i < 1; i += 1) {
+      String line = items
+          .skip(i)
+          .take(1)
+          .map((item) => '${item['name']} x ${item['quantity']}')
+          .join(', ');
+      formattedItems.add(line);
+    }
+    return formattedItems.join('\n');
+  }
 
   String timeAgo(String d) {
     final DateFormat formatter =
@@ -227,7 +239,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ],
           );
   }
-
+bool showFullItems = false;
   Widget _buildActionButtons(Map<String, dynamic> notification, bool isAccepted,
       Color boxShadowColor) {
     void handleStatusChange(String newStatus) async {
@@ -247,7 +259,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     if (notification['status'] == 'Submitted') {
       return Row(
         // mainAxisAlignment: MainAxisAlignment.start,
-        // crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Buyer logo
         
@@ -393,7 +405,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
         ],
       );
-    } else if (notification['status'] == 'Accepted') {
+    } 
+    else if (notification['status'] == 'Accepted') {
       return Row(
         children: [
           // Buyer logo
@@ -420,13 +433,28 @@ class _NotificationScreenState extends State<NotificationScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  formatItems(notification['items']),
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: boxShadowColor,
-                    fontWeight: FontWeight.bold,
+                    showFullItems
+                        ? formatItems(notification['items'])
+                        : oneItem(notification['items']),
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: boxShadowColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        showFullItems = !showFullItems;
+                      });
+                    },
+                    child: Icon(
+                      showFullItems
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      color: boxShadowColor,
+                    ),
+                  ),
                 Text(
                   timeAgo(notification['created_date']),
                   style: TextStyle(
@@ -461,7 +489,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
-    } else if (notification['status'] == 'Prepared') {
+   
+    } 
+    else if (notification['status'] == 'Prepared') {
       return Row(
         children: [
           Expanded(
