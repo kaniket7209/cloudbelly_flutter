@@ -57,8 +57,13 @@ class Auth with ChangeNotifier {
       orderDetails.where((order) => order['status'] == 'Accepted').toList();
   List<Map<String, dynamic>> get completedOrders =>
       orderDetails.where((order) => order['status'] == 'delivered').toList();
-      List<Map<String, dynamic>> get ongoingOrders =>
-    orderDetails.where((order) => order['status'] == 'Accepted' || order['status'] == 'Prepared' || order['status'] == 'Packed'|| order['status'] == 'Out for delivery' ).toList();
+  List<Map<String, dynamic>> get ongoingOrders => orderDetails
+      .where((order) =>
+          order['status'] == 'Accepted' ||
+          order['status'] == 'Prepared' ||
+          order['status'] == 'Packed' ||
+          order['status'] == 'Out for delivery')
+      .toList();
 
   List<Map<String, dynamic>> get paymentVerifications => paymentDetails;
 
@@ -99,28 +104,32 @@ class Auth with ChangeNotifier {
       throw Exception('Failed to accept order');
     }
   }
-  Future<void> statusChange(String orderId, String userId, String orderFrom, String status) async {
-  final response = await http.post(
-    Uri.parse("https://app.cloudbelly.in/order/status-change"),
-    headers: headers,
-    body: jsonEncode({
-      "user_id": userId,
-      "order_from_user_id": orderFrom,
-      "order_id": orderId,
-      "status-change": status
-    }),
-  );
-  print(response.body);
-  if (response.statusCode == 200) {
-    final orderIndex = orderDetails.indexWhere((order) => order['_id'] == orderId);
-    if (orderIndex != -1) {
-      orderDetails[orderIndex]['status'] = status; // Update to the correct status
-      notifyListeners();
+
+  Future<void> statusChange(
+      String orderId, String userId, String orderFrom, String status) async {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/order/status-change"),
+      headers: headers,
+      body: jsonEncode({
+        "user_id": userId,
+        "order_from_user_id": orderFrom,
+        "order_id": orderId,
+        "status-change": status
+      }),
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      final orderIndex =
+          orderDetails.indexWhere((order) => order['_id'] == orderId);
+      if (orderIndex != -1) {
+        orderDetails[orderIndex]['status'] =
+            status; // Update to the correct status
+        notifyListeners();
+      }
+    } else {
+      throw Exception('Failed to change order status');
     }
-  } else {
-    throw Exception('Failed to change order status');
   }
-}
 
   Future<void> rejectOrder(
       String orderId, String userId, String orderFrom) async {
@@ -222,16 +231,25 @@ class Auth with ChangeNotifier {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({"payment_to_user_id": userData?['user_id'] ?? ""}),
+        body: jsonEncode({
+          "payment_to_user_id": userData?['user_id'] ?? "",
+          "\$or": [
+            {
+              "payment_status": {"\$exists": false}
+            },
+            {
+              "payment_status": {"\$ne": "verified"}
+            }
+          ]
+        }),
       );
-      print("payment api${jsonEncode({"payment_to_user_id": userData?['user_id'] ?? ""})}");
+     
       paymentDetails =
           List<Map<String, dynamic>>.from(jsonDecode(payments.body));
       if (response.statusCode == 200) {
         var notif = List<Map<String, dynamic>>.from(jsonDecode(response.body));
         notificationDetails = notif
-            .where((element) =>
-                element['msg']['type'] == 'social' )
+            .where((element) => element['msg']['type'] == 'social')
             .toList();
         notifyListeners();
       } else {

@@ -1263,6 +1263,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           ],
                         ),
                       ),
+                      if(itemProvider.paymentVerifications.isNotEmpty)
                       Container(
                         decoration: ShapeDecoration(
                           color: Color(0xff0A4C61),
