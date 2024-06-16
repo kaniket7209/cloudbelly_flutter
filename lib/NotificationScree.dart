@@ -1578,6 +1578,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       child: Column(
                         children: [
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
                                 width: 35,
@@ -1605,66 +1607,105 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "${notification['buyer_store_name'] ?? 'Unknown Store'} | Order no - ${notification['order_no'] ?? 0}",
-                                      style: const TextStyle(
-                                          fontSize: 14.0,
-                                          fontFamily: 'Product Sans',
-                                          color: Color(0xff0A4C61),
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(height: 1.0),
-                                    Text(
-                                      "Amount: ${notification['amount'] ?? 0}",
+                                      "Rs ${notification['amount'] ?? 0} has been paid by ",
                                       style: TextStyle(
                                           fontSize: 14.0,
                                           color: Color(0xff0A4C61),
-                                          fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Product Sans'),
+                                    ),
+                                    Text(
+                                      "${notification['buyer_store_name'] ?? 'Unknown store'}",
+                                      style: TextStyle(
+                                          fontSize: 14.0,
+                                          color: Color(0xff0A4C61),
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Product Sans'),
                                     ),
                                     Row(
                                       children: [
-                                        Text(
-                                          timeAgo((notification['timestamp'] ??
-                                              '')),
-                                          style: const TextStyle(
-                                              fontSize: 10.0,
-                                              color: Color(0xFFFA6E00)),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              showScreenshot = !showScreenshot;
+                                            });
+                                          },
+                                          child: const Text(
+                                            "View screenshot",
+                                            style: TextStyle(
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                decorationColor:
+                                                    Color(0xFFFA6E00),
+                                                color: Color(0xFF519896),
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              showScreenshot = !showScreenshot;
+                                            });
+                                          },
+                                          child: Icon(
+                                            showScreenshot
+                                                ? Icons.keyboard_arrow_up
+                                                : Icons.keyboard_arrow_down,
+                                            color: Color(0xFFFA6E00),
+                                          ),
                                         ),
                                       ],
                                     ),
+                                    if (showScreenshot)
+                                      Container(
+                                        decoration: ShapeDecoration(
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                              cornerRadius: 20.0,
+                                              cornerSmoothing: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        clipBehavior: Clip
+                                            .antiAlias, // Ensures the image is clipped to the shape
+                                        child: Image.network(
+                                            notification['transaction_image']),
+                                      ),
+                                    SizedBox(height: 10),
                                   ],
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    showScreenshot = !showScreenshot;
-                                  });
-                                },
-                                child: Text(
-                                  "View screenshot",
-                                  style: TextStyle(
-                                      color: Color(0xFFFA6E00),
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Icon(
-                                showScreenshot
-                                    ? Icons.keyboard_arrow_up
-                                    : Icons.keyboard_arrow_down,
-                                color: Color(0xFFFA6E00),
-                              ),
+                                  onTap: () {
+                                    verifyPayment(context, notification);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 25, vertical: 10),
+                                    decoration: ShapeDecoration(
+                                      color: Color(0xff5FF59B),
+                                      shape: SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius(
+                                          cornerRadius: 13.0,
+                                          cornerSmoothing: 1,
+                                        ),
+                                      ),
+                                      shadows: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.2),
+                                          spreadRadius: 1,
+                                          blurRadius: 7,
+                                          offset: Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Text('Verify',
+                                        style: TextStyle(
+                                            fontFamily: 'Product Sans',
+                                            color: Color(0xFF0A4C61),
+                                            fontWeight: FontWeight.bold)),
+                                  )),
                             ],
-                          ),
-                          if (showScreenshot)
-                            Image.network(notification['transaction_image']),
-                          SizedBox(height: 10),
-                          ElevatedButton(
-                            onPressed: () =>
-                                verifyPayment(context, notification),
-                            child: Text('Verify'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                            ),
                           ),
                         ],
                       ),
