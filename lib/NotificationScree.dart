@@ -964,7 +964,7 @@ void initState() {
           ),
           // Delivered button
           GestureDetector(
-            onTap: () => handleStatusChange('Delivered'),
+            // onTap: () => handleStatusChange('Delivered'),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: ShapeDecoration(
@@ -976,7 +976,7 @@ void initState() {
                   ),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 "Delivered",
                 style: TextStyle(
                     color: Colors.white,
