@@ -6,6 +6,7 @@ import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -13,7 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +26,11 @@ class NotificationProvider with ChangeNotifier {
   void addNotification(Map<String, dynamic> notification) {
     _notifications.add(notification);
 
+    notifyListeners();
+  }
+
+  void clearNotifications() {
+    _notifications.clear();
     notifyListeners();
   }
 }
@@ -48,30 +54,29 @@ class _NotificationScreenState extends State<NotificationScreen> {
       RefreshController(initialRefresh: false);
 
   @override
-void initState() {
-  super.initState();
-  _fetchNotifications();
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    // Add the new notification to the provider
-    Provider.of<NotificationProvider>(context, listen: false)
-        .addNotification({
-      'title': message.notification?.title,
-      'body': message.notification?.body,
-      'data': message.data,
-    });
+  void initState() {
+    super.initState();
+    _fetchNotifications();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Add the new notification to the provider
+      Provider.of<NotificationProvider>(context, listen: false)
+          .addNotification({
+        'title': message.notification?.title,
+        'body': message.notification?.body,
+        'data': message.data,
+      });
 
       _fetchNotifications(); // Refresh notifications
 
-    // Check the type of the notification
-    // if (message.data['type'] == 'social' || message.data['type'] == 'orders') {
-    // // if (message.data['type'] == 'social' || message.data['type'] == 'orders') {
-    //   print("typenot ${message.data}");
-    //   _fetchNotifications(); // Refresh notifications
-    // }
-    print("Notification received: ${message.notification?.body}");
-  });
-}
-
+      // Check the type of the notification
+      // if (message.data['type'] == 'social' || message.data['type'] == 'orders') {
+      // // if (message.data['type'] == 'social' || message.data['type'] == 'orders') {
+      //   print("typenot ${message.data}");
+      //   _fetchNotifications(); // Refresh notifications
+      // }
+      print("Notification received: ${message.notification?.body}");
+    });
+  }
 
   @override
   void dispose() {
@@ -317,6 +322,7 @@ void initState() {
               ),
             ),
           ),
+
           SizedBox(width: 10.0),
           // Order details
           Expanded(
@@ -331,13 +337,35 @@ void initState() {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
-                  timeAgo(notification['created_date']),
-                  style: TextStyle(
-                    fontSize: 10.0,
-                    color: Color(0xff519896),
-                    // fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      timeAgo(notification['created_date']),
+                      style: TextStyle(
+                        fontSize: 10.0,
+                        color: Color(0xff519896),
+                        // fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      notification['payment_mode'] == 'online' ? 'Paid' : 'Cod',
+                      style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          // decorationThickness: 4,
+
+                          fontSize: 14.0,
+                          color: notification['payment_mode'] == 'online'
+                              ? Color(0xff0A4C61)
+                              : Colors.transparent,
+                          fontFamily: 'Product Sans'
+
+                          // fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -492,15 +520,18 @@ void initState() {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      showFullItems
-                          ? formatItems(notification['items'])
-                          : oneItem(notification['items']),
-                      style: TextStyle(
-                          fontSize: 14.0,
-                          color: Color(0xff0A4C61),
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Product Sans'),
+                    Container(
+                      width: 130,
+                      child: Text(
+                        showFullItems
+                            ? formatItems(notification['items'])
+                            : oneItem(notification['items']),
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            color: Color(0xff0A4C61),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Product Sans'),
+                      ),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -1231,17 +1262,124 @@ void initState() {
                           ],
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PaymentScreen(),
+                      Container(
+                        decoration: ShapeDecoration(
+                          color: Color(0xff0A4C61),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 21.0,
+                              cornerSmoothing: 1,
                             ),
-                          );
-                        },
-                        child: Text('Payment Verification'),
+                          ),
+                          shadows: [
+                            BoxShadow(
+                              color: boxShadowColor.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 10,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        padding: EdgeInsets.all(15),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => DraggableScrollableSheet(
+                                initialChildSize: 0.95,
+                                minChildSize: 0.5,
+                                maxChildSize: 0.95,
+                                builder: (BuildContext context,
+                                    ScrollController scrollController) {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(50.0),
+                                        topRight: Radius.circular(50.0),
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Color(0xff0A4C61)
+                                              .withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 10,
+                                          offset: Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        PaymentScreen(
+                                            scrollController: scrollController),
+                                        Positioned(
+                                          top: 10,
+                                          right: 100,
+                                          child: CircleAvatar(
+                                            radius: 12,
+                                            backgroundColor: Colors.red,
+                                            child: Text(
+                                              '${itemProvider.paymentVerifications.length}',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            maximumSize: Size(200, 100),
+                            backgroundColor: Color(0xffFA6E00), // Button color
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 14.0,
+                                cornerSmoothing: 1,
+                              ),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            // crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Verify Payment',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Product Sans'),
+                              ),
+                              SizedBox(width: 10),
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Color(0xffFCFF52),
+                                child: Text(
+                                  '${itemProvider.paymentVerifications.length}',
+                                  style: TextStyle(
+                                      color: Color(0xff0A4C61),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
+                      
+                      SizedBox(
+                        height: 30,
+                      )
                     ],
                   ),
                 )
@@ -1303,17 +1441,92 @@ void initState() {
   }
 }
 
-class PaymentScreen extends StatelessWidget {
+class PaymentScreen extends StatefulWidget {
+  final ScrollController scrollController;
+
+  PaymentScreen({required this.scrollController});
+
+  @override
+  _PaymentScreenState createState() => _PaymentScreenState();
+}
+
+class _PaymentScreenState extends State<PaymentScreen> {
+  bool showScreenshot = false;
+  void verifyPayment(
+      BuildContext context, Map<String, dynamic> notification) async {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/order/confirm_payment"),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "user_id": notification['payment_from_user_id'],
+        "order_from_user_id": notification['payment_to_user_id'],
+        "order_id": notification['order_id'],
+        "verification_status":
+            "verified", // or "not_received" based on your logic
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Handle successful verification
+      print("Payment verified successfully");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Payment verified successfully')),
+      );
+    } else {
+      // Handle error
+      print("Failed to verify payment");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to verify payment')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Payment Verification'),
+      backgroundColor: Color(0xff0A4C61),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(80.0), // Adjust height as needed
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.close, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          flexibleSpace: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                width: 100,
+                height: 5,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFFFA6E00),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 12,
+                      cornerSmoothing: 1,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 8.0), // Adjust spacing as needed
+              Text(
+                'Payment Verification',
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              SizedBox(height: 8.0), // Adjust spacing as needed
+            ],
+          ),
+        ),
       ),
       body: Consumer<Auth>(
         builder: (context, itemProvider, child) {
           return itemProvider.paymentVerifications.isNotEmpty
               ? ListView.builder(
+                  controller: widget.scrollController,
                   itemCount: itemProvider.paymentVerifications.length,
                   itemBuilder: (context, index) {
                     final notification =
@@ -1334,47 +1547,80 @@ class PaymentScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Row(
+                      child: Column(
                         children: [
-                          CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                notification['transaction_image'] ?? ''),
-                            radius: 20,
-                          ),
-                          SizedBox(width: 16.0),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "${notification['buyer_store_name'] ?? 'Unknown Store'} | Order no - ${notification['order_no'] ?? 0}",
-                                  style: const TextStyle(
-                                      fontSize: 14.0,
-                                      fontFamily: 'Product Sans',
-                                      color: Color(0xff0A4C61),
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 1.0),
-                                Text(
-                                  "Amount: ${notification['amount'] ?? 0}",
-                                  style: TextStyle(
-                                      fontSize: 14.0,
-                                      color: Color(0xff0A4C61),
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Row(
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    notification['transaction_image'] ?? ''),
+                                radius: 20,
+                              ),
+                              SizedBox(width: 16.0),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      timeAgo(
-                                          (notification['timestamp'] ?? '')),
-                                      // "timeAgo ${(notification['timestamp'] ?? '')}",
+                                      "${notification['buyer_store_name'] ?? 'Unknown Store'} | Order no - ${notification['order_no'] ?? 0}",
                                       style: const TextStyle(
-                                          fontSize: 10.0,
-                                          color: Color(0xFFFA6E00)),
+                                          fontSize: 14.0,
+                                          fontFamily: 'Product Sans',
+                                          color: Color(0xff0A4C61),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 1.0),
+                                    Text(
+                                      "Amount: ${notification['amount'] ?? 0}",
+                                      style: TextStyle(
+                                          fontSize: 14.0,
+                                          color: Color(0xff0A4C61),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          timeAgo((notification['timestamp'] ??
+                                              '')),
+                                          style: const TextStyle(
+                                              fontSize: 10.0,
+                                              color: Color(0xFFFA6E00)),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    showScreenshot = !showScreenshot;
+                                  });
+                                },
+                                child: Text(
+                                  "View screenshot",
+                                  style: TextStyle(
+                                      color: Color(0xFFFA6E00),
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Icon(
+                                showScreenshot
+                                    ? Icons.keyboard_arrow_up
+                                    : Icons.keyboard_arrow_down,
+                                color: Color(0xFFFA6E00),
+                              ),
+                            ],
+                          ),
+                          if (showScreenshot)
+                            Image.network(notification['transaction_image']),
+                          SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: () =>
+                                verifyPayment(context, notification),
+                            child: Text('Verify'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
                             ),
                           ),
                         ],
@@ -1382,7 +1628,9 @@ class PaymentScreen extends StatelessWidget {
                     );
                   },
                 )
-              : Center(child: Text('No payment history available.'));
+              : Center(
+                  child: Text('No payment history available.',
+                      style: TextStyle(color: Colors.white)));
         },
       ),
     );
