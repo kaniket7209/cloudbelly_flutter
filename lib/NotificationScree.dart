@@ -91,7 +91,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
     return formattedItems.join('\n');
   }
-String oneItem(List<dynamic> items) {
+
+  String oneItem(List<dynamic> items) {
     List<String> formattedItems = [];
     for (int i = 0; i < 1; i += 1) {
       String line = items
@@ -231,15 +232,14 @@ String oneItem(List<dynamic> items) {
                         padding: EdgeInsets.all(2),
                         child: _buildActionButtons(
                             notification, isAccepted, boxShadowColor),
-                      )
-                     
-                      );
+                      ));
                 }),
               )
             ],
           );
   }
-bool showFullItems = false;
+
+  bool showFullItems = false;
   Widget _buildActionButtons(Map<String, dynamic> notification, bool isAccepted,
       Color boxShadowColor) {
     void handleStatusChange(String newStatus) async {
@@ -262,7 +262,7 @@ bool showFullItems = false;
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Buyer logo
-        
+
           Container(
             width: 35,
             height: 35,
@@ -308,14 +308,16 @@ bool showFullItems = false;
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                      "Rs  ${notification['amount']}",
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        color: Color(0xff0A4C61),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                           SizedBox(height: 10,),
+                "Rs  ${notification['amount']}",
+                style: TextStyle(
+                  fontSize: 15.0,
+                  color: Color(0xff0A4C61),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
               Row(
                 children: [
                   GestureDetector(
@@ -331,7 +333,6 @@ bool showFullItems = false;
                         }
                       }
                     },
-                    
                     child: Container(
                       width: 30,
                       height: 30,
@@ -341,7 +342,8 @@ bool showFullItems = false;
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
+                            color: boxShadowColor
+                                .withOpacity(0.2), // Color with 35% opacity
                             blurRadius: 10, // Blur amount
                             offset: Offset(0, 4), // X and Y offset
                           ),
@@ -352,17 +354,17 @@ bool showFullItems = false;
                       ),
                     ),
                   ),
-                  
-                  
-                  SizedBox(width:10),
+
+                  SizedBox(width: 10),
                   // Reject button
                   GestureDetector(
                     onTap: () async {
                       try {
-                        await Provider.of<Auth>(context, listen: false).rejectOrder(
-                            notification['_id'],
-                            notification['user_id'],
-                            notification['order_from_user_id']);
+                        await Provider.of<Auth>(context, listen: false)
+                            .rejectOrder(
+                                notification['_id'],
+                                notification['user_id'],
+                                notification['order_from_user_id']);
                       } catch (e) {
                         print("${e.toString()}");
                       }
@@ -373,10 +375,10 @@ bool showFullItems = false;
                       decoration: BoxDecoration(
                         color: const Color(0xFFFD4F4F),
                         borderRadius: BorderRadius.circular(8),
-                  
                         boxShadow: [
                           BoxShadow(
-                            color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
+                            color: boxShadowColor
+                                .withOpacity(0.2), // Color with 35% opacity
                             blurRadius: 10, // Blur amount
                             offset: Offset(0, 4), // X and Y offset
                           ),
@@ -390,10 +392,11 @@ bool showFullItems = false;
                   GestureDetector(
                     onTap: () async {
                       try {
-                        await Provider.of<Auth>(context, listen: false).acceptOrder(
-                            notification['_id'],
-                            notification['user_id'],
-                            notification['order_from_user_id']);
+                        await Provider.of<Auth>(context, listen: false)
+                            .acceptOrder(
+                                notification['_id'],
+                                notification['user_id'],
+                                notification['order_from_user_id']);
                       } catch (e) {
                         print("${e.toString()}");
                       }
@@ -406,7 +409,8 @@ bool showFullItems = false;
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
+                            color: boxShadowColor
+                                .withOpacity(0.2), // Color with 35% opacity
                             blurRadius: 10, // Blur amount
                             offset: Offset(0, 4), // X and Y offset
                           ),
@@ -419,13 +423,9 @@ bool showFullItems = false;
               ),
             ],
           ),
-       
-
-
         ],
       );
-    } 
-    else if (notification['status'] == 'Accepted') {
+    } else if (notification['status'] == 'Accepted') {
       return Row(
         children: [
           // Buyer logo
@@ -455,36 +455,40 @@ bool showFullItems = false;
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                        showFullItems
-                            ? formatItems(notification['items'])
-                            : oneItem(notification['items']),
-                        style: TextStyle(
+                      showFullItems
+                          ? formatItems(notification['items'])
+                          : oneItem(notification['items']),
+                      style: TextStyle(
                           fontSize: 14.0,
                           color: Color(0xff0A4C61),
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Product Sans'
-                        ),
+                          fontFamily: 'Product Sans'),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showFullItems = !showFullItems;
+                        });
+                      },
+                      child: Icon(
+                        showFullItems
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        color: Color(0xffFA6E00),
                       ),
-
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            showFullItems = !showFullItems;
-                          });
-                        },
-                        child: Icon(
-                          
-                          showFullItems
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                          color: Color(0xffFA6E00),
-                        ),
-                      ),
+                    ),
                   ],
                 ),
-                
+                // Text(
+                //   timeAgo(notification['created_date']),
+                //   style: TextStyle(
+                //     fontSize: 10.0,
+                //     color: Color(0xffFA6E00),
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
                 Text(
-                  timeAgo(notification['created_date']),
+                  "Order ID - ${notification['order_no']}",
                   style: TextStyle(
                     fontSize: 10.0,
                     color: Color(0xff519896),
@@ -499,48 +503,84 @@ bool showFullItems = false;
           GestureDetector(
             onTap: () => handleStatusChange('Prepared'),
             child: Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
               decoration: ShapeDecoration(
-                color: boxShadowColor,
+                color: Color(0xff0A4C61),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
-                    cornerRadius: 10,
+                    cornerRadius: 12,
                     cornerSmoothing: 1,
                   ),
                 ),
               ),
               child: Text(
                 'Complete',
-                style: TextStyle(color: Colors.white),
+                style:
+                    TextStyle(color: Colors.white, fontFamily: 'Product Sans'),
               ),
             ),
           ),
         ],
       );
-   
-    } 
-    else if (notification['status'] == 'Prepared') {
+    } else if (notification['status'] == 'Prepared') {
       return Row(
         children: [
+          Container(
+            width: 35,
+            height: 35,
+            decoration: ShapeDecoration(
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 8,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              image: DecorationImage(
+                image: NetworkImage(notification['buyer_logo']),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 10.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  formatItems(notification['items']),
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: boxShadowColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      showFullItems
+                          ? formatItems(notification['items'])
+                          : oneItem(notification['items']),
+                      style: TextStyle(
+                          fontSize: 14.0,
+                          color: Color(0xff0A4C61),
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Product Sans'),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showFullItems = !showFullItems;
+                        });
+                      },
+                      child: Icon(
+                        showFullItems
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        color: Color(0xffFA6E00),
+                      ),
+                    ),
+                  ],
                 ),
                 Text(
-                  timeAgo(notification['created_date']),
+                  'Completed',
                   style: TextStyle(
-                    fontSize: 10.0,
-                    color: Color(0xffFA6E00),
-                    fontWeight: FontWeight.bold,
-                  ),
+                      fontSize: 18.0,
+                      color: Color(0xff519896),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans'),
                 ),
               ],
             ),
@@ -549,14 +589,20 @@ bool showFullItems = false;
           GestureDetector(
             onTap: () => handleStatusChange('Packed'),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Color(0xFF0A4C61),
-                borderRadius: BorderRadius.circular(8),
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              decoration: ShapeDecoration(
+                color: Color(0xff5FF59B),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 1,
+                  ),
+                ),
               ),
               child: Text(
                 "Packed",
-                style: TextStyle(color: Colors.white, fontSize: 10),
+                style: TextStyle(
+                    color: Color(0xff0A4C61), fontFamily: 'Product Sans'),
               ),
             ),
           ),
@@ -565,68 +611,226 @@ bool showFullItems = false;
     } else if (notification['status'] == 'Packed') {
       return Row(
         children: [
+          Container(
+            width: 35,
+            height: 35,
+            decoration: ShapeDecoration(
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 8,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              image: DecorationImage(
+                image: NetworkImage(notification['buyer_logo']),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 10.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  formatItems(notification['items']),
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: boxShadowColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 110,
+                      child: Text(
+                        showFullItems
+                            ? formatItems(notification['items'])
+                            : oneItem(notification['items']),
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            color: Color(0xff0A4C61),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Product Sans'),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showFullItems = !showFullItems;
+                        });
+                      },
+                      child: Icon(
+                        showFullItems
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        color: Color(0xffFA6E00),
+                      ),
+                    ),
+                  ],
                 ),
                 Text(
-                  timeAgo(notification['created_date']),
+                  'Completed',
                   style: TextStyle(
-                    fontSize: 10.0,
-                    color: Color(0xffFA6E00),
-                    fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                      color: Color(0xff519896),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans'),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xff519896).withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    final phoneNumber = notification['customer_phone'];
+                    final url = 'tel:$phoneNumber';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Could not launch phone call')),
+                      );
+                    }
+                  },
+                  child: CircleAvatar(
+                    radius: 9,
+                    backgroundColor: const Color(0xFFFA6E00),
+                    child: Image.asset('assets/images/Phone.png'),
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    if (notification['location'] != null &&
+                        notification['location']['latitude'] != null) {
+                      final String googleMapsUrl =
+                          'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
+                      if (await canLaunch(googleMapsUrl)) {
+                        await launch(googleMapsUrl);
+                      } else {
+                        throw 'Could not open the map.';
+                      }
+                    }
+                  },
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Colors.white,
+                    child: Image.asset('assets/images/Location.png'),
                   ),
                 ),
               ],
             ),
           ),
+
+          SizedBox(
+            width: 10,
+          ),
           // Out for delivery button
           GestureDetector(
             onTap: () => handleStatusChange('Out for delivery'),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Color(0xFF0A4C61),
-                borderRadius: BorderRadius.circular(8),
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              decoration: ShapeDecoration(
+                color: Color(0xffFA6E00),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 1,
+                  ),
+                ),
               ),
               child: Text(
                 "Out for delivery",
-                style: TextStyle(color: Colors.white, fontSize: 10),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontFamily: 'Product Sans'),
               ),
             ),
           ),
         ],
       );
+    
+    
     } else if (notification['status'] == 'Out for delivery') {
       return Row(
         children: [
+          Container(
+            width: 35,
+            height: 35,
+            decoration: ShapeDecoration(
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 8,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              image: DecorationImage(
+                image: NetworkImage(notification['buyer_logo']),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  formatItems(notification['items']),
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: boxShadowColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 110,
+                      child: Text(
+                        showFullItems
+                            ? formatItems(notification['items'])
+                            : oneItem(notification['items']),
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            color: Color(0xff0A4C61),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Product Sans'),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showFullItems = !showFullItems;
+                        });
+                      },
+                      child: Icon(
+                        showFullItems
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        color: Color(0xffFA6E00),
+                      ),
+                    ),
+                  ],
                 ),
+               
+               
                 Text(
-                  timeAgo(notification['created_date']),
+                  'Completed',
                   style: TextStyle(
-                    fontSize: 10.0,
-                    color: Color(0xffFD4F4F), //FD4F4F
-                    fontWeight: FontWeight.bold,
-                  ),
+                      fontSize: 18.0,
+                      color: Color(0xff519896),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans'),
                 ),
               ],
             ),
@@ -635,31 +839,127 @@ bool showFullItems = false;
           GestureDetector(
             onTap: () => handleStatusChange('Delivered'),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Color(0xFF0A4C61),
-                borderRadius: BorderRadius.circular(8),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: ShapeDecoration(
+                color: Colors.black.withOpacity(0.69),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 13,
+                    cornerSmoothing: 1,
+                  ),
+                ),
               ),
               child: Text(
                 "Delivered",
-                style: TextStyle(color: Colors.white, fontSize: 10),
+                style: TextStyle(color: Colors.white, fontSize: 10,fontFamily: 'Product Sans'),
               ),
             ),
           ),
         ],
       );
     } else if (notification['status'] == 'Delivered') {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Color(0xFF0A4C61),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          "Completed",
-          style: TextStyle(color: Colors.white, fontSize: 10),
-        ),
+return Row(
+        children: [
+          Container(
+            width: 35,
+            height: 35,
+            decoration: ShapeDecoration(
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 8,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              image: DecorationImage(
+                image: NetworkImage(notification['buyer_logo']),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 110,
+                      child: Text(
+                        showFullItems
+                            ? formatItems(notification['items'])
+                            : oneItem(notification['items']),
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            color: Color(0xff0A4C61),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Product Sans'),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showFullItems = !showFullItems;
+                        });
+                      },
+                      child: Icon(
+                        showFullItems
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        color: Color(0xffFA6E00),
+                      ),
+                    ),
+                  ],
+                ),
+               
+               
+                Text(
+                  'Delivered',
+                  style: TextStyle(
+                      fontSize: 18.0,
+                      color: Color(0xff519896),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans'),
+                ),
+              ],
+            ),
+          ),
+          // Delivered button
+          GestureDetector(
+            onTap: () => handleStatusChange('Delivered'),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: ShapeDecoration(
+                color: Colors.black.withOpacity(0.69),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 13,
+                    cornerSmoothing: 1,
+                  ),
+                ),
+              ),
+              child: Text(
+                "Delivered",
+                style: TextStyle(color: Colors.white, fontSize: 10,fontFamily: 'Product Sans'),
+              ),
+            ),
+          ),
+        ],
       );
+      // return Container(
+      //   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      //   decoration: BoxDecoration(
+      //     color: Color(0xFF0A4C61),
+      //     borderRadius: BorderRadius.circular(8),
+      //   ),
+      //   child: Text(
+      //     "Completed",
+      //     style: TextStyle(color: Colors.white, fontSize: 10),
+      //   ),
+      // );
     } else {
       return Container();
     }
@@ -760,13 +1060,12 @@ bool showFullItems = false;
                               Text(
                                 notification['notification']['body'],
                                 style: TextStyle(
-                                  color: user_type == 'Customer'
-                                      ? Color.fromARGB(255, 110, 20, 128)
-                                      : Color(0xff0A4C61),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14.0,
-                                  fontFamily: 'Product Sans'
-                                ),
+                                    color: user_type == 'Customer'
+                                        ? Color.fromARGB(255, 110, 20, 128)
+                                        : Color(0xff0A4C61),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14.0,
+                                    fontFamily: 'Product Sans'),
                               ),
                               Text(
                                 timeAgo(notification['timestamp']),
