@@ -43,20 +43,33 @@ void main() async {
       projectId: "cloudbelly-d97a9",
     ),
   );
+
   requestNotificationPermission();
   await FirebaseMessaging.instance.setAutoInitEnabled(true);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  
+  
   FlutterLocalNotificationsPlugin().initialize(
-      const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      ), onDidReceiveNotificationResponse:
-          (NotificationResponse? notificationResponse) {
-    print("notificationResponse:: ${notificationResponse?.payload}");
-  });
+    const InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+    ),
+    onDidReceiveNotificationResponse:
+        (NotificationResponse? notificationResponse) {
+      if (notificationResponse?.payload != null) {
+        handleNotificationClick(notificationResponse!.payload!);
+      }
+    },
+  );
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     showNotification(message);
+    // Add the new notification to the provider
+    Provider.of<NotificationProvider>(navigatorKey.currentContext!, listen: false).addNotification({
+      'title': message.notification?.title,
+      'body': message.notification?.body,
+      'data': message.data,
+    });
     print('Got a message whilst in the foreground!');
-    print('Message data: ${message.notification}');
+    print('Message data: ${message.notification?.body}');
     if (message.notification != null) {
       print('Message also contained a notification: ${message.notification}');
     }
@@ -71,6 +84,7 @@ void main() async {
   initUniLinks();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => Auth()),
+    ChangeNotifierProvider(create: (_) => NotificationProvider()),
   ], child: const MyApp()));
 }
 
@@ -95,6 +109,11 @@ Future<void> showNotification(RemoteMessage message) async {
     channelDescription: 'CHANNEL_DESCRIPTION',
     importance: Importance.high,
     priority: Priority.high,
+    color: Colors.blue, // Customize color
+    enableLights: true,
+    enableVibration: true,
+    playSound: true,
+    icon: '@mipmap/ic_launcher', // Customize icon if needed
   );
   var platformChannel = NotificationDetails(android: androidChannel);
   FlutterLocalNotificationsPlugin().show(
@@ -102,8 +121,17 @@ Future<void> showNotification(RemoteMessage message) async {
     message.notification?.title,
     message.notification?.body,
     platformChannel,
-    payload: 'New Payload',
+    payload: message.data['type'], // Add payload data
   );
+}
+
+void handleNotificationClick(String payload) {
+  if (payload == 'order') {
+    navigatorKey.currentState?.push(MaterialPageRoute(
+      builder: (context) => NotificationScreen(),
+    ));
+  }
+  // Handle other payloads as needed
 }
 
 Future<void> initUniLinks() async {

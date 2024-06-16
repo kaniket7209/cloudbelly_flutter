@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +13,21 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class NotificationProvider with ChangeNotifier {
+  List<Map<String, dynamic>> _notifications = [];
+
+  List<Map<String, dynamic>> get notifications => _notifications;
+
+  void addNotification(Map<String, dynamic> notification) {
+    _notifications.add(notification);
+
+    notifyListeners();
+  }
+}
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -30,10 +48,30 @@ class _NotificationScreenState extends State<NotificationScreen> {
       RefreshController(initialRefresh: false);
 
   @override
-  void initState() {
-    super.initState();
-    _fetchNotifications();
-  }
+void initState() {
+  super.initState();
+  _fetchNotifications();
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    // Add the new notification to the provider
+    Provider.of<NotificationProvider>(context, listen: false)
+        .addNotification({
+      'title': message.notification?.title,
+      'body': message.notification?.body,
+      'data': message.data,
+    });
+
+      _fetchNotifications(); // Refresh notifications
+
+    // Check the type of the notification
+    // if (message.data['type'] == 'social' || message.data['type'] == 'orders') {
+    // // if (message.data['type'] == 'social' || message.data['type'] == 'orders') {
+    //   print("typenot ${message.data}");
+    //   _fetchNotifications(); // Refresh notifications
+    // }
+    print("Notification received: ${message.notification?.body}");
+  });
+}
+
 
   @override
   void dispose() {
@@ -763,8 +801,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
-    
-    
     } else if (notification['status'] == 'Out for delivery') {
       return Row(
         children: [
@@ -822,8 +858,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ],
                 ),
-               
-               
                 Text(
                   'Completed',
                   style: TextStyle(
@@ -851,14 +885,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
               child: Text(
                 "Delivered",
-                style: TextStyle(color: Colors.white, fontSize: 10,fontFamily: 'Product Sans'),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontFamily: 'Product Sans'),
               ),
             ),
           ),
         ],
       );
     } else if (notification['status'] == 'Delivered') {
-return Row(
+      return Row(
         children: [
           Container(
             width: 35,
@@ -914,8 +951,6 @@ return Row(
                     ),
                   ],
                 ),
-               
-               
                 Text(
                   'Delivered',
                   style: TextStyle(
@@ -943,7 +978,10 @@ return Row(
               ),
               child: Text(
                 "Delivered",
-                style: TextStyle(color: Colors.white, fontSize: 10,fontFamily: 'Product Sans'),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontFamily: 'Product Sans'),
               ),
             ),
           ),
