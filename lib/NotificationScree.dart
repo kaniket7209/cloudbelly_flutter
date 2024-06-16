@@ -220,130 +220,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         child: _buildActionButtons(
                             notification, isAccepted, boxShadowColor),
                       )
-                      // child: Row(
-                      //   mainAxisAlignment: MainAxisAlignment.center,
-                      //   children: [
-                      //     // Column 1: buyer_logo
-                      //     Container(
-                      //       width: 35,
-                      //       height: 35,
-                      //       decoration: ShapeDecoration(
-                      //         shape: SmoothRectangleBorder(
-                      //           borderRadius: SmoothBorderRadius(
-                      //             cornerRadius: 8,
-                      //             cornerSmoothing: 1,
-                      //           ),
-                      //         ),
-                      //         image: DecorationImage(
-                      //           image: NetworkImage(notification['buyer_logo']),
-                      //           fit: BoxFit.cover,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     SizedBox(width: 16.0),
-                      //     // Column 2: items and created_date
-                      //     Expanded(
-                      //       child: Column(
-                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                      //         children: [
-
-                      //           Text(
-                      //             formatItems(notification['items']),
-                      //             style: TextStyle(
-                      //                 fontSize: 14.0,
-                      //                 color: boxShadowColor,
-                      //                 fontWeight: FontWeight.bold),
-                      //           ),
-                      //           Text(
-                      //             timeAgo(notification['created_date']),
-                      //             style: TextStyle(
-                      //                 fontSize: 10.0, color: Color(0xFFFA6E00)),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //     // Column 3: map icon
-                      //     GestureDetector(
-                      //       onTap: () async {
-                      //         if (notification['location'] != null &&
-                      //             notification['location']['latitude'] != null) {
-                      //           final String googleMapsUrl =
-                      //               'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
-                      //           if (await canLaunch(googleMapsUrl)) {
-                      //             await launch(googleMapsUrl);
-                      //           } else {
-                      //             throw 'Could not open the map.';
-                      //           }
-                      //         }
-                      //       },
-                      //       child: Image.asset(
-                      //         'assets/images/Navigation.png',
-                      //         width: 80,
-                      //         height: 80,
-                      //         fit: BoxFit.fill,
-                      //       ),
-                      //     ),
-                      //     // SizedBox(width: 16.0),
-                      //     // Column 4: reject button
-                      //     GestureDetector(
-                      //       onTap: () async {
-                      //         try {
-                      //           await Provider.of<Auth>(context, listen: false)
-                      //               .rejectOrder(
-                      //                   notification['_id'],
-                      //                   notification['user_id'],
-                      //                   notification['order_from_user_id']);
-                      //         } catch (e) {
-                      //           print("${e.toString()}");
-                      //         }
-                      //       },
-                      //       child: Container(
-                      //         width: 30,
-                      //         height: 30,
-                      //         decoration: ShapeDecoration(
-                      //           color: const Color(0xffFD4F4F),
-                      //           shape: SmoothRectangleBorder(
-                      //             borderRadius: SmoothBorderRadius(
-                      //               cornerRadius: 10,
-                      //               cornerSmoothing: 1,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //         child: Image.asset('assets/images/Multiply.png'),
-                      //       ),
-                      //     ),
-                      //     SizedBox(width: 16.0),
-                      //     // Column 5: accept button
-                      //     GestureDetector(
-                      //       onTap: () async {
-                      //         try {
-                      //           await Provider.of<Auth>(context, listen: false)
-                      //               .acceptOrder(
-                      //                   notification['_id'],
-                      //                   notification['user_id'],
-                      //                   notification['order_from_user_id']);
-                      //         } catch (e) {
-                      //           print("${e.toString()}");
-                      //         }
-                      //       },
-                      //       child: Container(
-                      //         width: 30,
-                      //         height: 30,
-                      //         decoration: ShapeDecoration(
-                      //           color: boxShadowColor,
-                      //           shape: SmoothRectangleBorder(
-                      //             borderRadius: SmoothBorderRadius(
-                      //               cornerRadius: 10,
-                      //               cornerSmoothing: 1,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //         child: Image.asset('assets/images/Done.png'),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-
+                     
                       );
                 }),
               )
@@ -369,8 +246,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
     if (notification['status'] == 'Submitted') {
       return Row(
+        // mainAxisAlignment: MainAxisAlignment.start,
+        // crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Buyer logo
+        
           Container(
             width: 35,
             height: 35,
@@ -426,11 +306,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 }
               }
             },
-            child: Image.asset(
-              'assets/images/Navigation.png',
+            
+            child: Container(
               width: 30,
               height: 30,
-              fit: BoxFit.fill,
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
+                    blurRadius: 10, // Blur amount
+                    offset: Offset(0, 4), // X and Y offset
+                  ),
+                ],
+              ),
+              child: Image.asset(
+                'assets/images/Location.png',
+              ),
             ),
           ),
           SizedBox(width: 10.0),
@@ -452,6 +346,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFFFD4F4F),
                 borderRadius: BorderRadius.circular(8),
+
+                boxShadow: [
+                  BoxShadow(
+                    color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
+                    blurRadius: 10, // Blur amount
+                    offset: Offset(0, 4), // X and Y offset
+                  ),
+                ],
               ),
               child: Icon(Icons.close, color: Colors.white, size: 20),
             ),
@@ -475,10 +377,20 @@ class _NotificationScreenState extends State<NotificationScreen> {
               decoration: BoxDecoration(
                 color: boxShadowColor,
                 borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
+                    blurRadius: 10, // Blur amount
+                    offset: Offset(0, 4), // X and Y offset
+                  ),
+                ],
               ),
               child: Icon(Icons.check, color: Colors.white, size: 20),
             ),
           ),
+       
+
+
         ],
       );
     } else if (notification['status'] == 'Accepted') {
