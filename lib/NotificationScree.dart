@@ -289,7 +289,7 @@ bool showFullItems = false;
                   formatItems(notification['items']),
                   style: TextStyle(
                     fontSize: 14.0,
-                    color: boxShadowColor,
+                    color: Color(0xff0A4C61),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -297,108 +297,127 @@ bool showFullItems = false;
                   timeAgo(notification['created_date']),
                   style: TextStyle(
                     fontSize: 10.0,
-                    color: Color(0xffFA6E00),
-                    fontWeight: FontWeight.bold,
+                    color: Color(0xff519896),
+                    // fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
-          // Map icon
-          GestureDetector(
-            onTap: () async {
-              if (notification['location'] != null &&
-                  notification['location']['latitude'] != null) {
-                final String googleMapsUrl =
-                    'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
-                if (await canLaunch(googleMapsUrl)) {
-                  await launch(googleMapsUrl);
-                } else {
-                  throw 'Could not open the map.';
-                }
-              }
-            },
-            
-            child: Container(
-              width: 30,
-              height: 30,
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
-                    blurRadius: 10, // Blur amount
-                    offset: Offset(0, 4), // X and Y offset
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                      "Rs  ${notification['amount']}",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Color(0xff0A4C61),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                           SizedBox(height: 10,),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      if (notification['location'] != null &&
+                          notification['location']['latitude'] != null) {
+                        final String googleMapsUrl =
+                            'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
+                        if (await canLaunch(googleMapsUrl)) {
+                          await launch(googleMapsUrl);
+                        } else {
+                          throw 'Could not open the map.';
+                        }
+                      }
+                    },
+                    
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
+                            blurRadius: 10, // Blur amount
+                            offset: Offset(0, 4), // X and Y offset
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'assets/images/Location.png',
+                      ),
+                    ),
+                  ),
+                  
+                  
+                  SizedBox(width:10),
+                  // Reject button
+                  GestureDetector(
+                    onTap: () async {
+                      try {
+                        await Provider.of<Auth>(context, listen: false).rejectOrder(
+                            notification['_id'],
+                            notification['user_id'],
+                            notification['order_from_user_id']);
+                      } catch (e) {
+                        print("${e.toString()}");
+                      }
+                    },
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFD4F4F),
+                        borderRadius: BorderRadius.circular(8),
+                  
+                        boxShadow: [
+                          BoxShadow(
+                            color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
+                            blurRadius: 10, // Blur amount
+                            offset: Offset(0, 4), // X and Y offset
+                          ),
+                        ],
+                      ),
+                      child: Icon(Icons.close, color: Colors.white, size: 20),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  // Accept button
+                  GestureDetector(
+                    onTap: () async {
+                      try {
+                        await Provider.of<Auth>(context, listen: false).acceptOrder(
+                            notification['_id'],
+                            notification['user_id'],
+                            notification['order_from_user_id']);
+                      } catch (e) {
+                        print("${e.toString()}");
+                      }
+                    },
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: Color(0xff1ACD0A),
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
+                            blurRadius: 10, // Blur amount
+                            offset: Offset(0, 4), // X and Y offset
+                          ),
+                        ],
+                      ),
+                      child: Icon(Icons.check, color: Colors.white, size: 20),
+                    ),
                   ),
                 ],
               ),
-              child: Image.asset(
-                'assets/images/Location.png',
-              ),
-            ),
-          ),
-          SizedBox(width: 10.0),
-          // Reject button
-          GestureDetector(
-            onTap: () async {
-              try {
-                await Provider.of<Auth>(context, listen: false).rejectOrder(
-                    notification['_id'],
-                    notification['user_id'],
-                    notification['order_from_user_id']);
-              } catch (e) {
-                print("${e.toString()}");
-              }
-            },
-            child: Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                color: const Color(0xFFFD4F4F),
-                borderRadius: BorderRadius.circular(8),
-
-                boxShadow: [
-                  BoxShadow(
-                    color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
-                    blurRadius: 10, // Blur amount
-                    offset: Offset(0, 4), // X and Y offset
-                  ),
-                ],
-              ),
-              child: Icon(Icons.close, color: Colors.white, size: 20),
-            ),
-          ),
-          SizedBox(width: 10),
-          // Accept button
-          GestureDetector(
-            onTap: () async {
-              try {
-                await Provider.of<Auth>(context, listen: false).acceptOrder(
-                    notification['_id'],
-                    notification['user_id'],
-                    notification['order_from_user_id']);
-              } catch (e) {
-                print("${e.toString()}");
-              }
-            },
-            child: Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                color: boxShadowColor,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: boxShadowColor.withOpacity(0.2), // Color with 35% opacity
-                    blurRadius: 10, // Blur amount
-                    offset: Offset(0, 4), // X and Y offset
-                  ),
-                ],
-              ),
-              child: Icon(Icons.check, color: Colors.white, size: 20),
-            ),
+            ],
           ),
        
 
@@ -432,34 +451,43 @@ bool showFullItems = false;
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                    showFullItems
-                        ? formatItems(notification['items'])
-                        : oneItem(notification['items']),
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      color: boxShadowColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        showFullItems = !showFullItems;
-                      });
-                    },
-                    child: Icon(
-                      showFullItems
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                      color: boxShadowColor,
-                    ),
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        showFullItems
+                            ? formatItems(notification['items'])
+                            : oneItem(notification['items']),
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Color(0xff0A4C61),
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Product Sans'
+                        ),
+                      ),
+
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            showFullItems = !showFullItems;
+                          });
+                        },
+                        child: Icon(
+                          
+                          showFullItems
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Color(0xffFA6E00),
+                        ),
+                      ),
+                  ],
+                ),
+                
                 Text(
                   timeAgo(notification['created_date']),
                   style: TextStyle(
                     fontSize: 10.0,
-                    color: Color(0xffFA6E00),
+                    color: Color(0xff519896),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -596,7 +624,7 @@ bool showFullItems = false;
                   timeAgo(notification['created_date']),
                   style: TextStyle(
                     fontSize: 10.0,
-                    color: Color(0xffFA6E00),
+                    color: Color(0xffFD4F4F), //FD4F4F
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -736,7 +764,8 @@ bool showFullItems = false;
                                       ? Color.fromARGB(255, 110, 20, 128)
                                       : Color(0xff0A4C61),
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12.0,
+                                  fontSize: 14.0,
+                                  fontFamily: 'Product Sans'
                                 ),
                               ),
                               Text(
