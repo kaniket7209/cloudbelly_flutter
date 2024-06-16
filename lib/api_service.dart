@@ -58,7 +58,7 @@ class Auth with ChangeNotifier {
   List<Map<String, dynamic>> get completedOrders =>
       orderDetails.where((order) => order['status'] == 'delivered').toList();
       List<Map<String, dynamic>> get ongoingOrders =>
-    orderDetails.where((order) => order['status'] == 'Accepted' || order['status'] == 'Prepared' || order['status'] == 'Packed'|| order['status'] == 'Out for delivery' || order['status'] == 'Delivered').toList();
+    orderDetails.where((order) => order['status'] == 'Accepted' || order['status'] == 'Prepared' || order['status'] == 'Packed'|| order['status'] == 'Out for delivery' ).toList();
 
   List<Map<String, dynamic>> get paymentVerifications => paymentDetails;
 
