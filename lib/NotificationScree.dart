@@ -275,7 +275,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       child: Padding(
                         padding: EdgeInsets.all(2),
                         child: _buildActionButtons(
-                            notification, isAccepted, boxShadowColor),
+                            notification, isAccepted, boxShadowColor,index),
                       ));
                 }),
               )
@@ -284,8 +284,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   bool showFullItems = false;
+  // Map<int, bool> expandedOrderIndices = {};
+
+         Map<int, bool> expandedOrderIndices = {}; 
   Widget _buildActionButtons(Map<String, dynamic> notification, bool isAccepted,
-      Color boxShadowColor) {
+      Color boxShadowColor,index) {
     void handleStatusChange(String newStatus) async {
       try {
         await Provider.of<Auth>(context, listen: false).statusChange(
@@ -524,9 +527,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     Container(
                       width: 130,
                       child: Text(
-                        showFullItems
-                            ? formatItems(notification['items'])
-                            : oneItem(notification['items']),
+                        expandedOrderIndices[index] ?? false
+                          ? formatItems(notification['items'])
+                          : oneItem(notification['items']),
                         style: TextStyle(
                             fontSize: 14.0,
                             color: Color(0xff0A4C61),
@@ -537,11 +540,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          showFullItems = !showFullItems;
+                          expandedOrderIndices[index] =
+                              !(expandedOrderIndices[index] ?? false);
                         });
                       },
                       child: Icon(
-                        showFullItems
+                        (expandedOrderIndices[index] ?? false)
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
                         color: Color(0xffFA6E00),
@@ -620,7 +624,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      showFullItems
+                     expandedOrderIndices[index] ?? false
                           ? formatItems(notification['items'])
                           : oneItem(notification['items']),
                       style: TextStyle(
@@ -632,11 +636,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          showFullItems = !showFullItems;
+                          expandedOrderIndices[index] =
+                              !(expandedOrderIndices[index] ?? false);
                         });
                       },
                       child: Icon(
-                        showFullItems
+                        (expandedOrderIndices[index] ?? false)
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
                         color: Color(0xffFA6E00),
@@ -708,9 +713,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     Container(
                       width: 110,
                       child: Text(
-                        showFullItems
-                            ? formatItems(notification['items'])
-                            : oneItem(notification['items']),
+                        expandedOrderIndices[index] ?? false
+                          ? formatItems(notification['items'])
+                          : oneItem(notification['items']),
                         style: TextStyle(
                             fontSize: 14.0,
                             color: Color(0xff0A4C61),
@@ -721,11 +726,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          showFullItems = !showFullItems;
+                          expandedOrderIndices[index] =
+                              !(expandedOrderIndices[index] ?? false);
                         });
                       },
                       child: Icon(
-                        showFullItems
+                        (expandedOrderIndices[index] ?? false)
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
                         color: Color(0xffFA6E00),
@@ -865,9 +871,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     Container(
                       width: 110,
                       child: Text(
-                        showFullItems
-                            ? formatItems(notification['items'])
-                            : oneItem(notification['items']),
+                        expandedOrderIndices[index] ?? false
+                          ? formatItems(notification['items'])
+                          : oneItem(notification['items']),
                         style: TextStyle(
                             fontSize: 14.0,
                             color: Color(0xff0A4C61),
@@ -878,11 +884,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          showFullItems = !showFullItems;
+                          expandedOrderIndices[index] =
+                              !(expandedOrderIndices[index] ?? false);
                         });
                       },
                       child: Icon(
-                        showFullItems
+                        (expandedOrderIndices[index] ?? false)
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
                         color: Color(0xffFA6E00),
@@ -958,9 +965,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     Container(
                       width: 110,
                       child: Text(
-                        showFullItems
-                            ? formatItems(notification['items'])
-                            : oneItem(notification['items']),
+                        expandedOrderIndices[index] ?? false
+                          ? formatItems(notification['items'])
+                          : oneItem(notification['items']),
                         style: TextStyle(
                             fontSize: 14.0,
                             color: Color(0xff0A4C61),
@@ -971,11 +978,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          showFullItems = !showFullItems;
+                          expandedOrderIndices[index] =
+                              !(expandedOrderIndices[index] ?? false);
                         });
                       },
                       child: Icon(
-                        showFullItems
+                        (expandedOrderIndices[index] ?? false)
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
                         color: Color(0xffFA6E00),
@@ -1263,138 +1271,139 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           ],
                         ),
                       ),
-                      if(itemProvider.paymentVerifications.isNotEmpty)
-                      Container(
-                        decoration: ShapeDecoration(
-                          color: Color(0xff0A4C61),
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                              cornerRadius: 21.0,
-                              cornerSmoothing: 1,
-                            ),
-                          ),
-                          shadows: [
-                            BoxShadow(
-                              color: boxShadowColor.withOpacity(0.2),
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        padding: EdgeInsets.all(15),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              barrierColor: Colors.transparent,
-                              // shape: RoundedRectangleBorder(
-                              //   borderRadius: BorderRadius.vertical(
-                              //       top: Radius.circular(30.0)),
-                              // ),
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) => DraggableScrollableSheet(
-                                initialChildSize: 0.95,
-                                minChildSize: 0.5,
-                                maxChildSize: 0.95,
-                                builder: (BuildContext context,
-                                    ScrollController scrollController) {
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: Color(
-                                          0xff0A4C61), // Set your desired color here
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(
-                                            30.0), // Consistent with the outer shape
-                                        topRight: Radius.circular(30.0),
-                                      ),
-
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Color(0xff0A4C61)
-                                              .withOpacity(0.5),
-                                          spreadRadius: 2,
-                                          blurRadius: 10,
-                                          offset: Offset(0, 3),
-                                        ),
-                                      ],
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(
-                                            30.0), // Consistent with the outer shape
-                                        topRight: Radius.circular(30.0),
-                                      ),
-                                      child: Stack(
-                                        children: [
-                                          PaymentScreen(
-                                              scrollController:
-                                                  scrollController),
-                                          Positioned(
-                                            top: 30,
-                                            right: 85,
-                                            child: CircleAvatar(
-                                              radius: 12,
-                                              backgroundColor: Colors.red,
-                                              child: Text(
-                                                '${itemProvider.paymentVerifications.length}',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            maximumSize: Size(200, 100),
-                            backgroundColor: Color(0xffFA6E00), // Button color
+                      if (itemProvider.paymentVerifications.isNotEmpty)
+                        Container(
+                          decoration: ShapeDecoration(
+                            color: Color(0xff0A4C61),
                             shape: SmoothRectangleBorder(
                               borderRadius: SmoothBorderRadius(
-                                cornerRadius: 14.0,
+                                cornerRadius: 21.0,
                                 cornerSmoothing: 1,
                               ),
                             ),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            // crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Verify Payment',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Product Sans'),
-                              ),
-                              SizedBox(width: 10),
-                              CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Color(0xffFCFF52),
-                                child: Text(
-                                  '${itemProvider.paymentVerifications.length}',
-                                  style: TextStyle(
-                                      color: Color(0xff0A4C61),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                            shadows: [
+                              BoxShadow(
+                                color: boxShadowColor.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                offset: Offset(0, 3),
                               ),
                             ],
                           ),
+                          padding: EdgeInsets.all(15),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                barrierColor: Colors.transparent,
+                                // shape: RoundedRectangleBorder(
+                                //   borderRadius: BorderRadius.vertical(
+                                //       top: Radius.circular(30.0)),
+                                // ),
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (context) => DraggableScrollableSheet(
+                                  initialChildSize: 0.95,
+                                  minChildSize: 0.5,
+                                  maxChildSize: 0.95,
+                                  builder: (BuildContext context,
+                                      ScrollController scrollController) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        color: Color(
+                                            0xff0A4C61), // Set your desired color here
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(
+                                              30.0), // Consistent with the outer shape
+                                          topRight: Radius.circular(30.0),
+                                        ),
+
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Color(0xff0A4C61)
+                                                .withOpacity(0.5),
+                                            spreadRadius: 2,
+                                            blurRadius: 10,
+                                            offset: Offset(0, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(
+                                              30.0), // Consistent with the outer shape
+                                          topRight: Radius.circular(30.0),
+                                        ),
+                                        child: Stack(
+                                          children: [
+                                            PaymentScreen(
+                                                scrollController:
+                                                    scrollController),
+                                            Positioned(
+                                              top: 30,
+                                              right: 85,
+                                              child: CircleAvatar(
+                                                radius: 12,
+                                                backgroundColor: Colors.red,
+                                                child: Text(
+                                                  '${itemProvider.paymentVerifications.length}',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              maximumSize: Size(200, 100),
+                              backgroundColor:
+                                  Color(0xffFA6E00), // Button color
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 14.0,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              // crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Verify Payment',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Product Sans'),
+                                ),
+                                SizedBox(width: 10),
+                                CircleAvatar(
+                                  radius: 10,
+                                  backgroundColor: Color(0xffFCFF52),
+                                  child: Text(
+                                    '${itemProvider.paymentVerifications.length}',
+                                    style: TextStyle(
+                                        color: Color(0xff0A4C61),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
                       SizedBox(
                         height: 30,
                       )
@@ -1469,6 +1478,8 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
+  List<int> expandedIndices = [];
+
   bool showScreenshot = false;
   void verifyPayment(
       BuildContext context, Map<String, dynamic> notification) async {
@@ -1628,7 +1639,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                         GestureDetector(
                                           onTap: () {
                                             setState(() {
-                                              showScreenshot = !showScreenshot;
+                                              if (expandedIndices
+                                                  .contains(index)) {
+                                                expandedIndices.remove(index);
+                                              } else {
+                                                expandedIndices.add(index);
+                                              }
                                             });
                                           },
                                           child: const Text(
@@ -1649,7 +1665,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                             });
                                           },
                                           child: Icon(
-                                            showScreenshot
+                                            expandedIndices.contains(index)
                                                 ? Icons.keyboard_arrow_up
                                                 : Icons.keyboard_arrow_down,
                                             color: Color(0xFFFA6E00),
@@ -1657,7 +1673,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                         ),
                                       ],
                                     ),
-                                    if (showScreenshot)
+                                    if (expandedIndices.contains(index))
                                       Container(
                                         decoration: ShapeDecoration(
                                           shape: SmoothRectangleBorder(
