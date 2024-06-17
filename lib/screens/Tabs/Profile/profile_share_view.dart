@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
@@ -9,6 +11,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 
 //  for QR code sharing (profile)
 class ProfileShareBottomSheet {
@@ -96,19 +101,75 @@ class _QrViewState extends State<QrView> {
     final String profilePhoto =
         Provider.of<Auth>(context, listen: false).userData?['profile_photo'] ??
             '';
+    final String store_name =
+        Provider.of<Auth>(context, listen: false).userData?['store_name'] ?? '';
 
+    final String user_type =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'] ?? '';
+
+    final ScreenshotController _screenshotController = ScreenshotController();
+
+    void _shareScreenshot() async {
+      final image = await _screenshotController.capture();
+      print("share $image");
+      if (image != null) {
+        final directory = await getTemporaryDirectory();
+        final imagePath =
+            await File('${directory.path}/screenshot.png').create();
+        await imagePath.writeAsBytes(image);
+        print("user_typed $user_type");
+        if (user_type == 'Vendor') {
+          await Share.shareFiles([imagePath.path],
+              text:
+                  '🍽️ Check out my store and menu for delicious meals at unbeatable prices! 🍲\n\nExplore our offerings and place your order now: ${profileUrl}\n\n#DeliciousMeals #AffordableDining #SupportLocalKitchens');
+        } else if (user_type == 'Customer') {
+          await Share.shareFiles([imagePath.path],
+          text: '🍴 Hey foodies! Discover amazing meals at unbeatable prices! 🍲\n\nI’ve partnered with this fantastic kitchen to bring you delicious food. Check out their menu and support local businesses: ${profileUrl}\n\n#FoodieFinds #SupportLocal #DeliciousMeals'
+              );
+        } else {
+          await Share.shareFiles([imagePath.path],
+              text:
+                  '🚚 Partner with us to supply the best ingredients and products for our kitchen. 🌿\n\nJoin our network and contribute to serving delicious meals: ${profileUrl}\n\n#SupplierNetwork #QualityIngredients #SupportLocalBusinesses');
+        }
+      }
+    }
+
+    Color boxShadowColor;
+
+    if (user_type == 'Vendor') {
+      boxShadowColor = const Color(0xff0A4C61);
+    } else if (user_type == 'Customer') {
+      boxShadowColor = const Color(0xff2E0536);
+    } else if (user_type == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    } else {
+      boxShadowColor = const Color(
+          0xff0A4C61); // Default color if user_type is none of the above
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(height: 10),
+        SizedBox(height: 20),
         Center(
           child: Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(40),
-              // border: Border.all(color: Colors.black),
+            width: 100,
+            height: 100,
+            decoration: ShapeDecoration(
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 22,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              shadows: [
+                BoxShadow(
+                  color:
+                      boxShadowColor.withOpacity(0.3), // Color with 35% opacity
+                  blurRadius: 15, // Blur amount
+                  offset: Offset(0, 4), // X and Y offset
+                ),
+              ],
               image: DecorationImage(
                 image: NetworkImage(profilePhoto),
                 fit: BoxFit.cover,
@@ -121,9 +182,9 @@ class _QrViewState extends State<QrView> {
           child: Text(
             Provider.of<Auth>(context, listen: false).userData?['store_name'] ??
                 '',
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 18,
+            style: TextStyle(
+              color: boxShadowColor,
+              fontSize: 26,
               fontFamily: 'Product Sans',
               fontWeight: FontWeight.w800,
               height: 1.2,
@@ -131,12 +192,26 @@ class _QrViewState extends State<QrView> {
             ),
           ),
         ),
-        SizedBox(height: 10),
-        // Center(
+        SizedBox(height: 5),
+
+        // GestureDetector(
+        //   onTap: () async {
+        //     final phoneNumber =
+        //         Provider.of<Auth>(context, listen: false).userData?['phone'] ??
+        //             '';
+        //     final url = 'tel:$phoneNumber';
+        //     if (await canLaunch(url)) {
+        //       await launch(url);
+        //     } else {
+        //       ScaffoldMessenger.of(context).showSnackBar(
+        //         const SnackBar(content: Text('Could not launch phone call')),
+        //       );
+        //     }
+        //   },
         //   child: Text(
         //     Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
-        //     style: const TextStyle(
-        //       color: Colors.black,
+        //     style: TextStyle(
+        //       color: boxShadowColor,
         //       fontSize: 18,
         //       fontFamily: 'Product Sans',
         //       fontWeight: FontWeight.w800,
@@ -144,89 +219,134 @@ class _QrViewState extends State<QrView> {
         //       letterSpacing: 0.35,
         //     ),
         //   ),
+        //   // child: CircleAvatar(
+        //   //   radius: 10,
+        //   //   backgroundColor: const Color(0xFFFA6E00),
+        //   //   child: Image.asset(
+        //   //     'assets/images/Phone.png',
+        //   //     width: 30,
+        //   //     height: 30,
+        //   //     fit: BoxFit.fill,
+        //   //   ),
+        //   // ),
         // ),
-        GestureDetector(
-          onTap: () async {
-            final phoneNumber =
-                Provider.of<Auth>(context, listen: false).userData?['phone'] ??
-                    '';
-            final url = 'tel:$phoneNumber';
-            if (await canLaunch(url)) {
-              await launch(url);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Could not launch phone call')),
-              );
-            }
-          },
-          child: CircleAvatar(
-            radius: 10,
-            backgroundColor: const Color(0xFFFA6E00),
-            child: Image.asset(
-              'assets/images/Phone.png',
-              width: 30,
-              height: 30,
-              fit: BoxFit.fill,
+
+        SizedBox(height: 10),
+        Center(
+          child: Screenshot(
+            controller: _screenshotController,
+            child: Container(
+              padding: EdgeInsets.all(8), // Optional for some spacing
+              decoration: BoxDecoration(
+                color: Colors.white, // Background color of the container
+                borderRadius: BorderRadius.circular(
+                    20), // Rounded corners of the container
+              ),
+              child: PrettyQr(
+                data: profileUrl, // Your data variable
+                size: 200, // Size of the QR code
+                roundEdges: true, // Rounded corners for the QR code elements
+                elementColor: boxShadowColor, // Color of the QR code elements
+                image: NetworkImage(profilePhoto), // Your profile photo URL
+              ),
             ),
           ),
         ),
-        SizedBox(height: 10),
-        Center(
-          child: QrImageView(
-            data: profileUrl,
-            version: QrVersions.auto,
-            size: 200,
-            gapless: false,
-            foregroundColor: const Color.fromARGB(255, 56, 12, 64),
-          ),
-        ),
-        SizedBox(height: 8),
+        // ElevatedButton(
+        //   onPressed: _shareScreenshot,
+        //   child: Text(
+        //     'Share Screenshot',
+        //     style: TextStyle(color: Colors.red),
+        //   ),
+        // ),
+        // Center(
+        //   child: QrImageView(
+        //     data: profileUrl,
+        //     version: QrVersions.auto,
+        //     size: 200,
+        //     gapless: false,
+        //     foregroundColor: boxShadowColor,
+        //   ),
+        // ),
+
+        SizedBox(height: 40),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    // color: const Color.fromARGB(255, 244, 114, 54),
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: Text(
-                    profileUrl,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.w800,
-                      height: 1.2,
-                      letterSpacing: 0.35,
+              Container(
+                width: MediaQuery.of(context).size.width * 0.90,
+                padding: EdgeInsets.all(10),
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 13,
+                      cornerSmoothing: 1,
                     ),
                   ),
+                  shadows: [
+                    BoxShadow(
+                      color: boxShadowColor
+                          .withOpacity(0.3), // Color with 35% opacity
+                      blurRadius: 15, // Blur amount
+                      offset: Offset(0, 4), // X and Y offset
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.black),
-                ),
-                child: IconButton(
-                  onPressed: () async {
-                    Share.share(profileUrl);
-                  },
-                  icon: const Icon(
-                    Icons.share,
-                    color: Colors.black,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        profileUrl,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w800,
+                          height: 1.2,
+                          letterSpacing: 0.35,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      decoration: ShapeDecoration(
+                        color: Color(0xffFA6E00),
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 13,
+                            cornerSmoothing: 1,
+                          ),
+                        ),
+                        shadows: [
+                          BoxShadow(
+                            color: boxShadowColor
+                                .withOpacity(0.3), // Color with 35% opacity
+                            blurRadius: 15, // Blur amount
+                            offset: Offset(0, 4), // X and Y offset
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        onPressed: () async {
+                          _shareScreenshot();
+                          // Share.share(profileUrl);
+                        },
+                        icon: Image.asset(
+                          'assets/images/Share.png', // Path to your image asset
+                          color: boxShadowColor, // Optional: If you want to tint the image
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 30),
       ],
     );
   }

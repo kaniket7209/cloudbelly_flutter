@@ -1891,7 +1891,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: Container(
+                child: 
+                Container(
                   width: 100,
                   height: 5,
                   decoration: ShapeDecoration(
