@@ -49,6 +49,7 @@ class Auth with ChangeNotifier {
   List<ProductDetails> itemAdd = [];
   List notificationDetails = [];
   List<Map<String, dynamic>> orderDetails = [];
+  List<Map<String, dynamic>> customerOrderDetails = [];
   List<Map<String, dynamic>> paymentDetails = [];
   // Assume your API response provides this status categorization
   List<Map<String, dynamic>> get incomingOrders =>
@@ -63,6 +64,16 @@ class Auth with ChangeNotifier {
           order['status'] == 'Prepared' ||
           order['status'] == 'Packed' ||
           order['status'] == 'Out for delivery')
+      .toList();
+  List<Map<String, dynamic>> get trackCustomerOrders => customerOrderDetails
+      .where((order) =>
+          order['status'] == 'Accepted' ||
+          order['status'] == 'Prepared' ||
+          order['status'] == 'Packed' ||
+          order['status'] == 'Out for delivery'
+           ||
+          order['status'] == 'Delivered'
+          )
       .toList();
 
   List<Map<String, dynamic>> get paymentVerifications => paymentDetails;
@@ -226,6 +237,15 @@ class Auth with ChangeNotifier {
         body: jsonEncode({"order_from_user_id": userData?['user_id'] ?? ""}),
       );
       orderDetails = List<Map<String, dynamic>>.from(jsonDecode(orders.body));
+      final customerOrders = await http.post(
+        Uri.parse("https://app.cloudbelly.in/order/get"),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"user_id": userData?['user_id'] ?? ""}),
+      );
+      customerOrderDetails = List<Map<String, dynamic>>.from(jsonDecode(customerOrders.body));
+      print("customerOrderDetails ${customerOrderDetails.length}");
       final payments = await http.post(
         Uri.parse("https://app.cloudbelly.in/payments/get"),
         headers: {
