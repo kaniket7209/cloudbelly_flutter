@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'dart:typed_data';
+import 'package:cloudbelly_app/NotificationScree.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'dart:ui';
 import 'package:cloudbelly_app/prefrence_helper.dart';
@@ -58,6 +59,7 @@ class PaymentOptions extends StatefulWidget {
   final String orderId;
   final double amount;
   final String sellerUpi;
+  final String paymentMode;
   final Map<String, dynamic> prepData;
 
   PaymentOptions({
@@ -67,17 +69,17 @@ class PaymentOptions extends StatefulWidget {
     required this.amount,
     required this.sellerUpi,
     required this.prepData,
+    required this.paymentMode,
   });
 
   @override
   _PaymentOptionsState createState() => _PaymentOptionsState();
 }
-
 class _PaymentOptionsState extends State<PaymentOptions> {
   Uint8List? qrCode;
   XFile? paymentScreenshot;
   bool isPaymentConfirmed = false;
-
+  bool isCod = false;
   @override
   void initState() {
     super.initState();
@@ -207,118 +209,163 @@ class _PaymentOptionsState extends State<PaymentOptions> {
   }
 
   Widget buildTitle(BuildContext context) {
-    return isPaymentConfirmed
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    if (isPaymentConfirmed) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Thank you,\nYour order has\nbeen placed.',
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        'Your payment is yet to be verified',
-                        style: TextStyle(fontSize: 10, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      final phoneNumber = widget.prepData['phone'];
-                      final url = 'tel:$phoneNumber';
-                      if (await canLaunch(url)) {
-                        await launch(url);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text('Could not launch phone call')),
-                        );
-                      }
-                    },
-                    child: CircleAvatar(
-                      backgroundColor: const Color(0xFFFA6E00),
-                      child: Image.asset('assets/images/Phone.png'),
+                  Text(
+                    'Thank you,\nYour order has\nbeen placed.',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-                ],
-              ),
-              Space(2.h),
-            ],
-          )
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Stack(
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Positioned.directional(
-                    textDirection: TextDirection.ltr,
-                    child: Container(
-                      child: IconButton(
-                        icon:
-                            Image.asset('assets/images/back_double_arrow.png'),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Container(
-                      // padding: const EdgeInsets.only(left: 30),
-                      child: const Text(
-                        'Scan to pay',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                    ),
+                  Text(
+                    'Your payment is yet to be verified',
+                    style: TextStyle(fontSize: 10, color: Colors.white),
                   ),
                 ],
               ),
               GestureDetector(
-                onTap: () {
-                  initState();
-                  Navigator.of(context).pop();
+                onTap: () async {
+                  final phoneNumber = widget.prepData['phone'];
+                  final url = 'tel:$phoneNumber';
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Could not launch phone call')),
+                    );
+                  }
                 },
-                child: Center(
-                  child: Container(
-                    width: 130,
-                    height: 5,
-                    decoration: ShapeDecoration(
-                      color: const Color(0xFFFA6E00),
-                      shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius(
-                          cornerRadius: 12,
-                          cornerSmoothing: 1,
-                        ),
-                      ),
+                child: CircleAvatar(
+                  backgroundColor: const Color(0xFFFA6E00),
+                  child: Image.asset('assets/images/Phone.png'),
+                ),
+              ),
+            ],
+          ),
+          Space(2.h),
+        ],
+      );
+    } else if (widget.paymentMode == 'cod') {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Thank you,\nYour order has\nbeen placed.',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    'Please pay to kitchen when you receive the order',
+                    style: TextStyle(fontSize: 10, color: Colors.white),
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () async {
+                  final phoneNumber = widget.prepData['phone'];
+                  final url = 'tel:$phoneNumber';
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Could not launch phone call')),
+                    );
+                  }
+                },
+                child: CircleAvatar(
+                  backgroundColor: const Color(0xFFFA6E00),
+                  child: Image.asset('assets/images/Phone.png'),
+                ),
+              ),
+            ],
+          ),
+          Space(2.h),
+        ],
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Stack(
+            children: [
+              Positioned.directional(
+                textDirection: TextDirection.ltr,
+                child: Container(
+                  child: IconButton(
+                    icon: Image.asset('assets/images/back_double_arrow.png'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              ),
+              Center(
+                child: Container(
+                  child: const Text(
+                    'Scan to pay',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 25,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans',
                     ),
                   ),
                 ),
               ),
-              // const SizedBox(height: 10),
-              Space(1.h)
             ],
-          );
+          ),
+          GestureDetector(
+            onTap: () {
+              initState();
+              Navigator.of(context).pop();
+            },
+            child: Center(
+              child: Container(
+                width: 130,
+                height: 5,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFFFA6E00),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 12,
+                      cornerSmoothing: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Space(1.h),
+        ],
+      );
+    }
   }
 
   Widget buildContent(BuildContext context) {
-    return isPaymentConfirmed
-        ? Column(
+    if (isPaymentConfirmed || widget.paymentMode == 'cod'){
+        return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Add your Lottie animation asset here
@@ -341,11 +388,15 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                     ),
                   ),
                   onPressed: () {
-                    // Add track order functionality here
                     Navigator.of(context).pop();
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => OrderPage()),
+                      MaterialPageRoute(
+                        builder: (context) => NotificationScreen(
+                            initialTabIndex: 1,
+                            redirect: true // Index of the " Order Tracking" tab
+                            ),
+                      ),
                     );
                   },
                   child: const Text(
@@ -388,8 +439,11 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                 ),
               ),
             ],
-          )
-        : Column(
+          );
+        
+    }
+    else {
+    return Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -491,7 +545,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   ),
                   onPressed: () => pickPaymentScreenshot(),
                   child: const Text(
-                    'Upload screenshot',
+                    'Upload payment screenshot',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.white,
@@ -510,54 +564,57 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                 ),
             ],
           );
-  }
+  }}
 
-  List<Widget> buildActions(BuildContext context) {
-    return !isPaymentConfirmed
-        ? [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius(
-                      cornerRadius: 12,
-                      cornerSmoothing: 1,
-                    ),
+ List<Widget> buildActions(BuildContext context) {
+  return (!isPaymentConfirmed && widget.paymentMode != 'cod')
+      ? [
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
+                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 1,
                   ),
                 ),
-                onPressed: () => uploadPaymentScreenshot(),
+              ),
+              onPressed: () => uploadPaymentScreenshot(),
+              child: const Text(
+                'Transferred, notify the seller',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Container(
                 child: const Text(
-                  'Transferred, notify the seller',
+                  '**Third party payment is not allowed',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 10,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ),
-            Row(
-              children: [
-                Container(
-                  child: const Text(
-                    '**Third party payment is not allowed',
-                    style: TextStyle(
-                      fontSize: 8,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Space(1.h)
-          ]
-        : [];
-  }
+            ],
+          ),
+          Space(1.h)
+        ]
+      : [];
+}
+
 }
 
 // show payment method section
@@ -644,8 +701,11 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
                 onPressed: () {
                   Navigator.of(context).pop();
                   // Add cash on delivery functionality here
-                  submitCustomerOrder(
+                  
+                   submitCustomerOrder(
                       context, orderId, "cod", orderFromUserId, prepData);
+                  openPaymentOptions(
+                      context, orderId, sellerUpi, orderFromUserId, prepData,'cod');
                 },
                 child: const Text(
                   'Cash on delivery',
@@ -674,7 +734,7 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
                 onPressed: () {
                   Navigator.of(context).pop();
                   openPaymentOptions(
-                      context, orderId, sellerUpi, orderFromUserId, prepData);
+                      context, orderId, sellerUpi, orderFromUserId, prepData,'online');
                 },
                 child: const Text(
                   'Pay directly to kitchen',
@@ -694,7 +754,8 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
   );
 }
 
-void submitCustomerOrder(
+Future<void> submitCustomerOrder (
+    // for cod
     BuildContext context,
     String orderId,
     String payment_method,
@@ -716,6 +777,10 @@ void submitCustomerOrder(
   );
 
   if (response.statusCode == 200) {
+    // setState(() {
+    //   isCod = true;
+    // });
+
     TOastNotification().showSuccesToast(
         context, 'Order no ${prepData['order_no']} submitted successfully ');
     print('Order  submitted successfully');
@@ -725,7 +790,7 @@ void submitCustomerOrder(
 }
 
 void openPaymentOptions(BuildContext context, String orderId, String sellerUpi,
-    String orderFromUserId, Map<String, dynamic> prepData) {
+    String orderFromUserId, Map<String, dynamic> prepData, String paymentMode) {
   print("Opening payment options with context: $context");
   var userData = UserPreferences.getUser();
   print("User data for payment: ${jsonEncode(userData)}");
@@ -739,6 +804,7 @@ void openPaymentOptions(BuildContext context, String orderId, String sellerUpi,
         amount: 100.0, // Replace with actual amount if needed
         sellerUpi: sellerUpi,
         prepData: prepData,
+        paymentMode: paymentMode,
       );
     },
   );
@@ -1249,7 +1315,7 @@ class _ViewCartState extends State<ViewCart> {
                             'price_each': priceEach,
                             'quantity': quantity,
                           };
-                          
+
                           convertedList.add(newItem);
                         });
                         // print("convertedList  $convertedList");

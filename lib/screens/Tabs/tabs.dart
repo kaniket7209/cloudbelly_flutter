@@ -61,17 +61,19 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       // 'Account',
     ];
     pages = [
-      const Feed(),
-      userType == UserType.Vendor.name
-          ? const DashBoard()
-          : userType == UserType.Supplier.name
-              ? const SupplierDashboard()
-              :  OrderPage(),
+  const Feed(),
+  userType == UserType.Vendor.name
+      ? const DashBoard()
+      : userType == UserType.Supplier.name
+          ? const SupplierDashboard()
+          : OrderPage(),
+  NotificationScreen(
+    initialTabIndex: 0, // Ensure initialTabIndex is an int
+  ),
+  const Profile(),
+];
 
-      // UploadPage(),
-      const NotificationScreen(),
-      const Profile(),
-    ];
+
     _hideBottomBarAnimationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
     // TODO: implement initState

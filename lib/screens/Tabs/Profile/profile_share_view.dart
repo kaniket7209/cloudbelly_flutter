@@ -276,7 +276,7 @@ class _QrViewState extends State<QrView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: MediaQuery.of(context).size.width * 0.90,
+                width: MediaQuery.of(context).size.width * 0.80,
                 padding: EdgeInsets.all(10),
                 decoration: ShapeDecoration(
                   color: Colors.white,
@@ -296,14 +296,14 @@ class _QrViewState extends State<QrView> {
                   ],
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
                       child: Text(
                         profileUrl,
                         style: const TextStyle(
                           color: Colors.black,
-                          fontSize: 18,
+                          fontSize: 14,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w800,
                           height: 1.2,
@@ -312,6 +312,8 @@ class _QrViewState extends State<QrView> {
                       ),
                     ),
                     Container(
+                      width: 40,
+                      height: 40,
                       decoration: ShapeDecoration(
                         color: Color(0xffFA6E00),
                         shape: SmoothRectangleBorder(

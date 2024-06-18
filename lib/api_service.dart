@@ -67,6 +67,7 @@ class Auth with ChangeNotifier {
       .toList();
   List<Map<String, dynamic>> get trackCustomerOrders => customerOrderDetails
       .where((order) =>
+          order['status'] == 'Submitted' ||
           order['status'] == 'Accepted' ||
           order['status'] == 'Prepared' ||
           order['status'] == 'Packed' ||

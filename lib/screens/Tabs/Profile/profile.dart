@@ -750,7 +750,7 @@ class _ProfileState extends State<Profile> {
                                             )
                                           : feedList.length == 0
                                               ? Container(
-                                                  height: double.infinity,
+                                                  
                                                   child: const Center(
                                                       child: Text(
                                                           'No items in Content')),

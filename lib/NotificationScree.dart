@@ -39,7 +39,14 @@ class NotificationProvider with ChangeNotifier {
 }
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({Key? key}) : super(key: key);
+  final int initialTabIndex;
+  final bool redirect;
+
+  const NotificationScreen({
+    Key? key, 
+    this.initialTabIndex = 0, 
+    this.redirect = false,
+  }) : super(key: key);
 
   @override
   _NotificationScreenState createState() => _NotificationScreenState();
@@ -59,9 +66,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedTabIndex = widget.initialTabIndex ?? 0; // Ensure it's not null
+    _pageController.addListener(() {
+      if (_pageController.page != null) {
+        _scrollController.jumpTo(_pageController.page!.toInt() * 65.0);
+      }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _pageController.jumpToPage(_selectedTabIndex);
+      _scrollToSelectedTab();
+    });
     _fetchNotifications();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Add the new notification to the provider
       Provider.of<NotificationProvider>(context, listen: false)
           .addNotification({
         'title': message.notification?.title,
@@ -69,14 +85,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         'data': message.data,
       });
 
-      _fetchNotifications(); // Refresh notifications
-
-      // Check the type of the notification
-      // if (message.data['type'] == 'social' || message.data['type'] == 'orders') {
-      // // if (message.data['type'] == 'social' || message.data['type'] == 'orders') {
-      //   print("typenot ${message.data}");
-      //   _fetchNotifications(); // Refresh notifications
-      // }
+      _fetchNotifications();
       print("Notification received: ${message.notification?.body}");
     });
   }
@@ -101,11 +110,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   void _scrollToSelectedTab() {
-    _scrollController.animateTo(
-      _selectedTabIndex * 65.0,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _selectedTabIndex * 65.0,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   Future<void> _fetchNotifications() async {
@@ -413,7 +424,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   Map<int, bool> expandedOrderIndices = {};
   Widget _buildActionButtons(Map<String, dynamic> notification, bool isAccepted,
-      Color boxShadowColor, index) {
+      Color boxShadowColor, int index) {
     void handleStatusChange(String newStatus) async {
       try {
         await Provider.of<Auth>(context, listen: false).statusChange(
@@ -1171,21 +1182,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
 // for order tracking
   Widget _buildActionButtonsCustomer(Map<String, dynamic> notification,
       bool isAccepted, Color boxShadowColor, index) {
-    void handleStatusChange(String newStatus) async {
-      try {
-        await Provider.of<Auth>(context, listen: false).statusChange(
-          notification['_id'],
-          notification['user_id'],
-          notification['order_from_user_id'],
-          newStatus,
-        );
-        setState(() {}); // Trigger UI update
-      } catch (e) {
-        print("${e.toString()}");
-      }
-    }
+    
 
-    if (notification['status'] == 'Accepted' ||
+    if (notification['status'] == 'Submitted'||
+      notification['status'] == 'Accepted' ||
         notification['status'] == 'Packed' ||
         notification['status'] == 'Prepared' ||
         notification['status'] == 'Delivered') {
@@ -1302,7 +1302,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
           // Out for delivery button
           GestureDetector(
-            // onTap: () => handleStatusChange('Out for delivery'),
+            
             child: Container(
               padding: notification['status'] == 'Out for delivery'
                   ? EdgeInsets.fromLTRB(10, 10, 10, 10)
@@ -1486,6 +1486,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    final int initialTabIndex =
+        args != null ? args['initialTabIndex'] : widget.initialTabIndex;
+    final bool redirect = args != null ? args['redirect'] : widget.redirect;
+    print("initialTabIndex $initialTabIndex $redirect");
+
     String? userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
     Color boxShadowColor;
@@ -1516,235 +1523,258 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   controller: _refreshController,
                   enablePullDown: true,
                   enablePullUp: false,
-                  child: Column(
-                    children: [
-                      SizedBox(height: 60),
-                      Center(
-                        child: Text(
-                          "Notification & Orders",
-                          style: TextStyle(
-                            color: boxShadowColor,
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1,
-                            fontSize: 22,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        controller: _scrollController,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildTabItem('Socials', 0, boxShadowColor),
-                              SizedBox(width: 30),
-                              if (userType != 'Customer')
-                                _buildTabItem(
-                                    'Incoming Orders', 1, boxShadowColor),
-                              SizedBox(width: 30),
-                              if (userType != 'Customer')
-                                _buildTabItem(
-                                    'Ongoing Orders', 2, boxShadowColor),
-                              if (userType == 'Customer')
-                                _buildTabItem(
-                                    'Order Tracking', 1, boxShadowColor),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: PageView(
-                          controller: _pageController,
-                          onPageChanged: (index) {
-                            setState(() {
-                              _selectedTabIndex = index;
-                              _scrollToSelectedTab();
-                            });
-                          },
+                  child: Container(
+                    child: Column(
+                      
+                      children: [
+                        SizedBox(height: 70),
+                        Stack(
+                          
                           children: [
-                            _buildPageContent(
-                              buildSocialNotificationList(
-                                'Socials',
-                                itemProvider.notificationDetails,
-                                showAllSocialNotifications,
-                                itemProvider.userData?['user_type'] ?? '',
+                            if (redirect)
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: IconButton(
+                                icon: Image.asset('assets/images/back_double_arrow.png'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
                               ),
                             ),
-                            if (userType != 'Customer')
-                              _buildPageContent(
-                                buildNotificationList(
-                                  'Incoming Orders',
-                                  itemProvider.incomingOrders,
-                                  showAllIncomingOrderNotifications,
-                                  false,
-                                  itemProvider.userData?['user_type'] ?? '',
+                           
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Notification & Orders",
+                                style: TextStyle(
+                                  color: boxShadowColor,
+                                  fontFamily: 'Jost',
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1,
+                                  fontSize: 22,
                                 ),
                               ),
-                            if (userType != 'Customer')
-                              _buildPageContent(
-                                buildNotificationList(
-                                  'Ongoing Orders',
-                                  itemProvider.ongoingOrders,
-                                  showAllAcceptedOrderNotifications,
-                                  true,
-                                  itemProvider.userData?['user_type'] ?? '',
-                                ),
-                              ),
-                            if (userType == 'Customer')
-                              _buildPageContent(
-                                buildOrderTracking(
-                                  'Order Tracking',
-                                  itemProvider.trackCustomerOrders,
-                                  showAllAcceptedOrderNotifications,
-                                  true,
-                                  itemProvider.userData?['user_type'] ?? '',
-                                ),
-                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      if (itemProvider.paymentVerifications.isNotEmpty)
-                        Container(
-                          decoration: ShapeDecoration(
-                            color: Color(0xff0A4C61),
-                            shape: SmoothRectangleBorder(
-                              borderRadius: SmoothBorderRadius(
-                                cornerRadius: 21.0,
-                                cornerSmoothing: 1,
-                              ),
-                            ),
-                            shadows: [
-                              BoxShadow(
-                                color: boxShadowColor.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          padding: EdgeInsets.all(15),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                barrierColor: Colors.transparent,
-                                // shape: RoundedRectangleBorder(
-                                //   borderRadius: BorderRadius.vertical(
-                                //       top: Radius.circular(30.0)),
-                                // ),
-                                isScrollControlled: true,
-                                backgroundColor: Colors.transparent,
-                                builder: (context) => DraggableScrollableSheet(
-                                  initialChildSize: 0.95,
-                                  minChildSize: 0.5,
-                                  maxChildSize: 0.95,
-                                  builder: (BuildContext context,
-                                      ScrollController scrollController) {
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: Color(
-                                            0xff0A4C61), // Set your desired color here
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(
-                                              30.0), // Consistent with the outer shape
-                                          topRight: Radius.circular(30.0),
-                                        ),
-
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Color(0xff0A4C61)
-                                                .withOpacity(0.5),
-                                            spreadRadius: 2,
-                                            blurRadius: 10,
-                                            offset: Offset(0, 3),
-                                          ),
-                                        ],
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(
-                                              30.0), // Consistent with the outer shape
-                                          topRight: Radius.circular(30.0),
-                                        ),
-                                        child: Stack(
-                                          children: [
-                                            PaymentScreen(
-                                                scrollController:
-                                                    scrollController),
-                                            Positioned(
-                                              top: 30,
-                                              right: 85,
-                                              child: CircleAvatar(
-                                                radius: 12,
-                                                backgroundColor: Colors.red,
-                                                child: Text(
-                                                  '${itemProvider.paymentVerifications.length}',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              maximumSize: Size(200, 100),
-                              backgroundColor:
-                                  Color(0xffFA6E00), // Button color
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 14.0,
-                                  cornerSmoothing: 1,
-                                ),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                            ),
+                        const SizedBox(height: 20),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          controller: _scrollController,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              // crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Verify Payment',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Product Sans'),
-                                ),
-                                SizedBox(width: 10),
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Color(0xffFCFF52),
-                                  child: Text(
-                                    '${itemProvider.paymentVerifications.length}',
-                                    style: TextStyle(
-                                        color: Color(0xff0A4C61),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
+                                _buildTabItem('Socials', 0, boxShadowColor),
+                                SizedBox(width: 30),
+                                if (userType != 'Customer')
+                                  _buildTabItem(
+                                      'Incoming Orders', 1, boxShadowColor),
+                                SizedBox(width: 30),
+                                if (userType != 'Customer')
+                                  _buildTabItem(
+                                      'Ongoing Orders', 2, boxShadowColor),
+                                if (userType == 'Customer')
+                                  _buildTabItem(
+                                      'Order Tracking', 1, boxShadowColor),
                               ],
                             ),
                           ),
                         ),
-                      SizedBox(
-                        height: 30,
-                      )
-                    ],
+                        Expanded(
+                          child: PageView(
+                            controller: _pageController,
+                            onPageChanged: (index) {
+                              setState(() {
+                                _selectedTabIndex = index;
+                                _scrollToSelectedTab();
+                              });
+                            },
+                            children: [
+                              _buildPageContent(
+                                buildSocialNotificationList(
+                                  'Socials',
+                                  itemProvider.notificationDetails,
+                                  showAllSocialNotifications,
+                                  itemProvider.userData?['user_type'] ?? '',
+                                ),
+                              ),
+                              if (userType != 'Customer')
+                                _buildPageContent(
+                                  buildNotificationList(
+                                    'Incoming Orders',
+                                    itemProvider.incomingOrders,
+                                    showAllIncomingOrderNotifications,
+                                    false,
+                                    itemProvider.userData?['user_type'] ?? '',
+                                  ),
+                                ),
+                              if (userType != 'Customer')
+                                _buildPageContent(
+                                  buildNotificationList(
+                                    'Ongoing Orders',
+                                    itemProvider.ongoingOrders,
+                                    showAllAcceptedOrderNotifications,
+                                    true,
+                                    itemProvider.userData?['user_type'] ?? '',
+                                  ),
+                                ),
+                              if (userType == 'Customer')
+                                _buildPageContent(
+                                  buildOrderTracking(
+                                    'Order Tracking',
+                                    itemProvider.trackCustomerOrders,
+                                    showAllAcceptedOrderNotifications,
+                                    true,
+                                    itemProvider.userData?['user_type'] ?? '',
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (itemProvider.paymentVerifications.isNotEmpty)
+                          Container(
+                            decoration: ShapeDecoration(
+                              color: Color(0xff0A4C61),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 21.0,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: boxShadowColor.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(15),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  barrierColor: Colors.transparent,
+                                  // shape: RoundedRectangleBorder(
+                                  //   borderRadius: BorderRadius.vertical(
+                                  //       top: Radius.circular(30.0)),
+                                  // ),
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (context) =>
+                                      DraggableScrollableSheet(
+                                    initialChildSize: 0.95,
+                                    minChildSize: 0.5,
+                                    maxChildSize: 0.95,
+                                    builder: (BuildContext context,
+                                        ScrollController scrollController) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: Color(
+                                              0xff0A4C61), // Set your desired color here
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(
+                                                30.0), // Consistent with the outer shape
+                                            topRight: Radius.circular(30.0),
+                                          ),
+
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Color(0xff0A4C61)
+                                                  .withOpacity(0.5),
+                                              spreadRadius: 2,
+                                              blurRadius: 10,
+                                              offset: Offset(0, 3),
+                                            ),
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(
+                                                30.0), // Consistent with the outer shape
+                                            topRight: Radius.circular(30.0),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              PaymentScreen(
+                                                  scrollController:
+                                                      scrollController),
+                                              Positioned(
+                                                top: 30,
+                                                right: 85,
+                                                child: CircleAvatar(
+                                                  radius: 12,
+                                                  backgroundColor: Colors.red,
+                                                  child: Text(
+                                                    '${itemProvider.paymentVerifications.length}',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                maximumSize: Size(200, 100),
+                                backgroundColor:
+                                    Color(0xffFA6E00), // Button color
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 14.0,
+                                    cornerSmoothing: 1,
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                // crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Verify Payment',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Product Sans'),
+                                  ),
+                                  SizedBox(width: 10),
+                                  CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: Color(0xffFCFF52),
+                                    child: Text(
+                                      '${itemProvider.paymentVerifications.length}',
+                                      style: TextStyle(
+                                          color: Color(0xff0A4C61),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        SizedBox(
+                          height: 30,
+                        )
+                      ],
+                    ),
                   ),
                 )
               : Center(
@@ -1891,8 +1921,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: 
-                Container(
+                child: Container(
                   width: 100,
                   height: 5,
                   decoration: ShapeDecoration(
