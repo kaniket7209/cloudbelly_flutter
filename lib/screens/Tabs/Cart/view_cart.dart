@@ -393,7 +393,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => NotificationScreen(
-                            initialTabIndex: 1,
+                            initialTabIndex: 0,
                             redirect: true // Index of the " Order Tracking" tab
                             ),
                       ),

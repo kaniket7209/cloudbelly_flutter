@@ -14,3 +14,5 @@ if (userType == 'Vendor') {
         77, 191, 74, 0.6); // Default color if user_type is none of the above
 }
 
+# shared profile = profile_view.dart
+# own profile = profile.dart
