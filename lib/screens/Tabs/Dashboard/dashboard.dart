@@ -76,7 +76,7 @@ class _DashBoardState extends State<DashBoard>
                               ),
                               Container(width: 40.w, child: StoreLogoWidget()),
                               CustomIconButton(
-                                ic: Icons.more_horiz,
+                                ic: Icons.settings,
                                 onTap: () {},
                               ),
                             ],

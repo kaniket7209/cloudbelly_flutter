@@ -184,7 +184,7 @@ class _SupplierDashboardState extends State<SupplierDashboard>
                               ),
                               Container(width: 40.w, child: StoreLogoWidget()),
                               CustomIconButton(
-                                ic: Icons.more_horiz,
+                                ic: Icons.settings,
                                 onTap: () {},
                               ),
                             ],

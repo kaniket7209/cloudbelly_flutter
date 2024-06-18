@@ -179,6 +179,18 @@ class _ProfileState extends State<Profile> {
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
+    Color boxShadowColor;
+
+if (userType == 'Vendor') {
+      boxShadowColor = const Color(0xff0A4C61);
+    } else if (userType == 'Customer') {
+      boxShadowColor = const Color(0xff2E0536);
+    } else if (userType == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    } else {
+      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+    }
+
     return SmartRefresher(
       onRefresh: _loading,
       controller: _refreshController,
@@ -283,7 +295,9 @@ class _ProfileState extends State<Profile> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const ProfileSettingView()));
+                                                    const ProfileSettingView()
+                                                    )
+                                                    );
                                       },
                                       child: Container(
                                         width: 40,
@@ -308,7 +322,7 @@ class _ProfileState extends State<Profile> {
                                             ),
                                           ),
                                         ),
-                                        child: Icon(Icons.more_horiz),
+                                        child: Icon(Icons.settings,color: boxShadowColor,),
                                         
                                       ),
                                     ),

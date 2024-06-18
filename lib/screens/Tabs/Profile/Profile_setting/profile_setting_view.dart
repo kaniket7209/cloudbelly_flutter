@@ -873,6 +873,20 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   @override
   Widget build(BuildContext context) {
+    String userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    Color boxShadowColor;
+
+if (userType == 'Vendor') {
+      boxShadowColor = const Color(0xff0A4C61);
+    } else if (userType == 'Customer') {
+      boxShadowColor = const Color(0xff2E0536);
+    } else if (userType == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    } else {
+      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       body: SingleChildScrollView(
@@ -1225,11 +1239,11 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     ],
                   ),
                   const Spacer(),
-                  const Center(
+                   Center(
                     child: Text(
                       'Setting',
                       style: TextStyle(
-                        color: Color(0xFF0A4C61),
+                        color: boxShadowColor,
                         fontSize: 30,
                         fontFamily: 'Jost',
                         fontWeight: FontWeight.w600,

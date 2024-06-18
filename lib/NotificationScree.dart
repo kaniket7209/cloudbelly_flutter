@@ -487,9 +487,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       width: 10,
                     ),
                     Text(
-                      notification['payment_method'] == 'online' ? 'Paid' : 'Cod',
+                      notification['payment_method'] == 'online'
+                          ? 'Paid'
+                          : 'Cod',
                       style: TextStyle(
-                          decoration:notification['payment_method'] == 'online' ? TextDecoration.underline:TextDecoration.none,
+                          decoration: notification['payment_method'] == 'online'
+                              ? TextDecoration.underline
+                              : TextDecoration.none,
                           // decorationThickness: 4,
 
                           fontSize: 14.0,
@@ -669,20 +673,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             fontFamily: 'Product Sans'),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          expandedOrderIndices[index] =
-                              !(expandedOrderIndices[index] ?? false);
-                        });
-                      },
-                      child: Icon(
-                        (expandedOrderIndices[index] ?? false)
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: Color(0xffFA6E00),
+                    if (notification['items'].length > 1)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            expandedOrderIndices[index] =
+                                !(expandedOrderIndices[index] ?? false);
+                          });
+                        },
+                        child: Icon(
+                          (expandedOrderIndices[index] ?? false)
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Color(0xffFA6E00),
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 // Text(
@@ -765,20 +770,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Product Sans'),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          expandedOrderIndices[index] =
-                              !(expandedOrderIndices[index] ?? false);
-                        });
-                      },
-                      child: Icon(
-                        (expandedOrderIndices[index] ?? false)
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: Color(0xffFA6E00),
+                    if (notification['items'].length > 1)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            expandedOrderIndices[index] =
+                                !(expandedOrderIndices[index] ?? false);
+                          });
+                        },
+                        child: Icon(
+                          (expandedOrderIndices[index] ?? false)
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Color(0xffFA6E00),
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 Text(
@@ -855,20 +861,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             fontFamily: 'Product Sans'),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          expandedOrderIndices[index] =
-                              !(expandedOrderIndices[index] ?? false);
-                        });
-                      },
-                      child: Icon(
-                        (expandedOrderIndices[index] ?? false)
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: Color(0xffFA6E00),
+                    if (notification['items'].length > 1)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            expandedOrderIndices[index] =
+                                !(expandedOrderIndices[index] ?? false);
+                          });
+                        },
+                        child: Icon(
+                          (expandedOrderIndices[index] ?? false)
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Color(0xffFA6E00),
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 Text(
@@ -1013,20 +1020,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             fontFamily: 'Product Sans'),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          expandedOrderIndices[index] =
-                              !(expandedOrderIndices[index] ?? false);
-                        });
-                      },
-                      child: Icon(
-                        (expandedOrderIndices[index] ?? false)
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: Color(0xffFA6E00),
+                    if (notification['items'].length > 1)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            expandedOrderIndices[index] =
+                                !(expandedOrderIndices[index] ?? false);
+                          });
+                        },
+                        child: Icon(
+                          (expandedOrderIndices[index] ?? false)
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Color(0xffFA6E00),
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 Text(
@@ -1107,20 +1115,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             fontFamily: 'Product Sans'),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          expandedOrderIndices[index] =
-                              !(expandedOrderIndices[index] ?? false);
-                        });
-                      },
-                      child: Icon(
-                        (expandedOrderIndices[index] ?? false)
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: Color(0xffFA6E00),
+                    if (notification['items'].length > 1)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            expandedOrderIndices[index] =
+                                !(expandedOrderIndices[index] ?? false);
+                          });
+                        },
+                        child: Icon(
+                          (expandedOrderIndices[index] ?? false)
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Color(0xffFA6E00),
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 Text(
@@ -1178,8 +1187,29 @@ class _NotificationScreenState extends State<NotificationScreen> {
 // for order tracking
   Widget _buildActionButtonsCustomer(Map<String, dynamic> notification,
       bool isAccepted, Color boxShadowColor, index) {
+
+    //      Color backColour;
+    // if (notification['status'] == 'Submitted') {
+    //   backColour = const Color(0xff0A4C61);
+    // } else if (notification['status'] == 'Accepted') {
+    //   backColour = const Color(0xff2E0536);
+    // } 
+    // else if (notification['status'] == 'Packed') {
+    //   backColour = Color.fromARGB(0, 115, 188, 150);
+    // } 
+    // else if (notification['status'] == 'Prepared') {
+    //   backColour = Color.fromARGB(0, 115, 188, 150);
+    // } 
+    // else if (notification['status'] == 'Out for delivery') {
+    //   backColour = Color.fromARGB(0, 115, 188, 150);
+    // } 
+    // else { // delivered
+    //   backColour = const Color.fromRGBO(77, 191, 74, 0.6);
+    // }
+
     if (notification['status'] == 'Submitted' ||
         notification['status'] == 'Accepted' ||
+        notification['status'] == 'Out for delivery' ||
         notification['status'] == 'Packed' ||
         notification['status'] == 'Prepared' ||
         notification['status'] == 'Delivered') {
@@ -1230,20 +1260,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             fontFamily: 'Product Sans'),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          expandedOrderIndices[index] =
-                              !(expandedOrderIndices[index] ?? false);
-                        });
-                      },
-                      child: Icon(
-                        (expandedOrderIndices[index] ?? false)
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: Color(0xffFA6E00),
+                    if (notification['items'].length > 1)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            expandedOrderIndices[index] =
+                                !(expandedOrderIndices[index] ?? false);
+                          });
+                        },
+                        child: Icon(
+                          (expandedOrderIndices[index] ?? false)
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Color(0xffFA6E00),
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 Text(
@@ -1301,7 +1332,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ? EdgeInsets.fromLTRB(10, 10, 10, 10)
                   : EdgeInsets.fromLTRB(20, 10, 20, 10),
               decoration: ShapeDecoration(
-                color: Color(0xffFA6E00),
+                color: Color(0xff7B358D),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
                     cornerRadius: 13,
@@ -1861,42 +1892,45 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: Column(
         children: [
           Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0, right: 16.0), // Adjust padding as needed
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: _selectedTabIndex == index ? boxShadowColor : Colors.grey,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            if(notificationCount != 0)
-            Positioned(
-              right: 0,
-              top: 0,
-              child: CircleAvatar(
-                radius: 10,
-                backgroundColor: Color(0xffFA0F00),
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 10.0, right: 16.0), // Adjust padding as needed
                 child: Text(
-                  '$notificationCount',
+                  title,
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
+                    color: _selectedTabIndex == index
+                        ? boxShadowColor
+                        : boxShadowColor,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
+              if (notificationCount != 0)
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Color(0xffFA0F00),
+                    child: Text(
+                      '$notificationCount',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
           if (_selectedTabIndex == index)
             Align(
               alignment: Alignment.center,
               child: Container(
-                margin: const EdgeInsets.only(top: 4.0,right:16 ),
+                margin: const EdgeInsets.only(top: 4.0, right: 16),
                 decoration: BoxDecoration(
                   color: Color(0xffFA6E00),
                   borderRadius: BorderRadius.circular(2.0),
