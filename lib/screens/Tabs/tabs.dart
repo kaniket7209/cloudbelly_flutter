@@ -44,7 +44,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           ? Icons.laptop
           : userType == UserType.Supplier.name
               ? Icons.laptop
-              : Icons.history,
+              : Icons.search,
       Icons.notifications_outlined,
       Icons.person,
       // Icons.brightness_1,
@@ -55,7 +55,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           ? 'Dashboard'
           : userType == UserType.Supplier.name
               ? 'Dashboard'
-              : 'History',
+              : 'Search',
       'Notifications',
       'Profile',
       // 'Account',
@@ -66,7 +66,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       ? const DashBoard()
       : userType == UserType.Supplier.name
           ? const SupplierDashboard()
-          : OrderPage(),
+          : SearchView(),
   NotificationScreen(
     initialTabIndex: 0, // Ensure initialTabIndex is an int
   ),

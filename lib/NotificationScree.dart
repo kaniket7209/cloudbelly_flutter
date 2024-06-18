@@ -1349,9 +1349,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                height: 100,
-              ),
+              // SizedBox(
+              //   height: 100,
+              // ),
               Text(
                 'No new  ',
                 style: TextStyle(
@@ -1873,6 +1873,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ),
               ),
             ),
+            if(notificationCount != 0)
             Positioned(
               right: 0,
               top: 0,
