@@ -1351,7 +1351,31 @@ class _NotificationScreenState extends State<NotificationScreen> {
           77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
     return notifications.isEmpty
-        ? Container()
+        ? Center(
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 100,),
+                  Text(
+                    'No new  ',
+                    style: TextStyle(
+                        color: Color(0xff4F7D7C).withOpacity(0.4),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                        fontFamily: 'Product Sans'),
+                  ),
+                  
+                  Text(
+                    'notifications  ',
+                    style: TextStyle(
+                        color: Color(0xff4F7D7C).withOpacity(0.4),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                        fontFamily: 'Product Sans'),
+                  ),
+                ],
+              ))
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1484,54 +1508,53 @@ class _NotificationScreenState extends State<NotificationScreen> {
           );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-    final int initialTabIndex =
-        args != null ? args['initialTabIndex'] : widget.initialTabIndex;
-    final bool redirect = args != null ? args['redirect'] : widget.redirect;
-    print("initialTabIndex $initialTabIndex $redirect");
+ @override
+Widget build(BuildContext context) {
+  final args =
+      ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+  final int initialTabIndex =
+      args != null ? args['initialTabIndex'] : widget.initialTabIndex;
+  final bool redirect = args != null ? args['redirect'] : widget.redirect;
+  print("initialTabIndex $initialTabIndex $redirect");
 
-    String? userType =
-        Provider.of<Auth>(context, listen: false).userData?['user_type'];
-    Color boxShadowColor;
+  String? userType =
+      Provider.of<Auth>(context, listen: false).userData?['user_type'];
+  Color boxShadowColor;
 
-    if (userType == 'Vendor') {
-      boxShadowColor = const Color(0xff0A4C61);
-    } else if (userType == 'Customer') {
-      boxShadowColor = const Color(0xff2E0536);
-    } else if (userType == 'Supplier') {
-      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
-    } else {
-      boxShadowColor = const Color.fromRGBO(
-          77, 191, 74, 0.6); // Default color if user_type is none of the above
-    }
+  if (userType == 'Vendor') {
+    boxShadowColor = const Color(0xff0A4C61);
+  } else if (userType == 'Customer') {
+    boxShadowColor = const Color(0xff2E0536);
+  } else if (userType == 'Supplier') {
+    boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+  } else {
+    boxShadowColor = const Color.fromRGBO(
+        77, 191, 74, 0.6); // Default color if user_type is none of the above
+  }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Consumer<Auth>(
-        builder: (context, itemProvider, child) {
-          bool hasNotifications = itemProvider.notificationDetails.isNotEmpty ||
-              itemProvider.acceptedOrders.isNotEmpty ||
-              itemProvider.incomingOrders.isNotEmpty ||
-              itemProvider.paymentDetails.isNotEmpty;
+  return Scaffold(
+    backgroundColor: Colors.white,
+    body: Consumer<Auth>(
+      builder: (context, itemProvider, child) {
+        bool hasNotifications = itemProvider.notificationDetails.isNotEmpty ||
+            itemProvider.acceptedOrders.isNotEmpty ||
+            itemProvider.incomingOrders.isNotEmpty ||
+            itemProvider.paymentDetails.isNotEmpty ||
+            itemProvider.trackCustomerOrders.isNotEmpty;
 
-          return hasNotifications
-              ? SmartRefresher(
-                  onRefresh: _onRefresh,
-                  controller: _refreshController,
-                  enablePullDown: true,
-                  enablePullUp: false,
-                  child: Container(
-                    child: Column(
-                      
-                      children: [
-                        SizedBox(height: 70),
-                        Stack(
-                          
-                          children: [
-                            if (redirect)
+        return hasNotifications
+            ? SmartRefresher(
+                onRefresh: _onRefresh,
+                controller: _refreshController,
+                enablePullDown: true,
+                enablePullUp: false,
+                child: Container(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 70),
+                      Stack(
+                        children: [
+                          if (redirect)
                             Align(
                               alignment: Alignment.centerLeft,
                               child: IconButton(
@@ -1541,269 +1564,263 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 },
                               ),
                             ),
-                           
-                            Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Notification & Orders",
-                                style: TextStyle(
-                                  color: boxShadowColor,
-                                  fontFamily: 'Jost',
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1,
-                                  fontSize: 22,
-                                ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Notification & Orders",
+                              style: TextStyle(
+                                color: boxShadowColor,
+                                fontFamily: 'Jost',
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1,
+                                fontSize: 22,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          controller: _scrollController,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildTabItem('Socials', 0, boxShadowColor),
-                                SizedBox(width: 30),
-                                if (userType != 'Customer')
-                                  _buildTabItem(
-                                      'Incoming Orders', 1, boxShadowColor),
-                                SizedBox(width: 30),
-                                if (userType != 'Customer')
-                                  _buildTabItem(
-                                      'Ongoing Orders', 2, boxShadowColor),
-                                if (userType == 'Customer')
-                                  _buildTabItem(
-                                      'Order Tracking', 1, boxShadowColor),
-                              ],
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: PageView(
-                            controller: _pageController,
-                            onPageChanged: (index) {
-                              setState(() {
-                                _selectedTabIndex = index;
-                                _scrollToSelectedTab();
-                              });
-                            },
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        controller: _scrollController,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildPageContent(
-                                buildSocialNotificationList(
-                                  'Socials',
-                                  itemProvider.notificationDetails,
-                                  showAllSocialNotifications,
-                                  itemProvider.userData?['user_type'] ?? '',
-                                ),
-                              ),
+                              _buildTabItem('Socials', 0, boxShadowColor),
+                              SizedBox(width: 30),
                               if (userType != 'Customer')
-                                _buildPageContent(
-                                  buildNotificationList(
-                                    'Incoming Orders',
-                                    itemProvider.incomingOrders,
-                                    showAllIncomingOrderNotifications,
-                                    false,
-                                    itemProvider.userData?['user_type'] ?? '',
-                                  ),
-                                ),
+                                _buildTabItem(
+                                    'Incoming Orders', 1, boxShadowColor),
+                              SizedBox(width: 30),
                               if (userType != 'Customer')
-                                _buildPageContent(
-                                  buildNotificationList(
-                                    'Ongoing Orders',
-                                    itemProvider.ongoingOrders,
-                                    showAllAcceptedOrderNotifications,
-                                    true,
-                                    itemProvider.userData?['user_type'] ?? '',
-                                  ),
-                                ),
+                                _buildTabItem(
+                                    'Ongoing Orders', 2, boxShadowColor),
                               if (userType == 'Customer')
-                                _buildPageContent(
-                                  buildOrderTracking(
-                                    'Order Tracking',
-                                    itemProvider.trackCustomerOrders,
-                                    showAllAcceptedOrderNotifications,
-                                    true,
-                                    itemProvider.userData?['user_type'] ?? '',
-                                  ),
-                                ),
+                                _buildTabItem(
+                                    'Order Tracking', 1, boxShadowColor),
                             ],
                           ),
                         ),
-                        if (itemProvider.paymentVerifications.isNotEmpty)
-                          Container(
-                            decoration: ShapeDecoration(
-                              color: Color(0xff0A4C61),
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 21.0,
-                                  cornerSmoothing: 1,
+                      ),
+                      Expanded(
+                        child: PageView(
+                          controller: _pageController,
+                          onPageChanged: (index) {
+                            setState(() {
+                              _selectedTabIndex = index;
+                              _scrollToSelectedTab();
+                            });
+                          },
+                          children: [
+                            _buildPageContent(
+                              buildSocialNotificationList(
+                                'Socials',
+                                itemProvider.notificationDetails,
+                                showAllSocialNotifications,
+                                itemProvider.userData?['user_type'] ?? '',
+                              ),
+                            ),
+                            if (userType != 'Customer')
+                              _buildPageContent(
+                                buildNotificationList(
+                                  'Incoming Orders',
+                                  itemProvider.incomingOrders,
+                                  showAllIncomingOrderNotifications,
+                                  false,
+                                  itemProvider.userData?['user_type'] ?? '',
                                 ),
                               ),
-                              shadows: [
-                                BoxShadow(
-                                  color: boxShadowColor.withOpacity(0.2),
-                                  spreadRadius: 2,
-                                  blurRadius: 10,
-                                  offset: Offset(0, 3),
+                            if (userType != 'Customer')
+                              _buildPageContent(
+                                buildNotificationList(
+                                  'Ongoing Orders',
+                                  itemProvider.ongoingOrders,
+                                  showAllAcceptedOrderNotifications,
+                                  true,
+                                  itemProvider.userData?['user_type'] ?? '',
                                 ),
-                              ],
+                              ),
+                            if (userType == 'Customer')
+                              _buildPageContent(
+                                buildOrderTracking(
+                                  'Order Tracking',
+                                  itemProvider.trackCustomerOrders,
+                                  showAllAcceptedOrderNotifications,
+                                  true,
+                                  itemProvider.userData?['user_type'] ?? '',
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (itemProvider.paymentVerifications.isNotEmpty)
+                        Container(
+                          decoration: ShapeDecoration(
+                            color: Color(0xff0A4C61),
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 21.0,
+                                cornerSmoothing: 1,
+                              ),
                             ),
-                            padding: EdgeInsets.all(15),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  barrierColor: Colors.transparent,
-                                  // shape: RoundedRectangleBorder(
-                                  //   borderRadius: BorderRadius.vertical(
-                                  //       top: Radius.circular(30.0)),
-                                  // ),
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (context) =>
-                                      DraggableScrollableSheet(
-                                    initialChildSize: 0.95,
-                                    minChildSize: 0.5,
-                                    maxChildSize: 0.95,
-                                    builder: (BuildContext context,
-                                        ScrollController scrollController) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          color: Color(
-                                              0xff0A4C61), // Set your desired color here
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(
-                                                30.0), // Consistent with the outer shape
-                                            topRight: Radius.circular(30.0),
-                                          ),
-
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Color(0xff0A4C61)
-                                                  .withOpacity(0.5),
-                                              spreadRadius: 2,
-                                              blurRadius: 10,
-                                              offset: Offset(0, 3),
-                                            ),
-                                          ],
+                            shadows: [
+                              BoxShadow(
+                                color: boxShadowColor.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          padding: EdgeInsets.all(15),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                barrierColor: Colors.transparent,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (context) =>
+                                    DraggableScrollableSheet(
+                                  initialChildSize: 0.95,
+                                  minChildSize: 0.5,
+                                  maxChildSize: 0.95,
+                                  builder: (BuildContext context,
+                                      ScrollController scrollController) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        color: Color(
+                                            0xff0A4C61), // Set your desired color here
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(
+                                              30.0), // Consistent with the outer shape
+                                          topRight: Radius.circular(30.0),
                                         ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(
-                                                30.0), // Consistent with the outer shape
-                                            topRight: Radius.circular(30.0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Color(0xff0A4C61)
+                                                .withOpacity(0.5),
+                                            spreadRadius: 2,
+                                            blurRadius: 10,
+                                            offset: Offset(0, 3),
                                           ),
-                                          child: Stack(
-                                            children: [
-                                              PaymentScreen(
-                                                  scrollController:
-                                                      scrollController),
-                                              Positioned(
-                                                top: 30,
-                                                right: 85,
-                                                child: CircleAvatar(
-                                                  radius: 12,
-                                                  backgroundColor: Colors.red,
-                                                  child: Text(
-                                                    '${itemProvider.paymentVerifications.length}',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                        ],
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(
+                                              30.0), // Consistent with the outer shape
+                                          topRight: Radius.circular(30.0),
+                                        ),
+                                        child: Stack(
+                                          children: [
+                                            PaymentScreen(
+                                                scrollController:
+                                                    scrollController),
+                                            Positioned(
+                                              top: 30,
+                                              right: 85,
+                                              child: CircleAvatar(
+                                                radius: 12,
+                                                backgroundColor: Colors.red,
+                                                child: Text(
+                                                  '${itemProvider.paymentVerifications.length}',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.bold,
                                                   ),
                                                 ),
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                maximumSize: Size(200, 100),
-                                backgroundColor:
-                                    Color(0xffFA6E00), // Button color
-                                shape: SmoothRectangleBorder(
-                                  borderRadius: SmoothBorderRadius(
-                                    cornerRadius: 14.0,
-                                    cornerSmoothing: 1,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              maximumSize: Size(200, 100),
+                              backgroundColor:
+                                  Color(0xffFA6E00), // Button color
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 14.0,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Verify Payment',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Product Sans'),
+                                ),
+                                SizedBox(width: 10),
+                                CircleAvatar(
+                                  radius: 10,
+                                  backgroundColor: Color(0xffFCFF52),
+                                  child: Text(
+                                    '${itemProvider.paymentVerifications.length}',
+                                    style: TextStyle(
+                                        color: Color(0xff0A4C61),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 10),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                // crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Verify Payment',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Product Sans'),
-                                  ),
-                                  SizedBox(width: 10),
-                                  CircleAvatar(
-                                    radius: 10,
-                                    backgroundColor: Color(0xffFCFF52),
-                                    child: Text(
-                                      '${itemProvider.paymentVerifications.length}',
-                                      style: TextStyle(
-                                          color: Color(0xff0A4C61),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              ],
                             ),
                           ),
-                        SizedBox(
-                          height: 30,
-                        )
-                      ],
-                    ),
+                        ),
+                      SizedBox(
+                        height: 30,
+                      )
+                    ],
                   ),
-                )
-              : Center(
-                  child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'No new  ',
-                      style: TextStyle(
-                          color: Color(0xff4F7D7C).withOpacity(0.4),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 35,
-                          fontFamily: 'Product Sans'),
-                    ),
-                    Text(
-                      'notifications  ',
-                      style: TextStyle(
-                          color: Color(0xff4F7D7C).withOpacity(0.4),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 35,
-                          fontFamily: 'Product Sans'),
-                    ),
-                  ],
-                ));
-        },
-      ),
-    );
-  }
+                ),
+              )
+            : Center(
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'No new  ',
+                    style: TextStyle(
+                        color: Color(0xff4F7D7C).withOpacity(0.4),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                        fontFamily: 'Product Sans'),
+                  ),
+                  Text(
+                    'notifications  ',
+                    style: TextStyle(
+                        color: Color(0xff4F7D7C).withOpacity(0.4),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                        fontFamily: 'Product Sans'),
+                  ),
+                ],
+              ));
+      },
+    ),
+  );
+}
+
 
   Widget _buildPageContent(Widget content) {
     return SingleChildScrollView(
