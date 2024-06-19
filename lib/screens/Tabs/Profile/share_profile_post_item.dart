@@ -573,15 +573,15 @@ class _ShareProfilePostItemState extends State<ShareProfilePostItem> {
                       height: 40,
                       decoration: ShapeDecoration(
                         gradient: const LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
+                          begin: Alignment(-1.0, 1),
+                          end: Alignment(1, -1.0),
                           colors: [
                             Color.fromRGBO(250, 110, 0, 1),
                             Color.fromRGBO(254, 209, 112, 1)
                           ],
                         ),
-                        shadows: [
-                          const BoxShadow(
+                        shadows: const [
+                          BoxShadow(
                             offset: Offset(0, 4),
                             color: Color.fromRGBO(0, 0, 0, 0.25),
                             blurRadius: 4,
@@ -597,6 +597,7 @@ class _ShareProfilePostItemState extends State<ShareProfilePostItem> {
                     ),
                   ),
                 ),
+            
             ],
           ),
           Padding(

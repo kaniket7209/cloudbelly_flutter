@@ -16,7 +16,11 @@ class ViewCartProvider with ChangeNotifier {
   }
 
   void setSellterId(id) {
-    SellterId = id;
+    if (id != null) {
+      SellterId = id;
+    } else {
+      print("Received null for sellerId");
+    }
   }
 
   void getProductList(List<ProductDetails> tempList) {
