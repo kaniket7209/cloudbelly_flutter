@@ -898,7 +898,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
         shadows: isActive == true
             ? [
                 BoxShadow(
-                    offset: Offset(5, 6),
+                    offset: Offset(0, 4),
                     spreadRadius: 0.1,
                     color: Color.fromRGBO(232, 128, 55, 0.5),
                     blurRadius: 10)
@@ -918,6 +918,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
           child: Text(
         txt,
         style: TextStyle(
+          
           color: isActive ? Colors.white : const Color(0xff0A4C61),
           fontSize: 14,
           fontFamily: 'Product Sans',

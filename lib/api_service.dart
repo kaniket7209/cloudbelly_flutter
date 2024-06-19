@@ -72,8 +72,8 @@ class Auth with ChangeNotifier {
           order['status'] == 'Prepared' ||
           order['status'] == 'Packed' ||
           order['status'] == 'Out for delivery'
-           ||
-          order['status'] == 'Delivered'
+          //  ||
+          // order['status'] == 'Delivered'
           )
       .toList();
 

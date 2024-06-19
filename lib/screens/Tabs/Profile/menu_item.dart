@@ -29,6 +29,7 @@ class _MenuItemState extends State<MenuItem> {
   Widget build(BuildContext context) {
     TextEditingController _controller =
         TextEditingController(text: widget.data['description']);
+
     return Container(
         width: double.infinity,
         margin: EdgeInsets.only(bottom: 1.h),
@@ -36,13 +37,13 @@ class _MenuItemState extends State<MenuItem> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
+           
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   width: 55.w,
                   child: Text(
                     widget.data['name'],
-                    // 'jshfj sbdjs n dhsgdjh h h h h g f f h h nsdeghujsdnsb  jugug ',
                     style: TextStyle(
                       color: Color(0xFF094B60),
                       fontSize: 16,
@@ -59,54 +60,71 @@ class _MenuItemState extends State<MenuItem> {
                       fontWeight: FontWeight.w600,
                     )),
                 if (widget.data['description'] == '') Space(1.h),
-                Container(
-                  width: 55.w,
-                  decoration: widget.data['description'] == ''
-                      ? ShapeDecoration(
-                          color: const Color.fromRGBO(239, 255, 254, 1),
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                              cornerRadius: 15,
-                              cornerSmoothing: 1,
+                if (Provider.of<Auth>(context, listen: false)
+                        .userData?['user_id'] ==
+                    widget.data['user_id'])
+                  Container(
+                    width: 55.w,
+                    decoration: widget.data['description'] == ''
+                        ? ShapeDecoration(
+                            color: const Color.fromRGBO(239, 255, 254, 1),
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 15,
+                                cornerSmoothing: 1,
+                              ),
                             ),
-                          ),
-                        )
-                      : null,
-                  child: Center(
-                    child: TextField(
-                      maxLines: null,
-                      style: const TextStyle(
-                        color: Color(0xFF094B60),
-                        fontSize: 10,
-                        fontFamily: 'Product Sans',
-                        fontWeight: FontWeight.w400,
-                      ),
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        hintText: widget.data['description'] == ''
-                            ? '                         Add description'
-                            : '',
-                        hintStyle: const TextStyle(
+                          )
+                        : null,
+                    child: Center(
+                      child: TextField(
+                        maxLines: null,
+                        style: const TextStyle(
                           color: Color(0xFF094B60),
                           fontSize: 10,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                         ),
-                        border: InputBorder.none,
+                        controller: _controller,
+                        decoration: InputDecoration(
+                          hintText: widget.data['description'] == ''
+                              ? '                         Add description'
+                              : '',
+                          hintStyle: const TextStyle(
+                            color: Color(0xFF094B60),
+                            fontSize: 10,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w400,
+                          ),
+                          border: InputBorder.none,
+                        ),
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (newValue) async {
+                          print(newValue);
+                          await Provider.of<Auth>(context, listen: false)
+                              .updateProductDetails(
+                                  widget.data['_id'], '', newValue);
+                          setState(() {
+                            widget.data['description'] = newValue;
+                          });
+                        },
                       ),
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (newValue) async {
-                        print(newValue);
-                        await Provider.of<Auth>(context, listen: false)
-                            .updateProductDetails(
-                                widget.data['_id'], '', newValue);
-                        setState(() {
-                          widget.data['description'] = newValue;
-                        });
-                      },
+                    ),
+                  )
+                else
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    child: Text(
+                      widget.data['description'] ?? '',
+                      style: const TextStyle(
+                        
+                        color: Color(0xFF094B60),
+                        fontSize: 10,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
             Stack(

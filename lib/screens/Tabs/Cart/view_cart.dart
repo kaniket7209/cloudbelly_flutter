@@ -767,7 +767,7 @@ Future<void> submitCustomerOrder (
     "user_id": userData?['user_id'] ?? "",
     "order_from_user_id": orderFromUserId,
     "order_id": orderId,
-    "payment_mode": payment_method
+    "payment_method": payment_method
   });
 
   final response = await http.post(

@@ -211,9 +211,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                height: 100,
-              ),
+              // SizedBox(
+              //   height: 100,
+              // ),
               Text(
                 'No new  ',
                 style: TextStyle(
@@ -1211,8 +1211,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         notification['status'] == 'Accepted' ||
         notification['status'] == 'Out for delivery' ||
         notification['status'] == 'Packed' ||
-        notification['status'] == 'Prepared' ||
-        notification['status'] == 'Delivered') {
+        notification['status'] == 'Prepared' ) {
       return Row(
         children: [
           Container(
@@ -1816,32 +1815,284 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ),
                 )
-              : Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'No new  ',
-                        style: TextStyle(
-                          color: Color(0xff4F7D7C).withOpacity(0.4),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 35,
-                          fontFamily: 'Product Sans',
+              
+              :SmartRefresher(
+                  onRefresh: _onRefresh,
+                  controller: _refreshController,
+                  enablePullDown: true,
+                  enablePullUp: false,
+                  child: Container(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 70),
+                        Stack(
+                          children: [
+                            if (redirect)
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: IconButton(
+                                  icon: Image.asset(
+                                      'assets/images/back_double_arrow.png'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Notification & Orders",
+                                style: TextStyle(
+                                  color: boxShadowColor,
+                                  fontFamily: 'Jost',
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1,
+                                  fontSize: 22,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        'notifications  ',
-                        style: TextStyle(
-                          color: Color(0xff4F7D7C).withOpacity(0.4),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 35,
-                          fontFamily: 'Product Sans',
+                        const SizedBox(height: 20),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          controller: _scrollController,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildTabItem(
+                                    'Socials', 0, boxShadowColor, itemProvider),
+                                SizedBox(width: 30),
+                                if (userType != 'Customer')
+                                  _buildTabItem('Incoming Orders', 1,
+                                      boxShadowColor, itemProvider),
+                                SizedBox(width: 30),
+                                if (userType != 'Customer')
+                                  _buildTabItem('Ongoing Orders', 2,
+                                      boxShadowColor, itemProvider),
+                                if (userType == 'Customer')
+                                  _buildTabItem('Order Tracking', 1,
+                                      boxShadowColor, itemProvider),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: PageView(
+                            controller: _pageController,
+                            onPageChanged: (index) {
+                              setState(() {
+                                _selectedTabIndex = index;
+                                _scrollToSelectedTab();
+                              });
+                            },
+                            children: [
+                              _buildPageContent(
+                                buildSocialNotificationList(
+                                  'Socials',
+                                  itemProvider.notificationDetails,
+                                  showAllSocialNotifications,
+                                  itemProvider.userData?['user_type'] ?? '',
+                                ),
+                              ),
+                              if (userType != 'Customer')
+                                _buildPageContent(
+                                  buildNotificationList(
+                                    'Incoming Orders',
+                                    itemProvider.incomingOrders,
+                                    showAllIncomingOrderNotifications,
+                                    false,
+                                    itemProvider.userData?['user_type'] ?? '',
+                                  ),
+                                ),
+                              if (userType != 'Customer')
+                                _buildPageContent(
+                                  buildNotificationList(
+                                    'Ongoing Orders',
+                                    itemProvider.ongoingOrders,
+                                    showAllAcceptedOrderNotifications,
+                                    true,
+                                    itemProvider.userData?['user_type'] ?? '',
+                                  ),
+                                ),
+                              if (userType == 'Customer')
+                                _buildPageContent(
+                                  buildOrderTracking(
+                                    'Order Tracking',
+                                    itemProvider.trackCustomerOrders,
+                                    showAllAcceptedOrderNotifications,
+                                    true,
+                                    itemProvider.userData?['user_type'] ?? '',
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (itemProvider.paymentVerifications.isNotEmpty)
+                          Container(
+                            decoration: ShapeDecoration(
+                              color: Color(0xff0A4C61),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 21.0,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: boxShadowColor.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(15),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  barrierColor: Colors.transparent,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (context) =>
+                                      DraggableScrollableSheet(
+                                    initialChildSize: 0.95,
+                                    minChildSize: 0.5,
+                                    maxChildSize: 0.95,
+                                    builder: (BuildContext context,
+                                        ScrollController scrollController) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: Color(0xff0A4C61),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(30.0),
+                                            topRight: Radius.circular(30.0),
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Color(0xff0A4C61)
+                                                  .withOpacity(0.5),
+                                              spreadRadius: 2,
+                                              blurRadius: 10,
+                                              offset: Offset(0, 3),
+                                            ),
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(30.0),
+                                            topRight: Radius.circular(30.0),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              PaymentScreen(
+                                                  scrollController:
+                                                      scrollController),
+                                              Positioned(
+                                                top: 30,
+                                                right: 85,
+                                                child: CircleAvatar(
+                                                  radius: 12,
+                                                  backgroundColor: Colors.red,
+                                                  child: Text(
+                                                    '${itemProvider.paymentVerifications.length}',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                maximumSize: Size(200, 100),
+                                backgroundColor: Color(0xffFA6E00),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 14.0,
+                                    cornerSmoothing: 1,
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Verify Payment',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Product Sans',
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: Color(0xffFCFF52),
+                                    child: Text(
+                                      '${itemProvider.paymentVerifications.length}',
+                                      style: TextStyle(
+                                        color: Color(0xff0A4C61),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        SizedBox(height: 30),
+                      ],
+                    ),
                   ),
                 );
+              
+              // : Center(
+              //     child: Column(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       children: [
+              //         Text(
+              //           'No new  ',
+              //           style: TextStyle(
+              //             color: Color(0xff4F7D7C).withOpacity(0.4),
+              //             fontWeight: FontWeight.bold,
+              //             fontSize: 35,
+              //             fontFamily: 'Product Sans',
+              //           ),
+              //         ),
+              //         Text(
+              //           'notifications  ',
+              //           style: TextStyle(
+              //             color: Color(0xff4F7D7C).withOpacity(0.4),
+              //             fontWeight: FontWeight.bold,
+              //             fontSize: 35,
+              //             fontFamily: 'Product Sans',
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   );
+        
+        
         },
       ),
     );
@@ -1879,7 +2130,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           notificationCount = itemProvider.incomingOrders.length;
           break;
         case 2:
-          notificationCount = itemProvider.acceptedOrders.length;
+          notificationCount = itemProvider.ongoingOrders.length;
           break;
         default:
           notificationCount = itemProvider.notificationDetails.length;
@@ -1967,40 +2218,41 @@ class _PaymentScreenState extends State<PaymentScreen> {
   List<int> expandedIndices = [];
 
   bool showScreenshot = false;
-  void verifyPayment(
-      BuildContext context, Map<String, dynamic> notification) async {
-    final response = await http.post(
-      Uri.parse("https://app.cloudbelly.in/order/confirm_payment"),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        "user_id": notification['payment_from_user_id'],
-        "order_from_user_id": notification['payment_to_user_id'],
-        "order_id": notification['order_id'],
-        "verification_status":
-            "verified", // or "not_received" based on your logic
-      }),
-    );
+ void verifyPayment(BuildContext context, Map<String, dynamic> notification) async {
+  final response = await http.post(
+    Uri.parse("https://app.cloudbelly.in/order/confirm_payment"),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      "user_id": notification['payment_from_user_id'],
+      "order_from_user_id": notification['payment_to_user_id'],
+      "order_id": notification['order_id'],
+      "verification_status": "verified", // or "not_received" based on your logic
+    }),
+  );
 
-    if (response.statusCode == 200) {
-      // Handle successful verification
-      print("Payment verified successfully");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Payment verified successfully')),
-      );
-    } else {
-      // Handle error
-      print("Failed to verify payment");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to verify payment')),
-      );
-    }
+  if (response.statusCode == 200) {
+    // Handle successful verification
+    print("Payment verified successfully");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Payment verified successfully')),
+    );
+    // Refresh notifications
+    await Provider.of<Auth>(context, listen: false).getNotificationList();
+  } else {
+    // Handle error
+    print("Failed to verify payment");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to verify payment')),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       backgroundColor: Color(0xff0A4C61),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70.0), // Adjust height as needed
