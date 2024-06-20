@@ -197,8 +197,7 @@ class _ProfileViewState extends State<ProfileView> {
      
     bool _isFollowing = checkFollow();
     String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-       print("check user shared user ${userType}  ${userList.first
-                                                                .userType}");
+     
     Color boxShadowColor;
     if (userType == 'Vendor') {
       boxShadowColor = const Color.fromRGBO(10, 76, 97, 0.5) ;
