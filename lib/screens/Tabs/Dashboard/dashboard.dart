@@ -263,38 +263,34 @@ class StoreLogoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userData = Provider.of<Auth>(context).userData;
+
+    print("profilepic ${userData?['profile_photo']}");
+
     return Column(
-      // mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const Space(15),
-        Provider.of<Auth>(context, listen: false).userData?['profile_photo'] !=
-                ''
+        userData?['profile_photo'] != ''
             ? Container(
                 height: 70,
                 width: 70,
                 decoration: ShapeDecoration(
                   shadows: [
-                    Provider.of<Auth>(context, listen: false)
-                                .userData?['user_type'] ==
-                            UserType.Vendor.name
+                    userData?['user_type'] == UserType.Vendor.name
                         ? const BoxShadow(
                             offset: Offset(0, 4),
                             color: Color.fromRGBO(31, 111, 109, 0.6),
                             blurRadius: 20,
                           )
-                        : Provider.of<Auth>(context, listen: false)
-                                    .userData?['user_type'] ==
-                                UserType.Supplier.name
+                        : userData?['user_type'] == UserType.Supplier.name
                             ? const BoxShadow(
                                 offset: Offset(0, 4),
                                 color: Color.fromRGBO(163, 220, 118, 0.6),
-                                // rgba(163, 220, 118, 1)
                                 blurRadius: 20,
                               )
                             : const BoxShadow(
                                 offset: Offset(0, 4),
                                 color: Color.fromRGBO(188, 115, 188, 0.6),
-                                // rgba(163, 220, 118, 1)
                                 blurRadius: 20,
                               ),
                   ],
@@ -306,8 +302,7 @@ class StoreLogoWidget extends StatelessWidget {
                     cornerSmoothing: 1,
                   ),
                   child: Image.network(
-                    Provider.of<Auth>(context, listen: false)
-                        .userData?['profile_photo'],
+                    userData?['profile_photo'],
                     fit: BoxFit.cover,
                     loadingBuilder: GlobalVariables().loadingBuilderForImage,
                     errorBuilder: GlobalVariables().ErrorBuilderForImage,
@@ -334,9 +329,7 @@ class StoreLogoWidget extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    Provider.of<Auth>(context, listen: true)
-                        .userData?['store_name'][0]
-                        .toUpperCase(),
+                    userData?['store_name'][0].toUpperCase(),
                     style: TextStyle(fontSize: 40),
                   ),
                 )),

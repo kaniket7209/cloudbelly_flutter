@@ -67,11 +67,14 @@ class _SocialStatusContentState extends State<SocialStatusContent>
   List<String> bottomBarName = ["Mon", "Tue", "Wed", "Thu", "Sat", "Sun"];
   @override
   Widget build(BuildContext context) {
-    final counter = Provider.of<Auth>(context, listen: true).userData?['pincode'] == ''
+    final counter = Provider.of<Auth>(context, listen: true)
+                .userData?['pincode'] ==
+            ''
         ? 1
         : Provider.of<Auth>(context, listen: true).userData?['pan_number'] == ''
             ? 2
-            : Provider.of<Auth>(context, listen: true).userData?['bank_name'] == ''
+            : Provider.of<Auth>(context, listen: true).userData?['bank_name'] ==
+                    ''
                 ? 3
                 : 4;
 
@@ -79,7 +82,6 @@ class _SocialStatusContentState extends State<SocialStatusContent>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Space(2.h),
           const Center(
             child: Text(
@@ -106,7 +108,9 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                       await Provider.of<Auth>(context, listen: false)
                           .pickMultipleImagesAndUpoad();
                   List<dynamic> menuList =
-                      await Provider.of<Auth>(context, listen: false).getMenu(Provider.of<Auth>(context, listen: false).userData?['user_id']);
+                      await Provider.of<Auth>(context, listen: false).getMenu(
+                          Provider.of<Auth>(context, listen: false)
+                              .userData?['user_id']);
                   Navigator.of(context).pop();
                   if (url.length == 0) {
                     TOastNotification()
@@ -131,7 +135,9 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                   url.add(await Provider.of<Auth>(context, listen: false)
                       .pickImageAndUpoad(src: 'Camera', context));
                   List<dynamic> menuList =
-                      await Provider.of<Auth>(context, listen: false).getMenu(Provider.of<Auth>(context, listen: false).userData?['user_id']);
+                      await Provider.of<Auth>(context, listen: false).getMenu(
+                          Provider.of<Auth>(context, listen: false)
+                              .userData?['user_id']);
                   print('object');
                   print(url[0]);
                   Navigator.of(context).pop();
@@ -210,7 +216,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
           ),
           Space(1.h),
           Container(
-          //  height: 27.h,
+            //  height: 27.h,
             width: double.infinity,
             decoration: GlobalVariables().ContainerDecoration(
               offset: Offset(0, 4),
@@ -1026,24 +1032,25 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
                       .updateCoverImage(_url, context);
               if (code == '200') {
                 if (isLogo) {
-                  Provider.of<Auth>(context, listen: false).logo_url = _url;
+                  Provider.of<Auth>(context, listen: false).setUserData({
+                    ...Provider.of<Auth>(context, listen: false).userData!,
+                    'profile_photo': _url
+                  });
                 } else {
-                  Provider.of<Auth>(context, listen: false).userData?['cover_image'] = _url;
+                  Provider.of<Auth>(context, listen: false).setUserData({
+                    ...Provider.of<Auth>(context, listen: false).userData!,
+                    'cover_image': _url
+                  });
                 }
                 TOastNotification().showSuccesToast(context,
                     '${isLogo ? 'Store logo' : 'Cover Image'}  updated');
-                // Navigator.of(context)
-                // .pushNamed(Tabs.routeName);
               } else {
                 TOastNotification().showErrorToast(
-                    context, 'Error happend while updating image');
+                    context, 'Error happened while updating image');
               }
-              // Provider.of<Auth>(context, listen: false).logo_url=
             }
             Navigator.of(context).pop();
             Navigator.of(context).pop();
-
-            print(_url);
           },
           child: const Padding(
             padding: EdgeInsets.all(8.0),
@@ -1066,11 +1073,68 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
             ),
           ),
         ),
-        TouchableOpacity(
+        
+        // TouchableOpacity(
+        //   onTap: () async {
+        //     AppWideLoadingBanner().loadingBanner(context);
+        //     final _url = await Provider.of<Auth>(context, listen: false)
+        //         .pickImageAndUpoad(context, src: 'Camera');
+        //     if (_url == 'file size very large') {
+        //       TOastNotification()
+        //           .showErrorToast(context, 'file size very large');
+        //     } else if (_url != '') {
+        //       String code = isLogo
+        //           ? await Provider.of<Auth>(context, listen: false)
+        //               .updateProfilePhoto(_url)
+        //           : await Provider.of<Auth>(context, listen: false)
+        //               .updateCoverImage(_url, context);
+        //       if (code == '200') {
+        //         if (isLogo) {
+        //           Provider.of<Auth>(context, listen: false).logo_url = _url;
+        //         } else {
+        //           Provider.of<Auth>(context, listen: false)
+        //               .userData?['cover_image'] = _url;
+        //         }
+        //         TOastNotification().showSuccesToast(context,
+        //             '${isLogo ? 'Store logo' : 'Cover Image'}  updated');
+        //         // Navigator.of(context)
+        //         // .pushNamed(Tabs.routeName);
+        //       } else {
+        //         TOastNotification().showErrorToast(
+        //             context, 'Error happend while updating image');
+        //       }
+        //       // Provider.of<Auth>(context, listen: false).logo_url=
+        //     }
+
+        //     Navigator.of(context).pop();
+        //     Navigator.of(context).pop();
+        //   },
+        //   child: const Padding(
+        //     padding: EdgeInsets.all(8.0),
+        //     child: Row(
+        //       children: [
+        //         Icon(Icons.camera),
+        //         Space(isHorizontal: true, 15),
+        //         Text(
+        //           'Click photo',
+        //           style: TextStyle(
+        //             color: Color(0xFF094B60),
+        //             fontSize: 12,
+        //             fontFamily: 'Product Sans',
+        //             fontWeight: FontWeight.w700,
+        //             height: 0.10,
+        //             letterSpacing: 0.36,
+        //           ),
+        //         )
+        //       ],
+        //     ),
+        //   ),
+        // ),
+      TouchableOpacity(
           onTap: () async {
             AppWideLoadingBanner().loadingBanner(context);
             final _url = await Provider.of<Auth>(context, listen: false)
-                .pickImageAndUpoad(context, src: 'Camera');
+                .pickImageAndUpoad(context,src: 'Camera');
             if (_url == 'file size very large') {
               TOastNotification()
                   .showErrorToast(context, 'file size very large');
@@ -1082,19 +1146,22 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
                       .updateCoverImage(_url, context);
               if (code == '200') {
                 if (isLogo) {
-                  Provider.of<Auth>(context, listen: false).logo_url = _url;
+                  Provider.of<Auth>(context, listen: false).setUserData({
+                    ...Provider.of<Auth>(context, listen: false).userData!,
+                    'profile_photo': _url
+                  });
                 } else {
-                  Provider.of<Auth>(context, listen: false).userData?['cover_image'] = _url;
+                  Provider.of<Auth>(context, listen: false).setUserData({
+                    ...Provider.of<Auth>(context, listen: false).userData!,
+                    'cover_image': _url
+                  });
                 }
                 TOastNotification().showSuccesToast(context,
                     '${isLogo ? 'Store logo' : 'Cover Image'}  updated');
-                // Navigator.of(context)
-                // .pushNamed(Tabs.routeName);
               } else {
                 TOastNotification().showErrorToast(
-                    context, 'Error happend while updating image');
+                    context, 'Error happened while updating image');
               }
-              // Provider.of<Auth>(context, listen: false).logo_url=
             }
             Navigator.of(context).pop();
             Navigator.of(context).pop();
@@ -1106,7 +1173,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
                 Icon(Icons.camera),
                 Space(isHorizontal: true, 15),
                 Text(
-                  'Click photo',
+                  'Click Photo',
                   style: TextStyle(
                     color: Color(0xFF094B60),
                     fontSize: 12,
@@ -1120,6 +1187,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
             ),
           ),
         ),
+        
       ],
     );
   }

@@ -228,7 +228,7 @@ class _ProfileState extends State<Profile> {
                                   text: '',
                                   ic: Icons.qr_code,
                                   onTap: () {
-                                    print(Provider.of<Auth>(context,
+                                    print(" profilepic"+ Provider.of<Auth>(context,
                                             listen: false)
                                         .userData?['profile_photo']);
                                     context

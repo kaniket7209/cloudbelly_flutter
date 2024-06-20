@@ -1935,6 +1935,11 @@ class Auth with ChangeNotifier {
       return {'Error': error};
     }
   }
+
+  void setUserData(Map<String, dynamic> newUserData) {
+    userData = newUserData;
+    notifyListeners();
+  }
 }
 
 class TransitionEffect with ChangeNotifier {
