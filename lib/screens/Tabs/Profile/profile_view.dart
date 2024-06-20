@@ -197,7 +197,8 @@ class _ProfileViewState extends State<ProfileView> {
      
     bool _isFollowing = checkFollow();
     String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-      
+       print("check user shared user ${userType}  ${userList.first
+                                                                .userType}");
     Color boxShadowColor;
     if (userType == 'Vendor') {
       boxShadowColor = const Color.fromRGBO(10, 76, 97, 0.5) ;
@@ -804,23 +805,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     width: 52,
                                                                   ),
                                                                 ),
-                                                                // TouchableOpacity(
-                                                                //   onTap: () {
-                                                                //     setState(
-                                                                //         () {
-                                                                //       _activeButtonIndex =
-                                                                //           2;
-                                                                //     });
-                                                                //   },
-                                                                //   child:
-                                                                //       CommonButtonProfile(
-                                                                //     isActive:
-                                                                //         _activeButtonIndex ==
-                                                                //             2,
-                                                                //     txt: 'Menu',
-                                                                //     width: 52,
-                                                                //   ),
-                                                                // ),
+                                                                
                                                                 TouchableOpacity(
                                                                   onTap: () {
                                                                     setState(
@@ -858,9 +843,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                           1;
                                                                     });
                                                                   },
-                                                                  child: !_isVendor
-                                                                      ? CommomButtonProfileCustomer(isActive: _activeButtonIndex == 1, text: 'Content')
-                                                                      : CommonButtonProfile(
+                                                                  child: CommonButtonProfile(
                                                                           isActive:
                                                                               _activeButtonIndex == 1,
                                                                           txt:
