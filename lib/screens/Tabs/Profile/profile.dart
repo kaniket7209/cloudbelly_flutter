@@ -176,12 +176,13 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    print("check user login user ${userType}");
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
     Color boxShadowColor;
 
-if (userType == 'Vendor') {
+    if (userType == 'Vendor') {
       boxShadowColor = const Color(0xff0A4C61);
     } else if (userType == 'Customer') {
       boxShadowColor = const Color(0xff2E0536);
@@ -246,9 +247,8 @@ if (userType == 'Vendor') {
                                   children: [
                                     CustomIconButton(
                                       boxColor: _isVendor
-                                              ?  Color.fromRGBO(
-                                                  31, 111, 109, 0.5)
-                                                  : Color(0xBC73BC).withOpacity(0.6),
+                                          ? Color.fromRGBO(31, 111, 109, 0.5)
+                                          : Color(0xBC73BC).withOpacity(0.6),
                                       // boxColor:
                                       //     const Color.fromRGBO(38, 115, 140, 1),
                                       color: Colors.white,
@@ -295,22 +295,20 @@ if (userType == 'Vendor') {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const ProfileSettingView()
-                                                    )
-                                                    );
+                                                    const ProfileSettingView()));
                                       },
                                       child: Container(
                                         width: 40,
                                         height: 40,
                                         decoration: ShapeDecoration(
-                                          shadows:  [
+                                          shadows: [
                                             BoxShadow(
                                               offset: Offset(0, 4),
-                                              
                                               color: _isVendor
-                                              ?  Color.fromRGBO(
-                                                  31, 111, 109, 0.5)
-                                                  : Color(0xBC73BC).withOpacity(0.6),
+                                                  ? Color.fromRGBO(
+                                                      31, 111, 109, 0.5)
+                                                  : Color(0xBC73BC)
+                                                      .withOpacity(0.6),
                                               blurRadius: 20,
                                             )
                                           ],
@@ -322,8 +320,10 @@ if (userType == 'Vendor') {
                                             ),
                                           ),
                                         ),
-                                        child: Icon(Icons.settings,color: boxShadowColor,),
-                                        
+                                        child: Icon(
+                                          Icons.settings,
+                                          color: boxShadowColor,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -528,7 +528,7 @@ if (userType == 'Vendor') {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                if (_isVendor)
+                                if (userType == UserType.Vendor.name)
                                   Container(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 1.h, horizontal: 3.w),
@@ -546,23 +546,7 @@ if (userType == 'Vendor') {
                                     ? Container(
                                         // height: 6.5.h,
                                         width: 95.w,
-                                        /* decoration: ShapeDecoration(
-                                          shadows: const [
-                                            BoxShadow(
-                                              offset: Offset(0, 4),
-                                              color: Color.fromRGBO(
-                                                  165, 200, 199, 0.6),
-                                              blurRadius: 20,
-                                            )
-                                          ],
-                                          color: Colors.white,
-                                          shape: SmoothRectangleBorder(
-                                            borderRadius: SmoothBorderRadius(
-                                              cornerRadius: 15,
-                                              cornerSmoothing: 1,
-                                            ),
-                                          ),
-                                        ),*/
+
                                         child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceAround,
@@ -623,7 +607,6 @@ if (userType == 'Vendor') {
                                       )
                                     : userType == UserType.Customer.name
                                         ? Container(
-                                        
                                             width: 95.w,
                                             /* decoration: ShapeDecoration(
                                           shadows: const [
@@ -764,13 +747,11 @@ if (userType == 'Vendor') {
                                             )
                                           : feedList.length == 0
                                               ? Container(
-                                                  
                                                   child: const Center(
                                                       child: Text(
                                                           'No items in Content')),
                                                 )
                                               : GridView.builder(
-                                               
                                                   physics:
                                                       const NeverScrollableScrollPhysics(),
                                                   // Disable scrolling
@@ -780,7 +761,7 @@ if (userType == 'Vendor') {
 
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 0.8.h,
-                                                      horizontal:0),
+                                                      horizontal: 0),
                                                   gridDelegate:
                                                       SliverGridDelegateWithFixedCrossAxisCount(
                                                     childAspectRatio: 1,
@@ -889,7 +870,8 @@ class _MenuState extends State<Menu> {
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(bottom: 15),
+                                      padding:
+                                          const EdgeInsets.only(bottom: 15),
                                       child: Row(
                                         children: [
                                           for (int i = 0;
@@ -917,8 +899,11 @@ class _MenuState extends State<Menu> {
                                                       BorderRadius.circular(10),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                        offset: const Offset(5, 5),
-                                                        color:const Color.fromRGBO(112, 186, 210, 1)
+                                                        offset:
+                                                            const Offset(5, 5),
+                                                        color: const Color
+                                                                .fromRGBO(112,
+                                                                186, 210, 1)
                                                             .withOpacity(0.5),
                                                         blurRadius: 10)
                                                   ],
@@ -1187,35 +1172,37 @@ class FeedWidget extends StatelessWidget {
   final String isSelfProfile;
   CarouselController buttonCarouselController = CarouselController();
 
-Color getBackgroundColor(String isSelfProfile, bool isVendor) {
-  print("userModel ${userModel?.userType}");
-  var usertype = userModel?.userType;
-  if (isSelfProfile == 'Yes' && isVendor && usertype == 'Vendor') {
-    return const Color.fromRGBO(10, 76, 97, 0.31);
-  } else if (isSelfProfile == 'Yes' && usertype == 'Customer') {
-    return Color(0xBC73BC).withOpacity(0.6);
-  } else if (isSelfProfile == 'Yes'  && usertype == 'Supplier') {
-    return const Color(0xFF4DBF4A);
-  } else if (isSelfProfile == 'No' && usertype == 'Vendor') {
-    return const Color.fromRGBO(10, 76, 97, 0.31);
-  } else if (isSelfProfile == 'No'  && usertype == 'Customer') {
-    return Color(0xBC73BC).withOpacity(0.6);
-  } else if (isSelfProfile == 'No' && usertype == 'Supplier') {
-    return const Color(0xFF4DBF4A);
-  } else {
-    return Colors.grey; // Default color if no conditions match
+  Color getBackgroundColor(String isSelfProfile, bool isVendor) {
+    print("userModel ${userModel?.id}");
+    var usertype = userModel?.userType;
+    if (isSelfProfile == 'Yes' && isVendor && usertype == 'Vendor') {
+      return const Color.fromRGBO(10, 76, 97, 0.31);
+    } else if (isSelfProfile == 'Yes' && usertype == 'Customer') {
+      return Color(0xBC73BC).withOpacity(0.6);
+    } else if (isSelfProfile == 'Yes' && usertype == 'Supplier') {
+      return const Color(0xFF4DBF4A);
+    } else if (isSelfProfile == 'No' && usertype == 'Vendor') {
+      return const Color.fromRGBO(10, 76, 97, 0.31);
+    } else if (isSelfProfile == 'No' && usertype == 'Customer') {
+      return Color(0xBC73BC).withOpacity(0.6);
+    } else if (isSelfProfile == 'No' && usertype == 'Supplier') {
+      return const Color(0xFF4DBF4A);
+    } else {
+      return Colors.grey; // Default color if no conditions match
+    }
   }
-}
 
-
- @override
+  @override
   Widget build(BuildContext context) {
-    bool _isVendor = Provider.of<Auth>(context, listen: false).userData?['user_type'] == 'Vendor';
+    bool _isVendor =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+            'Vendor';
 
     return TouchableOpacity(
       onTap: () async {
         print("fullData:: $fulldata");
-        final Data = await Provider.of<Auth>(context, listen: false).getFeed(userId) as List<dynamic>;
+        final Data = await Provider.of<Auth>(context, listen: false)
+            .getFeed(userId) as List<dynamic>;
         print("userId:: $userId");
         Navigator.of(context).pushNamed(PostsScreen.routeName, arguments: {
           'data': Data,
@@ -1257,24 +1244,28 @@ Color getBackgroundColor(String isSelfProfile, bool isVendor) {
                 child: Image.network(
                   data['file_path'],
                   fit: BoxFit.cover,
-                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                  loadingBuilder: (BuildContext context, Widget child,
+                      ImageChunkEvent? loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Center(
                       child: CircularProgressIndicator(
                         value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                (loadingProgress.expectedTotalBytes ?? 1)
                             : null,
                       ),
                     );
                   },
-                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                  errorBuilder: (BuildContext context, Object error,
+                      StackTrace? stackTrace) {
                     return Icon(Icons.error);
                   },
                 ),
               ),
             ),
           ),
-          if (data['multiple_files'] != null && data['multiple_files'].length != 0)
+          if (data['multiple_files'] != null &&
+              data['multiple_files'].length != 0)
             const Positioned(
               top: 5,
               right: 5,
@@ -1288,6 +1279,7 @@ Color getBackgroundColor(String isSelfProfile, bool isVendor) {
     );
   }
 }
+
 class CommonButtonProfile extends StatelessWidget {
   bool isActive;
   String txt;

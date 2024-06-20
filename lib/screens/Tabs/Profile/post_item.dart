@@ -189,7 +189,7 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
-    print("who is user:: ${widget.data['store_name']}");
+    print("who is user:: ${widget.data['store_name']}  ${widget.data['user_id']}");
     bool shouldShowIcon = widget.isProfilePost ||
         (!widget.isProfilePost &&
             Provider.of<Auth>(context, listen: false).userData?['user_id'] !=

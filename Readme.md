@@ -16,3 +16,4 @@ if (userType == 'Vendor') {
 
 # shared profile = profile_view.dart
 # own profile = profile.dart
+# profile_view.dart ( UserType.Customer.name shows shared user type and userType shows login user type)

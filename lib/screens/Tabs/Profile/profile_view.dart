@@ -182,6 +182,7 @@ class _ProfileViewState extends State<ProfileView> {
       }
       _loadAllData();
     });
+    
   }
 
   void _loadAllData() {
@@ -193,8 +194,10 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
+     
     bool _isFollowing = checkFollow();
     String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+      
     Color boxShadowColor;
     if (userType == 'Vendor') {
       boxShadowColor = const Color.fromRGBO(10, 76, 97, 0.5) ;
@@ -304,10 +307,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                     left: 10.w, top: 15),
                                                 child: userList.first
                                                                 .profilePhoto !=
-                                                            null ||
-                                                        userList.first
-                                                                .profilePhoto !=
-                                                            null
+                                                            null 
                                                     ? Container(
                                                         height: 70,
                                                         width: 70,
@@ -697,27 +697,12 @@ class _ProfileViewState extends State<ProfileView> {
                                                   ),
                                                 ),
                                               Space(2.h),
-                                              userType == UserType.Supplier.name
+                                              userList.first
+                                                                .userType == UserType.Supplier.name
                                                   ? Container(
                                                       
                                                       width: 95.w,
-                                                      /* decoration: ShapeDecoration(
-                                            shadows: const [
-                                              BoxShadow(
-                                                offset: Offset(0, 4),
-                                                color: Color.fromRGBO(
-                                                    165, 200, 199, 0.6),
-                                                blurRadius: 20,
-                                              )
-                                            ],
-                                            color: Colors.white,
-                                            shape: SmoothRectangleBorder(
-                                              borderRadius: SmoothBorderRadius(
-                                                cornerRadius: 15,
-                                                cornerSmoothing: 1,
-                                              ),
-                                            ),
-                                          ),*/
+                                                
                                                       child: Row(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
@@ -789,28 +774,13 @@ class _ProfileViewState extends State<ProfileView> {
                                                             ),
                                                           ]),
                                                     )
-                                                  : userType ==
+                                                  : userList.first
+                                                                .userType ==
                                                           UserType.Customer.name
                                                       ? Container(
                                                           
                                                           width: 95.w,
-                                                          /* decoration: ShapeDecoration(
-                                            shadows: const [
-                                              BoxShadow(
-                                                offset: Offset(0, 4),
-                                                color: Color.fromRGBO(
-                                                    165, 200, 199, 0.6),
-                                                blurRadius: 20,
-                                              )
-                                            ],
-                                            color: Colors.white,
-                                            shape: SmoothRectangleBorder(
-                                              borderRadius: SmoothBorderRadius(
-                                                cornerRadius: 15,
-                                                cornerSmoothing: 1,
-                                              ),
-                                            ),
-                                          ),*/
+                                                       
                                                           child: Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -834,23 +804,23 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     width: 52,
                                                                   ),
                                                                 ),
-                                                                TouchableOpacity(
-                                                                  onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      _activeButtonIndex =
-                                                                          2;
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      CommonButtonProfile(
-                                                                    isActive:
-                                                                        _activeButtonIndex ==
-                                                                            2,
-                                                                    txt: 'Menu',
-                                                                    width: 52,
-                                                                  ),
-                                                                ),
+                                                                // TouchableOpacity(
+                                                                //   onTap: () {
+                                                                //     setState(
+                                                                //         () {
+                                                                //       _activeButtonIndex =
+                                                                //           2;
+                                                                //     });
+                                                                //   },
+                                                                //   child:
+                                                                //       CommonButtonProfile(
+                                                                //     isActive:
+                                                                //         _activeButtonIndex ==
+                                                                //             2,
+                                                                //     txt: 'Menu',
+                                                                //     width: 52,
+                                                                //   ),
+                                                                // ),
                                                                 TouchableOpacity(
                                                                   onTap: () {
                                                                     setState(
@@ -874,23 +844,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                       : Container(
                                                         
                                                           width: 95.w,
-                                                          /*decoration: ShapeDecoration(
-                                            shadows: const [
-                                              BoxShadow(
-                                                offset: Offset(0, 4),
-                                                color: Color.fromRGBO(
-                                                    165, 200, 199, 0.6),
-                                                blurRadius: 20,
-                                              )
-                                            ],
-                                            color: Colors.white,
-                                            shape: SmoothRectangleBorder(
-                                              borderRadius: SmoothBorderRadius(
-                                                cornerRadius: 15,
-                                                cornerSmoothing: 1,
-                                              ),
-                                            ),
-                                          ),*/
+                                                        
                                                           child: Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
