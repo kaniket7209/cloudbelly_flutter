@@ -75,7 +75,7 @@ class RestaurantCard extends StatelessWidget {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    'Orders: ${restaurant.orderCounter}',
+                    'Orders served till data: ${restaurant.orderCounter}',
                     style: TextStyle(
                       color: Colors.grey,
                     ),
