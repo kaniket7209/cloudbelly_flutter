@@ -24,7 +24,7 @@ class RestaurantCard extends StatelessWidget {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
+              borderRadius: BorderRadius.circular(10.0),
               child: Image.network(
                 restaurant.profilePhoto.isNotEmpty
                     ? restaurant.profilePhoto

@@ -153,19 +153,29 @@ class _SearchViewState extends State<SearchView> {
       ),
       body: Column(
         children: [
-         
           Container(
-            
-            color: Color(0xff7B358D),
+            decoration: BoxDecoration(
+              color: Color(0xff7B358D),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.purple.withOpacity(0.3),
+                  blurRadius: 6,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 GestureDetector(
                   onTap: () => _changeTab(true),
                   child: Column(
-                    
                     children: [
-                       SizedBox(height: 20,),
+                      SizedBox(height: 20),
                       Text(
                         'Dishes',
                         style: TextStyle(
@@ -179,7 +189,7 @@ class _SearchViewState extends State<SearchView> {
                           width: 60,
                           color: Colors.orange,
                         ),
-                        SizedBox(height: 10,),
+                      SizedBox(height: 10),
                     ],
                   ),
                 ),
@@ -187,7 +197,7 @@ class _SearchViewState extends State<SearchView> {
                   onTap: () => _changeTab(false),
                   child: Column(
                     children: [
-                      SizedBox(height: 20,),
+                      SizedBox(height: 20),
                       Text(
                         'Restaurants',
                         style: TextStyle(
@@ -201,14 +211,16 @@ class _SearchViewState extends State<SearchView> {
                           width: 60,
                           color: Colors.orange,
                         ),
-                        SizedBox(height: 10,),
+                      SizedBox(height: 10),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-          // SizedBox(height: 20,),
+          SizedBox(
+            height: 10,
+          ),
           Expanded(
             child: NotificationListener<ScrollNotification>(
               onNotification: (ScrollNotification scrollInfo) {
