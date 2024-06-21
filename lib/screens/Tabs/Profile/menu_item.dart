@@ -26,11 +26,20 @@ class MenuItem extends StatefulWidget {
 
 class _MenuItemState extends State<MenuItem> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<Auth>(context, listen: false).clearAllItems();
+    });
+  }
+  @override
   Widget build(BuildContext context) {
+    
     TextEditingController _controller =
         TextEditingController(text: widget.data['description']);
 
     return Container(
+      
         width: double.infinity,
         margin: EdgeInsets.only(bottom: 1.h),
         child: Row(
@@ -300,12 +309,8 @@ class _MenuItemState extends State<MenuItem> {
                               onTap: () {
                                 if (widget.scroll != null) {
                                   print("scrolling");
-                                  print(widget.scroll.position.maxScrollExtent);
-                                  widget.scroll.animateTo(
-                                    1000.0,
-                                    duration: Duration(milliseconds: 500),
-                                    curve: Curves.easeInOut,
-                                  );
+                                  // print(widget.scroll.position.maxScrollExtent);
+                                 
                                 }
 
                                 Provider.of<Auth>(context, listen: false)

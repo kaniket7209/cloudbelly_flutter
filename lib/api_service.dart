@@ -67,11 +67,11 @@ class Auth with ChangeNotifier {
       .toList();
   List<Map<String, dynamic>> get trackCustomerOrders => customerOrderDetails
       .where((order) =>
-          order['status'] == 'Submitted' ||
-          order['status'] == 'Accepted' ||
-          order['status'] == 'Prepared' ||
-          order['status'] == 'Packed' ||
-          order['status'] == 'Out for delivery'
+              order['status'] == 'Submitted' ||
+              order['status'] == 'Accepted' ||
+              order['status'] == 'Prepared' ||
+              order['status'] == 'Packed' ||
+              order['status'] == 'Out for delivery'
           //  ||
           // order['status'] == 'Delivered'
           )
@@ -215,8 +215,8 @@ class Auth with ChangeNotifier {
       sum = sum + price;
     });
     Tpice = sum;
-    print("sum is");
-    print(sum);
+    // print("sum is");
+    // print(sum);
     notifyListeners();
     // return sum;
   }
@@ -245,7 +245,8 @@ class Auth with ChangeNotifier {
         },
         body: jsonEncode({"user_id": userData?['user_id'] ?? ""}),
       );
-      customerOrderDetails = List<Map<String, dynamic>>.from(jsonDecode(customerOrders.body));
+      customerOrderDetails =
+          List<Map<String, dynamic>>.from(jsonDecode(customerOrders.body));
       print("customerOrderDetails ${customerOrderDetails.length}");
       final payments = await http.post(
         Uri.parse("https://app.cloudbelly.in/payments/get"),
@@ -264,7 +265,7 @@ class Auth with ChangeNotifier {
           ]
         }),
       );
-     
+
       paymentDetails =
           List<Map<String, dynamic>>.from(jsonDecode(payments.body));
       if (response.statusCode == 200) {
@@ -290,6 +291,12 @@ class Auth with ChangeNotifier {
     }
     getprice();
 
+    notifyListeners();
+  }
+
+  void clearAllItems() {
+    itemAdd.clear();
+    getprice();
     notifyListeners();
   }
 
