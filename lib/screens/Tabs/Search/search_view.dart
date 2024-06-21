@@ -184,11 +184,32 @@ class _SearchViewState extends State<SearchView> {
                         ),
                       ),
                       if (isDishesSelected)
-                        Container(
-                          height: 2,
-                          width: 60,
-                          color: Colors.orange,
+                      Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 4.0, right: 0),
+                          decoration: BoxDecoration(
+                            color: Color(0xffFA6E00),
+                            borderRadius: BorderRadius.circular(2.0),
+                          ),
+                          height: 4.0,
+                          child: IntrinsicWidth(
+                            child: Text(
+                              'Dishes',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.transparent,
+                              ),
+                            ),
+                          ),
                         ),
+                      ),
+                        // Container(
+                        //   height: 2,
+                        //   width: 60,
+                        //   color: Colors.orange,
+                        // ),
                       SizedBox(height: 10),
                     ],
                   ),
@@ -206,11 +227,28 @@ class _SearchViewState extends State<SearchView> {
                         ),
                       ),
                       if (!isDishesSelected)
-                        Container(
-                          height: 2,
-                          width: 60,
-                          color: Colors.orange,
+                       
+                      Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 4.0, right: 0),
+                          decoration: BoxDecoration(
+                            color: Color(0xffFA6E00),
+                            borderRadius: BorderRadius.circular(2.0),
+                          ),
+                          height: 4.0,
+                          child: IntrinsicWidth(
+                            child: Text(
+                              'Restaurants',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.transparent,
+                              ),
+                            ),
+                          ),
                         ),
+                      ),
                       SizedBox(height: 10),
                     ],
                   ),
