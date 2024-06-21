@@ -6,6 +6,9 @@ class Restaurant {
   final String profilePhoto;
   final String phone;
   final String location;
+  final String latitude;
+  final String longitude;
+  
 
   Restaurant({
     required this.id,
@@ -14,6 +17,8 @@ class Restaurant {
     required this.profilePhoto,
     required this.phone,
     required this.location,
+    required this.latitude,
+    required this.longitude,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
@@ -24,6 +29,8 @@ class Restaurant {
       profilePhoto: json['profile_photo'] ?? '',
       phone: json['phone'] ?? '',
       location: json['location']?['location'] ?? '',
+      latitude: json['location']?['latitude'] ?? '',
+      longitude: json['location']?['longitude'] ?? '',
     );
   }
 }

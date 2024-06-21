@@ -6,6 +6,7 @@ import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/performance.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -77,7 +78,13 @@ class _DashBoardState extends State<DashBoard>
                               Container(width: 40.w, child: StoreLogoWidget()),
                               CustomIconButton(
                                 ic: Icons.settings,
-                                onTap: () {},
+                                onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const ProfileSettingView()));
+                                      },
                               ),
                             ],
                           ),

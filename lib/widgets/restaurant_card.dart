@@ -1,4 +1,5 @@
 // lib/widgets/restaurant_card.dart
+import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/restaurant.dart';
@@ -19,39 +20,44 @@ class RestaurantCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 6.0,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      margin: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
-              child: Image.network(
-                restaurant.profilePhoto.isNotEmpty
-                    ? restaurant.profilePhoto
-                    : 'https://via.placeholder.com/150',
-                height: 80,
-                width: 80,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    'assets/placeholder.png',
-                    height: 80,
-                    width: 80,
-                    fit: BoxFit.cover,
-                  );
-                },
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileView(
+                      userIdList: [
+                        restaurant.id
+                      ], // Adjust this according to your ProfileView constructor
+                    ),
+                  ),
+                ).then((value) {
+                  // You can clear the userId or perform any other actions here if needed
+                });
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10.0),
+                child: Image.network(
+                  restaurant.profilePhoto.isNotEmpty
+                      ? restaurant.profilePhoto
+                      : 'https://via.placeholder.com/150',
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      'assets/placeholder.png',
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
               ),
             ),
             SizedBox(width: 10),
@@ -64,6 +70,7 @@ class RestaurantCard extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
+                      color: Color(0xff2E0536),
                     ),
                   ),
                   SizedBox(height: 5),

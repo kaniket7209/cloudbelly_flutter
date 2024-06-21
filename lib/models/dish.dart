@@ -8,6 +8,7 @@ class Dish {
   final Map<String, dynamic> macros;
   final String price;
   final String type;
+  final String user_id;
 
   Dish({
     required this.id,
@@ -18,6 +19,7 @@ class Dish {
     required this.macros,
     required this.price,
     required this.type,
+    required this.user_id,
   });
 
   factory Dish.fromJson(Map<String, dynamic> json) {
@@ -30,6 +32,7 @@ class Dish {
       macros: json['macros'] ?? {},
       price: json['price'] ?? '',
       type: json['type'] ?? '',
+      user_id: json['user_id'] ?? '',
     );
   }
 }
