@@ -1,20 +1,11 @@
-// lib/widgets/restaurant_card.dart
+// lib/widgets/dish_card.dart
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../models/restaurant.dart';
+import '../models/dish.dart';
 
-class RestaurantCard extends StatelessWidget {
-  final Restaurant restaurant;
+class DishCard extends StatelessWidget {
+  final Dish dish;
 
-  RestaurantCard({required this.restaurant});
-
-  void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+  DishCard({required this.dish});
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +17,8 @@ class RestaurantCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: Image.network(
-                restaurant.profilePhoto.isNotEmpty
-                    ? restaurant.profilePhoto
+                dish.images.isNotEmpty
+                    ? dish.images.first
                     : 'https://via.placeholder.com/150',
                 height: 80,
                 width: 80,
@@ -40,7 +31,7 @@ class RestaurantCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    restaurant.storeName,
+                    dish.name,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -48,25 +39,21 @@ class RestaurantCard extends StatelessWidget {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    'Orders: ${restaurant.orderCounter}',
+                    'Category: ${dish.category}',
                     style: TextStyle(
                       color: Colors.grey,
                     ),
                   ),
                   Text(
-                    restaurant.location,
+                    'Type: ${dish.type}',
                     style: TextStyle(
                       color: Colors.grey,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => _launchURL('tel:${restaurant.phone}'),
-                    child: Text(
-                      restaurant.phone,
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
+                  Text(
+                    'Price: ${dish.price}',
+                    style: TextStyle(
+                      color: Colors.grey,
                     ),
                   ),
                 ],
