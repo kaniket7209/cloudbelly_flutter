@@ -14,12 +14,14 @@ class SearchView extends StatefulWidget {
 
 class _SearchViewState extends State<SearchView> {
   final TextEditingController _searchController = TextEditingController();
-  List<dynamic> _items = [];
+  List<Dish> dishItems = [];
+  List<Restaurant> restaurantItems = [];
   bool isDishesSelected = true;
   int page = 1;
   int limit = 10;
   bool isLoading = false;
   bool hasMoreData = true;
+  PageController _pageController = PageController();
 
   @override
   void initState() {
@@ -31,7 +33,11 @@ class _SearchViewState extends State<SearchView> {
   void _onSearchChanged() {
     setState(() {
       page = 1;
-      _items.clear();
+      if (isDishesSelected) {
+        dishItems.clear();
+      } else {
+        restaurantItems.clear();
+      }
       hasMoreData = true;
     });
     _fetchData();
@@ -60,13 +66,12 @@ class _SearchViewState extends State<SearchView> {
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       setState(() {
-        _items.addAll(
-          data
-              .map((item) => isDishesSelected
-                  ? Dish.fromJson(item)
-                  : Restaurant.fromJson(item))
-              .toList(),
-        );
+        if (isDishesSelected) {
+          dishItems.addAll(data.map((item) => Dish.fromJson(item)).toList());
+        } else {
+          restaurantItems
+              .addAll(data.map((item) => Restaurant.fromJson(item)).toList());
+        }
         if (data.length < limit) {
           hasMoreData = false;
         } else {
@@ -86,7 +91,11 @@ class _SearchViewState extends State<SearchView> {
   void _searchItems(String query) {
     setState(() {
       page = 1;
-      _items.clear();
+      if (isDishesSelected) {
+        dishItems.clear();
+      } else {
+        restaurantItems.clear();
+      }
       hasMoreData = true;
       _fetchData();
     });
@@ -96,9 +105,14 @@ class _SearchViewState extends State<SearchView> {
     setState(() {
       isDishesSelected = dishesSelected;
       page = 1;
-      _items.clear();
+      if (dishesSelected) {
+        dishItems.clear();
+      } else {
+        restaurantItems.clear();
+      }
       hasMoreData = true;
     });
+    _pageController.jumpToPage(dishesSelected ? 0 : 1);
     _fetchData();
   }
 
@@ -106,6 +120,7 @@ class _SearchViewState extends State<SearchView> {
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -184,32 +199,27 @@ class _SearchViewState extends State<SearchView> {
                         ),
                       ),
                       if (isDishesSelected)
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 4.0, right: 0),
-                          decoration: BoxDecoration(
-                            color: Color(0xffFA6E00),
-                            borderRadius: BorderRadius.circular(2.0),
-                          ),
-                          height: 4.0,
-                          child: IntrinsicWidth(
-                            child: Text(
-                              'Dishes',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.transparent,
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 4.0, right: 0),
+                            decoration: BoxDecoration(
+                              color: Color(0xffFA6E00),
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                            height: 4.0,
+                            child: IntrinsicWidth(
+                              child: Text(
+                                'Dishes',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.transparent,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                        // Container(
-                        //   height: 2,
-                        //   width: 60,
-                        //   color: Colors.orange,
-                        // ),
                       SizedBox(height: 10),
                     ],
                   ),
@@ -227,28 +237,27 @@ class _SearchViewState extends State<SearchView> {
                         ),
                       ),
                       if (!isDishesSelected)
-                       
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 4.0, right: 0),
-                          decoration: BoxDecoration(
-                            color: Color(0xffFA6E00),
-                            borderRadius: BorderRadius.circular(2.0),
-                          ),
-                          height: 4.0,
-                          child: IntrinsicWidth(
-                            child: Text(
-                              'Restaurants',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.transparent,
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 4.0, right: 0),
+                            decoration: BoxDecoration(
+                              color: Color(0xffFA6E00),
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                            height: 4.0,
+                            child: IntrinsicWidth(
+                              child: Text(
+                                'Restaurants',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.transparent,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
                       SizedBox(height: 10),
                     ],
                   ),
@@ -256,45 +265,85 @@ class _SearchViewState extends State<SearchView> {
               ],
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           Expanded(
-            child: NotificationListener<ScrollNotification>(
-              onNotification: (ScrollNotification scrollInfo) {
-                if (scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent &&
-                    !isLoading) {
-                  _fetchData();
-                }
-                return false;
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  isDishesSelected = index == 0;
+                });
+                _changeTab(index == 0);
               },
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  setState(() {
-                    page = 1;
-                    _items.clear();
-                    hasMoreData = true;
-                  });
-                  await _fetchData();
-                },
-                child: ListView.builder(
-                  itemCount: _items.length + (hasMoreData ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == _items.length) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    if (isDishesSelected) {
-                      return DishCard(dish: _items[index]);
-                    } else {
-                      return RestaurantCard(restaurant: _items[index]);
-                    }
-                  },
-                ),
-              ),
+              children: [
+                _buildDishList(),
+                _buildRestaurantList(),
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDishList() {
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
+            !isLoading) {
+          _fetchData();
+        }
+        return false;
+      },
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            page = 1;
+            dishItems.clear();
+            hasMoreData = true;
+          });
+          await _fetchData();
+        },
+        child: ListView.builder(
+          itemCount: dishItems.length + (hasMoreData ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == dishItems.length) {
+              return Center(child: CircularProgressIndicator());
+            }
+            return DishCard(dish: dishItems[index]);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRestaurantList() {
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
+            !isLoading) {
+          _fetchData();
+        }
+        return false;
+      },
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            page = 1;
+            restaurantItems.clear();
+            hasMoreData = true;
+          });
+          await _fetchData();
+        },
+        child: ListView.builder(
+          itemCount: restaurantItems.length + (hasMoreData ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == restaurantItems.length) {
+              return Center(child: CircularProgressIndicator());
+            }
+            return RestaurantCard(restaurant: restaurantItems[index]);
+          },
+        ),
       ),
     );
   }

@@ -19,11 +19,21 @@ class RestaurantCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6.0,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
       child: Padding(
-        
         padding: const EdgeInsets.all(20.0),
         child: Row(
-          
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
@@ -34,12 +44,19 @@ class RestaurantCard extends StatelessWidget {
                 height: 80,
                 width: 80,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    'assets/placeholder.png',
+                    height: 80,
+                    width: 80,
+                    fit: BoxFit.cover,
+                  );
+                },
               ),
             ),
             SizedBox(width: 10),
             Expanded(
               child: Column(
-               
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
