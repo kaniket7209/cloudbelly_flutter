@@ -194,15 +194,18 @@ class _SearchViewState extends State<SearchView> {
                       Text(
                         'Dishes',
                         style: TextStyle(
-                          color:
-                              isDishesSelected ? Colors.orange : Colors.white,
+                          color:Colors.white,
+                          fontSize: 16,
+                          fontFamily: 'Product Sans',
+                           fontWeight: FontWeight.bold
+                              // isDishesSelected ? Colors.orange : Colors.white,
                         ),
                       ),
                       if (isDishesSelected)
                         Align(
                           alignment: Alignment.center,
                           child: Container(
-                            margin: const EdgeInsets.only(top: 4.0, right: 0),
+                            margin: const EdgeInsets.only(top: 6.0, right: 0),
                             decoration: BoxDecoration(
                               color: Color(0xffFA6E00),
                               borderRadius: BorderRadius.circular(2.0),
@@ -220,7 +223,7 @@ class _SearchViewState extends State<SearchView> {
                             ),
                           ),
                         ),
-                      SizedBox(height: 10),
+                      // SizedBox(height: 10),
                     ],
                   ),
                 ),
@@ -232,15 +235,18 @@ class _SearchViewState extends State<SearchView> {
                       Text(
                         'Restaurants',
                         style: TextStyle(
-                          color:
-                              isDishesSelected ? Colors.white : Colors.orange,
+                          color:Colors.white,
+                          fontSize: 16,
+                           fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.bold
+                              // isDishesSelected ? Colors.white : Colors.orange,
                         ),
                       ),
                       if (!isDishesSelected)
                         Align(
                           alignment: Alignment.center,
                           child: Container(
-                            margin: const EdgeInsets.only(top: 4.0, right: 0),
+                            margin: const EdgeInsets.only(top: 6.0, right: 0),
                             decoration: BoxDecoration(
                               color: Color(0xffFA6E00),
                               borderRadius: BorderRadius.circular(2.0),
@@ -258,7 +264,7 @@ class _SearchViewState extends State<SearchView> {
                             ),
                           ),
                         ),
-                      SizedBox(height: 10),
+                      // SizedBox(height: 10),
                     ],
                   ),
                 ),

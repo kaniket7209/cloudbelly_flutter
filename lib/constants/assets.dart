@@ -23,4 +23,5 @@ class Assets {
   static const String coming_soon_jpg = 'assets/images/coming_soon.jpg';
   static const String appIcon = 'assets/images/cloudbelly_logo.png';
   static const String googleLoginBgImage = 'assets/images/google_login_bg_image.jpeg';
+  static const String heartIcon = 'assets/images/Heart.png';
 }
