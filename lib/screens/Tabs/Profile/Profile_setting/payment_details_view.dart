@@ -55,83 +55,89 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
   }
 
   Future<void> _submitForm() async {
-    // final prefs = await SharedPreferences.getInstance();
-    if (bank_name != '' &&
-        accountNumberController.text != '' &&
-        reEnterAccountNumber.text != '' &&
-        ifscCode.text != '' &&
-        upiController.text != '') {
-      if (accountNumberController.text == reEnterAccountNumber.text) {
-        AppWideLoadingBanner().loadingBanner(context);
-        String msg = await Provider.of<Auth>(context, listen: false)
-            .storeSetup3(bank_name, accountNumberController.text, ifscCode.text,
-                upiController.text);
+  // final prefs = await SharedPreferences.getInstance();
+  if ((upiController.text != '' || 
+  (bank_name != '' && accountNumberController.text != '' 
+  && reEnterAccountNumber.text != '' && ifscCode.text != ''))) {
+    if (accountNumberController.text == reEnterAccountNumber.text || upiController.text != '') {
+      AppWideLoadingBanner().loadingBanner(context);
+      
+      String msg;
+      if (upiController.text != '') {
+        msg = await Provider.of<Auth>(context, listen: false)
+            .storeSetup3('', '', '', upiController.text);
+      } else {
+        msg = await Provider.of<Auth>(context, listen: false)
+            .storeSetup3(bank_name, accountNumberController.text, ifscCode.text, '');
+      }
 
-        if (msg == 'User information updated successfully.') {
+      if (msg == 'User information updated successfully.') {
+        if (upiController.text != '') {
+          Provider.of<Auth>(context, listen: false).userData?['upi_id'] = upiController.text;
+        } else {
           Provider.of<Auth>(context, listen: false).userData?['bank_name'] = bank_name;
           Provider.of<Auth>(context, listen: false).userData?['account_number'] = accountNumberController.text;
           Provider.of<Auth>(context, listen: false).userData?['ifsc_code'] = ifscCode.text;
-          Provider.of<Auth>(context, listen: false).userData?['upi_id'] = upiController.text;
-          Map<String, dynamic>? userData = {
-            'user_id': Provider.of<Auth>(context, listen: false).userData?['user_id'],
-            'user_name': Provider.of<Auth>(context, listen: false).userData?['user_name'],
-            'email': Provider.of<Auth>(context, listen: false).userData?['email'],
-            'store_name': Provider.of<Auth>(context, listen: false).userData?['store_name'],
-            'profile_photo': Provider.of<Auth>(context, listen: false).userData?['profile_photo']  ?? '',
-            'store_availability': Provider.of<Auth>(context, listen: false).userData?['store_availability'] ?? false,
-            'pan_number': Provider.of<Auth>(context, listen: false).userData?['pan_number'] ?? '',
-            'aadhar_number': Provider.of<Auth>(context, listen: false).userData?['aadhar_number'] ?? '',
-            if(Provider.of<Auth>(context, listen: false).userData?['address'] != null)
-              'address' :{
-                "location": Provider.of<Auth>(context, listen: false).userData?['address']['location'],
-                "latitude": Provider.of<Auth>(context, listen: false).userData?['address']['latitude'],
-                "longitude": Provider.of<Auth>(context, listen: false).userData?['address']['longitude'],
-                "hno": Provider.of<Auth>(context, listen: false).userData?['address']['hno'],
-                "pincode": Provider.of<Auth>(context, listen: false).userData?['address']['pincode'],
-                "landmark": Provider.of<Auth>(context, listen: false).userData?['address']['landmark'],
-                "type": Provider.of<Auth>(context, listen: false).userData?['address']['type'],
-              },
-            if (Provider.of<Auth>(context, listen: false).userData?['location'] != null)
-              'location': {
-                'details': Provider.of<Auth>(context, listen: false).userData?['location']['details'] ?? '',
-                'latitude': Provider.of<Auth>(context, listen: false).userData?['location']['latitude'] ?? '',
-                'longitude': Provider.of<Auth>(context, listen: false).userData?['location']['longitude'] ?? '',
-              },
-            if (Provider.of<Auth>(context, listen: false).userData?['working_hours'] != null)
-              'working_hours': {
-                'start_time': Provider.of<Auth>(context, listen: false).userData?['working_hours']['start_time'] ?? '',
-                'end_time': Provider.of<Auth>(context, listen: false).userData?['working_hours']['end_time'] ?? '',
-              },
-            'delivery_addresses': Provider.of<Auth>(context, listen: false).userData?['delivery_addresses'] ?? [],
-            'bank_name': bank_name ?? '',
-            'pincode': Provider.of<Auth>(context, listen: false).userData?['pincode'] ?? '',
-            'rating': Provider.of<Auth>(context, listen: false).userData?['rating'] ?? '-',
-            'followers': Provider.of<Auth>(context, listen: false).userData?['followers'] ?? [],
-            'followings': Provider.of<Auth>(context, listen: false).userData?['followings'] ?? [],
-            'cover_image': Provider.of<Auth>(context, listen: false).userData?['cover_image'] ?? '',
-            'account_number': accountNumberController.text ?? '',
-            'ifsc_code': ifscCode.text ?? '',
-            'phone': Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
-            'upi_id': upiController.text ?? '',
-            'user_type': Provider.of<Auth>(context, listen: false).userData?['user_type'] ?? 'Vendor',
-          };
-          await UserPreferences.setUser(userData);
-          TOastNotification()
-              .showSuccesToast(context, 'Payment details updated');
-          Navigator.of(context).pop();
-          // prefs.setInt('counter', 4);
         }
-        Navigator.of(context).pop();
-        print(msg);
-      } else {
-        TOastNotification()
-            .showErrorToast(context, 'Fill Account number properly');
-      }
-    } else {
-      TOastNotification().showErrorToast(context, 'Please fill all fields');
-    }
-  }
 
+        Map<String, dynamic>? userData = {
+          'user_id': Provider.of<Auth>(context, listen: false).userData?['user_id'],
+          'user_name': Provider.of<Auth>(context, listen: false).userData?['user_name'],
+          'email': Provider.of<Auth>(context, listen: false).userData?['email'],
+          'store_name': Provider.of<Auth>(context, listen: false).userData?['store_name'],
+          'profile_photo': Provider.of<Auth>(context, listen: false).userData?['profile_photo']  ?? '',
+          'store_availability': Provider.of<Auth>(context, listen: false).userData?['store_availability'] ?? false,
+          'pan_number': Provider.of<Auth>(context, listen: false).userData?['pan_number'] ?? '',
+          'aadhar_number': Provider.of<Auth>(context, listen: false).userData?['aadhar_number'] ?? '',
+          if(Provider.of<Auth>(context, listen: false).userData?['address'] != null)
+            'address' :{
+              "location": Provider.of<Auth>(context, listen: false).userData?['address']['location'],
+              "latitude": Provider.of<Auth>(context, listen: false).userData?['address']['latitude'],
+              "longitude": Provider.of<Auth>(context, listen: false).userData?['address']['longitude'],
+              "hno": Provider.of<Auth>(context, listen: false).userData?['address']['hno'],
+              "pincode": Provider.of<Auth>(context, listen: false).userData?['address']['pincode'],
+              "landmark": Provider.of<Auth>(context, listen: false).userData?['address']['landmark'],
+              "type": Provider.of<Auth>(context, listen: false).userData?['address']['type'],
+            },
+          if (Provider.of<Auth>(context, listen: false).userData?['location'] != null)
+            'location': {
+              'details': Provider.of<Auth>(context, listen: false).userData?['location']['details'] ?? '',
+              'latitude': Provider.of<Auth>(context, listen: false).userData?['location']['latitude'] ?? '',
+              'longitude': Provider.of<Auth>(context, listen: false).userData?['location']['longitude'] ?? '',
+            },
+          if (Provider.of<Auth>(context, listen: false).userData?['working_hours'] != null)
+            'working_hours': {
+              'start_time': Provider.of<Auth>(context, listen: false).userData?['working_hours']['start_time'] ?? '',
+              'end_time': Provider.of<Auth>(context, listen: false).userData?['working_hours']['end_time'] ?? '',
+            },
+          'delivery_addresses': Provider.of<Auth>(context, listen: false).userData?['delivery_addresses'] ?? [],
+          'bank_name': bank_name ?? '',
+          'pincode': Provider.of<Auth>(context, listen: false).userData?['pincode'] ?? '',
+          'rating': Provider.of<Auth>(context, listen: false).userData?['rating'] ?? '-',
+          'followers': Provider.of<Auth>(context, listen: false).userData?['followers'] ?? [],
+          'followings': Provider.of<Auth>(context, listen: false).userData?['followings'] ?? [],
+          'cover_image': Provider.of<Auth>(context, listen: false).userData?['cover_image'] ?? '',
+          'account_number': accountNumberController.text ?? '',
+          'ifsc_code': ifscCode.text ?? '',
+          'phone': Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
+          'upi_id': upiController.text ?? '',
+          'user_type': Provider.of<Auth>(context, listen: false).userData?['user_type'] ?? 'Vendor',
+        };
+        
+        await UserPreferences.setUser(userData);
+        TOastNotification().showSuccesToast(context, 'Payment details updated');
+        Navigator.of(context).pop();
+        // prefs.setInt('counter', 4);
+      }
+      Navigator.of(context).pop();
+      print(msg);
+    } else {
+      TOastNotification().showErrorToast(context, 'Fill Account number properly');
+    }
+  } else {
+    TOastNotification().showErrorToast(context, 'Please fill all fields');
+  }
+}
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -182,9 +188,63 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                     ),
                   ],
                 ),
+                Space(4.h),
+                const Text(
+                      'Choose any one option. ',
+                      style: TextStyle(
+                        color: Color(0xFF0A4C61),
+                        fontSize: 14,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.bold,
+                        height: 0.03,
+                        letterSpacing: 0.78,
+                      ),
+                    ),
+                    Space(2.h),
+                const Text(
+                      'UPI ID is mandatory  ',
+                      style: TextStyle(
+                        color: Color(0xFF0A4C61),
+                        fontSize: 14,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.bold,
+                        height: 0.03,
+                        letterSpacing: 0.78,
+                      ),
+                    ),
                 Space(
-                  10.h,
+                4.h,
                 ),
+                
+                TextWidgetStoreSetup(label: 'Enter your UPI ID'),
+                Space(1.h),
+                AppwideTextField(
+                  controller: upiController,
+                  hintText: 'Type your UPI ID here',
+                  userType: Provider.of<Auth>(context,
+                      listen: false)
+                      .userData?['user_type'] ,
+                  onChanged: (p0) {
+                    // user_name = p0.toString();
+                    // print(user_name);
+                  },
+                ),
+
+                Space(3.h),
+                 Center(
+                   child: const Text(
+                        'OR  ',
+                        style: TextStyle(
+                          color: Color(0xFF0A4C61),
+                          fontSize: 26,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.bold,
+                          height: 0.03,
+                          letterSpacing: 0.78,
+                        ),
+                      ),
+                 ),
+                 Space(2.h),
                 TextWidgetStoreSetup(label: 'Select your bank'),
                 Space(1.h),
                 Container(
@@ -313,19 +373,20 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                 Space(
                   3.h,
                 ),
-                TextWidgetStoreSetup(label: 'Enter your UPI ID'),
-                Space(1.h),
-                AppwideTextField(
-                  controller: upiController,
-                  hintText: 'Type your UPI ID here',
-                  userType: Provider.of<Auth>(context,
-                      listen: false)
-                      .userData?['user_type'] ,
-                  onChanged: (p0) {
-                    // user_name = p0.toString();
-                    // print(user_name);
-                  },
-                ),
+                
+                // TextWidgetStoreSetup(label: 'Enter your UPI ID'),
+                // Space(1.h),
+                // AppwideTextField(
+                //   controller: upiController,
+                //   hintText: 'Type your UPI ID here',
+                //   userType: Provider.of<Auth>(context,
+                //       listen: false)
+                //       .userData?['user_type'] ,
+                //   onChanged: (p0) {
+                //     // user_name = p0.toString();
+                //     // print(user_name);
+                //   },
+                // ),
               ],
             ),
           ),

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cloudbelly_app/api_service.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class KycView extends StatefulWidget {
   const KycView({super.key});
@@ -33,12 +35,22 @@ class _KycViewState extends State<KycView> {
   void initState() {
     super.initState();
     userData = UserPreferences.getUser();
-    if (Provider.of<Auth>(context, listen: false).userData?['pan_number'] != null) {
-      panController.text = Provider.of<Auth>(context, listen: false).userData?['pan_number'];
+    // print('jsonen ${json.encode(userData)}');
+    if (Provider.of<Auth>(context, listen: false).userData?['pan_number'] !=
+        null) {
+      panController.text =
+          Provider.of<Auth>(context, listen: false).userData?['pan_number'];
     }
 
-    if (Provider.of<Auth>(context, listen: false).userData?['aadhar_number'] != null) {
-      aadharCardController.text = Provider.of<Auth>(context, listen: false).userData?['aadhar_number'];
+    if (Provider.of<Auth>(context, listen: false).userData?['aadhar_number'] !=
+        null) {
+      aadharCardController.text =
+          Provider.of<Auth>(context, listen: false).userData?['aadhar_number'];
+    }
+     if (Provider.of<Auth>(context, listen: false).userData?['fssai'] !=
+        null) {
+      fssai_licence_document =
+          Provider.of<Auth>(context, listen: false).userData?['fssai'];
     }
   }
 
@@ -51,50 +63,107 @@ class _KycViewState extends State<KycView> {
           fssai_licence_document);
 
       if (msg == 'User information updated successfully.') {
-        Provider.of<Auth>(context, listen: false).userData?['pan_number'] = panController.text;
-        Provider.of<Auth>(context, listen: false).userData?['aadhar_number'] = aadharCardController.text;
+        Provider.of<Auth>(context, listen: false).userData?['pan_number'] =
+            panController.text;
+        Provider.of<Auth>(context, listen: false).userData?['aadhar_number'] =
+            aadharCardController.text;
         Map<String, dynamic>? userData = {
-          'user_id': Provider.of<Auth>(context, listen: false).userData?['user_id'],
-          'user_name': Provider.of<Auth>(context, listen: false).userData?['user_name'],
+          'user_id':
+              Provider.of<Auth>(context, listen: false).userData?['user_id'],
+          'user_name':
+              Provider.of<Auth>(context, listen: false).userData?['user_name'],
           'email': Provider.of<Auth>(context, listen: false).userData?['email'],
-          'store_name': Provider.of<Auth>(context, listen: false).userData?['store_name'],
-          'profile_photo': Provider.of<Auth>(context, listen: false).userData?['profile_photo']  ?? '',
-          'store_availability': Provider.of<Auth>(context, listen: false).userData?['store_availability'] ?? false,
+          'store_name':
+              Provider.of<Auth>(context, listen: false).userData?['store_name'],
+          'profile_photo': Provider.of<Auth>(context, listen: false)
+                  .userData?['profile_photo'] ??
+              '',
+          'store_availability': Provider.of<Auth>(context, listen: false)
+                  .userData?['store_availability'] ??
+              false,
           'pan_number': panController.text ?? '',
           'aadhar_number': aadharCardController.text ?? '',
-          if(Provider.of<Auth>(context, listen: false).userData?['address'] != null)
-            'address' :{
-              "location": Provider.of<Auth>(context, listen: false).userData?['address']['location'],
-              "latitude": Provider.of<Auth>(context, listen: false).userData?['address']['latitude'],
-              "longitude": Provider.of<Auth>(context, listen: false).userData?['address']['longitude'],
-              "hno": Provider.of<Auth>(context, listen: false).userData?['address']['hno'],
-              "pincode": Provider.of<Auth>(context, listen: false).userData?['address']['pincode'],
-              "landmark": Provider.of<Auth>(context, listen: false).userData?['address']['landmark'],
-              "type": Provider.of<Auth>(context, listen: false).userData?['address']['type'],
+          if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
+              null)
+            'address': {
+              "location": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['location'],
+              "latitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['latitude'],
+              "longitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['longitude'],
+              "hno": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['hno'],
+              "pincode": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['pincode'],
+              "landmark": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['landmark'],
+              "type": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['type'],
             },
-          if (Provider.of<Auth>(context, listen: false).userData?['location'] != null)
+          if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
+              null)
             'location': {
-              'details': Provider.of<Auth>(context, listen: false).userData?['location']['details'] ?? '',
-              'latitude': Provider.of<Auth>(context, listen: false).userData?['location']['latitude'] ?? '',
-              'longitude': Provider.of<Auth>(context, listen: false).userData?['location']['longitude'] ?? '',
+              'details': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['details'] ??
+                  '',
+              'latitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['latitude'] ??
+                  '',
+              'longitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['longitude'] ??
+                  '',
             },
-          if (Provider.of<Auth>(context, listen: false).userData?['working_hours'] != null)
+          if (Provider.of<Auth>(context, listen: false)
+                  .userData?['working_hours'] !=
+              null)
             'working_hours': {
-              'start_time': Provider.of<Auth>(context, listen: false).userData?['working_hours']['start_time'] ?? '',
-              'end_time': Provider.of<Auth>(context, listen: false).userData?['working_hours']['end_time'] ?? '',
+              'start_time': Provider.of<Auth>(context, listen: false)
+                      .userData?['working_hours']['start_time'] ??
+                  '',
+              'end_time': Provider.of<Auth>(context, listen: false)
+                      .userData?['working_hours']['end_time'] ??
+                  '',
             },
-          'delivery_addresses': Provider.of<Auth>(context, listen: false).userData?['delivery_addresses'] ?? [],
-          'bank_name': Provider.of<Auth>(context, listen: false).userData?['bank_name'] ?? '',
-          'pincode': Provider.of<Auth>(context, listen: false).userData?['pincode'] ?? '',
-          'rating': Provider.of<Auth>(context, listen: false).userData?['rating'] ?? '-',
-          'followers': Provider.of<Auth>(context, listen: false).userData?['followers'] ?? [],
-          'followings': Provider.of<Auth>(context, listen: false).userData?['followings'] ?? [],
-          'cover_image': Provider.of<Auth>(context, listen: false).userData?['cover_image'] ?? '',
-          'account_number': Provider.of<Auth>(context, listen: false).userData?['account_number'] ?? '',
-          'ifsc_code': Provider.of<Auth>(context, listen: false).userData?['ifsc_code'] ?? '',
-          'phone': Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
-          'upi_id': Provider.of<Auth>(context, listen: false).userData?['upi_id'] ?? '',
-          'user_type': Provider.of<Auth>(context, listen: false).userData?['user_type'] ?? 'Vendor',
+          'delivery_addresses': Provider.of<Auth>(context, listen: false)
+                  .userData?['delivery_addresses'] ??
+              [],
+          'bank_name': Provider.of<Auth>(context, listen: false)
+                  .userData?['bank_name'] ??
+              '',
+          'pincode':
+              Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
+                  '',
+          'rating':
+              Provider.of<Auth>(context, listen: false).userData?['rating'] ??
+                  '-',
+          'followers': Provider.of<Auth>(context, listen: false)
+                  .userData?['followers'] ??
+              [],
+          'followings': Provider.of<Auth>(context, listen: false)
+                  .userData?['followings'] ??
+              [],
+          'cover_image': Provider.of<Auth>(context, listen: false)
+                  .userData?['cover_image'] ??
+              '',
+          'account_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['account_number'] ??
+              '',
+          'ifsc_code': Provider.of<Auth>(context, listen: false)
+                  .userData?['ifsc_code'] ??
+              '',
+          'phone':
+              Provider.of<Auth>(context, listen: false).userData?['phone'] ??
+                  '',
+          'upi_id':
+              Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
+                  '',
+          'fssai':
+              Provider.of<Auth>(context, listen: false).userData?['fssai'] ??
+                  '',
+          'user_type': Provider.of<Auth>(context, listen: false)
+                  .userData?['user_type'] ??
+              'Vendor',
         };
         await UserPreferences.setUser(userData);
         //  print('pin: ${pan_number}');
@@ -112,6 +181,7 @@ class _KycViewState extends State<KycView> {
 
   @override
   Widget build(BuildContext context) {
+    
     return SafeArea(
       child: Scaffold(
         body: Padding(
@@ -167,8 +237,7 @@ class _KycViewState extends State<KycView> {
               AppwideTextField(
                 hintText: 'Type your pan card number here',
                 controller: panController,
-                userType: Provider.of<Auth>(context,
-                    listen: false)
+                userType: Provider.of<Auth>(context, listen: false)
                     .userData?['user_type'],
                 onChanged: (p0) {
                   // pan_number = p0.toString();
@@ -184,9 +253,8 @@ class _KycViewState extends State<KycView> {
               AppwideTextField(
                 hintText: 'Type your aadhar card number here',
                 controller: aadharCardController,
-                userType: Provider.of<Auth>(context,
-                    listen: false)
-                    .userData?['user_type'] ,
+                userType: Provider.of<Auth>(context, listen: false)
+                    .userData?['user_type'],
                 onChanged: (p0) {
                   // user_name = p0.toString();
                   // print(user_name);
@@ -205,29 +273,24 @@ class _KycViewState extends State<KycView> {
                           .pickImageAndUpoad(context);
                   Navigator.pop(context);
                   setState(() {});
-                  print("fassai::${fssai_licence_document}");
+                  print("fssai::${fssai_licence_document}");
                 },
                 child: Container(
                   // rgba(165, 200, 199, 1),
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
-                  decoration:  ShapeDecoration(
+                  decoration: ShapeDecoration(
                     shadows: [
                       BoxShadow(
                         offset: const Offset(0, 4),
-                        color: Provider.of<Auth>(context,
-                            listen: false)
-                            .userData?['user_type'] ==
-                            UserType.Vendor.name
-                            ? const Color.fromRGBO(
-                            165, 200, 199, 0.6)
-                            : Provider.of<Auth>(context,
-                            listen: false)
-                            .userData?['user_type'] ==
-                            UserType.Supplier.name
-                            ? const Color.fromRGBO(
-                            77, 191, 74, 0.3)
-                            : const Color.fromRGBO(
-                            130, 47, 130, 0.7),
+                        color: Provider.of<Auth>(context, listen: false)
+                                    .userData?['user_type'] ==
+                                UserType.Vendor.name
+                            ? const Color.fromRGBO(165, 200, 199, 0.6)
+                            : Provider.of<Auth>(context, listen: false)
+                                        .userData?['user_type'] ==
+                                    UserType.Supplier.name
+                                ? const Color.fromRGBO(77, 191, 74, 0.3)
+                                : const Color.fromRGBO(130, 47, 130, 0.7),
                         blurRadius: 20,
                       )
                     ],
@@ -238,16 +301,17 @@ class _KycViewState extends State<KycView> {
                     ),
                   ),
                   height: 6.h,
-                  child:  Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'Upload',
                         style: TextStyle(
                           color: Provider.of<Auth>(context, listen: false)
-                              .userData?['user_type'] ==
-                              UserType.Vendor.name
-                              ?  const Color(0xFF0A4C61) : const Color(0xFF2E0536),
+                                      .userData?['user_type'] ==
+                                  UserType.Vendor.name
+                              ? const Color(0xFF0A4C61)
+                              : const Color(0xFF2E0536),
                           fontSize: 12,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
@@ -263,7 +327,7 @@ class _KycViewState extends State<KycView> {
                   ),
                 ),
               ),
-              if (fssai_licence_document.isNotEmpty) ...[
+              if (fssai_licence_document.isNotEmpty ) ...[
                 Space(3.h),
                 Container(
                   height: 100,
@@ -277,7 +341,8 @@ class _KycViewState extends State<KycView> {
                         fit: BoxFit.cover,
                       )),
                 ),
-              ],
+              ], 
+              
               Space(3.h),
               Container(
                 color: Colors.transparent, // Transparent color
@@ -310,7 +375,8 @@ class _KycViewState extends State<KycView> {
                                   child: Center(
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 1.h,),
+                                        vertical: 1.h,
+                                      ),
                                       width: 55,
                                       height: 9,
                                       decoration: ShapeDecoration(
@@ -358,13 +424,28 @@ class _KycViewState extends State<KycView> {
                                 ),
                               ),
                               Space(1.5.h),
-                              const Text('Government portal.',
-                                  style: TextStyle(
-                                    color: Color(0xFF2D33C5),
-                                    fontSize: 16,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.w400,
-                                  )),
+                              Container(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    const url =
+                                        'https://fssairegistration.org/fssai-registration.php';
+                                    if (await canLaunch(url)) {
+                                      await launch(url);
+                                    } else {
+                                      throw 'Could not launch $url';
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Government portal.',
+                                    style: TextStyle(
+                                      color: Color(0xFF2D33C5),
+                                      fontSize: 16,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              ),
                               Container(
                                 height: 1,
                                 width: 130,
@@ -429,7 +510,10 @@ class _KycViewState extends State<KycView> {
                     return _submitForm();
                   },
                   num: 2,
-                  txt: userData?['pan_number'] != null && userData?['pan_number'] != "" ? "Update KYC & documents" :'Complete KYC & documents'),
+                  txt: userData?['pan_number'] != null &&
+                          userData?['pan_number'] != ""
+                      ? "Update KYC & documents"
+                      : 'Complete KYC & documents'),
             ],
           ),
         ),

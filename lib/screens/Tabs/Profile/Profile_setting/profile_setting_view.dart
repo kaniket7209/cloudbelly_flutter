@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cloudbelly_app/api_service.dart';
@@ -23,6 +24,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileSettingView extends StatefulWidget {
@@ -37,7 +39,10 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   TextEditingController numberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-  bool? _switchValue;
+  bool _switchValue = false;
+  bool kycVerified = false;
+  bool paymentSetup = false;
+  bool kycSetup = false;
   TimeOfDay? tillTime;
   TimeOfDay? fromTime;
   String? fromTiming;
@@ -48,56 +53,57 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   @override
   void initState() {
     super.initState();
-    userDetails = UserPreferences.getUser();
+    fetchUserDataFromAPI();
+    // userDetails = UserPreferences.getUser();
 
     /* if (userData?['user_type'] == UserType.Customer.name) {
       if (userData?['user_name'] != null) {
         nameController.text = userData?['user_name'];
       }
     } else {*/
-    if (Provider.of<Auth>(context, listen: false).userData?['store_name'] !=
-        null) {
-      nameController.text =
-          Provider.of<Auth>(context, listen: false).userData?['store_name'];
-    }
-    if (Provider.of<Auth>(context, listen: false).userData?['email'] != null) {
-      emailController.text =
-          Provider.of<Auth>(context, listen: false).userData?['email'];
-    }
-    if (Provider.of<Auth>(context, listen: false).userData?['phone'] != null) {
-      numberController.text =
-          Provider.of<Auth>(context, listen: false).userData?['phone'];
-    }
-    if (Provider.of<Auth>(context, listen: false).userData?['working_hours'] !=
-        null) {
-      if (Provider.of<Auth>(context, listen: false).userData?['working_hours']
-              ['start_time'] !=
-          null) {
-        fromTiming = Provider.of<Auth>(context, listen: false)
-            .userData?['working_hours']['start_time'];
-        setState(() {});
-      }
-      if (Provider.of<Auth>(context, listen: false).userData?['working_hours']
-              ['end_time'] !=
-          null) {
-        tillTiming = Provider.of<Auth>(context, listen: false)
-            .userData?['working_hours']['end_time'];
+    // if (Provider.of<Auth>(context, listen: false).userData?['store_name'] !=
+    //     null) {
+    //   nameController.text =
+    //       Provider.of<Auth>(context, listen: false).userData?['store_name'];
+    // }
+    // if (Provider.of<Auth>(context, listen: false).userData?['email'] != null) {
+    //   emailController.text =
+    //       Provider.of<Auth>(context, listen: false).userData?['email'];
+    // }
+    // if (Provider.of<Auth>(context, listen: false).userData?['phone'] != null) {
+    //   numberController.text =
+    //       Provider.of<Auth>(context, listen: false).userData?['phone'];
+    // }
+    // if (Provider.of<Auth>(context, listen: false).userData?['working_hours'] !=
+    //     null) {
+    //   if (Provider.of<Auth>(context, listen: false).userData?['working_hours']
+    //           ['start_time'] !=
+    //       null) {
+    //     fromTiming = Provider.of<Auth>(context, listen: false)
+    //         .userData?['working_hours']['start_time'];
+    //     setState(() {});
+    //   }
+    //   if (Provider.of<Auth>(context, listen: false).userData?['working_hours']
+    //           ['end_time'] !=
+    //       null) {
+    //     tillTiming = Provider.of<Auth>(context, listen: false)
+    //         .userData?['working_hours']['end_time'];
 
-        setState(() {});
-      }
-    }
+    //     setState(() {});
+    //   }
+    // }
 
-    if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
-        null) {
-      addressController.text = Provider.of<Auth>(context, listen: false)
-          .userData?['address']['location'];
-    }
-    if (Provider.of<Auth>(context, listen: false)
-            .userData?['store_availability'] !=
-        null) {
-      _switchValue = Provider.of<Auth>(context, listen: false)
-          .userData?['store_availability'];
-    }
+    // if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
+    //     null) {
+    //   addressController.text = Provider.of<Auth>(context, listen: false)
+    //       .userData?['address']['location'];
+    // }
+    // if (Provider.of<Auth>(context, listen: false)
+    //         .userData?['store_availability'] !=
+    //     null) {
+    //   _switchValue = Provider.of<Auth>(context, listen: false)
+    //       .userData?['store_availability'];
+    // }
   }
 
   Future<void> submitStoreName() async {
@@ -204,6 +210,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           'upi_id':
               Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
                   '',
+          'fssai':
+              Provider.of<Auth>(context, listen: false).userData?['fssai'] ??
+                  '',
           'user_type': Provider.of<Auth>(context, listen: false)
                   .userData?['user_type'] ??
               'Vendor',
@@ -216,8 +225,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
             context,
             Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
                     UserType.Customer.name
-                ? "User name update successfully"
-                : 'Store name update successfully');
+                ? "User name updated successfully"
+                : 'Store name updated successfully');
         Navigator.of(context).pop();
         // prefs.setInt('counter', 3);
       } else {
@@ -331,6 +340,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
             Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
         'upi_id':
             Provider.of<Auth>(context, listen: false).userData?['upi_id'] ?? '',
+        'fssai':
+            Provider.of<Auth>(context, listen: false).userData?['fssai'] ?? '',
         'user_type':
             Provider.of<Auth>(context, listen: false).userData?['user_type'] ??
                 'Vendor',
@@ -454,6 +465,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   '',
           'upi_id':
               Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
+                  '',
+          'fssai':
+              Provider.of<Auth>(context, listen: false).userData?['fssai'] ??
                   '',
           'user_type': Provider.of<Auth>(context, listen: false)
                   .userData?['user_type'] ??
@@ -581,6 +595,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           'phone': numberController.text ?? '',
           'upi_id':
               Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
+                  '',
+          'fssai':
+              Provider.of<Auth>(context, listen: false).userData?['fssai'] ??
                   '',
           'user_type': Provider.of<Auth>(context, listen: false)
                   .userData?['user_type'] ??
@@ -711,6 +728,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           'upi_id':
               Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
                   '',
+          'fssai':
+              Provider.of<Auth>(context, listen: false).userData?['fssai'] ??
+                  '',
           'user_type': Provider.of<Auth>(context, listen: false)
                   .userData?['user_type'] ??
               'Vendor',
@@ -735,124 +755,142 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   Future<void> submitStoreAvailability() async {
     // final prefs = await SharedPreferences.getInstance();
-
+   
     AppWideLoadingBanner().loadingBanner(context);
+    print('pp${Provider.of<Auth>(context, listen: false).userData?['upi_id']}');
+    if (Provider.of<Auth>(context, listen: false).userData?['upi_id'] == '' &&
+       Provider.of<Auth>(context, listen: false).userData?['pan_number'] == '') {
+      TOastNotification().showErrorToast(
+          context, 'First complete Kyc details and Payment Setup');
+    } else if (Provider.of<Auth>(context, listen: false).userData?['upi_id'] != '' &&
+       Provider.of<Auth>(context, listen: false).userData?['pan_number'] != '' && !kycVerified) {
+      TOastNotification().showErrorToast(
+          context, 'Please Wait, Your application is in review');
+    } else if (paymentSetup && kycSetup 
+       &&
+        kycVerified) {
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .storeAvailability(_switchValue);
+      if (msg == 'User information updated successfully.') {
+        Provider.of<Auth>(context, listen: false)
+            .userData?['store_availability'] = _switchValue;
+        Map<String, dynamic>? userData = {
+          'user_id':
+              Provider.of<Auth>(context, listen: false).userData?['user_id'],
+          'user_name':
+              Provider.of<Auth>(context, listen: false).userData?['user_name'],
+          'email': Provider.of<Auth>(context, listen: false).userData?['email'],
+          'store_name':
+              Provider.of<Auth>(context, listen: false).userData?['store_name'],
+          'profile_photo': Provider.of<Auth>(context, listen: false)
+                  .userData?['profile_photo'] ??
+              '' ??
+              '',
+          'store_availability': _switchValue ?? false,
+          'pan_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['pan_number'] ??
+              '',
+          'aadhar_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['aadhar_number'] ??
+              '',
+          if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
+              null)
+            'address': {
+              "location": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['location'],
+              "latitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['latitude'],
+              "longitude": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['longitude'],
+              "hno": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['hno'],
+              "pincode": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['pincode'],
+              "landmark": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['landmark'],
+              "type": Provider.of<Auth>(context, listen: false)
+                  .userData?['address']['type'],
+            },
+          if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
+              null)
+            'location': {
+              'details': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['details'] ??
+                  '',
+              'latitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['latitude'] ??
+                  '',
+              'longitude': Provider.of<Auth>(context, listen: false)
+                      .userData?['location']['longitude'] ??
+                  '',
+            },
+          if (Provider.of<Auth>(context, listen: false)
+                  .userData?['working_hours'] !=
+              null)
+            'working_hours': {
+              'start_time': Provider.of<Auth>(context, listen: false)
+                      .userData?['working_hours']['start_time'] ??
+                  '' ??
+                  '',
+              'end_time': Provider.of<Auth>(context, listen: false)
+                      .userData?['working_hours']['end_time'] ??
+                  '',
+            },
+          'delivery_addresses': Provider.of<Auth>(context, listen: false)
+                  .userData?['delivery_addresses'] ??
+              [],
+          'bank_name': Provider.of<Auth>(context, listen: false)
+                  .userData?['bank_name'] ??
+              '',
+          'pincode':
+              Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
+                  '',
+          'rating':
+              Provider.of<Auth>(context, listen: false).userData?['rating'] ??
+                  '-',
+          'followers': Provider.of<Auth>(context, listen: false)
+                  .userData?['followers'] ??
+              [],
+          'followings': Provider.of<Auth>(context, listen: false)
+                  .userData?['followings'] ??
+              [],
+          'cover_image': Provider.of<Auth>(context, listen: false)
+                  .userData?['cover_image'] ??
+              '',
+          'account_number': Provider.of<Auth>(context, listen: false)
+                  .userData?['account_number'] ??
+              '',
+          'ifsc_code': Provider.of<Auth>(context, listen: false)
+                  .userData?['ifsc_code'] ??
+              '',
+          'phone':
+              Provider.of<Auth>(context, listen: false).userData?['phone'] ??
+                  '',
+          'upi_id':
+              Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
+                  '',
+          'fssai':
+              Provider.of<Auth>(context, listen: false).userData?['fssai'] ??
+                  '',
+          'user_type': Provider.of<Auth>(context, listen: false)
+                  .userData?['user_type'] ??
+              'Vendor',
+        };
+        await UserPreferences.setUser(userData);
+        userDetails = UserPreferences.getUser();
 
-    String msg = await Provider.of<Auth>(context, listen: false)
-        .storeAvailability(_switchValue);
-    if (msg == 'User information updated successfully.') {
-      Provider.of<Auth>(context, listen: false)
-          .userData?['store_availability'] = _switchValue;
-      Map<String, dynamic>? userData = {
-        'user_id':
-            Provider.of<Auth>(context, listen: false).userData?['user_id'],
-        'user_name':
-            Provider.of<Auth>(context, listen: false).userData?['user_name'],
-        'email': Provider.of<Auth>(context, listen: false).userData?['email'],
-        'store_name':
-            Provider.of<Auth>(context, listen: false).userData?['store_name'],
-        'profile_photo': Provider.of<Auth>(context, listen: false)
-                .userData?['profile_photo'] ??
-            '' ??
-            '',
-        'store_availability': _switchValue ?? false,
-        'pan_number':
-            Provider.of<Auth>(context, listen: false).userData?['pan_number'] ??
-                '',
-        'aadhar_number': Provider.of<Auth>(context, listen: false)
-                .userData?['aadhar_number'] ??
-            '',
-        if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
-            null)
-          'address': {
-            "location": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['location'],
-            "latitude": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['latitude'],
-            "longitude": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['longitude'],
-            "hno": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['hno'],
-            "pincode": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['pincode'],
-            "landmark": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['landmark'],
-            "type": Provider.of<Auth>(context, listen: false)
-                .userData?['address']['type'],
-          },
-        if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
-            null)
-          'location': {
-            'details': Provider.of<Auth>(context, listen: false)
-                    .userData?['location']['details'] ??
-                '',
-            'latitude': Provider.of<Auth>(context, listen: false)
-                    .userData?['location']['latitude'] ??
-                '',
-            'longitude': Provider.of<Auth>(context, listen: false)
-                    .userData?['location']['longitude'] ??
-                '',
-          },
-        if (Provider.of<Auth>(context, listen: false)
-                .userData?['working_hours'] !=
-            null)
-          'working_hours': {
-            'start_time': Provider.of<Auth>(context, listen: false)
-                    .userData?['working_hours']['start_time'] ??
-                '' ??
-                '',
-            'end_time': Provider.of<Auth>(context, listen: false)
-                    .userData?['working_hours']['end_time'] ??
-                '',
-          },
-        'delivery_addresses': Provider.of<Auth>(context, listen: false)
-                .userData?['delivery_addresses'] ??
-            [],
-        'bank_name':
-            Provider.of<Auth>(context, listen: false).userData?['bank_name'] ??
-                '',
-        'pincode':
-            Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
-                '',
-        'rating':
-            Provider.of<Auth>(context, listen: false).userData?['rating'] ??
-                '-',
-        'followers':
-            Provider.of<Auth>(context, listen: false).userData?['followers'] ??
-                [],
-        'followings':
-            Provider.of<Auth>(context, listen: false).userData?['followings'] ??
-                [],
-        'cover_image': Provider.of<Auth>(context, listen: false)
-                .userData?['cover_image'] ??
-            '',
-        'account_number': Provider.of<Auth>(context, listen: false)
-                .userData?['account_number'] ??
-            '',
-        'ifsc_code':
-            Provider.of<Auth>(context, listen: false).userData?['ifsc_code'] ??
-                '',
-        'phone':
-            Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
-        'upi_id':
-            Provider.of<Auth>(context, listen: false).userData?['upi_id'] ?? '',
-        'user_type':
-            Provider.of<Auth>(context, listen: false).userData?['user_type'] ??
-                'Vendor',
-      };
-      await UserPreferences.setUser(userData);
-      userDetails = UserPreferences.getUser();
-
-      //  print('pin: ${pan_number}');
-      TOastNotification()
-          .showSuccesToast(context, 'StoreAvailability update successfully');
-      Navigator.of(context).pop();
-      // prefs.setInt('counter', 3);
-    } else {
-      TOastNotification().showErrorToast(context, msg);
-      Navigator.of(context).pop();
+        //  print('pin: ${pan_number}');
+        TOastNotification()
+            .showSuccesToast(context, 'StoreAvailability update successfully');
+        // Navigator.of(context).pop();
+        // prefs.setInt('counter', 3);
+      } else {
+        TOastNotification().showErrorToast(context, msg);
+        Navigator.of(context).pop();
+      }
+      print(msg);
     }
-    print(msg);
+    Navigator.of(context).pop();
   }
 
   Future<void> logout() async {
@@ -873,11 +911,14 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        "jsonre  ${json.encode(Provider.of<Auth>(context, listen: true).userData)}");
+         print("756 $kycVerified kyc  $kycSetup  kyset  $paymentSetup pay");
     String userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
     Color boxShadowColor;
 
-if (userType == 'Vendor') {
+    if (userType == 'Vendor') {
       boxShadowColor = const Color(0xff0A4C61);
     } else if (userType == 'Customer') {
       boxShadowColor = const Color(0xff2E0536);
@@ -1239,7 +1280,7 @@ if (userType == 'Vendor') {
                     ],
                   ),
                   const Spacer(),
-                   Center(
+                  Center(
                     child: Text(
                       'Setting',
                       style: TextStyle(
@@ -1307,7 +1348,7 @@ if (userType == 'Vendor') {
                         )
                       : const TextStyle(
                           fontSize: 14,
-                          fontFamily: 'PT Sans',
+                          fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF2E0536)),
                   controller: nameController,
@@ -1598,7 +1639,7 @@ if (userType == 'Vendor') {
                             icon: const Icon(Icons.done),
                             color: const Color(0xFFFA6E00),
                           ),
-                    hintText: "Enter your contact here",
+                    hintText: "Enter your address here",
                     contentPadding: const EdgeInsets.only(left: 14, top: 10),
                     hintStyle: const TextStyle(
                         fontSize: 12,
@@ -1782,25 +1823,30 @@ if (userType == 'Vendor') {
                   children: [
                     TextWidgetStoreSetup(label: 'Store availability'),
                     Container(
-                      height:
-                          01, // Adjust the scale factor to adjust the height
+                      height: 25, // Adjust the height as needed
                       child: CupertinoSwitch(
-                        thumbColor: _switchValue == true
+                        thumbColor: _switchValue
                             ? const Color(0xFF4DAB4B)
                             : const Color(0xFFF82E52),
-                        activeColor: _switchValue == true
+                        activeColor: _switchValue
                             ? const Color(0xFFBFFC9A)
                             : const Color(0xFFF82E52).withOpacity(0.5),
                         trackColor: const Color(0xFFF82E52).withOpacity(0.5),
-                        value: _switchValue ?? false,
-                        onChanged: (value) {
-                          setState(() {
-                            _switchValue = value;
-                          });
-                          submitStoreAvailability();
+                        value: _switchValue,
+                        onChanged: (value) async {
+                          print("kycVerified $kycVerified");
+                          if (Provider.of<Auth>(context, listen: false).userData?['pan_number'] != '' &&
+                              Provider.of<Auth>(context, listen: false).userData?['upi_id'] != '' &&
+                              kycVerified) {
+                            setState(() {
+                              _switchValue = value;
+                            });
+                          }
+                            print("switch tapped $_switchValue");
+                          await submitStoreAvailability(); // Call the submit function after the state update
                         },
                       ),
-                    ),
+                    )
                   ],
                 ),
                 Space(
@@ -1826,14 +1872,14 @@ if (userType == 'Vendor') {
                               blurRadius: 20,
                             )
                           ],
-                          color: Provider.of<Auth>(context, listen: false)
-                                          .userData?['pan_number'] !=
-                                      null &&
-                                  Provider.of<Auth>(context, listen: false)
-                                          .userData?['pan_number'] !=
-                                      ""
-                              ? const Color(0xFFFA6E00)
-                              : const Color(0xFFA5C8C799),
+                          color:
+                              Provider.of<Auth>(context).userData?['upi_id'] !=
+                                          null &&
+                                      Provider.of<Auth>(context)
+                                              .userData?['upi_id'] !=
+                                          ''
+                                  ? const Color(0xFFFA6E00)
+                                  : const Color(0xFFA5C8C799),
                           shape: const SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius.all(SmoothRadius(
                                 cornerRadius: 10, cornerSmoothing: 1)),
@@ -1853,7 +1899,7 @@ if (userType == 'Vendor') {
                         "Payment setup",
                         style: TextStyle(
                             fontSize: 14,
-                            color: Provider.of<Auth>(context, listen: false)
+                            color: Provider.of<Auth>(context)
                                         .userData?['user_type'] ==
                                     UserType.Vendor.name
                                 ? const Color(0xFF0A4C61)
@@ -1865,21 +1911,6 @@ if (userType == 'Vendor') {
                         9,
                         isHorizontal: true,
                       ),
-                      if (Provider.of<Auth>(context, listen: false)
-                                  .userData?['pan_number'] ==
-                              null &&
-                          Provider.of<Auth>(context, listen: false)
-                                  .userData?['pan_number'] ==
-                              "") ...[
-                        Container(
-                          height: 8,
-                          width: 8,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFF82E52),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ],
                       const Spacer(),
                       Image.asset(
                         Assets.nextIcon,
@@ -1912,12 +1943,12 @@ if (userType == 'Vendor') {
                               blurRadius: 20,
                             )
                           ],
-                          color: Provider.of<Auth>(context, listen: false)
-                                          .userData?['bank_name'] !=
+                          color: Provider.of<Auth>(context)
+                                          .userData?['pan_number'] !=
                                       null &&
-                                  Provider.of<Auth>(context, listen: false)
-                                          .userData?['bank_name'] !=
-                                      ""
+                                  Provider.of<Auth>(context)
+                                          .userData?['pan_number'] !=
+                                      ''
                               ? const Color(0xFFFA6E00)
                               : const Color(0xFFA5C8C799),
                           shape: const SmoothRectangleBorder(
@@ -1939,7 +1970,7 @@ if (userType == 'Vendor') {
                         "KYC & documents",
                         style: TextStyle(
                             fontSize: 14,
-                            color: Provider.of<Auth>(context, listen: false)
+                            color: Provider.of<Auth>(context)
                                         .userData?['user_type'] ==
                                     UserType.Vendor.name
                                 ? const Color(0xFF0A4C61)
@@ -1951,26 +1982,58 @@ if (userType == 'Vendor') {
                         9,
                         isHorizontal: true,
                       ),
-                      if (Provider.of<Auth>(context, listen: false)
-                                  .userData?['bank_name'] ==
-                              null &&
-                          Provider.of<Auth>(context, listen: false)
-                                  .userData?['bank_name'] ==
-                              "")
-                        Container(
-                          height: 8,
-                          width: 8,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFF82E52),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
                       const Spacer(),
                       Image.asset(
                         Assets.nextIcon,
                         height: 20,
                         width: 8,
                       )
+                    ],
+                  ),
+                ),
+              ],
+              Space(1.h),
+              if (Provider.of<Auth>(context, listen: false).userData?['pan_number'] != '' && 
+              Provider.of<Auth>(context, listen: false).userData?['upi_id'] != '' &&
+                      !kycVerified
+                  //     &&
+                  // Provider.of<Auth>(context, listen: false)
+                  //         .userData?['store_availability'] ==
+                  //     true
+                  ) ...[
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10.0),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      color: Color(0xFF0A4C61),
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Application in review',
+                        style: TextStyle(
+                          color: Color(0xFF0A4C61),
+                          fontSize: 14,
+                          fontFamily: 'PT Sans',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'In progress',
+                        style: TextStyle(
+                          color: Color(0xFF0A4C61),
+                          fontSize: 14,
+                          fontFamily: 'PT Sans',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -2104,6 +2167,41 @@ if (userType == 'Vendor') {
         ),
       ),
     );
+  }
+
+  void fetchUserDataFromAPI() async {
+    // Replace with actual user id list if needed
+    print(
+        "ddddd ${json.encode(Provider.of<Auth>(context, listen: false).userData?['user_id'])}");
+    List<dynamic> userIdList = [UserPreferences.getUser()?['user_id']];
+    print("list ${userIdList}");
+    List<dynamic> fetchedUserDetails =
+        await Provider.of<Auth>(context, listen: false).getUserInfo(userIdList);
+    if (fetchedUserDetails.isNotEmpty) {
+      setState(() {
+        userDetails = fetchedUserDetails[0];
+      });
+    }
+
+    if (userDetails != null) {
+      print("userdet ${json.encode(userDetails)}");
+      nameController.text = userDetails!['store_name'] ?? '';
+      emailController.text = userDetails!['email'] ?? '';
+      numberController.text = userDetails!['phone'] ?? '';
+      fromTiming = userDetails!['working_hours']?['start_time'];
+      tillTiming = userDetails!['working_hours']?['end_time'];
+      if (userDetails!['kyc_status'] == 'verified') {
+        kycVerified = true;
+      }
+      if (userDetails!['pan_number'] != '') {
+        paymentSetup = true;
+      }
+      if (userDetails!['fssai'] != '') {
+        kycSetup = true;
+      }
+      addressController.text = userDetails!['address']?['location'] ?? '';
+      _switchValue = userDetails!['store_availability'] ?? false;
+    }
   }
 }
 

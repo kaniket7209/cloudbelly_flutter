@@ -1,0 +1,36 @@
+{
+    "user_id": "66770e32fa53a30431252799",
+    "user_name": null,
+    "email": "kaniket7209@gmail.com",
+    "store_name": "Belly Kitchen",
+    "profile_photo": "https://image-uploads.s3.amazonaws.com/ebd895c1-5060-49d1-aea7-3f697a7b1236_compressed_image.jpg",
+    "store_availability": false,
+    "pan_number": "KAZPS3862K",
+    "aadhar_number": "288508250776",
+    "address": {
+        "location": "Vidyanagar, Champasari",
+        "latitude": "37.4219983",
+        "longitude": "-122.084",
+        "hno": "Ice Cube",
+        "pincode": "734003",
+        "landmark": "Near Collection O Four Fox Suits",
+        "type": "Home"
+    },
+    "working_hours": {
+        "start_time": "11:0",
+        "end_time": "20:0"
+    },
+    "delivery_addresses": [],
+    "bank_name": "",
+    "pincode": "",
+    "rating": "-",
+    "followers": [],
+    "followings": [],
+    "cover_image": "",
+    "account_number": "",
+    "ifsc_code": "",
+    "phone": "6206630515",
+    "upi_id": "6206630515@axl",
+    "fssai": "",
+    "user_type": "Vendor"
+}

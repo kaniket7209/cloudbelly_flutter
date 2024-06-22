@@ -994,7 +994,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
-
+// kyc verification
   Future<String> storeSetup2(
       pan_number, aadhar_number, fssai_licence_document) async {
     final String url = 'https://app.cloudbelly.in/update-user';
@@ -1004,6 +1004,7 @@ class Auth with ChangeNotifier {
       'pan_number': pan_number,
       "aadhar_number": aadhar_number,
       "fssai": fssai_licence_document,
+      "kyc_status":"unverified"
     };
 
     try {
@@ -1601,7 +1602,7 @@ class Auth with ChangeNotifier {
       );
       // print(response.body);
       // print(response.statusCode);
-
+      notifyListeners();
       return jsonDecode(response.body) as List<dynamic>;
     } catch (error) {
       // Handle exceptions
@@ -1947,6 +1948,7 @@ class Auth with ChangeNotifier {
     userData = newUserData;
     notifyListeners();
   }
+ 
 }
 
 class TransitionEffect with ChangeNotifier {
