@@ -477,6 +477,9 @@ class _PostItemState extends State<PostItem> {
                         }
                       },
                       icon: const Icon(Icons.more_vert)),
+              //  for mantaining icon space
+                if(!shouldShowIcon)
+                SizedBox(height:50),
               ],
             ),
           ),

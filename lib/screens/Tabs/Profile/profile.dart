@@ -286,7 +286,7 @@ class _ProfileState extends State<Profile> {
                                       },
                                     ),
                                     Space(
-                                      3.w,
+                                      2.w,
                                       isHorizontal: true,
                                     ),
                                     InkWell(
