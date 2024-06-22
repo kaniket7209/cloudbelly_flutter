@@ -9,10 +9,12 @@ class Dish {
   final String price;
   final String type;
   final String user_id;
+  final String store_name;
 
   Dish({
     required this.id,
     required this.name,
+    required this.store_name,
     required this.category,
     required this.description,
     required this.images,
@@ -33,6 +35,7 @@ class Dish {
       price: json['price'] ?? '',
       type: json['type'] ?? '',
       user_id: json['user_id'] ?? '',
+      store_name: json['store_name'] ?? '',
     );
   }
 }

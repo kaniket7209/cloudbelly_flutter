@@ -132,8 +132,15 @@ class DishCard extends StatelessWidget {
                     ],
                   ),
                  
-                 
-                  
+                 SizedBox(height: 5),
+                   Text(
+                    dish.store_name,
+                    style: TextStyle(
+                      color: Color(0xff9428A9),
+                      fontFamily: 'Product Sans',
+                      fontSize: 12,
+                    ),
+                  ),
                   SizedBox(height: 5),
                   Text(
                     dish.description,
