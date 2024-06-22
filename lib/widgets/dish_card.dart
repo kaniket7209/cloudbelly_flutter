@@ -138,6 +138,7 @@ class DishCard extends StatelessWidget {
                     style: TextStyle(
                       color: Color(0xff9428A9),
                       fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
                   ),

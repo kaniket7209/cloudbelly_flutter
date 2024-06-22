@@ -39,6 +39,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   TextEditingController numberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  String profilePhoto = '';
   bool _switchValue = false;
   bool kycVerified = false;
   bool paymentSetup = false;
@@ -2187,6 +2188,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       print("userdet ${json.encode(userDetails)}");
       nameController.text = userDetails!['store_name'] ?? '';
       emailController.text = userDetails!['email'] ?? '';
+      profilePhoto = userDetails!['profile_photo'] ?? '';
       numberController.text = userDetails!['phone'] ?? '';
       fromTiming = userDetails!['working_hours']?['start_time'];
       tillTiming = userDetails!['working_hours']?['end_time'];
