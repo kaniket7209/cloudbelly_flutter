@@ -148,6 +148,7 @@ class _PerformanceState extends State<Performance> {
                       ),
                     ),
                     25.h);
+              
               },
               txt: 'Add products',
             ),
@@ -683,6 +684,7 @@ class _PerformanceState extends State<Performance> {
       },
     );
   }
+
 }
 
 class TopSellingItemWidget extends StatelessWidget {

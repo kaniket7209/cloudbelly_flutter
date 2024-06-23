@@ -1177,8 +1177,36 @@ class Auth with ChangeNotifier {
       );
       print(response.statusCode);
       print(response.body);
+      final responseBody = jsonDecode(response.body);
+      final code = responseBody['code'];
 
-      return response.statusCode.toString();
+      return code.toString();
+    } catch (error) {
+      // Handle exceptions
+      return '-1';
+    }
+  }
+  Future<String> updateDescriptionAndType() async {
+    final String url = 'https://app.cloudbelly.in/product/update-default-description';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? ""
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      // print(response.statusCode);
+      print("response.body ${response.body}");
+        final responseBody = jsonDecode(response.body);
+      final code = responseBody['code'];
+
+      return code.toString();
+
+      // return response.statusCode.toString();
     } catch (error) {
       // Handle exceptions
       return '-1';
