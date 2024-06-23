@@ -140,10 +140,10 @@ class _SearchViewState extends State<SearchView> {
             ),
             shadows: [
               BoxShadow(
-                color: Color(0xff7B358D).withOpacity(0.2),
-                spreadRadius: 2,
-                blurRadius: 10,
-                offset: Offset(0, 3),
+                color: Color(0xff4F205B).withOpacity(0.4),
+                spreadRadius: 0,
+                blurRadius: 20,
+                offset: Offset(0, 8),
               ),
             ],
           ),

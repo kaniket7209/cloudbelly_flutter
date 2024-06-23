@@ -28,9 +28,9 @@ class Restaurant {
       orderCounter: json['order_counter'] ?? 0,
       profilePhoto: json['profile_photo'] ?? '',
       phone: json['phone'] ?? '',
-      location: json['location']?['location'] ?? '',
-      latitude: json['location']?['latitude'] ?? '',
-      longitude: json['location']?['longitude'] ?? '',
+      location: json['address']?['location'] ?? '',
+      latitude: json['address']?['latitude'] ?? '',
+      longitude: json['address']?['longitude'] ?? '',
     );
   }
 }

@@ -62,6 +62,7 @@ class DishCard extends StatelessWidget {
             ),
             SizedBox(width: 20),
             Expanded(
+              flex: 1,
               child: Column(
                 mainAxisAlignment:
                     MainAxisAlignment.center, // Center vertically
@@ -133,6 +134,7 @@ class DishCard extends StatelessWidget {
                   ),
                  
                  SizedBox(height: 5),
+                 
                    Text(
                     dish.store_name,
                     style: TextStyle(

@@ -23,6 +23,7 @@ class RestaurantCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
       child: Padding(
+      
         padding: const EdgeInsets.all(20.0),
         child: Row(
           children: [
@@ -71,6 +72,7 @@ class RestaurantCard extends StatelessWidget {
             ),
             SizedBox(width: 20),
             Expanded(
+              flex: 1,
               child: Column(
                 mainAxisAlignment:
                     MainAxisAlignment.center, // Center vertically
