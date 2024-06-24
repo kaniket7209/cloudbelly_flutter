@@ -994,6 +994,7 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
 // kyc verification
   Future<String> storeSetup2(
       pan_number, aadhar_number, fssai_licence_document) async {
@@ -1004,7 +1005,7 @@ class Auth with ChangeNotifier {
       'pan_number': pan_number,
       "aadhar_number": aadhar_number,
       "fssai": fssai_licence_document,
-      "kyc_status":"unverified"
+      "kyc_status": "unverified"
     };
 
     try {
@@ -1186,8 +1187,10 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+
   Future<String> updateDescriptionAndType() async {
-    final String url = 'https://app.cloudbelly.in/product/update-default-description';
+    final String url =
+        'https://app.cloudbelly.in/product/update-default-description';
 
     final Map<String, dynamic> requestBody = {
       'user_id': userData?['user_id'] ?? ""
@@ -1201,7 +1204,7 @@ class Auth with ChangeNotifier {
       );
       // print(response.statusCode);
       print("response.body ${response.body}");
-        final responseBody = jsonDecode(response.body);
+      final responseBody = jsonDecode(response.body);
       final code = responseBody['code'];
 
       return code.toString();
@@ -1453,6 +1456,37 @@ class Auth with ChangeNotifier {
           return '-1';
         }
       }
+    }
+  }
+
+  Future<dynamic> updateProductImageusingAI(
+      String product_id, String description, BuildContext context) async {
+    final String url = 'https://app.cloudbelly.in/product/update-ai-image';
+
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      '_id': product_id,
+      'description': description,
+    };
+
+    try {
+     final response =  await http.post(
+        Uri.parse(url),
+        headers: {
+          'Accept': '*/*',
+          'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+      TOastNotification().showSuccesToast(context, 'Image updated ');
+      final responseBody = jsonDecode(response.body);
+      print("resim ${jsonDecode(response.body)}");
+      return responseBody['url'];
+    } catch (error) {
+      // Handle exceptions
+      return 'https://via.placeholder.com/150';
     }
   }
 
@@ -1976,7 +2010,6 @@ class Auth with ChangeNotifier {
     userData = newUserData;
     notifyListeners();
   }
- 
 }
 
 class TransitionEffect with ChangeNotifier {

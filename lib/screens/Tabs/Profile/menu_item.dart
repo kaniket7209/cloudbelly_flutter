@@ -451,6 +451,25 @@ class _MenuItemState extends State<MenuItem> {
                               print(url);
                             },
                             child: StocksMayBeNeedWidget(txt: 'Click photo')),
+                        SizedBox(width: 15,),
+                        TouchableOpacity(
+                            onTap: () async {
+                              AppWideLoadingBanner().loadingBanner(context);
+                              final temp = await Provider.of<Auth>(context,
+                                      listen: false)
+                                  .updateProductImageusingAI(
+                                      data['_id'],data['description'], context);
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              if (temp != null && temp != '') {
+                                url = temp;
+                              }
+                              print(url);
+                            },
+                            child: StocksMayBeNeedWidget(txt: 'From AI')
+                           
+                            ),
+                        
                         Space(isHorizontal: true, 5.w),
                       ],
                     ),
