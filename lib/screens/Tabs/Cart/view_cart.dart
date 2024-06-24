@@ -427,6 +427,8 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   onPressed: () {
                     // Add continue shopping functionality here
                     Navigator.of(context).pop();
+                     Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                   },
                   child: const Text(
                     'Continue shopping',
@@ -1320,6 +1322,7 @@ class _ViewCartState extends State<ViewCart> {
                         });
                         // print("convertedList  $convertedList");
                         createProductOrder();
+                         
                       },
                       child: Container(
                         height: 41,
