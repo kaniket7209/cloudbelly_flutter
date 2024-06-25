@@ -223,6 +223,7 @@ class _PostItemState extends State<PostItem> {
                             !widget.isProfilePost)
                     ? InkWell(
                         onTap: () {
+                          if(!widget.isProfilePost){
                           print("data:: ${widget.data}");
                           setState(() {
                             userId.add(widget.data['user_id']);
@@ -235,6 +236,7 @@ class _PostItemState extends State<PostItem> {
                                       ))).then((value) {
                             userId.clear();
                           });
+                          }
                         },
                         child: Container(
                             height: 35,

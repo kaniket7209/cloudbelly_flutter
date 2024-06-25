@@ -1,4 +1,5 @@
 // lib/widgets/restaurant_card.dart
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
@@ -42,33 +43,47 @@ class RestaurantCard extends StatelessWidget {
                   // You can clear the userId or perform any other actions here if needed
                 });
               },
-              child: Container(
-                width: 90,
+              child:
+                Container(
                 height: 90,
+                width: 90,
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(
-                      cornerRadius: 17.0,
+                      cornerRadius: 22.0,
                       cornerSmoothing: 1,
                     ),
                   ),
                   shadows: [
                     BoxShadow(
-                     color: Color(0xff9E749E).withOpacity(0.5),
+                      color: Color(0xff9E749E).withOpacity(0.5),
                       spreadRadius: 1,
-                      blurRadius: 20,
+                      blurRadius: 10,
                       offset: Offset(3, 6),
                     ),
                   ],
-                  image: DecorationImage(
-                    image: NetworkImage(restaurant.profilePhoto.isNotEmpty
-                        ? restaurant.profilePhoto
-                        : 'https://via.placeholder.com/150'),
-                    fit: BoxFit.cover,
-                  ),
                 ),
+                child: ClipSmoothRect(
+                  radius: SmoothBorderRadius(
+                    cornerRadius: 22,
+                    cornerSmoothing: 1,
+                  ),
+                  child: restaurant.profilePhoto.isNotEmpty
+                      ? Image.network(
+                         restaurant.profilePhoto.isNotEmpty
+                              ? restaurant.profilePhoto
+                              : 'https://via.placeholder.com/150', // Fallback image URL
+                          fit: BoxFit.cover,
+                          loadingBuilder:
+                              GlobalVariables().loadingBuilderForImage,
+                          errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                        )
+                      : Image.network('https://via.placeholder.com/150'),
+                ),
+             
               ),
+           
             ),
             SizedBox(width: 20),
             Expanded(

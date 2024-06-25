@@ -1,4 +1,5 @@
 // lib/widgets/dish_card.dart
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
@@ -33,13 +34,13 @@ class DishCard extends StatelessWidget {
                 });
               },
               child: Container(
-                width: 90,
                 height: 90,
+                width: 90,
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(
-                      cornerRadius: 17.0,
+                      cornerRadius: 22.0,
                       cornerSmoothing: 1,
                     ),
                   ),
@@ -47,17 +48,29 @@ class DishCard extends StatelessWidget {
                     BoxShadow(
                       color: Color(0xff9E749E).withOpacity(0.5),
                       spreadRadius: 1,
-                      blurRadius: 20,
+                      blurRadius: 10,
                       offset: Offset(3, 6),
                     ),
                   ],
-                  image: DecorationImage(
-                    image: NetworkImage(dish.images.isNotEmpty
-                        ? dish.images.first
-                        : 'https://via.placeholder.com/150'),
-                    fit: BoxFit.cover,
-                  ),
                 ),
+                child: ClipSmoothRect(
+                  radius: SmoothBorderRadius(
+                    cornerRadius: 22,
+                    cornerSmoothing: 1,
+                  ),
+                  child: dish.images.isNotEmpty
+                      ? Image.network(
+                          dish.images.isNotEmpty
+                              ? dish.images.first
+                              : 'https://via.placeholder.com/150', // Fallback image URL
+                          fit: BoxFit.cover,
+                          loadingBuilder:
+                              GlobalVariables().loadingBuilderForImage,
+                          errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                        )
+                      : Image.network('https://via.placeholder.com/150'),
+                ),
+             
               ),
             ),
             SizedBox(width: 20),
@@ -71,7 +84,7 @@ class DishCard extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        width : MediaQuery.of(context).size.width * 0.3,
+                        width: MediaQuery.of(context).size.width * 0.3,
                         child: Text(
                           dish.name,
                           style: TextStyle(
@@ -132,10 +145,8 @@ class DishCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                 
-                 SizedBox(height: 5),
-                 
-                   Text(
+                  SizedBox(height: 5),
+                  Text(
                     dish.store_name,
                     style: TextStyle(
                       color: Color(0xff9428A9),

@@ -447,170 +447,182 @@ class _ProfileState extends State<Profile> {
                                               txt: 'Edit profile',
                                               isActive: true),
                                         ),
-                                        Make_Profile_ListWidget(
-                                          color: Color(0xFFFA6E00),
-                                          onTap: () {
-                                            AppWideBottomSheet().showSheet(
-                                                context,
-                                                Container(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Space(1.h),
-                                                      const Text(
-                                                        '  Scan your menu',
-                                                        style: TextStyle(
-                                                          color:
-                                                              Color(0xFF094B60),
-                                                          fontSize: 26,
-                                                          fontFamily: 'Jost',
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          height: 0.03,
-                                                          letterSpacing: 0.78,
-                                                        ),
-                                                      ),
-                                                      Space(3.h),
-                                                      TouchableOpacity(
-                                                        onTap: () async {
-                                                          AppWideLoadingBanner()
-                                                              .loadingBanner(
-                                                                  context);
-                                                          dynamic data =
-                                                              await Provider.of<
-                                                                          Auth>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .ScanMenu(
-                                                                      'Gallery');
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                          if (data ==
-                                                              'file size very large') {
-                                                            TOastNotification()
-                                                                .showErrorToast(
-                                                                    context,
-                                                                    'file size very large');
-                                                          } else if (data !=
-                                                                  'No image picked' &&
-                                                              data != '') {
-                                                            ScannedMenuBottomSheet(
-                                                                context,
-                                                                data['data'],
-                                                                true);
-                                                          }
-                                                        },
-                                                        child: const Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  8.0),
-                                                          child: Row(
-                                                            children: [
-                                                              Icon(Icons
-                                                                  .photo_album_outlined),
-                                                              Space(
-                                                                  isHorizontal:
-                                                                      true,
-                                                                  15),
-                                                              Text(
-                                                                'Upload from gallery',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Color(
-                                                                      0xFF094B60),
-                                                                  fontSize: 12,
-                                                                  fontFamily:
-                                                                      'Product Sans',
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                  height: 0.10,
-                                                                  letterSpacing:
-                                                                      0.36,
-                                                                ),
-                                                              )
-                                                            ],
+                                        if (Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .userData?['user_type'] !=
+                                            UserType.Customer.name)
+                                          Make_Profile_ListWidget(
+                                            color: Color(0xFFFA6E00),
+                                            onTap: () {
+                                              AppWideBottomSheet().showSheet(
+                                                  context,
+                                                  Container(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Space(1.h),
+                                                        const Text(
+                                                          '  Scan your menu',
+                                                          style: TextStyle(
+                                                            color: Color(
+                                                                0xFF094B60),
+                                                            fontSize: 26,
+                                                            fontFamily: 'Jost',
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            height: 0.03,
+                                                            letterSpacing: 0.78,
                                                           ),
                                                         ),
-                                                      ),
-                                                      TouchableOpacity(
-                                                        onTap: () async {
-                                                          AppWideLoadingBanner()
-                                                              .loadingBanner(
-                                                                  context);
-                                                          dynamic data =
-                                                              await Provider.of<
-                                                                          Auth>(
+                                                        Space(3.h),
+                                                        TouchableOpacity(
+                                                          onTap: () async {
+                                                            AppWideLoadingBanner()
+                                                                .loadingBanner(
+                                                                    context);
+                                                            dynamic data =
+                                                                await Provider.of<
+                                                                            Auth>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .ScanMenu(
+                                                                        'Gallery');
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            if (data ==
+                                                                'file size very large') {
+                                                              TOastNotification()
+                                                                  .showErrorToast(
                                                                       context,
-                                                                      listen:
-                                                                          false)
-                                                                  .ScanMenu(
-                                                                      'Camera');
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                          // print(data);
-                                                          if (data ==
-                                                              'file size very large') {
-                                                            TOastNotification()
-                                                                .showErrorToast(
-                                                                    context,
-                                                                    'file size very large');
-                                                          } else if (data !=
-                                                                  'No image picked' &&
-                                                              data != '') {
-                                                            ScannedMenuBottomSheet(
-                                                                context,
-                                                                data['data'],
-                                                                true);
-                                                          }
-                                                        },
-                                                        child: const Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  8.0),
-                                                          child: Row(
-                                                            children: [
-                                                              Icon(
-                                                                  Icons.camera),
-                                                              Space(
-                                                                  isHorizontal:
-                                                                      true,
-                                                                  15),
-                                                              Text(
-                                                                'Click photo',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Color(
-                                                                      0xFF094B60),
-                                                                  fontSize: 12,
-                                                                  fontFamily:
-                                                                      'Product Sans',
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                  height: 0.10,
-                                                                  letterSpacing:
-                                                                      0.36,
-                                                                ),
-                                                              )
-                                                            ],
+                                                                      'file size very large');
+                                                            } else if (data !=
+                                                                    'No image picked' &&
+                                                                data != '') {
+                                                              ScannedMenuBottomSheet(
+                                                                  context,
+                                                                  data['data'],
+                                                                  true);
+                                                            }
+                                                          },
+                                                          child: const Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    8.0),
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(Icons
+                                                                    .photo_album_outlined),
+                                                                Space(
+                                                                    isHorizontal:
+                                                                        true,
+                                                                    15),
+                                                                Text(
+                                                                  'Upload from gallery',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Color(
+                                                                        0xFF094B60),
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontFamily:
+                                                                        'Product Sans',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    height:
+                                                                        0.10,
+                                                                    letterSpacing:
+                                                                        0.36,
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
                                                           ),
                                                         ),
-                                                      )
-                                                    ],
+                                                        TouchableOpacity(
+                                                          onTap: () async {
+                                                            AppWideLoadingBanner()
+                                                                .loadingBanner(
+                                                                    context);
+                                                            dynamic data =
+                                                                await Provider.of<
+                                                                            Auth>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .ScanMenu(
+                                                                        'Camera');
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            // print(data);
+                                                            if (data ==
+                                                                'file size very large') {
+                                                              TOastNotification()
+                                                                  .showErrorToast(
+                                                                      context,
+                                                                      'file size very large');
+                                                            } else if (data !=
+                                                                    'No image picked' &&
+                                                                data != '') {
+                                                              ScannedMenuBottomSheet(
+                                                                  context,
+                                                                  data['data'],
+                                                                  true);
+                                                            }
+                                                          },
+                                                          child: const Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    8.0),
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(Icons
+                                                                    .camera),
+                                                                Space(
+                                                                    isHorizontal:
+                                                                        true,
+                                                                    15),
+                                                                Text(
+                                                                  'Click photo',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Color(
+                                                                        0xFF094B60),
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontFamily:
+                                                                        'Product Sans',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    height:
+                                                                        0.10,
+                                                                    letterSpacing:
+                                                                        0.36,
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                25.h);
-                                          },
-                                          txt: 'Add products',
-                                        ),
+                                                  25.h);
+                                            },
+                                            txt: 'Add products',
+                                          ),
                                       ],
                                     ),
                                     Space(3.h),
@@ -1464,7 +1476,7 @@ Future<dynamic> ScannedMenuBottomSheet(
                                                 'Menu Updated successfully');
                                             Navigator.of(context)
                                                 .pop(); // Close the bottom sheet
-                                                Navigator.of(context)
+                                            Navigator.of(context)
                                                 .pop(); // Close the bottom sheet
                                           } else {
                                             TOastNotification().showErrorToast(
@@ -1631,20 +1643,25 @@ class _MenuState extends State<Menu> {
                                                 padding: EdgeInsets.symmetric(
                                                     vertical: 1.h,
                                                     horizontal: 5.w),
-                                                decoration: BoxDecoration(
+                                                
+                                                decoration: ShapeDecoration(
                                                   color: const Color.fromRGBO(
                                                       112, 186, 210, 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  boxShadow: [
+                                                  shape: SmoothRectangleBorder(
+                                                    borderRadius:
+                                                        SmoothBorderRadius(
+                                                      cornerRadius: 11,
+                                                      cornerSmoothing: 1,
+                                                    ),
+                                                  ),
+                                                  shadows:  [
                                                     BoxShadow(
-                                                        offset:
-                                                            const Offset(5, 5),
-                                                        color: const Color
-                                                                .fromRGBO(112,
-                                                                186, 210, 1)
-                                                            .withOpacity(0.5),
-                                                        blurRadius: 10)
+                                                      color: const Color.fromRGBO(
+                                                          112, 186, 210, 1).withOpacity(0.8),
+                                                      spreadRadius: 0,
+                                                      blurRadius: 10,
+                                                      offset: Offset(1, 4),
+                                                    ),
                                                   ],
                                                 ),
                                                 child: Center(

@@ -60,23 +60,20 @@ class CreateFeed {
                     ),
                   ),
                 ),
-                Space(4.h),
-                const Row(
+                Space(1.h),
+                Row(
                   children: [
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        '<<',
-                        style: TextStyle(
-                          color: Color(0xFFFA6E00),
-                          fontSize: 22,
-                          fontFamily: 'Kavoon',
-                          fontWeight: FontWeight.w400,
-                          height: 0.04,
-                          letterSpacing: 0.66,
+                    Align(
+                          alignment: Alignment.topLeft,
+                          child: IconButton(
+                            icon: Image.asset(
+                                'assets/images/back_double_arrow.png'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
                         ),
-                      ),
-                    ),
+               
                     Text(
                       'New post',
                       style: TextStyle(
@@ -87,7 +84,9 @@ class CreateFeed {
                         height: 0.04,
                         letterSpacing: 0.66,
                       ),
-                    )
+                    ),
+
+                    
                   ],
                 ),
                 Space(3.h),
@@ -96,15 +95,20 @@ class CreateFeed {
                         child: Container(
                           height: 200,
                           width: 200,
-                          decoration: const ShapeDecoration(
-                            shadows: [
+                          decoration:  ShapeDecoration(
+                            shadows: const [
                               BoxShadow(
                                 offset: Offset(0, 4),
                                 color: Color.fromRGBO(124, 193, 191, 0.3),
-                                blurRadius: 20,
+                                blurRadius: 10,
                               )
                             ],
-                            shape: SmoothRectangleBorder(),
+                             shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 13.0,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
                           ),
                           child: ClipSmoothRect(
                             radius: SmoothBorderRadius(
@@ -230,7 +234,7 @@ class _menuSuggestionWIdgetState extends State<menuSuggestionWIdget> {
             decoration: const BoxDecoration(color: Color(0xFFFA6E00)),
           ),
         ),
-        Space(5.h),
+        Space(3.h),
         const Text(
           'Link Menu Items',
           style: TextStyle(
@@ -242,33 +246,52 @@ class _menuSuggestionWIdgetState extends State<menuSuggestionWIdget> {
             letterSpacing: 0.14,
           ),
         ),
-        TextField(
-          controller: _textEditingController,
-          onChanged: (value) {
-            setState(() {
-              check = value;
-            });
-          },
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 3.w),
-            hintText: 'Type something',
-            hintStyle: const TextStyle(
-              color: Color(0xFF094B60),
-              fontSize: 12,
-              fontFamily: 'Product Sans Medium',
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.36,
+         SizedBox(height: 20),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 2.w),
+          // rgba(165, 200, 199, 1),
+          decoration: const ShapeDecoration(
+            shadows: [
+              BoxShadow(
+                offset: Offset(0, 4),
+                color: Color.fromRGBO(165, 200, 199, 0.6),
+                blurRadius: 20,
+              )
+            ],
+            color: Colors.white,
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.all(
+                  SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
             ),
-            border: InputBorder.none,
+          ),
+          child: TextField(
+            controller: _textEditingController,
+            onChanged: (value) {
+              setState(() {
+                check = value;
+              });
+            },
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 3.w),
+              hintText: 'Type product names and select to link',
+              hintStyle: const TextStyle(
+                color: Color(0xFF094B60),
+                fontSize: 12,
+                fontFamily: 'Product Sans Medium',
+                fontWeight: FontWeight.w400,
+                letterSpacing: 0.36,
+              ),
+              border: InputBorder.none,
+            ),
           ),
         ),
-        Center(
-          child: Container(
-            width: 85.w,
-            height: 2,
-            decoration: const BoxDecoration(color: Color(0xFFFA6E00)),
-          ),
-        ),
+        // Center(
+        //   child: Container(
+        //     width: 85.w,
+        //     height: 2,
+        //     decoration: const BoxDecoration(color: Color(0xFFFA6E00)),
+        //   ),
+        // ),
         SizedBox(height: 10),
         if (check != '')
           SizedBox(
@@ -369,6 +392,8 @@ class _menuSuggestionWIdgetState extends State<menuSuggestionWIdget> {
             onChanged: (value) {},
           ),
         ),
+        
+        
         Space(2.h),
         SizedBox(
           height: 10.h,

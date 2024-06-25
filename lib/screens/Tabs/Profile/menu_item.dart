@@ -184,7 +184,7 @@ class _MenuItemState extends State<MenuItem> {
                       height: 10,
                       decoration: ShapeDecoration(
                         color:
-                            widget.data['VEG'] ? Color(0xFF4CF910) : Colors.red,
+                            widget.data['type'] == 'Veg' ? Color(0xFF4CF910) : Colors.red,
                         shape: OvalBorder(),
                         shadows: const [
                           BoxShadow(
