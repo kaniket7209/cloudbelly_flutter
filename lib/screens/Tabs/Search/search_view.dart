@@ -1,11 +1,20 @@
+import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/models/dish.dart';
 import 'package:cloudbelly_app/models/restaurant.dart';
+import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/dish_card.dart';
 import 'package:cloudbelly_app/widgets/restaurant_card.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class SearchView extends StatefulWidget {
   @override
@@ -19,31 +28,85 @@ class _SearchViewState extends State<SearchView> {
   bool isDishesSelected = true;
   int page = 1;
   int limit = 10;
+  Position? _currentPosition;
+  String? area;
+  String? address;
   bool isLoading = false;
   bool hasMoreData = true;
+  String currentAddress = 'Fetching location...';
   PageController _pageController = PageController();
+
+  Map<String, String> headers = {
+    'Content-Type': 'application/json; charset=UTF-8'
+  };
 
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    _initializeData();
+
+    // _checkLocationPermission();
+    // _fetchData();
     _searchController.addListener(_onSearchChanged);
   }
 
-  void _onSearchChanged() {
-    setState(() {
-      page = 1;
-      if (isDishesSelected) {
-        dishItems.clear();
-      } else {
-        restaurantItems.clear();
-      }
-      hasMoreData = true;
-    });
+  Future<void> _initializeData() async {
+    await _checkLocationPermission();
     _fetchData();
   }
 
+  Future<void> _checkLocationPermission() async {
+    PermissionStatus permission = await Permission.locationWhenInUse.status;
+    if (permission == PermissionStatus.granted) {
+      _getCurrentLocation();
+    } else {
+      await Permission.locationWhenInUse.request();
+    }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    AppWideLoadingBanner().loadingBanner(context);
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      _currentPosition = position;
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          _currentPosition?.latitude ?? 22.88689073443092,
+          _currentPosition?.longitude ?? 79.5086424934095);
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks.first;
+
+        address =
+            '${placemark.street}, ${placemark.subLocality},${placemark.subAdministrativeArea}, ${placemark.locality}, ${placemark.administrativeArea},${placemark.country}, ${placemark.postalCode}';
+        area = '${placemark.administrativeArea}';
+
+        setState(() {
+          currentAddress = area!;
+        });
+      } else {
+        address = 'Address not found';
+      }
+
+      await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
+          _currentPosition?.latitude, _currentPosition?.longitude);
+    } catch (e) {
+      print('Error: $e');
+    }
+    Navigator.pop(context);
+    setState(() {});
+  }
+
   Future<void> _fetchData() async {
+    if (_currentPosition == null) {
+      await _getCurrentLocation();
+    }
+
+    if (_currentPosition == null) {
+      // Handle the case where location could not be fetched
+      return;
+    }
+
     if (isLoading || !hasMoreData) return;
 
     setState(() {
@@ -59,10 +122,11 @@ class _SearchViewState extends State<SearchView> {
       body: jsonEncode(<String, dynamic>{
         'page': page,
         'limit': limit,
+        'latitude': _currentPosition!.latitude,
+        'longitude': _currentPosition!.longitude,
         'query': _searchController.text,
       }),
     );
-
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       setState(() {
@@ -86,6 +150,19 @@ class _SearchViewState extends State<SearchView> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  void _onSearchChanged() {
+    setState(() {
+      page = 1;
+      if (isDishesSelected) {
+        dishItems.clear();
+      } else {
+        restaurantItems.clear();
+      }
+      hasMoreData = true;
+    });
+    _fetchData();
   }
 
   void _searchItems(String query) {
@@ -129,41 +206,114 @@ class _SearchViewState extends State<SearchView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff7B358D),
-        title: Container(
-          decoration: ShapeDecoration(
-            color: Colors.white,
-            shape: SmoothRectangleBorder(
-              borderRadius: SmoothBorderRadius(
-                cornerRadius: 15.0,
-                cornerSmoothing: 1,
+        toolbarHeight: 120.0, // Set a specific height for the AppBar
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.location_pin, color: Colors.white),
+                  onPressed: () async {
+                    var selectedLocation = await showSearch(
+                      context: context,
+                      delegate: LocationSearchDelegate(),
+                    );
+                    if (selectedLocation != null) {
+                      setState(() {
+                        currentAddress = selectedLocation['description']!;
+                      });
+
+                      var location = selectedLocation['location']?.split(',');
+                      if (location != null && location.length == 2) {
+                        double latitude = double.parse(location[0]);
+                        double longitude = double.parse(location[1]);
+
+                        _currentPosition = Position(
+                          latitude: latitude,
+                          longitude: longitude,
+                          timestamp: DateTime.now(),
+                          accuracy: 0,
+                          altitude: 0,
+                          heading: 0,
+                          speed: 0,
+                          speedAccuracy: 0,
+                          altitudeAccuracy: 0,
+                          headingAccuracy: 0, // Added this parameter
+                        );
+
+                        await Provider.of<Auth>(context, listen: false)
+                            .updateCustomerLocation(
+                          latitude,
+                          longitude,
+                        );
+
+                        // Fetch data based on new location
+                        // _fetchData();
+                        setState(() {
+            page = 1;
+            dishItems.clear();
+            restaurantItems.clear();
+            hasMoreData = true;
+          });
+          await _fetchData();
+                      }
+                    }
+                  },
+                ),
+                Expanded(
+                  child: Container(
+                    child: Text(
+                      currentAddress,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Container(
+              // height: 48.0, // Ensure height is consistent with the TextField
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 15.0,
+                    cornerSmoothing: 1,
+                  ),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0xff4F205B).withOpacity(0.4),
+                    spreadRadius: 0,
+                    blurRadius: 20,
+                    offset: Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search for restaurants or dishes',
+                  border: InputBorder.none,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () => _searchItems(_searchController.text),
+                  ),
+                ),
+                textInputAction: TextInputAction.search,
+                onSubmitted: (value) {
+                  _searchItems(value);
+                },
               ),
             ),
-            shadows: [
-              BoxShadow(
-                color: Color(0xff4F205B).withOpacity(0.4),
-                spreadRadius: 0,
-                blurRadius: 20,
-                offset: Offset(0, 8),
-              ),
-            ],
-          ),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Search for restaurants or dishes',
-              border: InputBorder.none,
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-              suffixIcon: IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () => _searchItems(_searchController.text),
-              ),
-            ),
-            textInputAction: TextInputAction.search,
-            onSubmitted: (value) {
-              _searchItems(value);
-            },
-          ),
+          ],
         ),
       ),
       body: Column(
@@ -190,15 +340,14 @@ class _SearchViewState extends State<SearchView> {
                   onTap: () => _changeTab(true),
                   child: Column(
                     children: [
-                      SizedBox(height: 20),
+                      SizedBox(height: 10),
                       Text(
                         'Dishes',
                         style: TextStyle(
-                          color:Colors.white,
+                          color: Colors.white,
                           fontSize: 16,
                           fontFamily: 'Product Sans',
-                           fontWeight: FontWeight.bold
-                              // isDishesSelected ? Colors.orange : Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       if (isDishesSelected)
@@ -223,7 +372,6 @@ class _SearchViewState extends State<SearchView> {
                             ),
                           ),
                         ),
-                      // SizedBox(height: 10),
                     ],
                   ),
                 ),
@@ -231,15 +379,14 @@ class _SearchViewState extends State<SearchView> {
                   onTap: () => _changeTab(false),
                   child: Column(
                     children: [
-                      SizedBox(height: 20),
+                      SizedBox(height: 10),
                       Text(
                         'Restaurants',
                         style: TextStyle(
-                          color:Colors.white,
+                          color: Colors.white,
                           fontSize: 16,
-                           fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.bold
-                              // isDishesSelected ? Colors.white : Colors.orange,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       if (!isDishesSelected)
@@ -264,7 +411,6 @@ class _SearchViewState extends State<SearchView> {
                             ),
                           ),
                         ),
-                      // SizedBox(height: 10),
                     ],
                   ),
                 ),
@@ -292,65 +438,156 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  Widget _buildDishList() {
-    return NotificationListener<ScrollNotification>(
-      onNotification: (ScrollNotification scrollInfo) {
-        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
-            !isLoading) {
-          _fetchData();
-        }
-        return false;
+ Widget _buildDishList() {
+  return NotificationListener<ScrollNotification>(
+    onNotification: (ScrollNotification scrollInfo) {
+      if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && !isLoading) {
+        _fetchData();
+      }
+      return false;
+    },
+    child: RefreshIndicator(
+      onRefresh: () async {
+        setState(() {
+          page = 1;
+          dishItems.clear();
+          hasMoreData = true;
+        });
+        await _fetchData();
       },
-      child: RefreshIndicator(
-        onRefresh: () async {
-          setState(() {
-            page = 1;
-            dishItems.clear();
-            hasMoreData = true;
-          });
-          await _fetchData();
-        },
-        child: ListView.builder(
-          itemCount: dishItems.length + (hasMoreData ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index == dishItems.length) {
-              return Center(child: CircularProgressIndicator());
-            }
-            return DishCard(dish: dishItems[index]);
-          },
-        ),
-      ),
+      child: dishItems.isEmpty && !isLoading
+          ? Center(child: Text('No data in this region'))
+          : ListView.builder(
+              itemCount: dishItems.length + (hasMoreData ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == dishItems.length) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                return DishCard(dish: dishItems[index]);
+              },
+            ),
+    ),
+  );
+}
+
+  Widget _buildRestaurantList() {
+  return NotificationListener<ScrollNotification>(
+    onNotification: (ScrollNotification scrollInfo) {
+      if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && !isLoading) {
+        _fetchData();
+      }
+      return false;
+    },
+    child: RefreshIndicator(
+      onRefresh: () async {
+        setState(() {
+          page = 1;
+          restaurantItems.clear();
+          hasMoreData = true;
+        });
+        await _fetchData();
+      },
+      child: restaurantItems.isEmpty && !isLoading
+          ? Center(child: Text('No data in this region'))
+          : ListView.builder(
+              itemCount: restaurantItems.length + (hasMoreData ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == restaurantItems.length) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                return RestaurantCard(restaurant: restaurantItems[index]);
+              },
+            ),
+    ),
+  );
+}
+}
+
+class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
+  final List<Map<String, String>> locations = [
+    {'description': 'Current Location', 'location': ''},
+    {'description': 'Jamshedpur, Jharkhand', 'location': '22.8046, 86.2029'},
+    {'description': 'Siliguri, West Bengal', 'location': '26.7271, 88.3953'},
+    {'description': 'Kolkata, West Bengal', 'location': '22.5726, 88.3639'},
+    {'description': 'Mumbai, Maharashtra', 'location': '19.0760, 72.8777'},
+  ];
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [IconButton(icon: Icon(Icons.clear), onPressed: () => query = '')];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () => close(context, {}),
     );
   }
 
-  Widget _buildRestaurantList() {
-    return NotificationListener<ScrollNotification>(
-      onNotification: (ScrollNotification scrollInfo) {
-        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
-            !isLoading) {
-          _fetchData();
-        }
-        return false;
-      },
-      child: RefreshIndicator(
-        onRefresh: () async {
-          setState(() {
-            page = 1;
-            restaurantItems.clear();
-            hasMoreData = true;
-          });
-          await _fetchData();
-        },
-        child: ListView.builder(
-          itemCount: restaurantItems.length + (hasMoreData ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index == restaurantItems.length) {
-              return Center(child: CircularProgressIndicator());
+  @override
+  Widget buildResults(BuildContext context) {
+    final results = locations
+        .where((loc) =>
+            loc['description']!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(results[index]['description']!),
+          onTap: () {
+            if (results[index]['description'] == 'Current Location') {
+              // Handle current location selection
+              _getCurrentLocation(context);
+            } else {
+              close(context, results[index]);
             }
-            return RestaurantCard(restaurant: restaurantItems[index]);
           },
-        ),
-      ),
+        );
+      },
     );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = locations
+        .where((loc) =>
+            loc['description']!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(suggestions[index]['description']!),
+          onTap: () {
+            if (suggestions[index]['description'] == 'Current Location') {
+              // Handle current location selection
+              _getCurrentLocation(context);
+            } else {
+              close(context, suggestions[index]);
+            }
+          },
+        );
+      },
+    );
+  }
+
+  void _getCurrentLocation(BuildContext context) async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    if (placemarks.isNotEmpty) {
+      Placemark placemark = placemarks.first;
+      close(context, {
+        'description': 'Current Location',
+        'location': '${position.latitude},${position.longitude}',
+      });
+    } else {
+      close(context, {'description': 'Location not found', 'location': ''});
+    }
   }
 }

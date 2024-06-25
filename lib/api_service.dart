@@ -1025,6 +1025,30 @@ class Auth with ChangeNotifier {
     }
   }
 
+ Future<String> updateCustomerLocation(double? latitude, double? longitude) async {
+    final String url = 'https://app.cloudbelly.in/update-user';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "current_location": {"latitude": latitude, "longitude": longitude}
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+      // Handle exceptions
+      return '-1';
+    }
+  }
+
   Future<String> storeSetup3(
       bank_name, account_number, ifsc_code, upi_id) async {
     final String url = 'https://app.cloudbelly.in/update-user';
@@ -1463,7 +1487,6 @@ class Auth with ChangeNotifier {
       String product_id, String description, BuildContext context) async {
     final String url = 'https://app.cloudbelly.in/product/update-ai-image';
 
-
     final Map<String, dynamic> requestBody = {
       'user_id': userData?['user_id'] ?? "",
       '_id': product_id,
@@ -1471,7 +1494,7 @@ class Auth with ChangeNotifier {
     };
 
     try {
-     final response =  await http.post(
+      final response = await http.post(
         Uri.parse(url),
         headers: {
           'Accept': '*/*',

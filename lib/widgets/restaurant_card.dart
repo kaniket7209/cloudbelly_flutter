@@ -119,6 +119,16 @@ class RestaurantCard extends StatelessWidget {
                             color: Color(0xff9428A9),
                             fontWeight: FontWeight.bold),
                       ),
+                       SizedBox(
+                          width:
+                              3.0),
+                      Text(
+                        '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km', // Add the rating text here
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            color: Color(0xffFA6E00),
+                            fontWeight: FontWeight.bold),
+                      ),
                       Spacer(), // Pushes the text to the right
                       Text(
                         '45-50 mins',

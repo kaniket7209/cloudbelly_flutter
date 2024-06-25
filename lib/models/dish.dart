@@ -10,6 +10,7 @@ class Dish {
   final String type;
   final String user_id;
   final String store_name;
+  final String distance_km;
 
   Dish({
     required this.id,
@@ -22,6 +23,7 @@ class Dish {
     required this.price,
     required this.type,
     required this.user_id,
+    required this.distance_km,
   });
 
   factory Dish.fromJson(Map<String, dynamic> json) {
@@ -36,6 +38,7 @@ class Dish {
       type: json['type'] ?? '',
       user_id: json['user_id'] ?? '',
       store_name: json['store_name'] ?? '',
+      distance_km: json['distance_km'].toString(),
     );
   }
 }

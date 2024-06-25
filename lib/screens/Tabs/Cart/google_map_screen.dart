@@ -269,42 +269,42 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                           fontWeight: FontWeight.w600),
                     ),
                     const Spacer(),
-                    Container(
-                      height: 40,
-                      //width: 40,
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: const Color(0xFF2E0536),
-                          width: 1,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            offset: Offset(0, 6),
-                            blurRadius: 20,
-                            color: Color.fromRGBO(158, 116, 158, 0.5),
-                          )
-                        ],
-                      ),
-                      /*decoration: GlobalVariables().ContainerDecoration(
-                        offset: const Offset(3, 6),
-                        blurRadius: 20,
-                        shadowColor: const Color.fromRGBO(158, 116, 158, 0.5),
-                        boxColor:  Colors.white,
-                        cornerRadius: 8),*/
-                      child: const Center(
-                        child: Text(
-                          'Change',
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF9428A9),
-                              fontFamily: 'Jost',
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   height: 40,
+                    //   //width: 40,
+                    //   padding: const EdgeInsets.symmetric(horizontal: 15),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(8),
+                    //     border: Border.all(
+                    //       color: const Color(0xFF2E0536),
+                    //       width: 1,
+                    //     ),
+                    //     boxShadow: const [
+                    //       BoxShadow(
+                    //         offset: Offset(0, 6),
+                    //         blurRadius: 20,
+                    //         color: Color.fromRGBO(158, 116, 158, 0.5),
+                    //       )
+                    //     ],
+                    //   ),
+                    //   /*decoration: GlobalVariables().ContainerDecoration(
+                    //     offset: const Offset(3, 6),
+                    //     blurRadius: 20,
+                    //     shadowColor: const Color.fromRGBO(158, 116, 158, 0.5),
+                    //     boxColor:  Colors.white,
+                    //     cornerRadius: 8),*/
+                    //   child: const Center(
+                    //     child: Text(
+                    //       'Change',
+                    //       style: TextStyle(
+                    //           fontSize: 14,
+                    //           color: Color(0xFF9428A9),
+                    //           fontFamily: 'Jost',
+                    //           fontWeight: FontWeight.w600),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

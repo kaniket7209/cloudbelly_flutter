@@ -8,6 +8,7 @@ class Restaurant {
   final String location;
   final String latitude;
   final String longitude;
+  final String distance_km;
   
 
   Restaurant({
@@ -19,6 +20,7 @@ class Restaurant {
     required this.location,
     required this.latitude,
     required this.longitude,
+    required this.distance_km,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class Restaurant {
       location: json['address']?['location'] ?? '',
       latitude: json['address']?['latitude'] ?? '',
       longitude: json['address']?['longitude'] ?? '',
+      distance_km: json['distance_km'].toString(),
     );
   }
 }

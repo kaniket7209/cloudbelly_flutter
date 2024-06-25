@@ -146,14 +146,28 @@ class DishCard extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 5),
-                  Text(
-                    dish.store_name,
-                    style: TextStyle(
-                      color: Color(0xff9428A9),
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        dish.store_name,
+                        style: TextStyle(
+                          color: Color(0xff9428A9),
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                             SizedBox(width: 10,),          
+                      Text(
+                        '${double.parse(dish.distance_km).toStringAsFixed(2)} km',
+                        style: TextStyle(
+                          color: Color(0xffFA6E00),
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 5),
                   Text(
