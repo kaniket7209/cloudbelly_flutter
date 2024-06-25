@@ -251,12 +251,12 @@ class _SearchViewState extends State<SearchView> {
                         // Fetch data based on new location
                         // _fetchData();
                         setState(() {
-            page = 1;
-            dishItems.clear();
-            restaurantItems.clear();
-            hasMoreData = true;
-          });
-          await _fetchData();
+                          page = 1;
+                          dishItems.clear();
+                          restaurantItems.clear();
+                          hasMoreData = true;
+                        });
+                        await _fetchData();
                       }
                     }
                   },
@@ -438,69 +438,121 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
- Widget _buildDishList() {
-  return NotificationListener<ScrollNotification>(
-    onNotification: (ScrollNotification scrollInfo) {
-      if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && !isLoading) {
-        _fetchData();
-      }
-      return false;
-    },
-    child: RefreshIndicator(
-      onRefresh: () async {
-        setState(() {
-          page = 1;
-          dishItems.clear();
-          hasMoreData = true;
-        });
-        await _fetchData();
+  Widget _buildDishList() {
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
+            !isLoading) {
+          _fetchData();
+        }
+        return false;
       },
-      child: dishItems.isEmpty && !isLoading
-          ? Center(child: Text('No data in this region'))
-          : ListView.builder(
-              itemCount: dishItems.length + (hasMoreData ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == dishItems.length) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                return DishCard(dish: dishItems[index]);
-              },
-            ),
-    ),
-  );
-}
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            page = 1;
+            dishItems.clear();
+            hasMoreData = true;
+          });
+          await _fetchData();
+        },
+        child: dishItems.isEmpty && !isLoading
+            ?Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'No products in   ',
+                      style: TextStyle(
+                        color: Color(0xff9E749E).withOpacity(0.4),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
+                    Text(
+                      'this region  ',
+                      style: TextStyle(
+                        color: Color(0xff9E749E).withOpacity(0.4),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : ListView.builder(
+                itemCount: dishItems.length + (hasMoreData ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == dishItems.length) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  return DishCard(dish: dishItems[index]);
+                },
+              ),
+      ),
+    );
+  }
 
   Widget _buildRestaurantList() {
-  return NotificationListener<ScrollNotification>(
-    onNotification: (ScrollNotification scrollInfo) {
-      if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && !isLoading) {
-        _fetchData();
-      }
-      return false;
-    },
-    child: RefreshIndicator(
-      onRefresh: () async {
-        setState(() {
-          page = 1;
-          restaurantItems.clear();
-          hasMoreData = true;
-        });
-        await _fetchData();
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
+            !isLoading) {
+          _fetchData();
+        }
+        return false;
       },
-      child: restaurantItems.isEmpty && !isLoading
-          ? Center(child: Text('No data in this region'))
-          : ListView.builder(
-              itemCount: restaurantItems.length + (hasMoreData ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == restaurantItems.length) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                return RestaurantCard(restaurant: restaurantItems[index]);
-              },
-            ),
-    ),
-  );
-}
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            page = 1;
+            restaurantItems.clear();
+            hasMoreData = true;
+          });
+          await _fetchData();
+        },
+        child: restaurantItems.isEmpty && !isLoading
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'No products in   ',
+                      style: TextStyle(
+                        color: Color(0xff9E749E).withOpacity(0.4),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
+                    Text(
+                      'this region  ',
+                      style: TextStyle(
+                        color: Color(0xff9E749E).withOpacity(0.4),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : ListView.builder(
+                itemCount: restaurantItems.length + (hasMoreData ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == restaurantItems.length) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  return RestaurantCard(restaurant: restaurantItems[index]);
+                },
+              ),
+      ),
+    );
+  }
 }
 
 class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
