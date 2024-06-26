@@ -126,7 +126,8 @@ class _PostItemState extends State<PostItem> {
         _likeData.add({
           'id': element['_id'] ?? 'default_id',
           'name': element['store_name'] ?? 'default_name',
-          'profile_photo': element['profile_photo'] ?? 'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg'
+          'profile_photo': element['profile_photo'] ??
+              'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg'
         });
         itemsToShow = min(_likeData.length, 2);
       } else {
@@ -189,7 +190,8 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
-    print("who is user:: ${widget.data['store_name']}  ${widget.data['user_id']}");
+    print(
+        "who is user:: ${widget.data['store_name']}  ${widget.data['user_id']}");
     bool shouldShowIcon = widget.isProfilePost ||
         (!widget.isProfilePost &&
             Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
@@ -223,19 +225,19 @@ class _PostItemState extends State<PostItem> {
                             !widget.isProfilePost)
                     ? InkWell(
                         onTap: () {
-                          if(!widget.isProfilePost){
-                          print("data:: ${widget.data}");
-                          setState(() {
-                            userId.add(widget.data['user_id']);
-                          });
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ProfileView(
-                                        userIdList: userId,
-                                      ))).then((value) {
-                            userId.clear();
-                          });
+                          if (!widget.isProfilePost) {
+                            print("data:: ${widget.data}");
+                            setState(() {
+                              userId.add(widget.data['user_id']);
+                            });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProfileView(
+                                          userIdList: userId,
+                                        ))).then((value) {
+                              userId.clear();
+                            });
                           }
                         },
                         child: Container(
@@ -244,21 +246,33 @@ class _PostItemState extends State<PostItem> {
                             decoration: ShapeDecoration(
                               shadows: [
                                 BoxShadow(
-                                  offset: const Offset(0, 4),
+                                  offset: const Offset(3, 6),
                                   color: _isVendor
                                       ? const Color.fromRGBO(31, 111, 109, 0.4)
+                                          .withOpacity(0.3)
                                       : Provider.of<Auth>(context,
                                                       listen: false)
                                                   .userData?['user_type'] ==
                                               UserType.Supplier.name
                                           ? const Color.fromRGBO(
-                                              198, 239, 161, 0.6)
+                                                  198, 239, 161, 0.6)
+                                              .withOpacity(0.3)
                                           : const Color.fromRGBO(
-                                              130, 47, 130, 0.6),
+                                                  130, 47, 130, 0.6)
+                                              .withOpacity(0.3),
                                   blurRadius: 20,
                                 ),
                               ],
-                              color: const Color.fromRGBO(31, 111, 109, 0.6),
+                              color: _isVendor
+                                  ? const Color.fromRGBO(31, 111, 109, 0.4)
+                                      .withOpacity(0.3)
+                                  : Provider.of<Auth>(context, listen: false)
+                                              .userData?['user_type'] ==
+                                          UserType.Supplier.name
+                                      ? const Color.fromRGBO(198, 239, 161, 0.6)
+                                          .withOpacity(0.3)
+                                      : const Color.fromRGBO(130, 47, 130, 0.6)
+                                          .withOpacity(0.3),
                               shape: SmoothRectangleBorder(
                                   borderRadius: SmoothBorderRadius(
                                 cornerRadius: 10,
@@ -305,7 +319,7 @@ class _PostItemState extends State<PostItem> {
                           setState(() {
                             userId.add(widget.data['user_id']);
                           });
-                          print("userId:: $userId");
+                          print("userIdfrom post:: $userId");
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -319,17 +333,20 @@ class _PostItemState extends State<PostItem> {
                           decoration: ShapeDecoration(
                             shadows: [
                               BoxShadow(
-                                offset: const Offset(0, 4),
-                                color: _isVendor
-                                    ? const Color.fromRGBO(31, 111, 109, 0.6)
-                                    : Provider.of<Auth>(context, listen: false)
-                                                .userData?['user_type'] ==
-                                            UserType.Supplier.name
-                                        ? const Color.fromRGBO(77, 191, 74, 0.5)
-                                        : const Color.fromRGBO(
-                                            130, 47, 130, 0.7),
-                                blurRadius: 20,
-                              )
+                                  offset: const Offset(3, 6),
+                                  color: _isVendor
+                                      ? const Color.fromRGBO(31, 111, 109, 0.6)
+                                      : Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Supplier.name
+                                          ? const Color.fromRGBO(
+                                              77, 191, 74, 0.5)
+                                          : const Color.fromRGBO(
+                                                  130, 47, 130, 0.7)
+                                              .withOpacity(0.5),
+                                  blurRadius: 20,
+                                  spreadRadius: 0)
                             ],
                             shape: const SmoothRectangleBorder(),
                           ),
@@ -478,10 +495,18 @@ class _PostItemState extends State<PostItem> {
                           });
                         }
                       },
-                      icon: const Icon(Icons.more_vert)),
-              //  for mantaining icon space
-                if(!shouldShowIcon)
-                SizedBox(height:50),
+                      icon: Icon(Icons.more_vert,
+                          color: Provider.of<Auth>(context, listen: false)
+                                      .userData?['user_type'] ==
+                                  'Vendor'
+                              ? const Color(0xFF094B60)
+                              : Provider.of<Auth>(context, listen: false)
+                                          .userData?['user_type'] ==
+                                      UserType.Supplier.name
+                                  ? Color.fromARGB(255, 26, 48, 10)
+                                  : const Color(0xFF2E0536))),
+                //  for mantaining icon space
+                if (!shouldShowIcon) SizedBox(height: 50),
               ],
             ),
           ),
@@ -501,26 +526,28 @@ class _PostItemState extends State<PostItem> {
                             decoration: ShapeDecoration(
                               shadows: [
                                 _isVendor
-                                    ? const BoxShadow(
-                                        offset: Offset(0, 4),
-                                        color:
-                                            Color.fromRGBO(124, 193, 191, 0.6),
-                                        blurRadius: 20,
+                                    ? BoxShadow(
+                                        offset: Offset(3, 6),
+                                        color: Color.fromRGBO(124, 193, 191, 1)
+                                            .withOpacity(0.3),
+                                        blurRadius: 35,
                                       )
                                     : Provider.of<Auth>(context, listen: false)
                                                 .userData?['user_type'] ==
                                             UserType.Supplier.name
-                                        ? const BoxShadow(
-                                            offset: Offset(3, 4),
-                                            color: Color.fromRGBO(
-                                                77, 191, 74, 0.5),
-                                            blurRadius: 20,
+                                        ? BoxShadow(
+                                            offset: Offset(1, 4),
+                                            color:
+                                                Color.fromRGBO(77, 191, 74, 1)
+                                                    .withOpacity(0.3),
+                                            blurRadius: 35,
                                           )
-                                        : const BoxShadow(
+                                        : BoxShadow(
                                             offset: Offset(3, 4),
-                                            color: Color.fromRGBO(
-                                                158, 116, 158, 0.5),
-                                            blurRadius: 15,
+                                            color:
+                                                Color.fromRGBO(158, 116, 158, 1)
+                                                    .withOpacity(0.3),
+                                            blurRadius: 35,
                                           )
                               ],
                               shape: const SmoothRectangleBorder(),
@@ -661,13 +688,32 @@ class _PostItemState extends State<PostItem> {
                             Color.fromRGBO(254, 209, 112, 1)
                           ],
                         ),
-                        shadows: const [
-                          BoxShadow(
-                            offset: Offset(0, 4),
-                            color: Color.fromRGBO(0, 0, 0, 0.25),
-                            blurRadius: 4,
-                          ),
-                        ],
+                        shadows: [
+                                _isVendor
+                                    ? BoxShadow(
+                                        offset: Offset(3, 6),
+                                        color: Color.fromRGBO(124, 193, 191, 1)
+                                            .withOpacity(0.3),
+                                        blurRadius: 35,
+                                      )
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Supplier.name
+                                        ? BoxShadow(
+                                            offset: Offset(1, 4),
+                                            color:
+                                                Color.fromRGBO(77, 191, 74, 1)
+                                                    .withOpacity(0.3),
+                                            blurRadius: 35,
+                                          )
+                                        : BoxShadow(
+                                            offset: Offset(3, 4),
+                                            color:
+                                                Color.fromRGBO(158, 116, 158, 1)
+                                                    .withOpacity(0.3),
+                                            blurRadius: 35,
+                                          )
+                              ],
                         shape: SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius(
                           cornerRadius: 15,
@@ -756,6 +802,11 @@ class _PostItemState extends State<PostItem> {
                       icon: AnimatedContainer(
                         duration: const Duration(milliseconds: 3000),
                         curve: Curves.easeInOut,
+                        /* color: _isLiked
+                              ? Colors.red
+                              : null,*/
+                        height: 20,
+                        width: 20,
                         child: _isLiked
                             ? const Icon(
                                 Icons.favorite,
@@ -765,13 +816,16 @@ class _PostItemState extends State<PostItem> {
                             : SvgPicture.asset(
                                 /*_isLiked ?  Assets.favourite_svg :*/
                                 Assets.favourite_svg,
+                                // ignore: deprecated_member_use
+                                color: _isVendor
+                                    ? const Color(0xFF094B60)
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Supplier.name
+                                        ? Color.fromARGB(255, 26, 48, 10)
+                                        : const Color(0xFF2E0536),
                                 // colorFilter: ColorFilter.mode(Colors.transparent, BlendMode.xor)
                               ),
-                        /* color: _isLiked
-                              ? Colors.red
-                              : null,*/
-                        height: 20,
-                        width: 20,
                         // Change color when liked
                       ),
                     ),
@@ -814,6 +868,14 @@ class _PostItemState extends State<PostItem> {
                         },
                         icon: SvgPicture.asset(
                           Assets.comment_svg,
+                          // ignore: deprecated_member_use
+                          color: _isVendor
+                              ? const Color(0xFF094B60)
+                              : Provider.of<Auth>(context, listen: false)
+                                          .userData?['user_type'] ==
+                                      UserType.Supplier.name
+                                  ? Color.fromARGB(255, 26, 48, 10)
+                                  : const Color(0xFF2E0536),
                           height: 20,
                           width: 20,
                         )),
@@ -840,6 +902,14 @@ class _PostItemState extends State<PostItem> {
                         },
                         icon: SvgPicture.asset(
                           Assets.share,
+                          // ignore: deprecated_member_use
+                          color: _isVendor
+                              ? const Color(0xFF094B60)
+                              : Provider.of<Auth>(context, listen: false)
+                                          .userData?['user_type'] ==
+                                      UserType.Supplier.name
+                                  ? Color.fromARGB(255, 26, 48, 10)
+                                  : const Color(0xFF2E0536),
                           height: 20,
                           width: 20,
                         ))
@@ -939,7 +1009,11 @@ class _PostItemState extends State<PostItem> {
                               style: TextStyle(
                                 color: _isVendor
                                     ? const Color(0xFF519896)
-                                    : const Color(0xFFB232CB),
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Supplier.name
+                                        ? Color.fromARGB(255, 26, 48, 10)
+                                        : const Color(0xFFB232CB),
                                 fontSize: 12,
                                 fontFamily: 'Product Sans Medium',
                                 fontWeight: FontWeight.w500,
@@ -952,8 +1026,12 @@ class _PostItemState extends State<PostItem> {
                               '${_likeData.length == 0 ? '0 people' : _likeData.length == 1 ? _likeData[0]['name'] : '${_likeData[0]['name']} and ${_likeData.length - 1} others'}',
                               style: TextStyle(
                                 color: _isVendor
-                                    ? const Color(0xFF0A4C61)
-                                    : const Color(0xFF2E0536),
+                                    ? const Color(0xFF094B60)
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Supplier.name
+                                        ? Color.fromARGB(255, 26, 48, 10)
+                                        : const Color(0xFF2E0536),
                                 fontSize: 12,
                                 fontFamily: 'Product Sans',
                                 fontWeight: FontWeight.w700,

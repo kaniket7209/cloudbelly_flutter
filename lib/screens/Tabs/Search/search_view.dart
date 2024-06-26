@@ -463,7 +463,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'No products in   ',
+                      'No dishes in   ',
                       style: TextStyle(
                         color: Color(0xff9E749E).withOpacity(0.4),
                         fontWeight: FontWeight.bold,
@@ -521,7 +521,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'No products in   ',
+                      'No restaurants in   ',
                       style: TextStyle(
                         color: Color(0xff9E749E).withOpacity(0.4),
                         fontWeight: FontWeight.bold,

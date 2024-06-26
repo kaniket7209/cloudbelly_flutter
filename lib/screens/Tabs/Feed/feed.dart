@@ -129,6 +129,9 @@ class _FeedState extends State<Feed> {
   // int _pageNumber = 1;/
   @override
   Widget build(BuildContext context) {
+     bool _isVendor =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
+            'Vendor';
     // FeedList = FeedList.reversed.toList();
     return RefreshIndicator(
       onRefresh: _refreshFeed,
@@ -145,13 +148,20 @@ class _FeedState extends State<Feed> {
               Space(10.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: const Text(
+                child:  Text(
                   'Cloudbelly',
                   style: TextStyle(
-                    color: Color(0xFF094B60),
+                     color: _isVendor
+                                      ? const Color(0xFF094B60)
+                                      : Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Supplier.name
+                                          ? Color.fromARGB(255, 26, 48, 10)
+                                          : const Color(0xFF2E0536),
                     fontSize: 24,
                     fontFamily: 'Jost',
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.bold,
                     height: 0.04,
                   ),
                 ),

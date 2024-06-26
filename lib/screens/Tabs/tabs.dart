@@ -61,18 +61,17 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       // 'Account',
     ];
     pages = [
-  const Feed(),
-  userType == UserType.Vendor.name
-      ? const DashBoard()
-      : userType == UserType.Supplier.name
-          ? const SupplierDashboard()
-          : SearchView(),
-  NotificationScreen(
-    initialTabIndex: 0, // Ensure initialTabIndex is an int
-  ),
-  const Profile(),
-];
-
+      const Feed(),
+      userType == UserType.Vendor.name
+          ? const DashBoard()
+          : userType == UserType.Supplier.name
+              ? const SupplierDashboard()
+              : SearchView(),
+      NotificationScreen(
+        initialTabIndex: 0, // Ensure initialTabIndex is an int
+      ),
+      const Profile(),
+    ];
 
     _hideBottomBarAnimationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
@@ -114,7 +113,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                   UserType.Vendor.name
               ? const Color.fromRGBO(234, 245, 247, 1)
               : userType == UserType.Supplier.name
-                  ? const Color(0xFFF6FFEE)
+                  ? const Color(0xffF6FFEE)
                   : const Color.fromRGBO(255, 248, 255, 1),
 
       body: pages[_selectedIndex],
@@ -190,10 +189,16 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               width: 100,
               height: 30,
               decoration: ShapeDecoration(
-                shadows: const [
+                shadows:  [
                   BoxShadow(
                     offset: Offset(0, 8),
-                    color: Color.fromRGBO(152, 202, 201, 0.8),
+                    color: Provider.of<Auth>(context, listen: false)
+                            .userData?['user_type'] ==
+                        UserType.Vendor.name
+                    ?  Color.fromRGBO(84, 166, 193, 1).withOpacity(0.5)
+                    : userType == UserType.Supplier.name
+                        ?  Color(0xFF4DBF4A).withOpacity(0.5)
+                        :  Color(0xff7B358D).withOpacity(0.5),
                     blurRadius: 20,
                   )
                 ],
@@ -204,7 +209,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     ? const Color.fromRGBO(84, 166, 193, 1)
                     : userType == UserType.Supplier.name
                         ? const Color(0xFF4DBF4A)
-                        : const Color(0xFFFA6E00),
+                        : const Color(0xff7B358D),
                 shape: const SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.all(
                       SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
