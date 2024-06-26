@@ -296,12 +296,13 @@ class _SearchViewState extends State<SearchView> {
                 ],
               ),
               child: TextField(
+                style: const TextStyle(fontSize: 14,),
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search for restaurants or dishes',
                   border: InputBorder.none,
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      EdgeInsets.symmetric(vertical: 14, horizontal: 20),
                   suffixIcon: IconButton(
                     icon: Icon(Icons.search),
                     onPressed: () => _searchItems(_searchController.text),

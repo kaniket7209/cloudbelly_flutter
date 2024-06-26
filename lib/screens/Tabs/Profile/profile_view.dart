@@ -316,7 +316,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                           shadows: [
                                                             BoxShadow(
                                                               offset:
-                                                                  Offset(0, 4),
+                                                                  Offset(1, 4),
                                                                color: userList.first
                                                                 .userType ==
                                                             UserType.Vendor.name

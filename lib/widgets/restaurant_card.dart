@@ -57,9 +57,11 @@ class RestaurantCard extends StatelessWidget {
                   ),
                   shadows: [
                     BoxShadow(
-                      color: Color(0xff9E749E).withOpacity(0.5),
+                      color:const Color.fromRGBO(
+                                                  130, 47, 130, 1)
+                                              .withOpacity(0.3),
                       spreadRadius: 1,
-                      blurRadius: 10,
+                      blurRadius: 25,
                       offset: Offset(3, 6),
                     ),
                   ],
@@ -122,13 +124,7 @@ class RestaurantCard extends StatelessWidget {
                        SizedBox(
                           width:
                               3.0),
-                      Text(
-                        '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km', // Add the rating text here
-                        style: TextStyle(
-                            fontSize: 14.0,
-                            color: Color(0xffFA6E00),
-                            fontWeight: FontWeight.bold),
-                      ),
+                     
                       Spacer(), // Pushes the text to the right
                       Text(
                         '45-50 mins',
@@ -141,12 +137,24 @@ class RestaurantCard extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 5),
-                  Text(
-                    restaurant.location,
-                    style: TextStyle(
-                      color: Color(0xff9428A9),
-                      fontSize: 12,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        restaurant.location,
+                        style: TextStyle(
+                          color: Color(0xff9428A9),
+                          fontSize: 12,
+                        ),
+                      ),
+                      Spacer(),
+                       Text(
+                            '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km', // Add the rating text here
+                            style: TextStyle(
+                                fontSize: 14.0,
+                                color: Color(0xffFA6E00),
+                                fontWeight: FontWeight.bold),
+                          ),
+                    ],
                   ),
                 ],
               ),
