@@ -127,6 +127,13 @@ class _SearchViewState extends State<SearchView> {
         'query': _searchController.text,
       }),
     );
+    print("apicall ${json.encode({
+          'page': page,
+          'limit': limit,
+          'latitude': _currentPosition!.latitude,
+          'longitude': _currentPosition!.longitude,
+          'query': _searchController.text,
+        })}");
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       setState(() {
@@ -210,70 +217,83 @@ class _SearchViewState extends State<SearchView> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.location_pin, color: Colors.white),
-                  onPressed: () async {
-                    var selectedLocation = await showSearch(
-                      context: context,
-                      delegate: LocationSearchDelegate(),
+            GestureDetector(
+              onTap: () async {
+                var selectedLocation = await showSearch(
+                  context: context,
+                  delegate: LocationSearchDelegate(),
+                );
+                if (selectedLocation != null) {
+                  setState(() {
+                    currentAddress = selectedLocation['description']!;
+                  });
+
+                  var location = selectedLocation['location']?.split(',');
+                  if (location != null && location.length == 2) {
+                    double latitude = double.parse(location[0]);
+                    double longitude = double.parse(location[1]);
+
+                    _currentPosition = Position(
+                      latitude: latitude,
+                      longitude: longitude,
+                      timestamp: DateTime.now(),
+                      accuracy: 0,
+                      altitude: 0,
+                      heading: 0,
+                      speed: 0,
+                      speedAccuracy: 0,
+                      altitudeAccuracy: 0,
+                      headingAccuracy: 0, // Added this parameter
                     );
-                    if (selectedLocation != null) {
-                      setState(() {
-                        currentAddress = selectedLocation['description']!;
-                      });
 
-                      var location = selectedLocation['location']?.split(',');
-                      if (location != null && location.length == 2) {
-                        double latitude = double.parse(location[0]);
-                        double longitude = double.parse(location[1]);
+                    await Provider.of<Auth>(context, listen: false)
+                        .updateCustomerLocation(
+                      latitude,
+                      longitude,
+                    );
 
-                        _currentPosition = Position(
-                          latitude: latitude,
-                          longitude: longitude,
-                          timestamp: DateTime.now(),
-                          accuracy: 0,
-                          altitude: 0,
-                          heading: 0,
-                          speed: 0,
-                          speedAccuracy: 0,
-                          altitudeAccuracy: 0,
-                          headingAccuracy: 0, // Added this parameter
-                        );
-
-                        await Provider.of<Auth>(context, listen: false)
-                            .updateCustomerLocation(
-                          latitude,
-                          longitude,
-                        );
-
-                        // Fetch data based on new location
-                        // _fetchData();
-                        setState(() {
-                          page = 1;
-                          dishItems.clear();
-                          restaurantItems.clear();
-                          hasMoreData = true;
-                        });
-                        await _fetchData();
-                      }
-                    }
-                  },
-                ),
-                Expanded(
-                  child: Container(
-                    child: Text(
-                      currentAddress,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    // Fetch data based on new location
+                    // _fetchData();
+                    setState(() {
+                      page = 1;
+                      dishItems.clear();
+                      restaurantItems.clear();
+                      hasMoreData = true;
+                    });
+                    await _fetchData();
+                  }
+                }
+              },
+              child: Row(
+                children: [
+                  Container(
+                    child: Icon(Icons.location_pin, color: Colors.white),
                   ),
-                ),
-              ],
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        child: Text(
+                          currentAddress,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Container(
+                        child: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Color(0xFFFA6E00),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 10),
             Container(
@@ -296,7 +316,9 @@ class _SearchViewState extends State<SearchView> {
                 ],
               ),
               child: TextField(
-                style: const TextStyle(fontSize: 14,),
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search for restaurants or dishes',
@@ -341,7 +363,7 @@ class _SearchViewState extends State<SearchView> {
                   onTap: () => _changeTab(true),
                   child: Column(
                     children: [
-                      SizedBox(height: 10),
+                      SizedBox(height: 5),
                       Text(
                         'Dishes',
                         style: TextStyle(
@@ -380,7 +402,7 @@ class _SearchViewState extends State<SearchView> {
                   onTap: () => _changeTab(false),
                   child: Column(
                     children: [
-                      SizedBox(height: 10),
+                      SizedBox(height: 5),
                       Text(
                         'Restaurants',
                         style: TextStyle(
@@ -458,7 +480,7 @@ class _SearchViewState extends State<SearchView> {
           await _fetchData();
         },
         child: dishItems.isEmpty && !isLoading
-            ?Center(
+            ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -644,3 +666,4 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
     }
   }
 }
+

@@ -109,7 +109,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
      String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
    Color colorProfile;
     if (userType == 'Vendor') {
-      colorProfile = const Color(0xFF094B60) ;
+      colorProfile = const Color(0xff54A6C1) ;
     } else if (userType == 'Customer') {
       colorProfile = const Color(0xff7B358D);//0xff7B358D
     } else if (userType == 'Supplier') {

@@ -372,7 +372,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                       "${(widget.data['likes'] ?? []).length}",
                                       style: const TextStyle(
                                         color: Color(0xFF9327A8),
-                                        fontSize: 12,
+                                        fontSize: 14,
                                         fontFamily: 'Product Sans Medium',
                                         fontWeight: FontWeight.w500,
                                         height: 0,
@@ -727,6 +727,13 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                       height: 41,
                       width: 113,
                       decoration: ShapeDecoration(
+                        shadows: [
+                          BoxShadow(
+                            offset: Offset(3, 6),
+                            color: Color(0xff4F215B),
+                            blurRadius: 20,
+                          )
+                        ],
                         color: const Color.fromRGBO(84, 166, 193, 1),
                         shape: SmoothRectangleBorder(
                           borderRadius: SmoothBorderRadius(
