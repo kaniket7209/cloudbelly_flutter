@@ -181,11 +181,12 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                 Container(
                   height: /*_isfocused ?*/ 50 /*: 88*/,
                   width: /*_isfocused ?*/ 50 /*: 88*/,
-                  decoration:  ShapeDecoration(
+                  decoration: ShapeDecoration(
                     shadows: [
                       BoxShadow(
                         offset: Offset(3, 6),
-                        color: Color.fromRGBO(158, 116, 158, 0.5).withOpacity(0.3),
+                        color:
+                            Color.fromRGBO(158, 116, 158, 0.5).withOpacity(0.3),
                         blurRadius: 20,
                       )
                     ],
@@ -218,7 +219,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                               .userData?['store_name'],
                       style: const TextStyle(
                         color: Color(0xFF2E0435),
-                        fontSize: 14,
+                        fontSize: 20,
                         fontFamily: 'Product Sans',
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.42,
@@ -457,23 +458,22 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                             height: 33,
                                             width: 33,
                                             decoration: ShapeDecoration(
-                                              color: const Color(0xFFFA6E00),
-                                              shape: SmoothRectangleBorder(
-                                                borderRadius:
-                                                    SmoothBorderRadius(
-                                                  cornerRadius: 12,
-                                                  cornerSmoothing: 1,
+                                                color: const Color(0xFFFA6E00),
+                                                shape: SmoothRectangleBorder(
+                                                  borderRadius:
+                                                      SmoothBorderRadius(
+                                                    cornerRadius: 12,
+                                                    cornerSmoothing: 1,
+                                                  ),
                                                 ),
-                                              ),
-                                              shadows: [
-                                              BoxShadow(
-                                                  offset: Offset(0, 4),
-                                                  spreadRadius: 0.1,
-                                                  color: Color.fromRGBO(
-                                                      232, 128, 55, 0.5),
-                                                  blurRadius: 10)
-                                            ]
-                                            ),
+                                                shadows: [
+                                                  BoxShadow(
+                                                      offset: Offset(0, 4),
+                                                      spreadRadius: 0.1,
+                                                      color: Color.fromRGBO(
+                                                          232, 128, 55, 0.5),
+                                                      blurRadius: 10)
+                                                ]),
                                             child: const Center(
                                               child: Text(
                                                 '-',
@@ -524,23 +524,22 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                             height: 33,
                                             width: 33,
                                             decoration: ShapeDecoration(
-                                              color: const Color(0xFFFA6E00),
-                                              shape: SmoothRectangleBorder(
-                                                borderRadius:
-                                                    SmoothBorderRadius(
-                                                  cornerRadius: 12,
-                                                  cornerSmoothing: 1,
+                                                color: const Color(0xFFFA6E00),
+                                                shape: SmoothRectangleBorder(
+                                                  borderRadius:
+                                                      SmoothBorderRadius(
+                                                    cornerRadius: 12,
+                                                    cornerSmoothing: 1,
+                                                  ),
                                                 ),
-                                              ),
-                                              shadows: [
-                                              BoxShadow(
-                                                  offset: Offset(0, 4),
-                                                  spreadRadius: 0.1,
-                                                  color: Color.fromRGBO(
-                                                      232, 128, 55, 0.5),
-                                                  blurRadius: 10)
-                                            ]
-                                            ),
+                                                shadows: [
+                                                  BoxShadow(
+                                                      offset: Offset(0, 4),
+                                                      spreadRadius: 0.1,
+                                                      color: Color.fromRGBO(
+                                                          232, 128, 55, 0.5),
+                                                      blurRadius: 10)
+                                                ]),
                                             child: const Center(
                                               child: Text(
                                                 '+',
@@ -590,8 +589,7 @@ class _ProductInPostSheetWidgetState extends State<ProductInPostSheetWidget> {
                                                   color: Color.fromRGBO(
                                                       232, 128, 55, 0.5),
                                                   blurRadius: 10)
-                                            ]
-                                            ),
+                                            ]),
                                         child: const Center(
                                           child: Text(
                                             'Add to Cart',
