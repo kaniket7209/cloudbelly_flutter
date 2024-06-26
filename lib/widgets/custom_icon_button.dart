@@ -21,11 +21,20 @@ class CustomIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool _isVendor =
-        Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
-            'Vendor';
-    String? userType =
-        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+     
+    Color colorProfile;
+    if (userType == 'Vendor') {
+      colorProfile = const Color(0xFF094B60) ;
+    } else if (userType == 'Customer') {
+      colorProfile = const Color(0xFF2E0536);
+    } else if (userType == 'Supplier') {
+      colorProfile = Color.fromARGB(255, 26, 48, 10);
+    } else {
+      colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+    }
+ 
+
     Color boxShadowColor;
 
     if (userType == 'Vendor') {
@@ -64,14 +73,14 @@ class CustomIconButton extends StatelessWidget {
         child: text == ''
             ? Icon(
                 ic,
-                color: color,
+                color: colorProfile,
               )
             : text == 'notification'
                 ? Transform.rotate(
                     angle: 25 * 3.1415926535 / 180, //
                     child: Icon(
                       ic,
-                      color: color,
+                      color: colorProfile,
                     ),
                   )
                 : Center(

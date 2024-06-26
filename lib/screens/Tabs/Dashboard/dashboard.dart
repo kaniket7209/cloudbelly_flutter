@@ -271,7 +271,17 @@ class StoreLogoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userData = Provider.of<Auth>(context).userData;
-
+    String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+   Color colorProfile;
+    if (userType == 'Vendor') {
+      colorProfile = const Color(0xFF094B60) ;
+    } else if (userType == 'Customer') {
+      colorProfile = const Color(0xFF2E0536);
+    } else if (userType == 'Supplier') {
+      colorProfile = Color.fromARGB(255, 26, 48, 10);
+    } else {
+      colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+    }
     print("profilepic ${userData?['profile_photo']}");
 
     return Column(
@@ -320,14 +330,14 @@ class StoreLogoWidget extends StatelessWidget {
                 height: 70,
                 width: 70,
                 decoration: ShapeDecoration(
-                  shadows: const [
+                  shadows:  [
                     BoxShadow(
                       offset: Offset(0, 4),
-                      color: Color.fromRGBO(31, 111, 109, 0.4),
+                      color:colorProfile.withOpacity(0.5),
                       blurRadius: 20,
                     ),
                   ],
-                  color: Color.fromRGBO(31, 111, 109, 0.6),
+                  color:colorProfile,
                   shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(
                     cornerRadius: 15,
@@ -337,7 +347,7 @@ class StoreLogoWidget extends StatelessWidget {
                 child: Center(
                   child: Text(
                     userData?['store_name'][0].toUpperCase(),
-                    style: TextStyle(fontSize: 40),
+                    style: TextStyle(fontSize: 40,color: colorProfile),
                   ),
                 )),
       ],
@@ -355,6 +365,17 @@ class StoreNameWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+   Color colorProfile;
+    if (userType == 'Vendor') {
+      colorProfile = const Color(0xFF094B60) ;
+    } else if (userType == 'Customer') {
+      colorProfile = const Color(0xFF2E0536);
+    } else if (userType == 'Supplier') {
+      colorProfile = Color.fromARGB(255, 26, 48, 10);
+    } else {
+      colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+    }
     return Container(
       child: Column(
         children: [
@@ -381,8 +402,8 @@ class StoreNameWidget extends StatelessWidget {
                     maxLines: 2,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Color(0xFF094B60),
+                    style:  TextStyle(
+                      color: colorProfile,
                       fontSize: 14,
                       fontFamily: 'Product Sans',
                       fontWeight: FontWeight.w700,
@@ -844,12 +865,24 @@ class ColumnWidgetHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+     
+    Color colorProfile;
+    if (userType == 'Vendor') {
+      colorProfile = const Color(0xFF094B60) ;
+    } else if (userType == 'Customer') {
+      colorProfile = const Color(0xFF2E0536);
+    } else if (userType == 'Supplier') {
+      colorProfile = Color.fromARGB(255, 26, 48, 10);
+    } else {
+      colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+    }
     return Column(
       children: [
         Text(
           data,
-          style: const TextStyle(
-            color: Color(0xFF0A4C61),
+          style:  TextStyle(
+            color: colorProfile,
             fontSize: 35,
             fontFamily: 'Product Sans',
             fontWeight: FontWeight.w700,
@@ -859,8 +892,8 @@ class ColumnWidgetHomeScreen extends StatelessWidget {
         ),
         Text(
           txt,
-          style: const TextStyle(
-            color: Color(0xFF0A4C61),
+          style:  TextStyle(
+            color: colorProfile,
             fontSize: 11,
             fontFamily: 'Product Sans',
             fontWeight: FontWeight.w400,

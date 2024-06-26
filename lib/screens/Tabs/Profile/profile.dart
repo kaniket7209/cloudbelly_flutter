@@ -802,23 +802,7 @@ class _ProfileState extends State<Profile> {
                                         : Container(
                                             // height: 6.5.h,
                                             width: 95.w,
-                                            /*decoration: ShapeDecoration(
-                                          shadows: const [
-                                            BoxShadow(
-                                              offset: Offset(0, 4),
-                                              color: Color.fromRGBO(
-                                                  165, 200, 199, 0.6),
-                                              blurRadius: 20,
-                                            )
-                                          ],
-                                          color: Colors.white,
-                                          shape: SmoothRectangleBorder(
-                                            borderRadius: SmoothBorderRadius(
-                                              cornerRadius: 15,
-                                              cornerSmoothing: 1,
-                                            ),
-                                          ),
-                                        ),*/
+                                            
                                             child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -885,11 +869,37 @@ class _ProfileState extends State<Profile> {
                                                   CircularProgressIndicator(),
                                             )
                                           : feedList.length == 0
-                                              ? Container(
-                                                  child: const Center(
-                                                      child: Text(
-                                                          'No items in Content')),
-                                                )
+                                              ? 
+                                              Container(
+                                                height: MediaQuery.sizeOf(context).height /2.7,
+                                                child: Center(
+                                                  
+                                                            child: Column(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+                                                              
+                                                              Text(
+                                                                'No items  ',
+                                                                style: TextStyle(
+                                                                    color: boxShadowColor.withOpacity(0.2),
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 35,
+                                                                    fontFamily: 'Product Sans'),
+                                                              ),
+                                                              Text(
+                                                                'in content  ',
+                                                                style: TextStyle(
+                                                                    color: boxShadowColor.withOpacity(0.2),
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 35,
+                                                                    fontFamily: 'Product Sans'),
+                                                              ),
+                                                              const SizedBox(height: 100,)
+                                                            ],
+                                                          )),
+                                              )
+       
                                               : GridView.builder(
                                                   physics:
                                                       const NeverScrollableScrollPhysics(),
@@ -936,9 +946,53 @@ class _ProfileState extends State<Profile> {
                                       categories: categories,
                                       scroll: t1),
                                 if (_activeButtonIndex == 3)
-                                  const Text('Feature Pending'),
+                                    Container(
+                                                height: MediaQuery.sizeOf(context).height /2.7,
+                                                child: Center(
+                                                  
+                                                            child: Column(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+                                                              
+                                                              Text(
+                                                                'No reviews  ',
+                                                                style: TextStyle(
+                                                                    color: boxShadowColor.withOpacity(0.2),
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 35,
+                                                                    fontFamily: 'Product Sans'),
+                                                              ),
+                                                              
+                                                              const SizedBox(height: 100,)
+                                                            ],
+                                                          )),
+                                              ),
+       
                                 if (_activeButtonIndex == 4)
-                                  const Text('Feature Pending')
+                                    Container(
+                                                height: MediaQuery.sizeOf(context).height /2.7,
+                                                child: Center(
+                                                  
+                                                            child: Column(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+                                                              
+                                                              Text(
+                                                                'No reviews  ',
+                                                                style: TextStyle(
+                                                                    color: boxShadowColor.withOpacity(0.2),
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 35,
+                                                                    fontFamily: 'Product Sans'),
+                                                              ),
+                                                              
+                                                              const SizedBox(height: 100,)
+                                                            ],
+                                                          )),
+                                              )
+       
                               ]),
                         ),
                       ),
@@ -2050,29 +2104,19 @@ class CommonButtonProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    Color colorProfile;
+    if (userType == 'Vendor') {
+      colorProfile = const Color(0xFF094B60) ;
+    } else if (userType == 'Customer') {
+      colorProfile = const Color(0xFF2E0536);
+    } else if (userType == 'Supplier') {
+      colorProfile = Color.fromARGB(255, 26, 48, 10);
+    } else {
+      colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+    }
     return Container(
-        // height: 4.4.h,
-        // width: 25.w,
-        //  padding: EdgeInsets.all(08),
-
-        /* decoration: isActive
-            ? ShapeDecoration(
-                shadows: const [
-                  BoxShadow(
-                    offset: Offset(5, 6),
-                    color: Color.fromRGBO(124, 193, 191, 0.44),
-                    blurRadius: 20,
-                  )
-                ],
-                color: const Color.fromRGBO(84, 166, 193, 1),
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 10,
-                    cornerSmoothing: 1,
-                  ),
-                ),
-              )
-            : const ShapeDecoration(shape: SmoothRectangleBorder()),*/
+       
         child: Center(
       child: Padding(
         padding: const EdgeInsets.all(0.0),
@@ -2087,8 +2131,8 @@ class CommonButtonProfile extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 13.0),
                   child: Text(
                     txt,
-                    style: const TextStyle(
-                      color: /*isActive ? Colors.white :*/ Color(0xFF094B60),
+                    style:  TextStyle(
+                      color: colorProfile,
                       fontSize: 14,
                       fontFamily: 'Product Sans',
                       fontWeight: FontWeight.w700,
