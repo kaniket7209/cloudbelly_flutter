@@ -106,6 +106,17 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+     String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+   Color colorProfile;
+    if (userType == 'Vendor') {
+      colorProfile = const Color(0xFF094B60) ;
+    } else if (userType == 'Customer') {
+      colorProfile = const Color(0xff7B358D);//0xff7B358D
+    } else if (userType == 'Supplier') {
+      colorProfile = Color.fromARGB(255, 26, 48, 10);
+    } else {
+      colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+    }
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       backgroundColor:
@@ -247,7 +258,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 height: 20,
                 child: Icon(
                   iconList[index],
-                  color: const Color.fromRGBO(84, 166, 193, 1),
+                  color: colorProfile,
                 ));
           }
         },
