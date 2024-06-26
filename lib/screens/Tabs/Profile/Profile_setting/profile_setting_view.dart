@@ -756,20 +756,22 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   Future<void> submitStoreAvailability() async {
     // final prefs = await SharedPreferences.getInstance();
-   
+
     AppWideLoadingBanner().loadingBanner(context);
     print('pp${Provider.of<Auth>(context, listen: false).userData?['upi_id']}');
     if (Provider.of<Auth>(context, listen: false).userData?['upi_id'] == '' &&
-       Provider.of<Auth>(context, listen: false).userData?['pan_number'] == '') {
+        Provider.of<Auth>(context, listen: false).userData?['pan_number'] ==
+            '') {
       TOastNotification().showErrorToast(
           context, 'First complete Kyc details and Payment Setup');
-    } else if (Provider.of<Auth>(context, listen: false).userData?['upi_id'] != '' &&
-       Provider.of<Auth>(context, listen: false).userData?['pan_number'] != '' && !kycVerified) {
+    } else if (Provider.of<Auth>(context, listen: false).userData?['upi_id'] !=
+            '' &&
+        Provider.of<Auth>(context, listen: false).userData?['pan_number'] !=
+            '' &&
+        !kycVerified) {
       TOastNotification().showErrorToast(
           context, 'Please Wait, Your application is in review');
-    } else if (paymentSetup && kycSetup 
-       &&
-        kycVerified) {
+    } else if (paymentSetup && kycSetup && kycVerified) {
       String msg = await Provider.of<Auth>(context, listen: false)
           .storeAvailability(_switchValue);
       if (msg == 'User information updated successfully.') {
@@ -914,7 +916,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   Widget build(BuildContext context) {
     print(
         "jsonre  ${json.encode(Provider.of<Auth>(context, listen: true).userData)}");
-         print("756 $kycVerified kyc  $kycSetup  kyset  $paymentSetup pay");
+    print("756 $kycVerified kyc  $kycSetup  kyset  $paymentSetup pay");
     String userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
     Color boxShadowColor;
@@ -936,7 +938,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: <Widget>[
               Row(
                 children: [
                   Row(
@@ -1304,7 +1306,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 child: TextWidgetStoreSetup(
                     label: userDetails?['user_type'] == UserType.Customer.name
                         ? 'Enter user name'
-                        : 'Enter brand name'),
+                        : 'Enter store name'),
               ),
               Space(1.h),
               Container(
@@ -1391,7 +1393,10 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 3.h,
               ),
               if (userDetails?['user_type'] == UserType.Customer.name) ...[
-                TextWidgetStoreSetup(label: 'Enter email'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextWidgetStoreSetup(label: 'Enter email'),
+                ),
                 Space(1.h),
                 Container(
                   // rgba(165, 200, 199, 1),
@@ -1482,7 +1487,10 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   3.h,
                 ),
               ],
-              TextWidgetStoreSetup(label: 'Contact number'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextWidgetStoreSetup(label: 'Contact number'),
+              ),
               Space(1.h),
               Container(
                 // rgba(165, 200, 199, 1),
@@ -1564,7 +1572,10 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               Space(
                 3.h,
               ),
-              TextWidgetStoreSetup(label: 'Business address'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextWidgetStoreSetup(label: 'Business address'),
+              ),
               Space(1.h),
               Container(
                 // rgba(165, 200, 199, 1),
@@ -1642,9 +1653,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           ),
                     hintText: "Enter your address here",
                     contentPadding: const EdgeInsets.only(left: 14, top: 10),
-                    hintStyle: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF0A4C61),
+                    hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: boxShadowColor,
                         fontFamily: 'Product Sans',
                         fontWeight: FontWeight.w400),
                     border: InputBorder.none,
@@ -1836,14 +1847,18 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                         value: _switchValue,
                         onChanged: (value) async {
                           print("kycVerified $kycVerified");
-                          if (Provider.of<Auth>(context, listen: false).userData?['pan_number'] != '' &&
-                              Provider.of<Auth>(context, listen: false).userData?['upi_id'] != '' &&
+                          if (Provider.of<Auth>(context, listen: false)
+                                      .userData?['pan_number'] !=
+                                  '' &&
+                              Provider.of<Auth>(context, listen: false)
+                                      .userData?['upi_id'] !=
+                                  '' &&
                               kycVerified) {
                             setState(() {
                               _switchValue = value;
                             });
                           }
-                            print("switch tapped $_switchValue");
+                          print("switch tapped $_switchValue");
                           await submitStoreAvailability(); // Call the submit function after the state update
                         },
                       ),
@@ -1994,8 +2009,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 ),
               ],
               Space(1.h),
-              if (Provider.of<Auth>(context, listen: false).userData?['pan_number'] != '' && 
-              Provider.of<Auth>(context, listen: false).userData?['upi_id'] != '' &&
+              if (Provider.of<Auth>(context, listen: false)
+                              .userData?['pan_number'] !=
+                          '' &&
+                      Provider.of<Auth>(context, listen: false)
+                              .userData?['upi_id'] !=
+                          '' &&
                       !kycVerified
                   //     &&
                   // Provider.of<Auth>(context, listen: false)
@@ -2039,15 +2058,19 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   ),
                 ),
               ],
+              if (Provider.of<Auth>(context).userData?['user_type'] !=
+                  UserType.Customer.name)
               const Space(24),
-              const Text(
-                "Please note your store will be live for receiving orders only after your trade & FSSAI license is verified, which will notify once approved.",
-                style: TextStyle(
-                    fontSize: 9,
-                    color: Color(0xFF0A4C61),
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.w400),
-              ),
+              if (Provider.of<Auth>(context).userData?['user_type'] !=
+                  UserType.Customer.name)
+                Text(
+                  "Please note your store will be live for receiving orders only after your trade & FSSAI license is verified, which will notify once approved.",
+                  style: TextStyle(
+                      fontSize: 9,
+                      color: boxShadowColor,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w400),
+                ),
               const Space(24),
 
               // Add terms and condition and privacy policy
@@ -2061,12 +2084,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                         _launchURL(
                             "https://app.cloudbelly.in/terms-and-conditions");
                       },
-                      child: const Text(
+                      child: Text(
                         "Terms and Condition",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           decoration: TextDecoration.underline,
-                          color: Color(0xFF0A4C61),
+                          color: boxShadowColor,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                         ),
@@ -2077,12 +2100,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                       onTap: () {
                         _launchURL("https://app.cloudbelly.in/privacy-policy");
                       },
-                      child: const Text(
+                      child: Text(
                         "Privacy policy",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           decoration: TextDecoration.underline,
-                          color: Color(0xFF0A4C61),
+                          color: boxShadowColor,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                         ),
