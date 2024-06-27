@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:ui';
+import 'package:flutter/material.dart';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
@@ -36,14 +37,15 @@ import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+// import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -57,14 +59,19 @@ class _ProfileState extends State<Profile> {
   SampleItem? selectedMenu;
   List<dynamic> menuList = [];
   List<dynamic> feedList = [];
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  // final RefreshController _refreshController =
+  //     RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
-    // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
-    _refreshController.refreshCompleted();
+    // _refreshController.refreshCompleted();
+    _scrollToTop(); // Ensure the scroll jumps to the top after refresh
+  }
+
+  void _scrollToTop() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      t1.jumpTo(MediaQuery.sizeOf(context).height / 2.5); // Scroll to the top
+    });
   }
 
   Future<void> _loading() async {
@@ -79,7 +86,6 @@ class _ProfileState extends State<Profile> {
         feedList = [];
         feedList.addAll(feed);
         _isLoading = false;
-        _refreshController.refreshCompleted();
       });
     });
     await Provider.of<Auth>(context, listen: false)
@@ -89,13 +95,10 @@ class _ProfileState extends State<Profile> {
         menuList = [];
         menuList.addAll(menu);
         _isLoading = false;
-        _refreshController.refreshCompleted();
       });
-      final feedData = json.encode(
-        {
-          'menu': menu,
-        },
-      );
+      final feedData = json.encode({
+        'menu': menu,
+      });
       prefs.setString('menuData', feedData);
     });
   }
@@ -196,12 +199,12 @@ class _ProfileState extends State<Profile> {
       boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
     }
 
-    return SmartRefresher(
+    return RefreshIndicator(
       onRefresh: _loading,
-      controller: _refreshController,
-      enablePullDown: true,
-      enablePullUp: false,
-      onLoading: _loading,
+      // controller: _refreshController,
+      // enablePullDown: true,
+      // enablePullUp: false,
+      // onLoading: _loading,
       child: SingleChildScrollView(
         controller: t1,
         child: Container(
@@ -634,6 +637,8 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                       ),
+
+                      // bottom - panel
                       Center(
                         child: Container(
                           width: 100.w,
@@ -667,19 +672,18 @@ class _ProfileState extends State<Profile> {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                if (userType == UserType.Vendor.name)
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 1.h, horizontal: 3.w),
-                                    width: 55,
-                                    height: 6,
-                                    decoration: ShapeDecoration(
-                                      color: const Color(0xFFFA6E00),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(6)),
-                                    ),
+                                // if (userType == UserType.Vendor.name)
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 1.h, horizontal: 3.w),
+                                  width: 55,
+                                  height: 6,
+                                  decoration: ShapeDecoration(
+                                    color: const Color(0xFFFA6E00),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6)),
                                   ),
+                                ),
                                 Space(2.h),
                                 userType == UserType.Supplier.name
                                     ? Container(
@@ -707,6 +711,7 @@ class _ProfileState extends State<Profile> {
                                                 onTap: () {
                                                   setState(() {
                                                     _activeButtonIndex = 2;
+                                                    _scrollToTop();
                                                   });
                                                 },
                                                 child: CommonButtonProfile(
@@ -802,7 +807,7 @@ class _ProfileState extends State<Profile> {
                                         : Container(
                                             // height: 6.5.h,
                                             width: 95.w,
-                                            
+
                                             child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -832,7 +837,13 @@ class _ProfileState extends State<Profile> {
                                                     onTap: () {
                                                       setState(() {
                                                         _activeButtonIndex = 2;
+                                                        _scrollToTop();
                                                       });
+
+                                                      // Ensure the scroll happens after the frame is built
+                                                      //                                                   WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                      //   t1.jumpTo(500.0); // Scroll to the top
+                                                      // });
                                                     },
                                                     child: CommonButtonProfile(
                                                       isActive:
@@ -869,37 +880,50 @@ class _ProfileState extends State<Profile> {
                                                   CircularProgressIndicator(),
                                             )
                                           : feedList.length == 0
-                                              ? 
-                                              Container(
-                                                height: MediaQuery.sizeOf(context).height /2.7,
-                                                child: Center(
-                                                  
-                                                            child: Column(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                                            children: [
-                                                              
-                                                              Text(
-                                                                'No items  ',
-                                                                style: TextStyle(
-                                                                    color: boxShadowColor.withOpacity(0.2),
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 35,
-                                                                    fontFamily: 'Product Sans'),
-                                                              ),
-                                                              Text(
-                                                                'in content  ',
-                                                                style: TextStyle(
-                                                                    color: boxShadowColor.withOpacity(0.2),
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 35,
-                                                                    fontFamily: 'Product Sans'),
-                                                              ),
-                                                              const SizedBox(height: 100,)
-                                                            ],
-                                                          )),
-                                              )
-       
+                                              ? Container(
+                                                  height:
+                                                      MediaQuery.sizeOf(context)
+                                                              .height /
+                                                          2.7,
+                                                  child: Center(
+                                                      child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        'No items  ',
+                                                        style: TextStyle(
+                                                            color: boxShadowColor
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 35,
+                                                            fontFamily:
+                                                                'Product Sans'),
+                                                      ),
+                                                      Text(
+                                                        'in content  ',
+                                                        style: TextStyle(
+                                                            color: boxShadowColor
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 35,
+                                                            fontFamily:
+                                                                'Product Sans'),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 100,
+                                                      )
+                                                    ],
+                                                  )),
+                                                )
                                               : GridView.builder(
                                                   physics:
                                                       const NeverScrollableScrollPhysics(),
@@ -941,58 +965,64 @@ class _ProfileState extends State<Profile> {
                                                 )),
                                 if (_activeButtonIndex == 2)
                                   Menu(
-                                      isLoading: _isLoading,
-                                      menuList: menuList,
-                                      categories: categories,
-                                      scroll: t1),
+                                    isLoading: _isLoading,
+                                    menuList: menuList,
+                                    categories: categories,
+                                    scroll: t1,
+                                  ),
                                 if (_activeButtonIndex == 3)
-                                    Container(
-                                                height: MediaQuery.sizeOf(context).height /2.7,
-                                                child: Center(
-                                                  
-                                                            child: Column(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                                            children: [
-                                                              
-                                                              Text(
-                                                                'No reviews  ',
-                                                                style: TextStyle(
-                                                                    color: boxShadowColor.withOpacity(0.2),
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 35,
-                                                                    fontFamily: 'Product Sans'),
-                                                              ),
-                                                              
-                                                              const SizedBox(height: 100,)
-                                                            ],
-                                                          )),
-                                              ),
-       
+                                  Container(
+                                    height:
+                                        MediaQuery.sizeOf(context).height / 2.7,
+                                    child: Center(
+                                        child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'No reviews  ',
+                                          style: TextStyle(
+                                              color: boxShadowColor
+                                                  .withOpacity(0.2),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 35,
+                                              fontFamily: 'Product Sans'),
+                                        ),
+                                        const SizedBox(
+                                          height: 100,
+                                        )
+                                      ],
+                                    )),
+                                  ),
+
                                 if (_activeButtonIndex == 4)
-                                    Container(
-                                                height: MediaQuery.sizeOf(context).height /2.7,
-                                                child: Center(
-                                                  
-                                                            child: Column(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                                            children: [
-                                                              
-                                                              Text(
-                                                                'No reviews  ',
-                                                                style: TextStyle(
-                                                                    color: boxShadowColor.withOpacity(0.2),
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 35,
-                                                                    fontFamily: 'Product Sans'),
-                                                              ),
-                                                              
-                                                              const SizedBox(height: 100,)
-                                                            ],
-                                                          )),
-                                              )
-       
+                                  Container(
+                                    height:
+                                        MediaQuery.sizeOf(context).height / 2.7,
+                                    child: Center(
+                                        child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'No reviews  ',
+                                          style: TextStyle(
+                                              color: boxShadowColor
+                                                  .withOpacity(0.2),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 35,
+                                              fontFamily: 'Product Sans'),
+                                        ),
+                                        const SizedBox(
+                                          height: 100,
+                                        )
+                                      ],
+                                    )),
+                                  )
                               ]),
                         ),
                       ),
@@ -1644,12 +1674,31 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   TextEditingController _controller = TextEditingController();
-
   bool _iscategorySearch = false;
   bool _searchOn = false;
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   // Scroll to the top 10 items after the first frame is rendered
+
+  // }
 
   @override
   Widget build(BuildContext context) {
+    String userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    Color boxShadowColor;
+
+    if (userType == 'Vendor') {
+      boxShadowColor = const Color(0xff0A4C61);
+    } else if (userType == 'Customer') {
+      boxShadowColor = const Color(0xff2E0536);
+    } else if (userType == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    } else {
+      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+    }
     return Container(
       width: 90.w,
       height: 90.h,
@@ -1662,12 +1711,38 @@ class _MenuState extends State<Menu> {
                       child: CircularProgressIndicator(),
                     )
                   : widget.menuList.isEmpty
-                      ? const SizedBox(
-                          // height: 10.h,
-                          child: Center(child: Text('No items in Menu')),
+                      ? Container(
+                          height: MediaQuery.sizeOf(context).height / 2.7,
+                          child: Center(
+                              child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'No items  ',
+                                style: TextStyle(
+                                    color: boxShadowColor.withOpacity(0.2),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 35,
+                                    fontFamily: 'Product Sans'),
+                              ),
+                              Text(
+                                'in menu  ',
+                                style: TextStyle(
+                                    color: boxShadowColor.withOpacity(0.2),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 35,
+                                    fontFamily: 'Product Sans'),
+                              ),
+                              const SizedBox(
+                                height: 100,
+                              )
+                            ],
+                          )),
                         )
                       : Expanded(
                           child: SingleChildScrollView(
+                            // controller: widget.scroll,
                             child: Column(
                               children: [
                                 Padding(
@@ -1697,7 +1772,6 @@ class _MenuState extends State<Menu> {
                                                 padding: EdgeInsets.symmetric(
                                                     vertical: 1.h,
                                                     horizontal: 5.w),
-                                                
                                                 decoration: ShapeDecoration(
                                                   color: const Color.fromRGBO(
                                                       112, 186, 210, 1),
@@ -1708,10 +1782,15 @@ class _MenuState extends State<Menu> {
                                                       cornerSmoothing: 1,
                                                     ),
                                                   ),
-                                                  shadows:  [
+                                                  shadows: [
                                                     BoxShadow(
-                                                      color: const Color.fromRGBO(
-                                                          112, 186, 210, 1).withOpacity(0.8),
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                                  112,
+                                                                  186,
+                                                                  210,
+                                                                  1)
+                                                              .withOpacity(0.8),
                                                       spreadRadius: 0,
                                                       blurRadius: 10,
                                                       offset: Offset(1, 4),
@@ -1858,6 +1937,9 @@ class _MenuState extends State<Menu> {
                                         data: widget.menuList[index],
                                         scroll: widget.scroll),
                                 Space(2.h),
+                                SizedBox(
+                                  height: 70,
+                                ),
                               ],
                             ),
                           ),
@@ -2104,19 +2186,20 @@ class CommonButtonProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    String? userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
     Color colorProfile;
     if (userType == 'Vendor') {
-      colorProfile = const Color(0xFF094B60) ;
+      colorProfile = const Color(0xFF094B60);
     } else if (userType == 'Customer') {
       colorProfile = const Color(0xFF2E0536);
     } else if (userType == 'Supplier') {
       colorProfile = Color.fromARGB(255, 26, 48, 10);
     } else {
-      colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+      colorProfile = const Color.fromRGBO(
+          77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
     return Container(
-       
         child: Center(
       child: Padding(
         padding: const EdgeInsets.all(0.0),
@@ -2131,7 +2214,7 @@ class CommonButtonProfile extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 13.0),
                   child: Text(
                     txt,
-                    style:  TextStyle(
+                    style: TextStyle(
                       color: colorProfile,
                       fontSize: 14,
                       fontFamily: 'Product Sans',
