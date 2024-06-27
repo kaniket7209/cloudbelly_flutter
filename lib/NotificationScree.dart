@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/main.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -365,7 +366,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
             ],
           ))
-       
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -454,7 +454,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ),
               ),
               image: DecorationImage(
-                image: NetworkImage(notification['buyer_logo']),
+                image: NetworkImage(
+                  notification['buyer_logo'],
+                ),
                 fit: BoxFit.cover,
               ),
             ),
@@ -1188,22 +1190,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
 // for order tracking
   Widget _buildActionButtonsCustomer(Map<String, dynamic> notification,
       bool isAccepted, Color boxShadowColor, index) {
-
     //      Color backColour;
     // if (notification['status'] == 'Submitted') {
     //   backColour = const Color(0xff0A4C61);
     // } else if (notification['status'] == 'Accepted') {
     //   backColour = const Color(0xff2E0536);
-    // } 
+    // }
     // else if (notification['status'] == 'Packed') {
     //   backColour = Color.fromARGB(0, 115, 188, 150);
-    // } 
+    // }
     // else if (notification['status'] == 'Prepared') {
     //   backColour = Color.fromARGB(0, 115, 188, 150);
-    // } 
+    // }
     // else if (notification['status'] == 'Out for delivery') {
     //   backColour = Color.fromARGB(0, 115, 188, 150);
-    // } 
+    // }
     // else { // delivered
     //   backColour = const Color.fromRGBO(77, 191, 74, 0.6);
     // }
@@ -1212,7 +1213,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         notification['status'] == 'Accepted' ||
         notification['status'] == 'Out for delivery' ||
         notification['status'] == 'Packed' ||
-        notification['status'] == 'Prepared' ) {
+        notification['status'] == 'Prepared') {
       return Row(
         children: [
           Container(
@@ -1466,21 +1467,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           width: 35,
                           height: 35,
                           decoration: ShapeDecoration(
-                            color: Color(0xff0A4C61),
-                            shape: SmoothRectangleBorder(
-                              borderRadius: SmoothBorderRadius(
-                                cornerRadius: 12.0,
-                                cornerSmoothing: 1,
-                              ),
-                            ),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                  notification['msg']['from_profile_photo']),
-                              fit: BoxFit.cover,
-                            ),
+                            shape: const SmoothRectangleBorder(),
                             shadows: [
                               BoxShadow(
-                                color: boxShadowColor.withOpacity(0.2),
+                                color: Colors.black.withOpacity(0.2),
                                 spreadRadius: 2,
                                 blurRadius: 10,
                                 offset: Offset(0, 3),
@@ -1489,9 +1479,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           ),
                           child: GestureDetector(
                             onTap: () {
-                              print(" redirect ${notification['msg']['from']}");
-                              String userId = notification['msg'][
-                                  'from']; // Assuming you have a field for user ID in the notification
+                              print("redirect ${notification['msg']['from']}");
+                              String userId = notification['msg']['from'];
                               navigatorKey.currentState?.push(
                                 MaterialPageRoute(
                                   builder: (context) =>
@@ -1499,6 +1488,36 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 ),
                               );
                             },
+                            child: ClipSmoothRect(
+                              radius: SmoothBorderRadius(
+                                cornerRadius: 9,
+                                cornerSmoothing: 1,
+                              ),
+                              child: notification['msg']
+                                              ['from_profile_photo'] !=
+                                          null &&
+                                      notification['msg']['from_profile_photo']
+                                          .isNotEmpty
+                                  ? Image.network(
+                                      notification['msg']['from_profile_photo'],
+                                      fit: BoxFit.cover,
+                                      width: 35,
+                                      height: 35,
+                                      loadingBuilder: GlobalVariables()
+                                          .loadingBuilderForImage,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return _buildInitialsAvatar(
+                                          notification['notification']['body'],
+                                          notification['msg']['type'],boxShadowColor
+                                        );
+                                      },
+                                    )
+                                  : _buildInitialsAvatar(
+                                      notification['notification']['body'],
+                                      notification['msg']['type'],boxShadowColor
+                                    ),
+                            ),
                           ),
                         ),
 
@@ -1816,8 +1835,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ),
                 )
-              
-              :SmartRefresher(
+              : SmartRefresher(
                   onRefresh: _onRefresh,
                   controller: _refreshController,
                   enablePullDown: true,
@@ -2065,35 +2083,33 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ),
                 );
-              
-              // : Center(
-              //     child: Column(
-              //       mainAxisAlignment: MainAxisAlignment.center,
-              //       crossAxisAlignment: CrossAxisAlignment.center,
-              //       children: [
-              //         Text(
-              //           'No new  ',
-              //           style: TextStyle(
-              //             color: Color(0xff4F7D7C).withOpacity(0.4),
-              //             fontWeight: FontWeight.bold,
-              //             fontSize: 35,
-              //             fontFamily: 'Product Sans',
-              //           ),
-              //         ),
-              //         Text(
-              //           'notifications  ',
-              //           style: TextStyle(
-              //             color: Color(0xff4F7D7C).withOpacity(0.4),
-              //             fontWeight: FontWeight.bold,
-              //             fontSize: 35,
-              //             fontFamily: 'Product Sans',
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   );
-        
-        
+
+          // : Center(
+          //     child: Column(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       crossAxisAlignment: CrossAxisAlignment.center,
+          //       children: [
+          //         Text(
+          //           'No new  ',
+          //           style: TextStyle(
+          //             color: Color(0xff4F7D7C).withOpacity(0.4),
+          //             fontWeight: FontWeight.bold,
+          //             fontSize: 35,
+          //             fontFamily: 'Product Sans',
+          //           ),
+          //         ),
+          //         Text(
+          //           'notifications  ',
+          //           style: TextStyle(
+          //             color: Color(0xff4F7D7C).withOpacity(0.4),
+          //             fontWeight: FontWeight.bold,
+          //             fontSize: 35,
+          //             fontFamily: 'Product Sans',
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   );
         },
       ),
     );
@@ -2219,41 +2235,42 @@ class _PaymentScreenState extends State<PaymentScreen> {
   List<int> expandedIndices = [];
 
   bool showScreenshot = false;
- void verifyPayment(BuildContext context, Map<String, dynamic> notification) async {
-  final response = await http.post(
-    Uri.parse("https://app.cloudbelly.in/order/confirm_payment"),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode({
-      "user_id": notification['payment_from_user_id'],
-      "order_from_user_id": notification['payment_to_user_id'],
-      "order_id": notification['order_id'],
-      "verification_status": "verified", // or "not_received" based on your logic
-    }),
-  );
+  void verifyPayment(
+      BuildContext context, Map<String, dynamic> notification) async {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/order/confirm_payment"),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "user_id": notification['payment_from_user_id'],
+        "order_from_user_id": notification['payment_to_user_id'],
+        "order_id": notification['order_id'],
+        "verification_status":
+            "verified", // or "not_received" based on your logic
+      }),
+    );
 
-  if (response.statusCode == 200) {
-    // Handle successful verification
-    print("Payment verified successfully");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Payment verified successfully')),
-    );
-    // Refresh notifications
-    await Provider.of<Auth>(context, listen: false).getNotificationList();
-  } else {
-    // Handle error
-    print("Failed to verify payment");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to verify payment')),
-    );
+    if (response.statusCode == 200) {
+      // Handle successful verification
+      print("Payment verified successfully");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Payment verified successfully')),
+      );
+      // Refresh notifications
+      await Provider.of<Auth>(context, listen: false).getNotificationList();
+    } else {
+      // Handle error
+      print("Failed to verify payment");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to verify payment')),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       backgroundColor: Color(0xff0A4C61),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70.0), // Adjust height as needed
@@ -2425,7 +2442,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                         clipBehavior: Clip
                                             .antiAlias, // Ensures the image is clipped to the shape
                                         child: Image.network(
-                                            notification['transaction_image']),
+                                          notification['transaction_image'],
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: GlobalVariables()
+                                              .loadingBuilderForImage,
+                                          errorBuilder: GlobalVariables()
+                                              .ErrorBuilderForImage,
+                                        ),
                                       ),
                                     SizedBox(height: 10),
                                   ],
@@ -2500,5 +2523,53 @@ String timeAgo(String d) {
   } else {
     final int years = (difference.inDays / 365).floor();
     return '$years year${years == 1 ? '' : 's'} ago';
+  }
+}
+
+Widget _buildInitialsAvatar(String body, String type,Color boxShadowColor) {
+  String storeName = '';
+  if (type == "social") {
+    // Extract the first two words from body for social notifications
+    storeName = extractStoreName(body);
+  } else {
+    storeName = body;
+  }
+  String initials = _getInitials(storeName);
+
+  return Container(
+    color: boxShadowColor,
+    child: Center(
+      child: Text(
+        initials,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  );
+}
+
+String extractStoreName(String text) {
+  print("$text " );
+ List<String> words = text.split('');
+  if (words.length >= 2) {
+    print('${words[0]} ${words[1]}');
+    return '${words[0]} ${words[1]}';
+  } else if (words.length == 1) {
+    return words[0];
+  } else {
+    return 'N/A';
+  }
+}
+
+String _getInitials(String name) {
+  List<String> nameParts = name.split(' ');
+  if (nameParts.length == 1) {
+    return nameParts[0].substring(0, 1).toUpperCase();
+  } else {
+    return nameParts[0].substring(0, 1).toUpperCase() +
+        nameParts[1].substring(0, 1).toUpperCase();
   }
 }
