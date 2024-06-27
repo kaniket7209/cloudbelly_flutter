@@ -70,8 +70,19 @@ class _ProfileState extends State<Profile> {
 
   void _scrollToTop() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      t1.jumpTo(MediaQuery.sizeOf(context).height / 2.5); // Scroll to the top
+      t1.animateTo(
+        MediaQuery.sizeOf(context).height / 2.5, // Scroll to the top
+        duration:
+            const Duration(milliseconds: 300), // Duration of the animation
+        curve: Curves.fastLinearToSlowEaseIn, // Curve of the animation
+      );
     });
+  }
+
+  @override
+  void dispose() {
+    t1.dispose();
+    super.dispose();
   }
 
   Future<void> _loading() async {
@@ -982,7 +993,7 @@ class _ProfileState extends State<Profile> {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          'No reviews  ',
+                                          'No reviews',
                                           style: TextStyle(
                                               color: boxShadowColor
                                                   .withOpacity(0.2),
@@ -1009,7 +1020,7 @@ class _ProfileState extends State<Profile> {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          'No reviews  ',
+                                          'No data',
                                           style: TextStyle(
                                               color: boxShadowColor
                                                   .withOpacity(0.2),
@@ -1741,209 +1752,203 @@ class _MenuState extends State<Menu> {
                           )),
                         )
                       : Expanded(
-                          child: SingleChildScrollView(
-                            // controller: widget.scroll,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 15),
-                                      child: Row(
-                                        children: [
-                                          for (int i = 0;
-                                              i < widget.categories.length;
-                                              i++)
-                                            TouchableOpacity(
-                                              onTap: () {
-                                                setState(() {
-                                                  _iscategorySearch = true;
-                                                  _searchOn = true;
-                                                  _controller.text =
-                                                      widget.categories[i];
-                                                });
-                                              },
-                                              child: Container(
-                                                margin:
-                                                    EdgeInsets.only(right: 5.w),
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 1.h,
-                                                    horizontal: 5.w),
-                                                decoration: ShapeDecoration(
-                                                  color: const Color.fromRGBO(
-                                                      112, 186, 210, 1),
-                                                  shape: SmoothRectangleBorder(
-                                                    borderRadius:
-                                                        SmoothBorderRadius(
-                                                      cornerRadius: 11,
-                                                      cornerSmoothing: 1,
-                                                    ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 15),
+                                    child: Row(
+                                      children: [
+                                        for (int i = 0;
+                                            i < widget.categories.length;
+                                            i++)
+                                          TouchableOpacity(
+                                            onTap: () {
+                                              setState(() {
+                                                _iscategorySearch = true;
+                                                _searchOn = true;
+                                                _controller.text =
+                                                    widget.categories[i];
+                                              });
+                                            },
+                                            child: Container(
+                                              margin:
+                                                  EdgeInsets.only(right: 5.w),
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 1.h,
+                                                  horizontal: 5.w),
+                                              decoration: ShapeDecoration(
+                                                color: const Color.fromRGBO(
+                                                    112, 186, 210, 1),
+                                                shape: SmoothRectangleBorder(
+                                                  borderRadius:
+                                                      SmoothBorderRadius(
+                                                    cornerRadius: 11,
+                                                    cornerSmoothing: 1,
                                                   ),
-                                                  shadows: [
-                                                    BoxShadow(
-                                                      color:
-                                                          const Color.fromRGBO(
-                                                                  112,
-                                                                  186,
-                                                                  210,
-                                                                  1)
-                                                              .withOpacity(0.8),
-                                                      spreadRadius: 0,
-                                                      blurRadius: 10,
-                                                      offset: Offset(1, 4),
-                                                    ),
-                                                  ],
                                                 ),
-                                                child: Center(
-                                                  child: Text(
-                                                    widget.categories[i],
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontFamily:
-                                                          'Product Sans',
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      height: 0,
-                                                      letterSpacing: 0.14,
-                                                    ),
+                                                shadows: [
+                                                  BoxShadow(
+                                                    color: const Color.fromRGBO(
+                                                            112, 186, 210, 1)
+                                                        .withOpacity(0.8),
+                                                    spreadRadius: 0,
+                                                    blurRadius: 10,
+                                                    offset: Offset(1, 4),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  widget.categories[i],
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                    fontFamily: 'Product Sans',
+                                                    fontWeight: FontWeight.w700,
+                                                    height: 0,
+                                                    letterSpacing: 0.14,
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                        ],
-                                      ),
+                                          ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                const Space(12),
-                                Container(
-                                  width: double.infinity,
-                                  height: 40,
-                                  decoration:
-                                      GlobalVariables().ContainerDecoration(
-                                    offset: const Offset(0, 4),
-                                    blurRadius: 0,
-                                    shadowColor: Colors.white,
-                                    boxColor:
-                                        const Color.fromRGBO(239, 255, 254, 1),
-                                    cornerRadius: 10,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      const Space(12, isHorizontal: true),
-                                      const Icon(
-                                        Icons.search,
-                                        color: Color(0xFFFA6E00),
-                                      ),
-                                      const Space(12, isHorizontal: true),
-                                      Center(
-                                        child: Container(
-                                          width: 60.w,
-                                          child: TextField(
-                                              controller: _controller,
-                                              readOnly: false,
-                                              maxLines: null,
-                                              style: const TextStyle(
+                              ),
+                              const Space(1),
+                              Container(
+                                width: double.infinity,
+                                height: 40,
+                                decoration:
+                                    GlobalVariables().ContainerDecoration(
+                                  offset: const Offset(0, 4),
+                                  blurRadius: 0,
+                                  shadowColor: Colors.white,
+                                  boxColor:
+                                      const Color.fromRGBO(239, 255, 254, 1),
+                                  cornerRadius: 10,
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Space(12, isHorizontal: true),
+                                    const Icon(
+                                      Icons.search,
+                                      color: Color(0xFFFA6E00),
+                                    ),
+                                    const Space(12, isHorizontal: true),
+                                    Center(
+                                      child: Container(
+                                        width: 60.w,
+                                        child: TextField(
+                                            controller: _controller,
+                                            readOnly: false,
+                                            maxLines: null,
+                                            style: const TextStyle(
+                                              color: Color(0xFF094B60),
+                                              fontSize: 14,
+                                              fontFamily: 'Product Sans',
+                                              fontWeight: FontWeight.w400,
+                                              letterSpacing: 0.42,
+                                            ),
+                                            textInputAction:
+                                                TextInputAction.done,
+                                            decoration: const InputDecoration(
+                                              hintText: 'Search',
+                                              hintStyle: TextStyle(
                                                 color: Color(0xFF094B60),
                                                 fontSize: 14,
                                                 fontFamily: 'Product Sans',
                                                 fontWeight: FontWeight.w400,
                                                 letterSpacing: 0.42,
                                               ),
-                                              textInputAction:
-                                                  TextInputAction.done,
-                                              decoration: const InputDecoration(
-                                                hintText: 'Search',
-                                                hintStyle: TextStyle(
-                                                  color: Color(0xFF094B60),
-                                                  fontSize: 14,
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w400,
-                                                  letterSpacing: 0.42,
-                                                ),
-                                                contentPadding:
-                                                    EdgeInsets.only(bottom: 10),
-                                                border: InputBorder.none,
-                                              ),
-                                              onChanged: (newv) {
+                                              contentPadding:
+                                                  EdgeInsets.only(bottom: 10),
+                                              border: InputBorder.none,
+                                            ),
+                                            onChanged: (newv) {
+                                              setState(() {
+                                                _iscategorySearch = false;
+                                                _searchOn = true;
+                                              });
+                                              if (newv == '') {
                                                 setState(() {
-                                                  _iscategorySearch = false;
-                                                  _searchOn = true;
+                                                  _searchOn = false;
                                                 });
-                                                if (newv == '') {
-                                                  setState(() {
-                                                    _searchOn = false;
-                                                  });
-                                                }
-                                              },
-                                              cursorColor:
-                                                  const Color(0xFFFA6E00)),
+                                              }
+                                            },
+                                            cursorColor:
+                                                const Color(0xFFFA6E00)),
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    TouchableOpacity(
+                                      onTap: () {
+                                        setState(() {
+                                          _searchOn = false;
+                                          _controller.clear();
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 1.w),
+                                        child: const Icon(
+                                          Icons.cancel,
+                                          color: Color(0xFFFA6E00),
                                         ),
                                       ),
-                                      const Spacer(),
-                                      TouchableOpacity(
-                                        onTap: () {
-                                          setState(() {
-                                            _searchOn = false;
-                                            _controller.clear();
-                                          });
-                                        },
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 1.w),
-                                          child: const Icon(
-                                            Icons.cancel,
-                                            color: Color(0xFFFA6E00),
-                                          ),
-                                        ),
-                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Space(10),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      if (_iscategorySearch && _searchOn)
+                                        for (int index = 0;
+                                            index < widget.menuList.length;
+                                            index++)
+                                          if (widget.menuList[index]['category']
+                                              .toString()
+                                              .contains(_controller.text))
+                                            MenuItem(
+                                                data: widget.menuList[index],
+                                                scroll: widget.scroll),
+                                      if (!_iscategorySearch && _searchOn)
+                                        for (int index = 0;
+                                            index < widget.menuList.length;
+                                            index++)
+                                          if (widget.menuList[index]['name']
+                                              .toString()
+                                              .toLowerCase()
+                                              .contains(_controller.text
+                                                  .toLowerCase()))
+                                            MenuItem(
+                                                data: widget.menuList[index],
+                                                scroll: widget.scroll),
+                                      if (!_searchOn)
+                                        for (int index = 0;
+                                            index < widget.menuList.length;
+                                            index++)
+                                          MenuItem(
+                                              data: widget.menuList[index],
+                                              scroll: widget.scroll),
+                                      const SizedBox(height: 150),
                                     ],
                                   ),
                                 ),
-                                Space(1.h),
-                                if (_iscategorySearch && _searchOn)
-                                  for (int index = 0;
-                                      index < widget.menuList.length;
-                                      index++)
-                                    if (widget.menuList[index]['category']
-                                        .toString()
-                                        .contains(_controller.text))
-                                      MenuItem(
-                                          data: widget.menuList[index],
-                                          scroll: widget.scroll),
-                                if (!_iscategorySearch && _searchOn)
-                                  for (int index = 0;
-                                      index < widget.menuList.length;
-                                      index++)
-                                    if (widget.menuList[index]['name']
-                                        .toString()
-                                        .toLowerCase()
-                                        .contains(
-                                            _controller.text.toLowerCase()))
-                                      MenuItem(
-                                          data: widget.menuList[index],
-                                          scroll: widget.scroll),
-                                if (!_searchOn)
-                                  for (int index = 0;
-                                      index < widget.menuList.length;
-                                      index++)
-                                    MenuItem(
-                                        data: widget.menuList[index],
-                                        scroll: widget.scroll),
-                                Space(2.h),
-                                SizedBox(
-                                  height: 130,
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ),
+                        )
             ],
           ),
           if (Provider.of<Auth>(context).itemAdd.isNotEmpty)
@@ -1952,7 +1957,6 @@ class _MenuState extends State<Menu> {
               left: 0,
               right: 0,
               child: Container(
-                // margin: EdgeInsets.symmetric(horizontal: 7.w),
                 width: double.infinity,
                 height: 75,
                 decoration: GlobalVariables().ContainerDecoration(
@@ -2017,13 +2021,13 @@ class _MenuState extends State<Menu> {
                               cornerSmoothing: 1,
                             ),
                           ),
-                           shadows: const [
-                        BoxShadow(
-                          offset: Offset(3, 6),
-                          color: Color(0xff4F215B),
-                          blurRadius: 20,
-                        ),
-                      ],
+                          shadows: const [
+                            BoxShadow(
+                              offset: Offset(3, 6),
+                              color: Color(0xff4F215B),
+                              blurRadius: 20,
+                            ),
+                          ],
                         ),
                         child: const Center(
                           child: Text(

@@ -77,10 +77,22 @@ class _ProfileViewState extends State<ProfileView> {
       // _refreshController.refreshFailed();
     }
   }
-   void _scrollToTop() {
+
+  void _scrollToTop() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      t1.jumpTo(MediaQuery.sizeOf(context).height / 2.5); // Scroll to the top
+      t1.animateTo(
+        MediaQuery.sizeOf(context).height / 2.5, // Scroll to the top
+        duration:
+            const Duration(milliseconds: 300), // Duration of the animation
+        curve: Curves.fastLinearToSlowEaseIn, // Curve of the animation
+      );
     });
+  }
+
+  @override
+  void dispose() {
+    t1.dispose();
+    super.dispose();
   }
 
   Future<void> getUserInfo(List<String> userIds) async {
@@ -188,7 +200,6 @@ class _ProfileViewState extends State<ProfileView> {
       }
       _loadAllData();
     });
-    
   }
 
   void _loadAllData() {
@@ -200,19 +211,20 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-     
     bool _isFollowing = checkFollow();
-    String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-     
+    String? userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+
     Color boxShadowColor;
     if (userType == 'Vendor') {
-      boxShadowColor = const Color.fromRGBO(10, 76, 97, 0.5) ;
+      boxShadowColor = const Color.fromRGBO(10, 76, 97, 0.5);
     } else if (userType == 'Customer') {
       boxShadowColor = const Color(0xBC73BC).withOpacity(0.5);
     } else if (userType == 'Supplier') {
       boxShadowColor = Color.fromARGB(0, 115, 188, 150).withOpacity(0.5);
     } else {
-      boxShadowColor = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+      boxShadowColor = const Color.fromRGBO(
+          77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
@@ -254,20 +266,16 @@ class _ProfileViewState extends State<ProfileView> {
                                       width: 100.w,
                                       height: 30.h,
                                       decoration: ShapeDecoration(
-                                         color: userList.first
-                                                                .userType ==
-                                                            UserType.Vendor.name
-                                                        ? const Color.fromRGBO(
-                                                            165, 200, 199, 0.6)
-                                                        : userList.first
-                                                                    .userType ==
-                                                                UserType
-                                                                    .Supplier
-                                                                    .name
-                                                            ? const Color
-                                                                .fromRGBO(77,
-                                                                191, 74, 0.6)
-                                                            :  const Color(0xBC73BC).withOpacity(0.5),
+                                        color: userList.first.userType ==
+                                                UserType.Vendor.name
+                                            ? const Color.fromRGBO(
+                                                165, 200, 199, 0.6)
+                                            : userList.first.userType ==
+                                                    UserType.Supplier.name
+                                                ? const Color.fromRGBO(
+                                                    77, 191, 74, 0.6)
+                                                : const Color(0xBC73BC)
+                                                    .withOpacity(0.5),
                                         shape: const SmoothRectangleBorder(
                                           borderRadius: SmoothBorderRadius.only(
                                               bottomLeft: SmoothRadius(
@@ -312,33 +320,46 @@ class _ProfileViewState extends State<ProfileView> {
                                                 padding: EdgeInsets.only(
                                                     left: 10.w, top: 15),
                                                 child: userList.first
-                                                                .profilePhoto !=
-                                                            null 
+                                                            .profilePhoto !=
+                                                        null
                                                     ? Container(
                                                         height: 70,
                                                         width: 70,
                                                         decoration:
-                                                             ShapeDecoration(
+                                                            ShapeDecoration(
                                                           shadows: [
                                                             BoxShadow(
                                                               offset:
                                                                   Offset(1, 4),
-                                                               color: userList.first
-                                                                .userType ==
-                                                            UserType.Vendor.name
-                                                        ? const Color.fromRGBO(
-                                                            165, 200, 199, 0.6)
-                                                        : userList.first
-                                                                    .userType ==
-                                                                UserType
-                                                                    .Supplier
-                                                                    .name
-                                                            ? const Color
-                                                                .fromRGBO(77,
-                                                                191, 74, 0.6)
-                                                            : const Color
-                                                                .fromRGBO(188,
-                                                                115, 188, 0.6),
+                                                              color: userList
+                                                                          .first
+                                                                          .userType ==
+                                                                      UserType
+                                                                          .Vendor
+                                                                          .name
+                                                                  ? const Color
+                                                                      .fromRGBO(
+                                                                      165,
+                                                                      200,
+                                                                      199,
+                                                                      0.6)
+                                                                  : userList.first
+                                                                              .userType ==
+                                                                          UserType
+                                                                              .Supplier
+                                                                              .name
+                                                                      ? const Color
+                                                                          .fromRGBO(
+                                                                          77,
+                                                                          191,
+                                                                          74,
+                                                                          0.6)
+                                                                      : const Color
+                                                                          .fromRGBO(
+                                                                          188,
+                                                                          115,
+                                                                          188,
+                                                                          0.6),
                                                               blurRadius: 20,
                                                             )
                                                           ],
@@ -370,45 +391,68 @@ class _ProfileViewState extends State<ProfileView> {
                                                         width: 70,
                                                         decoration:
                                                             ShapeDecoration(
-                                                          shadows:  [
+                                                          shadows: [
                                                             BoxShadow(
                                                               offset:
                                                                   Offset(0, 4),
-                                                               color: userList.first
-                                                                .userType ==
-                                                            UserType.Vendor.name
-                                                        ? const Color.fromRGBO(
-                                                            165, 200, 199, 0.6)
-                                                        : userList.first
-                                                                    .userType ==
-                                                                UserType
-                                                                    .Supplier
-                                                                    .name
-                                                            ? const Color
-                                                                .fromRGBO(77,
-                                                                191, 74, 0.6)
-                                                            : const Color
-                                                                .fromRGBO(188,
-                                                                115, 188, 0.6),
+                                                              color: userList
+                                                                          .first
+                                                                          .userType ==
+                                                                      UserType
+                                                                          .Vendor
+                                                                          .name
+                                                                  ? const Color
+                                                                      .fromRGBO(
+                                                                      165,
+                                                                      200,
+                                                                      199,
+                                                                      0.6)
+                                                                  : userList.first
+                                                                              .userType ==
+                                                                          UserType
+                                                                              .Supplier
+                                                                              .name
+                                                                      ? const Color
+                                                                          .fromRGBO(
+                                                                          77,
+                                                                          191,
+                                                                          74,
+                                                                          0.6)
+                                                                      : const Color
+                                                                          .fromRGBO(
+                                                                          188,
+                                                                          115,
+                                                                          188,
+                                                                          0.6),
                                                               blurRadius: 20,
                                                             ),
                                                           ],
                                                           color: userList.first
-                                                                .userType ==
-                                                            UserType.Vendor.name
-                                                        ? const Color.fromRGBO(
-                                                            165, 200, 199, 0.6)
-                                                        : userList.first
-                                                                    .userType ==
-                                                                UserType
-                                                                    .Supplier
-                                                                    .name
-                                                            ? const Color
-                                                                .fromRGBO(77,
-                                                                191, 74, 0.6)
-                                                            : const Color
-                                                                .fromRGBO(188,
-                                                                115, 188, 0.6),
+                                                                      .userType ==
+                                                                  UserType
+                                                                      .Vendor
+                                                                      .name
+                                                              ? const Color.fromRGBO(
+                                                                  165,
+                                                                  200,
+                                                                  199,
+                                                                  0.6)
+                                                              : userList.first.userType ==
+                                                                      UserType
+                                                                          .Supplier
+                                                                          .name
+                                                                  ? const Color
+                                                                      .fromRGBO(
+                                                                      77,
+                                                                      191,
+                                                                      74,
+                                                                      0.6)
+                                                                  : const Color
+                                                                      .fromRGBO(
+                                                                      188,
+                                                                      115,
+                                                                      188,
+                                                                      0.6),
                                                           shape:
                                                               SmoothRectangleBorder(
                                                                   borderRadius:
@@ -653,22 +697,16 @@ class _ProfileViewState extends State<ProfileView> {
                                           shadows: [
                                             BoxShadow(
                                               offset: const Offset(0, 4),
-                                               color: userList.first
-                                                                .userType ==
-                                                            UserType.Vendor.name
-                                                        ? const Color.fromRGBO(
-                                                            165, 200, 199, 0.6)
-                                                        : userList.first
-                                                                    .userType ==
-                                                                UserType
-                                                                    .Supplier
-                                                                    .name
-                                                            ? const Color
-                                                                .fromRGBO(77,
-                                                                191, 74, 0.6)
-                                                            : const Color
-                                                                .fromRGBO(188,
-                                                                115, 188, 0.6),
+                                              color: userList.first.userType ==
+                                                      UserType.Vendor.name
+                                                  ? const Color.fromRGBO(
+                                                      165, 200, 199, 0.6)
+                                                  : userList.first.userType ==
+                                                          UserType.Supplier.name
+                                                      ? const Color.fromRGBO(
+                                                          77, 191, 74, 0.6)
+                                                      : const Color.fromRGBO(
+                                                          188, 115, 188, 0.6),
                                               blurRadius: 30,
                                             )
                                           ],
@@ -703,12 +741,10 @@ class _ProfileViewState extends State<ProfileView> {
                                                   ),
                                                 ),
                                               Space(2.h),
-                                              userList.first
-                                                                .userType == UserType.Supplier.name
+                                              userList.first.userType ==
+                                                      UserType.Supplier.name
                                                   ? Container(
-                                                      
                                                       width: 95.w,
-                                                
                                                       child: Row(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
@@ -735,7 +771,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 setState(() {
                                                                   _activeButtonIndex =
                                                                       2;
-                                                                      _scrollToTop();
+                                                                  _scrollToTop();
                                                                 });
                                                               },
                                                               child:
@@ -781,13 +817,10 @@ class _ProfileViewState extends State<ProfileView> {
                                                             ),
                                                           ]),
                                                     )
-                                                  : userList.first
-                                                                .userType ==
+                                                  : userList.first.userType ==
                                                           UserType.Customer.name
                                                       ? Container(
-                                                          
                                                           width: 95.w,
-                                                       
                                                           child: Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -811,7 +844,6 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     width: 52,
                                                                   ),
                                                                 ),
-                                                                
                                                                 TouchableOpacity(
                                                                   onTap: () {
                                                                     setState(
@@ -833,9 +865,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                               ]),
                                                         )
                                                       : Container(
-                                                        
                                                           width: 95.w,
-                                                        
                                                           child: Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -849,14 +879,15 @@ class _ProfileViewState extends State<ProfileView> {
                                                                           1;
                                                                     });
                                                                   },
-                                                                  child: CommonButtonProfile(
-                                                                          isActive:
-                                                                              _activeButtonIndex == 1,
-                                                                          txt:
-                                                                              'Content',
-                                                                          width:
-                                                                              52,
-                                                                        ),
+                                                                  child:
+                                                                      CommonButtonProfile(
+                                                                    isActive:
+                                                                        _activeButtonIndex ==
+                                                                            1,
+                                                                    txt:
+                                                                        'Content',
+                                                                    width: 52,
+                                                                  ),
                                                                 ),
                                                                 TouchableOpacity(
                                                                   onTap: () {
@@ -864,7 +895,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                         () {
                                                                       _activeButtonIndex =
                                                                           2;
-                                                                          _scrollToTop();
+                                                                      _scrollToTop();
                                                                     });
                                                                   },
                                                                   child:
@@ -908,10 +939,50 @@ class _ProfileViewState extends State<ProfileView> {
                                                           )
                                                         : feedList.length == 0
                                                             ? Container(
-                                                                height: 10.h,
-                                                                child: const Center(
-                                                                    child: Text(
-                                                                        'No items in Content')),
+                                                                height: MediaQuery.sizeOf(
+                                                                            context)
+                                                                        .height /
+                                                                    2,
+                                                                child: Center(
+                                                                    child:
+                                                                        Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Text(
+                                                                      'No items  ',
+                                                                      style: TextStyle(
+                                                                          color: boxShadowColor.withOpacity(
+                                                                              0.2),
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          fontSize:
+                                                                              35,
+                                                                          fontFamily:
+                                                                              'Product Sans'),
+                                                                    ),
+                                                                    Text(
+                                                                      'in content  ',
+                                                                      style: TextStyle(
+                                                                          color: boxShadowColor.withOpacity(
+                                                                              0.2),
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          fontSize:
+                                                                              35,
+                                                                          fontFamily:
+                                                                              'Product Sans'),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          200,
+                                                                    )
+                                                                  ],
+                                                                )),
                                                               )
                                                             : GridView.builder(
                                                                 physics:
@@ -979,9 +1050,71 @@ class _ProfileViewState extends State<ProfileView> {
                                                     user: widget
                                                         .userIdList.first),
                                               if (_activeButtonIndex == 3)
-                                                const Text('Feature Pending'),
+                                                Container(
+                                                  height:
+                                                      MediaQuery.sizeOf(context)
+                                                              .height /
+                                                          2.5,
+                                                  child: Center(
+                                                      child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        'No reviews',
+                                                        style: TextStyle(
+                                                            color: boxShadowColor
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 35,
+                                                            fontFamily:
+                                                                'Product Sans'),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 200,
+                                                      )
+                                                    ],
+                                                  )),
+                                                ),
                                               if (_activeButtonIndex == 4)
-                                                const Text('Feature Pending')
+                                                Container(
+                                                  height:
+                                                      MediaQuery.sizeOf(context)
+                                                              .height /
+                                                          2,
+                                                  child: Center(
+                                                      child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        'No data',
+                                                        style: TextStyle(
+                                                            color: boxShadowColor
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 35,
+                                                            fontFamily:
+                                                                'Product Sans'),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 200,
+                                                      )
+                                                    ],
+                                                  )),
+                                                )
                                             ]),
                                       ),
                                     ),
@@ -993,20 +1126,17 @@ class _ProfileViewState extends State<ProfileView> {
                           ],
                         ),
                       )
-                    :  Center(
+                    : Center(
                         child: CircularProgressIndicator(
                         color: Colors.black,
                       )),
               )
             : Center(
-          child: CircularProgressIndicator(
-            color: Colors.black,
-          ),
-        ),
+                child: CircularProgressIndicator(
+                  color: Colors.black,
+                ),
+              ),
       ),
     );
   }
-
-
-
 }
