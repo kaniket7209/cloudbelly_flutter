@@ -2154,7 +2154,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           break;
       }
     }
-
+  print("notificationCount $notificationCount");
     return GestureDetector(
       onTap: () => _onTabTapped(index),
       child: Column(
@@ -2175,7 +2175,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ),
                 ),
               ),
-              if (notificationCount != 0)
+              if (notificationCount != 0 && index != 0) // removed social notification display  using index
                 Positioned(
                   right: 0,
                   top: 0,
