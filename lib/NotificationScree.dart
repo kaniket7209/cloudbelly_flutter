@@ -1508,15 +1508,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                       errorBuilder:
                                           (context, error, stackTrace) {
                                         return _buildInitialsAvatar(
-                                          notification['notification']['body'],
-                                          notification['msg']['type'],boxShadowColor
-                                        );
+                                            notification['notification']
+                                                ['body'],
+                                            notification['msg']['type'],
+                                            boxShadowColor);
                                       },
                                     )
                                   : _buildInitialsAvatar(
                                       notification['notification']['body'],
-                                      notification['msg']['type'],boxShadowColor
-                                    ),
+                                      notification['msg']['type'],
+                                      boxShadowColor),
                             ),
                           ),
                         ),
@@ -2083,33 +2084,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ),
                 );
-
-          // : Center(
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       crossAxisAlignment: CrossAxisAlignment.center,
-          //       children: [
-          //         Text(
-          //           'No new  ',
-          //           style: TextStyle(
-          //             color: Color(0xff4F7D7C).withOpacity(0.4),
-          //             fontWeight: FontWeight.bold,
-          //             fontSize: 35,
-          //             fontFamily: 'Product Sans',
-          //           ),
-          //         ),
-          //         Text(
-          //           'notifications  ',
-          //           style: TextStyle(
-          //             color: Color(0xff4F7D7C).withOpacity(0.4),
-          //             fontWeight: FontWeight.bold,
-          //             fontSize: 35,
-          //             fontFamily: 'Product Sans',
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   );
         },
       ),
     );
@@ -2154,7 +2128,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           break;
       }
     }
-  print("notificationCount $notificationCount");
+    print("notificationCount $notificationCount");
     return GestureDetector(
       onTap: () => _onTabTapped(index),
       child: Column(
@@ -2175,7 +2149,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ),
                 ),
               ),
-              if (notificationCount != 0 && index != 0) // removed social notification display  using index
+              if (notificationCount != 0 &&
+                  index !=
+                      0) // removed social notification display  using index
                 Positioned(
                   right: 0,
                   top: 0,
@@ -2438,6 +2414,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                               cornerSmoothing: 1,
                                             ),
                                           ),
+                                          shadows: const [
+                                            BoxShadow(
+                                              color: Color(
+                                                  0x591F6F6D), // Color with 35% opacity
+                                              blurRadius: 10, // Blur amount
+                                              offset: Offset(
+                                                  0, 4), // X and Y offset
+                                            ),
+                                          ],
                                         ),
                                         clipBehavior: Clip
                                             .antiAlias, // Ensures the image is clipped to the shape
@@ -2526,7 +2511,7 @@ String timeAgo(String d) {
   }
 }
 
-Widget _buildInitialsAvatar(String body, String type,Color boxShadowColor) {
+Widget _buildInitialsAvatar(String body, String type, Color boxShadowColor) {
   String storeName = '';
   if (type == "social") {
     // Extract the first two words from body for social notifications
@@ -2552,8 +2537,8 @@ Widget _buildInitialsAvatar(String body, String type,Color boxShadowColor) {
 }
 
 String extractStoreName(String text) {
-  print("$text " );
- List<String> words = text.split('');
+  print("$text ");
+  List<String> words = text.split('');
   if (words.length >= 2) {
     print('${words[0]} ${words[1]}');
     return '${words[0]} ${words[1]}';
