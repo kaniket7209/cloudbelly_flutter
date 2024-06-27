@@ -197,7 +197,7 @@ class _MenuItemState extends State<MenuItem> {
                       ),
                     )),
                 Positioned(
-                  bottom: 2,
+                  bottom: 0,
                   left: (Provider.of<Auth>(context)
                           .itemAdd
                           .where(
@@ -243,112 +243,121 @@ class _MenuItemState extends State<MenuItem> {
                               height: 2.5.h,
                               width: 15.w,
                               txt: 'ADD'))
-                      : Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Provider.of<Auth>(context, listen: false)
-                                    .removeItem(
-                                        ProductDetails.fromJson(widget.data));
-                              },
-                              child: Container(
-                                height: 30,
-                                width: 30,
-                                decoration: ShapeDecoration(
-                                  color: const Color(0xFFFA6E00),
-                                  shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius(
-                                      cornerRadius: 12,
-                                      cornerSmoothing: 1,
-                                    ),
-                                  ),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    '-',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w700,
-                                      height: 0,
-                                      letterSpacing: 0.14,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const Space(
-                              12,
-                              isHorizontal: true,
-                            ),
-                            Text(
-                              Provider.of<Auth>(context)
-                                  .itemAdd
-                                  .lastWhere(
-                                    (element) =>
-                                        element.id == widget.data["_id"],
-                                  )
-                                  .quantity
-                                  .toString(),
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.w700,
-                                height: 0,
-                                letterSpacing: 0.14,
-                              ),
-                            ),
-                            const Space(
-                              16,
-                              isHorizontal: true,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                if (widget.scroll != null) {
-                                  print("scrolling");
-                                  // print(widget.scroll.position.maxScrollExtent);
-                                 
-                                }
+                      : 
+                    Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    InkWell(
+      onTap: () {
+        Provider.of<Auth>(context, listen: false)
+            .removeItem(ProductDetails.fromJson(widget.data));
+      },
+      child: Container(
+        height: 30,
+        width: 30,
+        decoration: ShapeDecoration(
+          color: const Color(0xFFFA6E00),
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(
+              cornerRadius: 12,
+              cornerSmoothing: 1,
+            ),
+          ),
+        ),
+        child: const Center(
+          child: Text(
+            '-',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w700,
+              height: 1.0, // Adjusted height for better vertical alignment
+              letterSpacing: 0.14,
+            ),
+          ),
+        ),
+      ),
+    ),
+    const SizedBox(width: 8), // Adjusted spacing for responsiveness
+    Container(
+      height: 30,
+      width: 36,
+      decoration: ShapeDecoration(
+        color: const Color(0xFFFA6E00),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 12,
+            cornerSmoothing: 1,
+          ),
+        ),
+      ),
+      child: Center(
+        child: Text(
+          Provider.of<Auth>(context)
+              .itemAdd
+              .lastWhere(
+                (element) => element.id == widget.data["_id"],
+              )
+              .quantity
+              .toString(),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.w700,
+            height: 1.0, // Adjusted height for better vertical alignment
+            letterSpacing: 0.14,
+          ),
+        ),
+      ),
+    ),
+    const SizedBox(width: 8), // Adjusted spacing for responsiveness
+    InkWell(
+      onTap: () {
+        if (widget.scroll != null) {
+          print("scrolling");
+          // Handle scroll action if needed
+        }
+        Provider.of<Auth>(context, listen: false)
+            .addItem(ProductDetails.fromJson(widget.data));
+      },
+      child: Container(
+        height: 30,
+        width: 30,
+        decoration: ShapeDecoration(
+          color: const Color(0xFFFA6E00),
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(
+              cornerRadius: 12,
+              cornerSmoothing: 1,
+            ),
+          ),
+        ),
+        child: const Center(
+          child: Text(
+            '+',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20, // Adjusted font size for consistency
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w700,
+              height: 1.0, // Adjusted height for better vertical alignment
+              letterSpacing: 0.14,
+            ),
+          ),
+        ),
+      ),
+    ),
+  ],
+),
 
-                                Provider.of<Auth>(context, listen: false)
-                                    .addItem(
-                                        ProductDetails.fromJson(widget.data));
-                              },
-                              child: Container(
-                                height: 30,
-                                width: 30,
-                                decoration: ShapeDecoration(
-                                  color: const Color(0xFFFA6E00),
-                                  shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius(
-                                      cornerRadius: 12,
-                                      cornerSmoothing: 1,
-                                    ),
-                                  ),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    '+',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 25,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w700,
-                                      height: 0,
-                                      letterSpacing: 0.14,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
                 ),
               ],
             )
+          
           ],
         ));
   }
