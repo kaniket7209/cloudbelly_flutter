@@ -32,21 +32,19 @@ class _MenuItemState extends State<MenuItem> {
       Provider.of<Auth>(context, listen: false).clearAllItems();
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    
     TextEditingController _controller =
         TextEditingController(text: widget.data['description']);
 
     return Container(
-      
         width: double.infinity,
         margin: EdgeInsets.only(bottom: 1.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
-           
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
@@ -126,7 +124,6 @@ class _MenuItemState extends State<MenuItem> {
                     child: Text(
                       widget.data['description'] ?? '',
                       style: const TextStyle(
-                        
                         color: Color(0xFF094B60),
                         fontSize: 10,
                         fontFamily: 'Product Sans',
@@ -177,25 +174,27 @@ class _MenuItemState extends State<MenuItem> {
                       : null,
                 ),
                 Positioned(
-                    right: 0.5.w,
-                    top: 2.2.h,
-                    child: Container(
-                      width: 10,
-                      height: 10,
-                      decoration: ShapeDecoration(
-                        color:
-                            widget.data['type'] == 'Veg' ? Color(0xFF4CF910) : Colors.red,
-                        shape: OvalBorder(),
-                        shadows: const [
-                          BoxShadow(
-                            color: Color(0x7FB1D9D8),
-                            blurRadius: 6,
-                            offset: Offset(-2, 4),
-                            spreadRadius: 0,
-                          )
-                        ],
-                      ),
-                    )),
+                  right: 0.5.w,
+                  top: 2.2.h,
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: ShapeDecoration(
+                      color: widget.data['type'] == 'Veg'
+                          ? Color(0xFF4CF910)
+                          : Colors.red,
+                      shape: OvalBorder(),
+                      shadows: const [
+                        BoxShadow(
+                          color: Color(0x7FB1D9D8),
+                          blurRadius: 6,
+                          offset: Offset(-2, 4),
+                          spreadRadius: 0,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
                 Positioned(
                   bottom: 0,
                   left: (Provider.of<Auth>(context)
@@ -242,122 +241,125 @@ class _MenuItemState extends State<MenuItem> {
                               isActive: true,
                               height: 2.5.h,
                               width: 15.w,
-                              txt: 'ADD'))
-                      : 
-                    Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-    InkWell(
-      onTap: () {
-        Provider.of<Auth>(context, listen: false)
-            .removeItem(ProductDetails.fromJson(widget.data));
-      },
-      child: Container(
-        height: 30,
-        width: 30,
-        decoration: ShapeDecoration(
-          color: const Color(0xFFFA6E00),
-          shape: SmoothRectangleBorder(
-            borderRadius: SmoothBorderRadius(
-              cornerRadius: 12,
-              cornerSmoothing: 1,
-            ),
-          ),
-        ),
-        child: const Center(
-          child: Text(
-            '-',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontFamily: 'Product Sans',
-              fontWeight: FontWeight.w700,
-              height: 1.0, // Adjusted height for better vertical alignment
-              letterSpacing: 0.14,
-            ),
-          ),
-        ),
-      ),
-    ),
-    const SizedBox(width: 8), // Adjusted spacing for responsiveness
-    Container(
-      height: 30,
-      width: 36,
-      decoration: ShapeDecoration(
-        color: const Color(0xFFFA6E00),
-        shape: SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius(
-            cornerRadius: 12,
-            cornerSmoothing: 1,
-          ),
-        ),
-      ),
-      child: Center(
-        child: Text(
-          Provider.of<Auth>(context)
-              .itemAdd
-              .lastWhere(
-                (element) => element.id == widget.data["_id"],
-              )
-              .quantity
-              .toString(),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontFamily: 'Product Sans',
-            fontWeight: FontWeight.w700,
-            height: 1.0, // Adjusted height for better vertical alignment
-            letterSpacing: 0.14,
-          ),
-        ),
-      ),
-    ),
-    const SizedBox(width: 8), // Adjusted spacing for responsiveness
-    InkWell(
-      onTap: () {
-        if (widget.scroll != null) {
-          print("scrolling");
-          // Handle scroll action if needed
-        }
-        Provider.of<Auth>(context, listen: false)
-            .addItem(ProductDetails.fromJson(widget.data));
-      },
-      child: Container(
-        height: 30,
-        width: 30,
-        decoration: ShapeDecoration(
-          color: const Color(0xFFFA6E00),
-          shape: SmoothRectangleBorder(
-            borderRadius: SmoothBorderRadius(
-              cornerRadius: 12,
-              cornerSmoothing: 1,
-            ),
-          ),
-        ),
-        child: const Center(
-          child: Text(
-            '+',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20, // Adjusted font size for consistency
-              fontFamily: 'Product Sans',
-              fontWeight: FontWeight.w700,
-              height: 1.0, // Adjusted height for better vertical alignment
-              letterSpacing: 0.14,
-            ),
-          ),
-        ),
-      ),
-    ),
-  ],
-),
-
+                              txt: 'ADD'),
+                        )
+                      : Container(
+                          width: 24.w,
+                          // padding: EdgeInsets.symmetric(horizontal: 2.w),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  Provider.of<Auth>(context, listen: false)
+                                      .removeItem(
+                                          ProductDetails.fromJson(widget.data));
+                                },
+                                child: Container(
+                                  height: 30,
+                                  width: 30,
+                                  decoration: ShapeDecoration(
+                                    color: const Color(0xFFFA6E00),
+                                    shape: SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius(
+                                        cornerRadius: 12,
+                                        cornerSmoothing: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      '-',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.w700,
+                                        height: 1.0,
+                                        letterSpacing: 0.14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                height: 30,
+                                width: 30,
+                                decoration: ShapeDecoration(
+                                  color: const Color(0xff0A4C61),
+                                  shape: SmoothRectangleBorder(
+                                    borderRadius: SmoothBorderRadius(
+                                      cornerRadius: 12,
+                                      cornerSmoothing: 1,
+                                    ),
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    Provider.of<Auth>(context)
+                                        .itemAdd
+                                        .lastWhere(
+                                          (element) =>
+                                              element.id == widget.data["_id"],
+                                        )
+                                        .quantity
+                                        .toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.0,
+                                      letterSpacing: 0.14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  if (widget.scroll != null) {
+                                    print("scrolling");
+                                    // Handle scroll action if needed
+                                  }
+                                  Provider.of<Auth>(context, listen: false)
+                                      .addItem(
+                                          ProductDetails.fromJson(widget.data));
+                                },
+                                child: Container(
+                                  height: 30,
+                                  width: 30,
+                                  decoration: ShapeDecoration(
+                                    color: const Color(0xFFFA6E00),
+                                    shape: SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius(
+                                        cornerRadius: 12,
+                                        cornerSmoothing: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      '+',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.w700,
+                                        height: 1.0,
+                                        letterSpacing: 0.14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                 ),
               ],
             )
-          
           ],
         ));
   }
@@ -460,14 +462,16 @@ class _MenuItemState extends State<MenuItem> {
                               print(url);
                             },
                             child: StocksMayBeNeedWidget(txt: 'Click photo')),
-                        SizedBox(width: 15,),
+                        SizedBox(
+                          width: 15,
+                        ),
                         TouchableOpacity(
                             onTap: () async {
                               AppWideLoadingBanner().loadingBanner(context);
                               final temp = await Provider.of<Auth>(context,
                                       listen: false)
-                                  .updateProductImageusingAI(
-                                      data['_id'],data['description'], context);
+                                  .updateProductImageusingAI(data['_id'],
+                                      data['description'], context);
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                               if (temp != null && temp != '') {
@@ -475,10 +479,7 @@ class _MenuItemState extends State<MenuItem> {
                               }
                               print(url);
                             },
-                            child: StocksMayBeNeedWidget(txt: 'From AI')
-                           
-                            ),
-                        
+                            child: StocksMayBeNeedWidget(txt: 'From AI')),
                         Space(isHorizontal: true, 5.w),
                       ],
                     ),
