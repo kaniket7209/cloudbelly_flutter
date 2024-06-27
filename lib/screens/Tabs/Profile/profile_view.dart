@@ -84,7 +84,7 @@ class _ProfileViewState extends State<ProfileView> {
         MediaQuery.sizeOf(context).height / 2.5, // Scroll to the top
         duration:
             const Duration(milliseconds: 300), // Duration of the animation
-        curve: Curves.fastLinearToSlowEaseIn, // Curve of the animation
+        curve: Curves.linearToEaseOut, // Curve of the animation
       );
     });
   }
@@ -939,10 +939,11 @@ class _ProfileViewState extends State<ProfileView> {
                                                           )
                                                         : feedList.length == 0
                                                             ? Container(
-                                                                height: MediaQuery.sizeOf(
-                                                                            context)
-                                                                        .height /
-                                                                    2,
+                                                                constraints:
+                                                                    BoxConstraints(
+                                                                  minHeight:
+                                                                      300, // Set your minimum height here
+                                                                ),
                                                                 child: Center(
                                                                     child:
                                                                         Column(
@@ -984,63 +985,72 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   ],
                                                                 )),
                                                               )
-                                                            : GridView.builder(
-                                                                physics:
-                                                                    const NeverScrollableScrollPhysics(),
-                                                                // Disable scrolling
-                                                                shrinkWrap:
-                                                                    true,
-                                                                // Allow the GridView to shrink-wrap its content
-                                                                addAutomaticKeepAlives:
-                                                                    true,
-
-                                                                padding: EdgeInsets.symmetric(
-                                                                    vertical:
-                                                                        0.8.h,
-                                                                    horizontal:
-                                                                        _isVendor
-                                                                            ? 1.w
-                                                                            : 0),
-                                                                gridDelegate:
-                                                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                                                  childAspectRatio:
-                                                                      1,
-                                                                  crossAxisCount:
-                                                                      3, // Number of items in a row
-                                                                  crossAxisSpacing:
-                                                                      _isVendor
-                                                                          ? 2.w
-                                                                          : 2.w,
-                                                                  mainAxisSpacing:
-                                                                      1.h, // Spacing between rows
+                                                            : Container(
+                                                                constraints:
+                                                                    BoxConstraints(
+                                                                  minHeight:
+                                                                      300, // Set your minimum height here
                                                                 ),
-                                                                itemCount:
-                                                                    feedList
-                                                                        .length,
-                                                                // Total number of items
-                                                                itemBuilder:
-                                                                    (context,
-                                                                        index) {
-                                                                  // You can replace this container with your custom item widget
-                                                                  return FeedWidget(
-                                                                      index:
-                                                                          index,
-                                                                      isSelfProfile:
-                                                                          "No",
-                                                                      type:
-                                                                          "not self",
-                                                                      userModel:
-                                                                          userList
-                                                                              .first,
-                                                                      userId: widget
-                                                                          .userIdList
-                                                                          .first,
-                                                                      fulldata:
-                                                                          feedList,
-                                                                      data: feedList[
-                                                                          index]);
-                                                                },
+                                                                child: GridView
+                                                                    .builder(
+                                                                  physics:
+                                                                      const NeverScrollableScrollPhysics(),
+                                                                  // Disable scrolling
+                                                                  shrinkWrap:
+                                                                      true,
+                                                                  // Allow the GridView to shrink-wrap its content
+                                                                  addAutomaticKeepAlives:
+                                                                      true,
+
+                                                                  padding: EdgeInsets.symmetric(
+                                                                      vertical:
+                                                                          0.8.h,
+                                                                      horizontal:
+                                                                          _isVendor
+                                                                              ? 1.w
+                                                                              : 0),
+                                                                  gridDelegate:
+                                                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                                                    childAspectRatio:
+                                                                        1,
+                                                                    crossAxisCount:
+                                                                        3, // Number of items in a row
+                                                                    crossAxisSpacing:
+                                                                        _isVendor
+                                                                            ? 2.w
+                                                                            : 2.w,
+                                                                    mainAxisSpacing:
+                                                                        1.h, // Spacing between rows
+                                                                  ),
+                                                                  itemCount:
+                                                                      feedList
+                                                                          .length,
+                                                                  // Total number of items
+                                                                  itemBuilder:
+                                                                      (context,
+                                                                          index) {
+                                                                    // You can replace this container with your custom item widget
+                                                                    return FeedWidget(
+                                                                        index:
+                                                                            index,
+                                                                        isSelfProfile:
+                                                                            "No",
+                                                                        type:
+                                                                            "not self",
+                                                                        userModel:
+                                                                            userList
+                                                                                .first,
+                                                                        userId: widget
+                                                                            .userIdList
+                                                                            .first,
+                                                                        fulldata:
+                                                                            feedList,
+                                                                        data: feedList[
+                                                                            index]);
+                                                                  },
+                                                                ),
                                                               )),
+
                                               if (_activeButtonIndex == 2)
                                                 Menu(
                                                     isLoading: _isLoading,
@@ -1051,10 +1061,11 @@ class _ProfileViewState extends State<ProfileView> {
                                                         .userIdList.first),
                                               if (_activeButtonIndex == 3)
                                                 Container(
-                                                  height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height /
-                                                          2.5,
+                                                 constraints:
+                                                                    BoxConstraints(
+                                                                  minHeight:
+                                                                      300, // Set your minimum height here
+                                                                ),
                                                   child: Center(
                                                       child: Column(
                                                     mainAxisAlignment:
@@ -1084,10 +1095,11 @@ class _ProfileViewState extends State<ProfileView> {
                                                 ),
                                               if (_activeButtonIndex == 4)
                                                 Container(
-                                                  height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height /
-                                                          2,
+                                                  constraints:
+                                                                    BoxConstraints(
+                                                                  minHeight:
+                                                                      300, // Set your minimum height here
+                                                                ),
                                                   child: Center(
                                                       child: Column(
                                                     mainAxisAlignment:

@@ -74,7 +74,7 @@ class _ProfileState extends State<Profile> {
         MediaQuery.sizeOf(context).height / 2.5, // Scroll to the top
         duration:
             const Duration(milliseconds: 300), // Duration of the animation
-        curve: Curves.fastLinearToSlowEaseIn, // Curve of the animation
+        curve: Curves.linearToEaseOut, // Curve of the animation
       );
     });
   }
