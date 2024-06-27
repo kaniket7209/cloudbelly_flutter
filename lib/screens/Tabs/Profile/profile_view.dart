@@ -29,7 +29,7 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+// import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ProfileView extends StatefulWidget {
   List<String> userIdList = [];
@@ -63,18 +63,24 @@ class _ProfileViewState extends State<ProfileView> {
     return false;
   }
 
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  // final RefreshController _refreshController =
+  //     RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
     try {
       await getUserInfo(widget.userIdList);
       await _getFeed();
       await _getMenu();
-      _refreshController.refreshCompleted();
+      // _refreshController.refreshCompleted();
+      _scrollToTop();
     } catch (error) {
-      _refreshController.refreshFailed();
+      // _refreshController.refreshFailed();
     }
+  }
+   void _scrollToTop() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      t1.jumpTo(MediaQuery.sizeOf(context).height / 2.5); // Scroll to the top
+    });
   }
 
   Future<void> getUserInfo(List<String> userIds) async {
@@ -100,7 +106,7 @@ class _ProfileViewState extends State<ProfileView> {
         feedList = [];
         feedList.addAll(feed);
         _isLoading = false;
-        _refreshController.refreshCompleted();
+        // _refreshController.refreshCompleted();
       });
     });
     await Provider.of<Auth>(context, listen: false)
@@ -110,7 +116,7 @@ class _ProfileViewState extends State<ProfileView> {
         menuList = [];
         menuList.addAll(menu);
         _isLoading = false;
-        _refreshController.refreshCompleted();
+        // _refreshController.refreshCompleted();
       });
       final feedData = json.encode(
         {
@@ -219,12 +225,12 @@ class _ProfileViewState extends State<ProfileView> {
               : userType == UserType.Supplier.name
                   ? const Color(0xFFF6FFEE)
                   : const Color.fromRGBO(255, 248, 255, 1),
-      body: SmartRefresher(
+      body: RefreshIndicator(
         onRefresh: _loading,
-        controller: _refreshController,
-        enablePullDown: true,
-        enablePullUp: false,
-        onLoading: _loading,
+        // controller: _refreshController,
+        // enablePullDown: true,
+        // enablePullUp: false,
+        // onLoading: _loading,
         child: userList.isNotEmpty
             ? SingleChildScrollView(
                 controller: t1,
@@ -729,6 +735,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 setState(() {
                                                                   _activeButtonIndex =
                                                                       2;
+                                                                      _scrollToTop();
                                                                 });
                                                               },
                                                               child:
@@ -857,6 +864,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                         () {
                                                                       _activeButtonIndex =
                                                                           2;
+                                                                          _scrollToTop();
                                                                     });
                                                                   },
                                                                   child:
@@ -985,13 +993,20 @@ class _ProfileViewState extends State<ProfileView> {
                           ],
                         ),
                       )
-                    : const Center(
+                    :  Center(
                         child: CircularProgressIndicator(
                         color: Colors.black,
                       )),
               )
-            : null,
+            : Center(
+          child: CircularProgressIndicator(
+            color: Colors.black,
+          ),
+        ),
       ),
     );
   }
+
+
+
 }

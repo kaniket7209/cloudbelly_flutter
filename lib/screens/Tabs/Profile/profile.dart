@@ -1938,7 +1938,7 @@ class _MenuState extends State<Menu> {
                                         scroll: widget.scroll),
                                 Space(2.h),
                                 SizedBox(
-                                  height: 70,
+                                  height: 130,
                                 ),
                               ],
                             ),
@@ -1948,12 +1948,12 @@ class _MenuState extends State<Menu> {
           ),
           if (Provider.of<Auth>(context).itemAdd.isNotEmpty)
             Positioned(
-              bottom: 40,
+              bottom: 60,
               left: 0,
               right: 0,
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 7.w),
-                width: 80.w,
+                // margin: EdgeInsets.symmetric(horizontal: 7.w),
+                width: double.infinity,
                 height: 75,
                 decoration: GlobalVariables().ContainerDecoration(
                   offset: const Offset(3, 6),
@@ -2017,6 +2017,13 @@ class _MenuState extends State<Menu> {
                               cornerSmoothing: 1,
                             ),
                           ),
+                           shadows: const [
+                        BoxShadow(
+                          offset: Offset(3, 6),
+                          color: Color(0xff4F215B),
+                          blurRadius: 20,
+                        ),
+                      ],
                         ),
                         child: const Center(
                           child: Text(
