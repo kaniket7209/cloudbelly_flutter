@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.of(context).pop();
     print("msg:: $msg");
     if (msg == 'Login successful') {
-     // TOastNotification().showSuccesToast(context, msg);
+      // TOastNotification().showSuccesToast(context, msg);
       UserPreferences().isLogin = true;
       Navigator.of(context).pushReplacementNamed(Tabs.routeName);
     } else {
@@ -69,10 +69,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _submitFormSignUp() async {
     // Perform signup logic
     // Add your signup logic here
-    if(_accepted == false) {
-      TOastNotification().showErrorToast(context, "Please Accept Terms & Condition and Privacy Policy");
-
-    }else {
+    if (_accepted == false) {
+      TOastNotification().showErrorToast(
+          context, "Please Accept Terms & Condition and Privacy Policy");
+    } else {
       user_pass = user_pass.trim();
       // For example, print the values:
       AppWideLoadingBanner().loadingBanner(context);
@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // print('vmdkmv:: $msg');
       if (msg == 'Registration Succesful') {
         UserPreferences().isLogin = true;
-       // TOastNotification().showSuccesToast(context, 'Registration successful');
+        // TOastNotification().showSuccesToast(context, 'Registration successful');
         Navigator.of(context).pop();
         Navigator.of(context).pushReplacementNamed(Tabs.routeName);
       } else {
@@ -90,6 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
   }
+
   Future<void> _launchURL(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
@@ -114,15 +115,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     //AppwideBanner(),
                     Container(
                         width: 100.w,
-                        height: 30.h ,
+                        height: 30.h,
                         decoration: const ShapeDecoration(
-                          color:  Color(0xFFB1D9D8),
+                          color: Color(0xFFB1D9D8),
                           shape: SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius.only(
-                                bottomLeft:
-                                SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
-                                bottomRight:
-                                SmoothRadius(cornerRadius: 40, cornerSmoothing: 1)),
+                                bottomLeft: SmoothRadius(
+                                    cornerRadius: 40, cornerSmoothing: 1),
+                                bottomRight: SmoothRadius(
+                                    cornerRadius: 40, cornerSmoothing: 1)),
                           ),
                         )),
                     Center(
@@ -204,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Space(4.h),
                                       AppwideTextField(
                                         hintText: 'Enter your Email',
-                                        userType:  "Vendor",
+                                        userType: "Vendor",
                                         onChanged: (p0) {
                                           user_email = p0.toString();
                                           // print(p0);
@@ -213,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Space(3.h),
                                       AppwideTextField(
                                         hintText: 'Enter your Phone Number',
-                                        userType:  "Vendor",
+                                        userType: "Vendor",
                                         onChanged: (p0) {
                                           user_mobile_number = p0.toString();
                                           // print(p0);
@@ -247,8 +248,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                             Expanded(
                                               child: Center(
                                                 child: TextField(
-                                                  cursorColor: const Color(0xFF0A4C61),
-                                                  style: TextStyle(color: Color(0xFF0A4C61),fontSize: 14,fontFamily: 'PT Sans'),
+                                                  cursorColor:
+                                                      const Color(0xFF0A4C61),
+                                                  style: TextStyle(
+                                                      color: Color(0xFF0A4C61),
+                                                      fontSize: 14,
+                                                      fontFamily: 'PT Sans'),
                                                   obscureText:
                                                       !_isPasswordVisible,
                                                   decoration:
@@ -261,8 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     hintStyle: TextStyle(
                                                       fontSize: 12,
                                                       color: Color(0xFF0A4C61),
-                                                      fontFamily:
-                                                          'PT Sans',
+                                                      fontFamily: 'PT Sans',
                                                       fontWeight:
                                                           FontWeight.w400,
                                                     ),
@@ -288,7 +292,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   _isPasswordVisible
                                                       ? Icons.visibility
                                                       : Icons.visibility_off,
-                                                  color: const Color(0xFF0A4C61),
+                                                  color:
+                                                      const Color(0xFF0A4C61),
                                                 ),
                                               ),
                                             ),
@@ -366,7 +371,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Space(3.h),
 
                                       Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Checkbox(
                                             value: _accepted,
@@ -385,54 +391,70 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     text: "I accept the ",
                                                     style: TextStyle(
                                                         fontSize: 18,
-                                                        color: Color(0xFF0A4C61),
-                                                        fontFamily: 'Product Sans',
+                                                        color:
+                                                            Color(0xFF0A4C61),
+                                                        fontFamily:
+                                                            'Product Sans',
                                                         fontWeight:
-                                                        FontWeight.w400),
+                                                            FontWeight.w400),
                                                   ),
                                                   TextSpan(
                                                     text: "Terms of Use",
-                                                    style:TextStyle(
+                                                    style: TextStyle(
                                                         fontSize: 18,
-                                                        decoration: TextDecoration.underline,
-                                                        decorationColor: Colors.blue,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                        decorationColor:
+                                                            Colors.blue,
                                                         color: Colors.blue,
-                                                        fontFamily: 'Product Sans',
+                                                        fontFamily:
+                                                            'Product Sans',
                                                         fontWeight:
-                                                        FontWeight.w400),
-                                                    recognizer: TapGestureRecognizer()
-                                                      ..onTap = () {
-                                                        _launchURL("https://app.cloudbelly.in/terms-and-conditions");                                                      },
+                                                            FontWeight.w400),
+                                                    recognizer:
+                                                        TapGestureRecognizer()
+                                                          ..onTap = () {
+                                                            _launchURL(
+                                                                "https://app.cloudbelly.in/terms-and-conditions");
+                                                          },
                                                   ),
                                                   TextSpan(
                                                     text: " and ",
                                                     style: TextStyle(
                                                         fontSize: 18,
-                                                        color: Color(0xFF0A4C61),
-                                                        fontFamily: 'Product Sans',
+                                                        color:
+                                                            Color(0xFF0A4C61),
+                                                        fontFamily:
+                                                            'Product Sans',
                                                         fontWeight:
-                                                        FontWeight.w400),
+                                                            FontWeight.w400),
                                                   ),
                                                   TextSpan(
                                                     text: "Privacy policy",
-                                                    style:TextStyle(
+                                                    style: TextStyle(
                                                         fontSize: 18,
                                                         color: Colors.blue,
-                                                        decoration: TextDecoration.underline,
-                                                        decorationColor: Colors.blue,
-                                                        fontFamily: 'Product Sans',
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                        decorationColor:
+                                                            Colors.blue,
+                                                        fontFamily:
+                                                            'Product Sans',
                                                         fontWeight:
-                                                        FontWeight.w400),
-                                                    recognizer: TapGestureRecognizer()
-                                                      ..onTap = () {
-                                                        _launchURL("https://app.cloudbelly.in/privacy-policy");
-                                                      },
+                                                            FontWeight.w400),
+                                                    recognizer:
+                                                        TapGestureRecognizer()
+                                                          ..onTap = () {
+                                                            _launchURL(
+                                                                "https://app.cloudbelly.in/privacy-policy");
+                                                          },
                                                   ),
                                                 ],
                                               ),
                                             ),
                                           )
-
                                         ],
                                       ),
                                       Space(4.h),
@@ -448,40 +470,40 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
 
                                       Space(4.h),
-                                      Container(
-                                        width: double.infinity,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            Container(
-                                              height: 1,
-                                              width: 20.w,
-                                              decoration: const BoxDecoration(
-                                                  color: Colors.black),
-                                            ),
-                                            const Text('Or',
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Color(0xFF0A4C61),
-                                                    fontFamily: 'Product Sans',
-                                                    fontWeight:
-                                                        FontWeight.w400)),
-                                            Container(
-                                              height: 1,
-                                              width: 20.w,
-                                              decoration: const BoxDecoration(
-                                                  color: Colors.black),
-                                            )
-                                          ],
-                                        ),
-                                      ),
+                                      // Container(
+                                      //   width: double.infinity,
+                                      //   child: Row(
+                                      //     mainAxisAlignment:
+                                      //         MainAxisAlignment.spaceAround,
+                                      //     children: [
+                                      //       Container(
+                                      //         height: 1,
+                                      //         width: 20.w,
+                                      //         decoration: const BoxDecoration(
+                                      //             color: Colors.black),
+                                      //       ),
+                                      //       const Text('Or',
+                                      //           style: TextStyle(
+                                      //               fontSize: 18,
+                                      //               color: Color(0xFF0A4C61),
+                                      //               fontFamily: 'Product Sans',
+                                      //               fontWeight:
+                                      //                   FontWeight.w400)),
+                                      //       Container(
+                                      //         height: 1,
+                                      //         width: 20.w,
+                                      //         decoration: const BoxDecoration(
+                                      //             color: Colors.black),
+                                      //       )
+                                      //     ],
+                                      //   ),
+                                      // ),
                                       Space(2.h),
-                                    /*  CommonButton('Continue with Whatsapp'),
+                                      /*  CommonButton('Continue with Whatsapp'),
                                       Space(1.5.h),*/
-                                      CommonButton('Continue with Google',() {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => GoogleLogin()));
-                                      }),
+                                      // CommonButton('Continue with Google',() {
+                                      //   Navigator.push(context, MaterialPageRoute(builder: (context) => GoogleLogin()));
+                                      // }),
                                       /*Space(1.5.h),
                                       CommonButton('Continue with Facebook'),*/
                                     ],
@@ -563,52 +585,63 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ),
                                         ),
                                         height: 6.h,
-                                        child:
-                                       Row(
-  children: [
-    Expanded(
-      child: Center(
-        child: TextField(
-          obscureText: !_isPasswordVisible,
-          cursorColor: const Color(0xFF0A4C61), // Set the cursor color
-          style: const TextStyle( // Set the text color
-            color: Color(0xFF0A4C61),
-          ),
-          decoration: const InputDecoration(
-            fillColor: Colors.white,
-            contentPadding: EdgeInsets.only(left: 14),
-            hintText: 'Enter Password',
-            hintStyle: TextStyle(
-              fontSize: 12,
-              color: Color(0xFF0A4C61),
-              fontFamily: 'Product Sans',
-              fontWeight: FontWeight.w400,
-            ),
-            border: InputBorder.none,
-          ),
-          onChanged: (p0) {
-            user_pass = p0;
-          },
-        ),
-      ),
-    ),
-    GestureDetector(
-      onTap: () {
-        setState(() {
-          _isPasswordVisible = !_isPasswordVisible;
-        });
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Icon(
-          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-          color: const Color(0xFF0A4C61),
-        ),
-      ),
-    ),
-  ],
-),
-                                      
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Center(
+                                                child: TextField(
+                                                  obscureText:
+                                                      !_isPasswordVisible,
+                                                  cursorColor: const Color(
+                                                      0xFF0A4C61), // Set the cursor color
+                                                  style: const TextStyle(
+                                                    // Set the text color
+                                                    color: Color(0xFF0A4C61),
+                                                  ),
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    fillColor: Colors.white,
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            left: 14),
+                                                    hintText: 'Enter Password',
+                                                    hintStyle: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Color(0xFF0A4C61),
+                                                      fontFamily:
+                                                          'Product Sans',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                    border: InputBorder.none,
+                                                  ),
+                                                  onChanged: (p0) {
+                                                    user_pass = p0;
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _isPasswordVisible =
+                                                      !_isPasswordVisible;
+                                                });
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  _isPasswordVisible
+                                                      ? Icons.visibility
+                                                      : Icons.visibility_off,
+                                                  color:
+                                                      const Color(0xFF0A4C61),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                       Space(0.2.h),
                                       Row(
@@ -652,37 +685,37 @@ class _LoginScreenState extends State<LoginScreen> {
                                         },
                                       ),
                                       Space(4.h),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Container(
-                                            height: 1,
-                                            width: 20.w,
-                                            decoration: const BoxDecoration(
-                                                color: Colors.black),
-                                          ),
-                                          const Text('Or',
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: Color(0xFF0A4C61),
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w400)),
-                                          Container(
-                                            height: 1,
-                                            width: 20.w,
-                                            decoration: const BoxDecoration(
-                                                color: Colors.black),
-                                          )
-                                        ],
-                                      ),
-                                      Space(2.h),
-                                     /* CommonButton('Continue with Whatsapp'),
+                                      // Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.spaceAround,
+                                      //   children: [
+                                      //     Container(
+                                      //       height: 1,
+                                      //       width: 20.w,
+                                      //       decoration: const BoxDecoration(
+                                      //           color: Colors.black),
+                                      //     ),
+                                      //     const Text('Or',
+                                      //         style: TextStyle(
+                                      //             fontSize: 18,
+                                      //             color: Color(0xFF0A4C61),
+                                      //             fontFamily: 'Product Sans',
+                                      //             fontWeight: FontWeight.w400)),
+                                      //     Container(
+                                      //       height: 1,
+                                      //       width: 20.w,
+                                      //       decoration: const BoxDecoration(
+                                      //           color: Colors.black),
+                                      //     )
+                                      //   ],
+                                      // ),
+                                      // Space(2.h),
+                                      /* CommonButton('Continue with Whatsapp'),
                                       Space(1.5.h),*/
-                                      CommonButton('Continue with Google',() {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => GoogleLogin()));
-                                      }),
-                                     /* Space(1.5.h),
+                                      // CommonButton('Continue with Google',() {
+                                      //   Navigator.push(context, MaterialPageRoute(builder: (context) => GoogleLogin()));
+                                      // }),
+                                      /* Space(1.5.h),
                                       CommonButton('Continue with Facebook'),*/
                                     ],
                                   )),
