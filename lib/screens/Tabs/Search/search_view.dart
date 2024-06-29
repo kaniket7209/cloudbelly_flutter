@@ -589,16 +589,18 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: () => query = '')];
+    return [IconButton(icon: Icon(Icons.clear),  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },)];
   }
 
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.arrow_back),
-      onPressed: () => close(context, {}),
-    );
-  }
+  // @override
+  // Widget buildLeading(BuildContext context) {
+  //   return IconButton(
+  //     icon: Icon(Icons.arrow_back),
+  //     onPressed: () => close(context, {}),
+  //   );
+  // }
 
   @override
   Widget buildResults(BuildContext context) {
@@ -617,7 +619,8 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
               // Handle current location selection
               _getCurrentLocation(context);
             } else {
-              close(context, results[index]);
+               Navigator.of(context).pop();
+              // close(context, results[index]);
             }
           },
         );
@@ -664,6 +667,11 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
     } else {
       close(context, {'description': 'Location not found', 'location': ''});
     }
+  }
+  
+  @override
+  Widget buildLeading(BuildContext context) {
+    return const SizedBox(); // Return an empty widget
   }
 }
 

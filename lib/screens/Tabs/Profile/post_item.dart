@@ -192,15 +192,16 @@ class _PostItemState extends State<PostItem> {
   Widget build(BuildContext context) {
     print(
         "who is user:: ${widget.data['store_name']}  ${widget.data['user_id']}");
-    bool shouldShowIcon = widget.isProfilePost ||
-        (!widget.isProfilePost &&
-            Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
-                widget.data['user_id']);
+    // bool shouldShowIcon = widget.isProfilePost ||
+    //     (!widget.isProfilePost &&
+    //         Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
+    //             widget.data['user_id']);
+    bool shouldShowIcon = false;
     bool _isFollowing = checkFollow();
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
-    // print(widget.data);
+   
     // final date_time = formatTimeDifference('created_at');
     CarouselController buttonCarouselController = CarouselController();
     return Container(
@@ -486,27 +487,36 @@ class _PostItemState extends State<PostItem> {
                       ),
                     ),
                   ),
-                if (shouldShowIcon)
-                  IconButton(
-                      onPressed: () async {
-                        {
-                          return MoreSheetInPostItem(context).then((value) {
-                            setState(() {});
-                          });
-                        }
-                      },
-                      icon: Icon(Icons.more_vert,
-                          color: Provider.of<Auth>(context, listen: false)
-                                      .userData?['user_type'] ==
-                                  'Vendor'
-                              ? const Color(0xFF094B60)
-                              : Provider.of<Auth>(context, listen: false)
-                                          .userData?['user_type'] ==
-                                      UserType.Supplier.name
-                                  ? Color.fromARGB(255, 26, 48, 10)
-                                  : const Color(0xFF2E0536))),
-                //  for mantaining icon space
-                if (!shouldShowIcon) SizedBox(height: 50),
+                // if (shouldShowIcon)...{
+
+                
+                //   IconButton(
+                //       onPressed: () async {
+                //         {
+                //           return MoreSheetInPostItem(context).then((value) {
+                //             setState(() {});
+                //           });
+                //         }
+                //       },
+                //       icon: Icon(Icons.more_vert,
+                //           color: Provider.of<Auth>(context, listen: false)
+                //                       .userData?['user_type'] ==
+                //                   'Vendor'
+                //               ? const Color(0xFF094B60)
+                //               : Provider.of<Auth>(context, listen: false)
+                //                           .userData?['user_type'] ==
+                //                       UserType.Supplier.name
+                //                   ? const Color.fromARGB(255, 26, 48, 10)
+                //                   : const Color(0xFF2E0536))),
+                //                   }
+                // //  for mantaining icon space
+                // else... {
+                // const SizedBox(height: 50),
+
+                // }
+                 SizedBox(width:20),
+                 
+                
               ],
             ),
           ),
@@ -665,7 +675,7 @@ class _PostItemState extends State<PostItem> {
                   ),
                 ),
               //search menu items sheet icon
-              if (widget.data['menu_items'] != null &&
+              if (!_isVendor && widget.data['menu_items'] != null &&
                   (widget.data['menu_items'] as List<dynamic>).length != 0)
                 Positioned(
                   right: 35,
