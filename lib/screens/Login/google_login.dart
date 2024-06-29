@@ -51,7 +51,7 @@ class _GoogleLoginState extends State<GoogleLogin> {
         if (userData != null) {
           AppWideLoadingBanner().loadingBanner(context);
           String msg = await Provider.of<Auth>(context, listen: false)
-              .googleLogin(userData.email, selectedIndex == 0 ? "customer" : selectedIndex == 1 ? "vendor" :"supplier");
+              .googleLogin(userData.email, selectedIndex == 0 ? "Customer" : selectedIndex == 1 ? "Vendor" :"Supplier");
           Navigator.of(context).pop();
           if (msg == 'Login successful') {
             //TOastNotification().showSuccesToast(context, msg);

@@ -69,6 +69,7 @@ class AppwideTextField extends StatelessWidget {
       height: height == 1.1 ? 6.h : height,
       child: Center(
         child: TextFormField(
+          cursorColor: Color(0xFF0A4C61),
           controller: controller,
           validator: validator,
           style: Provider.of<Auth>(context, listen: false)
@@ -80,7 +81,7 @@ class AppwideTextField extends StatelessWidget {
               fontSize: 14,
               fontFamily: 'PT Sans',
               fontWeight: FontWeight.w400,
-              color: Color(0xFF2E0536)
+              color: Color(0xFF0A4C61)
           ),
           decoration: InputDecoration(
             fillColor: Colors.white,
@@ -88,6 +89,7 @@ class AppwideTextField extends StatelessWidget {
             hintText: hintText,
           //  suffixIcon: prefixIcon,
             hintStyle: const TextStyle(
+              
                 fontSize: 12,
                 color: Color(0xFF0A4C61),
                 fontFamily: 'Product Sans',

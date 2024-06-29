@@ -247,6 +247,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                             Expanded(
                                               child: Center(
                                                 child: TextField(
+                                                  cursorColor: const Color(0xFF0A4C61),
+                                                  style: TextStyle(color: Color(0xFF0A4C61),fontSize: 14,fontFamily: 'PT Sans'),
                                                   obscureText:
                                                       !_isPasswordVisible,
                                                   decoration:
@@ -260,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       fontSize: 12,
                                                       color: Color(0xFF0A4C61),
                                                       fontFamily:
-                                                          'Product Sans',
+                                                          'PT Sans',
                                                       fontWeight:
                                                           FontWeight.w400,
                                                     ),
@@ -561,56 +563,52 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ),
                                         ),
                                         height: 6.h,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Center(
-                                                child: TextField(
-                                                  obscureText:
-                                                      !_isPasswordVisible,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    fillColor: Colors.white,
-                                                    contentPadding:
-                                                        EdgeInsets.only(
-                                                            left: 14),
-                                                    hintText: 'Enter Password',
-                                                    hintStyle: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Color(0xFF0A4C61),
-                                                      fontFamily:
-                                                          'Product Sans',
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                    border: InputBorder.none,
-                                                  ),
-                                                  onChanged: (p0) {
-                                                    user_pass = p0;
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  _isPasswordVisible =
-                                                      !_isPasswordVisible;
-                                                });
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Icon(
-                                                  _isPasswordVisible
-                                                      ? Icons.visibility
-                                                      : Icons.visibility_off,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                        child:
+                                       Row(
+  children: [
+    Expanded(
+      child: Center(
+        child: TextField(
+          obscureText: !_isPasswordVisible,
+          cursorColor: const Color(0xFF0A4C61), // Set the cursor color
+          style: const TextStyle( // Set the text color
+            color: Color(0xFF0A4C61),
+          ),
+          decoration: const InputDecoration(
+            fillColor: Colors.white,
+            contentPadding: EdgeInsets.only(left: 14),
+            hintText: 'Enter Password',
+            hintStyle: TextStyle(
+              fontSize: 12,
+              color: Color(0xFF0A4C61),
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w400,
+            ),
+            border: InputBorder.none,
+          ),
+          onChanged: (p0) {
+            user_pass = p0;
+          },
+        ),
+      ),
+    ),
+    GestureDetector(
+      onTap: () {
+        setState(() {
+          _isPasswordVisible = !_isPasswordVisible;
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Icon(
+          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+          color: const Color(0xFF0A4C61),
+        ),
+      ),
+    ),
+  ],
+),
+                                      
                                       ),
                                       Space(0.2.h),
                                       Row(
