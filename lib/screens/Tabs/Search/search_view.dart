@@ -674,4 +674,3 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
     return const SizedBox(); // Return an empty widget
   }
 }
-
