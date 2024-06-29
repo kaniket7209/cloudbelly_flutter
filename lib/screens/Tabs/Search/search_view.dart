@@ -211,134 +211,133 @@ class _SearchViewState extends State<SearchView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff7B358D),
-        toolbarHeight: 120.0, // Set a specific height for the AppBar
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+     appBar: AppBar(
+    backgroundColor: Color(0xff7B358D),
+    toolbarHeight: 120.0, // Set a specific height for the AppBar
+    automaticallyImplyLeading: false, // Add this line to ensure no default back button
+    title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
             GestureDetector(
-              onTap: () async {
-                var selectedLocation = await showSearch(
-                  context: context,
-                  delegate: LocationSearchDelegate(),
-                );
-                if (selectedLocation != null) {
-                  setState(() {
-                    currentAddress = selectedLocation['description']!;
-                  });
-
-                  var location = selectedLocation['location']?.split(',');
-                  if (location != null && location.length == 2) {
-                    double latitude = double.parse(location[0]);
-                    double longitude = double.parse(location[1]);
-
-                    _currentPosition = Position(
-                      latitude: latitude,
-                      longitude: longitude,
-                      timestamp: DateTime.now(),
-                      accuracy: 0,
-                      altitude: 0,
-                      heading: 0,
-                      speed: 0,
-                      speedAccuracy: 0,
-                      altitudeAccuracy: 0,
-                      headingAccuracy: 0, // Added this parameter
+                onTap: () async {
+                    var selectedLocation = await showSearch(
+                        context: context,
+                        delegate: LocationSearchDelegate(),
                     );
+                    if (selectedLocation != null) {
+                        setState(() {
+                            currentAddress = selectedLocation['description']!;
+                        });
 
-                    await Provider.of<Auth>(context, listen: false)
-                        .updateCustomerLocation(
-                      latitude,
-                      longitude,
-                    );
+                        var location = selectedLocation['location']?.split(',');
+                        if (location != null && location.length == 2) {
+                            double latitude = double.parse(location[0]);
+                            double longitude = double.parse(location[1]);
 
-                    // Fetch data based on new location
-                    // _fetchData();
-                    setState(() {
-                      page = 1;
-                      dishItems.clear();
-                      restaurantItems.clear();
-                      hasMoreData = true;
-                    });
-                    await _fetchData();
-                  }
-                }
-              },
-              child: Row(
-                children: [
-                  Container(
-                    child: Icon(Icons.location_pin, color: Colors.white),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Row(
+                            _currentPosition = Position(
+                                latitude: latitude,
+                                longitude: longitude,
+                                timestamp: DateTime.now(),
+                                accuracy: 0,
+                                altitude: 0,
+                                heading: 0,
+                                speed: 0,
+                                speedAccuracy: 0,
+                                altitudeAccuracy: 0,
+                                headingAccuracy: 0, // Added this parameter
+                            );
+
+                            await Provider.of<Auth>(context, listen: false)
+                                .updateCustomerLocation(
+                                latitude,
+                                longitude,
+                            );
+
+                            setState(() {
+                                page = 1;
+                                dishItems.clear();
+                                restaurantItems.clear();
+                                hasMoreData = true;
+                            });
+                            await _fetchData();
+                        }
+                    }
+                },
+                child: Row(
                     children: [
-                      Container(
-                        child: Text(
-                          currentAddress,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                        Container(
+                            child: Icon(Icons.location_pin, color: Colors.white),
                         ),
-                      ),
-                      Container(
-                        child: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Color(0xFFFA6E00),
+                        SizedBox(
+                            width: 10,
                         ),
-                      ),
+                        Row(
+                            children: [
+                                Container(
+                                    child: Text(
+                                        currentAddress,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                    ),
+                                ),
+                                Container(
+                                    child: Icon(
+                                        Icons.keyboard_arrow_down,
+                                        color: Color(0xFFFA6E00),
+                                    ),
+                                ),
+                            ],
+                        ),
                     ],
-                  ),
-                ],
-              ),
+                ),
             ),
             SizedBox(height: 10),
             Container(
-              // height: 48.0, // Ensure height is consistent with the TextField
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 15.0,
-                    cornerSmoothing: 1,
-                  ),
+                decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                            cornerRadius: 15.0,
+                            cornerSmoothing: 1,
+                        ),
+                    ),
+                    shadows: [
+                        BoxShadow(
+                            color: Color(0xff4F205B).withOpacity(0.4),
+                            spreadRadius: 0,
+                            blurRadius: 20,
+                            offset: Offset(0, 8),
+                        ),
+                    ],
                 ),
-                shadows: [
-                  BoxShadow(
-                    color: Color(0xff4F205B).withOpacity(0.4),
-                    spreadRadius: 0,
-                    blurRadius: 20,
-                    offset: Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: TextField(
-                style: const TextStyle(
-                  fontSize: 14,
+                child: TextField(
+                    cursorColor: Color(0xff7B358D),
+                    style: const TextStyle(
+                        fontSize: 14,
+                    ),
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                        hintText: 'Search for restaurants or dishes',
+                        border: InputBorder.none,
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                        suffixIcon: IconButton(
+                            icon: Icon(Icons.search),
+                            onPressed: () => _searchItems(_searchController.text),
+                        ),
+                    ),
+                    textInputAction: TextInputAction.search,
+                    onSubmitted: (value) {
+                        _searchItems(value);
+                    },
                 ),
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search for restaurants or dishes',
-                  border: InputBorder.none,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () => _searchItems(_searchController.text),
-                  ),
-                ),
-                textInputAction: TextInputAction.search,
-                onSubmitted: (value) {
-                  _searchItems(value);
-                },
-              ),
             ),
-          ],
-        ),
-      ),
+        ],
+    ),
+),
       body: Column(
         children: [
           Container(
@@ -589,18 +588,51 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear),  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },)];
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      )
+    ];
   }
 
-  // @override
-  // Widget buildLeading(BuildContext context) {
-  //   return IconButton(
-  //     icon: Icon(Icons.arrow_back),
-  //     onPressed: () => close(context, {}),
-  //   );
-  // }
+  @override
+  Widget buildLeading(BuildContext context) {
+    return const SizedBox(width: 0,); // Ensure this line is present
+  }
+
+ @override
+ThemeData appBarTheme(BuildContext context) {
+    return Theme.of(context).copyWith(
+        appBarTheme: const AppBarTheme(
+            color: Color(0xff7B358D), // Your app bar color
+            elevation: 0,
+            iconTheme: IconThemeData(color: Colors.white),
+            toolbarTextStyle: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+            ),
+            titleTextStyle: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+            ),
+        ),
+        inputDecorationTheme: const InputDecorationTheme(
+            hintStyle: TextStyle(
+                color: Colors.white, // Adjust as needed
+                fontSize: 18,
+            ),
+        ),
+        textTheme: const TextTheme(
+            titleLarge: TextStyle(
+                color: Colors.white, // Adjust as needed
+                fontSize: 18,
+            ),
+        ),
+    );
+}
 
   @override
   Widget buildResults(BuildContext context) {
@@ -619,7 +651,7 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
               // Handle current location selection
               _getCurrentLocation(context);
             } else {
-               Navigator.of(context).pop();
+              Navigator.of(context).pop();
               // close(context, results[index]);
             }
           },
@@ -667,10 +699,5 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
     } else {
       close(context, {'description': 'Location not found', 'location': ''});
     }
-  }
-  
-  @override
-  Widget buildLeading(BuildContext context) {
-    return const SizedBox(); // Return an empty widget
   }
 }

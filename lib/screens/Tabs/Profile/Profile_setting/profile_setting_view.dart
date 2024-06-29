@@ -1344,14 +1344,14 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               .userData?['user_type'] ==
                           UserType.Vendor.name
                       ? const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'Product Sans',
+                          fontSize: 16,
+                          fontFamily: 'PT Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF0A4C61),
                         )
                       : const TextStyle(
                           fontSize: 14,
-                          fontFamily: 'Product Sans',
+                          fontFamily: 'PT Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF2E0536)),
                   controller: nameController,
@@ -1572,9 +1572,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               Space(
                 3.h,
               ),
+              
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextWidgetStoreSetup(label: 'Business address'),
+                child: TextWidgetStoreSetup(label: Provider.of<Auth>(context, listen: false)
+                                  .userData?['user_type'] !=
+                              UserType.Customer.name?'Business address':'Add Location'),
               ),
               Space(1.h),
               Container(
@@ -1683,7 +1686,10 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 Space(
                   3.h,
                 ),
-                TextWidgetStoreSetup(label: 'Choose your working hours'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextWidgetStoreSetup(label: 'Choose your working hours'),
+                ),
                 Space(1.h),
                 Row(
                   children: [
