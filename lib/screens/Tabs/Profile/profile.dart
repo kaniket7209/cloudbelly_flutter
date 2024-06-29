@@ -722,7 +722,10 @@ class _ProfileState extends State<Profile> {
                                                 onTap: () {
                                                   setState(() {
                                                     _activeButtonIndex = 2;
-                                                    _scrollToTop();
+                                                    print(
+                                                        "menuList.length ${menuList.length}");
+                                                    if (menuList.length != 0)
+                                                      _scrollToTop();
                                                   });
                                                 },
                                                 child: CommonButtonProfile(
@@ -848,7 +851,9 @@ class _ProfileState extends State<Profile> {
                                                     onTap: () {
                                                       setState(() {
                                                         _activeButtonIndex = 2;
-                                                        _scrollToTop();
+                                                       
+                                                        if (menuList.length !=
+                                                            0) _scrollToTop();
                                                       });
 
                                                       // Ensure the scroll happens after the frame is built

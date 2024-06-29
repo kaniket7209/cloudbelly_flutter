@@ -771,7 +771,8 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 setState(() {
                                                                   _activeButtonIndex =
                                                                       2;
-                                                                  _scrollToTop();
+                                                                       if (menuList.length !=
+                                                            0) _scrollToTop();
                                                                 });
                                                               },
                                                               child:
@@ -895,7 +896,8 @@ class _ProfileViewState extends State<ProfileView> {
                                                                         () {
                                                                       _activeButtonIndex =
                                                                           2;
-                                                                      _scrollToTop();
+                                                                           if (menuList.length !=
+                                                            0) _scrollToTop();
                                                                     });
                                                                   },
                                                                   child:
