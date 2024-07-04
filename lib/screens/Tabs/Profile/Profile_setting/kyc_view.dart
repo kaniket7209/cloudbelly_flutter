@@ -61,7 +61,7 @@ class _KycViewState extends State<KycView> {
           panController.text,
           aadharCardController.text,
           fssai_licence_document);
-
+          print("msgfromres $msg");
       if (msg == 'User information updated successfully.') {
         Provider.of<Auth>(context, listen: false).userData?['pan_number'] =
             panController.text;

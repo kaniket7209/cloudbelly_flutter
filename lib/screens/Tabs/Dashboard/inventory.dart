@@ -94,7 +94,8 @@ class _InventoryState extends State<Inventory> {
     final payload = JWT({
       "resource": {"dashboard": 8},
       "params": {
-        'email': Provider.of<Auth>(context, listen: false).userData?['user_email'],
+        'email':
+            Provider.of<Auth>(context, listen: false).userData?['user_email'],
         'item_id': '1',
       },
     });
@@ -211,7 +212,8 @@ class _InventoryState extends State<Inventory> {
             print("nearExpiryItems:: ${nearExpiryItems.length}");
           }
 
-          nearExpiryItems = allStocks.where((element) => element['runway'] < 0).toList();
+          nearExpiryItems =
+              allStocks.where((element) => element['runway'] < 0).toList();
         }
       }
     });
@@ -284,7 +286,7 @@ class _InventoryState extends State<Inventory> {
         const Center(
           child: Text(
             "Manage your inventory",
-            style:  TextStyle(
+            style: TextStyle(
               color: Color.fromRGBO(10, 76, 97, 1),
               fontSize: 20,
               fontFamily: 'Jost',
@@ -311,7 +313,10 @@ class _InventoryState extends State<Inventory> {
                 });
               },
             ),
-            const Space(25,isHorizontal: true,),
+            const Space(
+              25,
+              isHorizontal: true,
+            ),
             _isUpdateLoading
                 ? SizedBox(
                     width: 30.w,
@@ -320,7 +325,7 @@ class _InventoryState extends State<Inventory> {
                   )
                 : Make_Update_ListWidget(
                     txt: 'BellyMart',
-                    color:  const Color.fromRGBO(10, 76, 97, 1),
+                    color: const Color.fromRGBO(10, 76, 97, 1),
                     onTap: () async {
                       context.read<TransitionEffect>().setBlurSigma(5.0);
                       BellyMartBottomSheet().BellyMartSheet(context);
@@ -348,7 +353,7 @@ class _InventoryState extends State<Inventory> {
                   ),
           ],
         ),
-        
+
         // Space(3.h),
         // Center(
         //   child: Make_Update_ListWidget(
@@ -487,11 +492,12 @@ class _InventoryState extends State<Inventory> {
             const Spacer(),
             TouchableOpacity(
                 onTap: () {
-                 /* var tempList = allStocks.where((element) => element['runway'] <0).toList();
+                  /* var tempList = allStocks.where((element) => element['runway'] <0).toList();
                   setState(() {
                     nearExpiryItems.add(tempList);
                   });*/
-                  print("stocks near:: ${allStocks.where((element) => element['runway'] <0).toList()}");
+                  print(
+                      "stocks near:: ${allStocks.where((element) => element['runway'] < 0).toList()}");
                   StockNearExpirySheet(context);
                 },
                 child: const SeeAllWidget()),
@@ -501,7 +507,9 @@ class _InventoryState extends State<Inventory> {
         FutureBuilder(
             future: _getNearExpiryStocks(),
             builder: (context, snapshot) {
-              var tempList = stocksYouMayNeed.where((element) => element['runway'] <0).toList();
+              var tempList = stocksYouMayNeed
+                  .where((element) => element['runway'] < 0)
+                  .toList();
 
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -525,10 +533,7 @@ class _InventoryState extends State<Inventory> {
                     child: Row(
                       children: [
                         for (int index = 0;
-                            index <
-                                (tempList.length > 5
-                                    ? 5
-                                    : tempList.length);
+                            index < (tempList.length > 5 ? 5 : tempList.length);
                             index++)
                           StocksNearExpiryWidget(
                             name: tempList[index]['itemName'],
@@ -549,7 +554,7 @@ class _InventoryState extends State<Inventory> {
   }
 
   Future<void> StockNearExpirySheet(BuildContext context) {
-    var tempList = allStocks.where((element) => element['runway'] <0).toList();
+    var tempList = allStocks.where((element) => element['runway'] < 0).toList();
     return AppWideBottomSheet().showSheet(
         context,
         // Container(),
@@ -563,40 +568,42 @@ class _InventoryState extends State<Inventory> {
               ),
             ),
             Space(2.h),
-            tempList.isNotEmpty ?
-            Container(
-              width: double.infinity,
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                addAutomaticKeepAlives: true,
-                padding: EdgeInsets.symmetric(vertical: 0.8.h, horizontal: 3.w),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 0.7,
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 4.w,
-                  mainAxisSpacing: 1.5.h,
-                ),
-                itemCount: tempList.length ?? 1,
-                itemBuilder: (context, index) {
-                  print("nearstocksExpire:: ${tempList.length}");
-                  return StocksNearExpiryWidget(
-                    name: tempList[index]['itemName'],
-                    volume: tempList[index]['volumeLeft'] +
-                        ' ' +
-                        tempList[index]['unitType'],
-                    url: tempList[index]['image_url'] ?? '',
-                  );
-                },
-              ),
-            ) :  const Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(
-                  child: Text('No Near Expiring Items in Your Inventory'),
-                ),
-              ],
-            ),
+            tempList.isNotEmpty
+                ? Container(
+                    width: double.infinity,
+                    child: GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      addAutomaticKeepAlives: true,
+                      padding: EdgeInsets.symmetric(
+                          vertical: 0.8.h, horizontal: 3.w),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: 0.7,
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 4.w,
+                        mainAxisSpacing: 1.5.h,
+                      ),
+                      itemCount: tempList.length ?? 1,
+                      itemBuilder: (context, index) {
+                        print("nearstocksExpire:: ${tempList.length}");
+                        return StocksNearExpiryWidget(
+                          name: tempList[index]['itemName'],
+                          volume: tempList[index]['volumeLeft'] +
+                              ' ' +
+                              tempList[index]['unitType'],
+                          url: tempList[index]['image_url'] ?? '',
+                        );
+                      },
+                    ),
+                  )
+                : const Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: Text('No Near Expiring Items in Your Inventory'),
+                      ),
+                    ],
+                  ),
           ],
         ),
         60.h);
@@ -707,141 +714,274 @@ class _InventoryState extends State<Inventory> {
 
   Future<dynamic> StockYouMayNeedSheet(BuildContext context) {
     return showModalBottomSheet(
-      // useSafeArea: true,
       context: context,
       isScrollControlled: true,
-
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
+            TextEditingController productController = TextEditingController();
+            TextEditingController volumeController = TextEditingController();
+            TextEditingController quantityController = TextEditingController();
+            List<Map<String, dynamic>> stocksYouMayNeed = [
+              {
+                'itemName': 'Green cabbage',
+                'image_url': '',
+                'runway': 3,
+                'volumeLeft': 5,
+                'unitType': 'kg',
+                'isAdding': false,
+                'quantity': 0,
+              },
+              {
+                'itemName': 'cabbage',
+                'image_url': '',
+                'runway': 5,
+                'volumeLeft': 10,
+                'unitType': 'kg',
+                'isAdding': false,
+                'quantity': 0,
+              },
+            ];
+
+            void handleAddQuantity(int index) {
+              setState(() {
+                stocksYouMayNeed[index]['isAdding'] = true;
+                quantityController.text =
+                    stocksYouMayNeed[index]['quantity'].toString();
+              });
+            }
+
+            void handleSaveQuantity(int index) {
+              setState(() {
+                stocksYouMayNeed[index]['quantity'] =
+                    int.tryParse(quantityController.text) ?? 0;
+                stocksYouMayNeed[index]['isAdding'] = false;
+              });
+            }
+
+            void handleCancelQuantity(int index) {
+              setState(() {
+                stocksYouMayNeed[index]['isAdding'] = false;
+              });
+            }
+
             return SingleChildScrollView(
               child: Container(
                 decoration: const ShapeDecoration(
                   color: Colors.white,
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.only(
-                        topLeft:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                        topRight:
-                            SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                      topLeft:
+                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                      topRight:
+                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                    ),
                   ),
                 ),
                 height: MediaQuery.of(context).size.height * 0.6,
                 width: double.infinity,
                 padding: EdgeInsets.only(
-                    left: 6.w,
-                    right: 6.w,
-                    top: 2.h,
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TouchableOpacity(
-                        onTap: () {
-                          return Navigator.of(context).pop();
-                        },
-                        child: Center(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 1.h, horizontal: 3.w),
-                            width: 65,
-                            height: 6,
-                            decoration: ShapeDecoration(
-                              color: const Color(0xFFFA6E00),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6)),
-                            ),
+                  left: 20,
+                  right: 20,
+                  top: 20,
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        width: 65,
+                        height: 6,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFFA6E00),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
                           ),
                         ),
                       ),
-                      Space(2.h),
-                      const BoldTextWidgetHomeScreen(
-                        txt: 'Stocks you may need',
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Stocks you may need',
+                      style: TextStyle(
+                        color: Color(0xFF094B60),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Column(
-                        children: [
-                          for (int index = 0;
-                              index < stocksYouMayNeed.length;
-                              index++)
-                            Container(
-                              margin: const EdgeInsets.symmetric(
-                                vertical: 15,
-                              ),
-                              child: Row(children: [
-                                ImageWidgetInventory(
-                                    height: 40,
-                                    radius: 12,
-                                    url: stocksYouMayNeed[index]['image_url'] ??
-                                        ''),
-                                const Space(
-                                  14,
-                                  isHorizontal: true,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      stocksYouMayNeed[index]['itemName'],
-                                      style: const TextStyle(
-                                        color: Color(0xFF094B60),
-                                        fontSize: 14,
-                                        fontFamily: 'Product Sans',
-                                        fontWeight: FontWeight.w400,
-                                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Column(
+                      children: [
+                        for (int index = 0;
+                            index < stocksYouMayNeed.length;
+                            index++)
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            child: Row(children: [
+                              const SizedBox(width: 10),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    stocksYouMayNeed[index]['itemName'],
+                                    style: const TextStyle(
+                                      color: Color(0xFF094B60),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
                                     ),
-                                    const Space(2),
-                                    Text(
-                                      stocksYouMayNeed[index]['runway'] < 0
-                                          ? '${stocksYouMayNeed[index]['volumeLeft']} ${stocksYouMayNeed[index]['unitType']} left and ${"expired 8 days before"}'
-                                          : '${stocksYouMayNeed[index]['volumeLeft']} ${stocksYouMayNeed[index]['unitType']} for next ${stocksYouMayNeed[index]['runway']} days',
-                                      style: const TextStyle(
-                                        color: Color(0xFFFA6E00),
-                                        fontSize: 8,
-                                        fontFamily: 'Product Sans',
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    )
-                                  ],
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    stocksYouMayNeed[index]['runway'] < 0
+                                        ? '${stocksYouMayNeed[index]['volumeLeft']} ${stocksYouMayNeed[index]['unitType']} left and expired 8 days before'
+                                        : '${stocksYouMayNeed[index]['volumeLeft']} ${stocksYouMayNeed[index]['unitType']} for next ${stocksYouMayNeed[index]['runway']} days',
+                                    style: const TextStyle(
+                                      color: Color(0xFFFA6E00),
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              if (stocksYouMayNeed[index]['isAdding'] ==
+                                  true) ...[
+                                Container(
+                                  width: 50,
+                                  height: 30,
+                                  child: TextFormField(
+                                    controller: quantityController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 5, horizontal: 10),
+                                    ),
+                                  ),
                                 ),
-                                const Spacer(),
-                                TouchableOpacity(
+                                IconButton(
+                                  icon: const Icon(Icons.check,
+                                      color: Colors.green),
+                                  onPressed: () {
+                                    handleSaveQuantity(index);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.cancel,
+                                      color: Colors.red),
+                                  onPressed: () {
+                                    handleCancelQuantity(index);
+                                  },
+                                ),
+                              ] else ...[
+                                GestureDetector(
                                   onTap: () {
-                                    AppWideLoadingBanner()
-                                        .featurePending(context);
+                                    handleAddQuantity(index);
                                   },
                                   child: Container(
-                                    width: 71,
-                                    height: 30,
-                                    decoration: GlobalVariables()
-                                        .ContainerDecoration(
-                                            offset: const Offset(0, 4),
-                                            blurRadius: 4,
-                                            shadowColor:
-                                                const Color.fromRGBO(0, 0, 0, 0.25),
-                                            boxColor:
-                                                const Color.fromRGBO(84, 166, 193, 1),
-                                            cornerRadius: 10),
-                                    child: const Center(
-                                      child: Text(
-                                        'Add',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontFamily: 'Product Sans',
-                                          fontWeight: FontWeight.w700,
-                                        ),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          const Color.fromRGBO(84, 166, 193, 1),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      '${stocksYouMayNeed[index]['quantity']} kg',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
                                   ),
                                 ),
-                              ]),
-                            ),
-                        ],
-                      )
-                    ],
-                  ),
+                                IconButton(
+                                  icon: const Icon(Icons.edit,
+                                      color: Color(0xFFFA6E00)),
+                                  onPressed: () {
+                                    handleAddQuantity(index);
+                                  },
+                                ),
+                              ],
+                              IconButton(
+                                icon: const Icon(Icons.cancel,
+                                    color: Colors.orange),
+                                onPressed: () {
+                                  setState(() {
+                                    stocksYouMayNeed.removeAt(index);
+                                  });
+                                },
+                              ),
+                            ]),
+                          ),
+                      ],
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (BuildContext context) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom),
+                              child: Container(
+                                padding: EdgeInsets.all(16.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    TextField(
+                                      controller: productController,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Name of the product',
+                                      ),
+                                    ),
+                                    TextField(
+                                      controller: volumeController,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Volume needed',
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          stocksYouMayNeed.add({
+                                            'itemName': productController.text,
+                                            'image_url': '',
+                                            'runway': 0,
+                                            'volumeLeft': 0,
+                                            'unitType': 'kg',
+                                            'isAdding': false,
+                                            'quantity': 0,
+                                          });
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Add item'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: const Text('Add Item'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Handle submit logic here
+                      },
+                      child: const Text('Submit'),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -1151,8 +1291,10 @@ class LowStocksWidget extends StatelessWidget {
 class StocksMayBeNeedWidget extends StatelessWidget {
   String url;
   String txt;
+  String icon;
 
-  StocksMayBeNeedWidget({super.key, this.txt = 'chicken', this.url = ''});
+  StocksMayBeNeedWidget(
+      {super.key, this.txt = 'chicken', this.url = '', this.icon = ''});
 
   @override
   Widget build(BuildContext context) {
@@ -1169,7 +1311,7 @@ class StocksMayBeNeedWidget extends StatelessWidget {
         children: [
           Container(
             height: 60,
-            width: 60,
+            width:60,
             decoration: ShapeDecoration(
               shadows: const [
                 BoxShadow(
@@ -1186,7 +1328,7 @@ class StocksMayBeNeedWidget extends StatelessWidget {
                 ),
               ),
             ),
-            child: url != ''
+            child: url != '' && icon == ''
                 ? ClipSmoothRect(
                     radius: SmoothBorderRadius(
                       cornerRadius: 10,
@@ -1216,7 +1358,26 @@ class StocksMayBeNeedWidget extends StatelessWidget {
                       },
                     ),
                   )
-                : null,
+                : url == '' && icon != ''
+                    ? ClipSmoothRect(
+  radius: SmoothBorderRadius(
+    cornerRadius: 15,
+    cornerSmoothing: 1,
+  ),
+  child: Container(
+    child: Center(
+      child: Container(
+        width: 30,  // Half of the container width
+        height: 30, // Half of the container height
+        child: Image.asset(
+          icon,
+          fit: BoxFit.cover,
+        ),
+      ),
+    ),
+  ),
+)
+                    : null,
           ),
           Space(1.h),
           Text(

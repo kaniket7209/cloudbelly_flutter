@@ -163,13 +163,12 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                   Provider.of<Auth>(context, listen: false)
                       .userData?['user_id']);
           Navigator.of(context).pop();
-          if (url.length == 0) {
-            TOastNotification()
-                .showErrorToast(context, 'Error While Uploading Image');
-          } else if (url.contains('file size very large'))
-            TOastNotification().showErrorToast(context, 'file size very large');
-          else if (!url.contains('element'))
-            CreateFeed().showModalSheetForNewPost(context, url, menuList);
+          if (url.isEmpty) {
+            print("No image selected");
+          } else if (url.contains('file size very large')){
+            TOastNotification().showErrorToast(context, 'file size very large');}
+          else if (!url.contains('element')){
+            CreateFeed().showModalSheetForNewPost(context, url, menuList);}
           else {
             TOastNotification()
                 .showErrorToast(context, 'Error While Uploading Image');

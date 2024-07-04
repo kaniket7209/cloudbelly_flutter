@@ -191,12 +191,14 @@ class _PostItemState extends State<PostItem> {
   @override
   Widget build(BuildContext context) {
     print(
-        "who is user:: ${widget.data['store_name']}  ${widget.data['user_id']}");
+        "who is user:: ${ widget.isProfilePost}  ${widget.data['user_id']}");
     // bool shouldShowIcon = widget.isProfilePost ||
     //     (!widget.isProfilePost &&
     //         Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
     //             widget.data['user_id']);
-    bool shouldShowIcon = false;
+    bool shouldShowIcon = 
+        (widget.isProfilePost );
+    // bool shouldShowIcon = false;
     bool _isFollowing = checkFollow();
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
@@ -204,7 +206,8 @@ class _PostItemState extends State<PostItem> {
    
     // final date_time = formatTimeDifference('created_at');
     CarouselController buttonCarouselController = CarouselController();
-    return Container(
+    return
+     Container(
       // height: caption1 != '' ? 67.h : 63.h,
       margin: EdgeInsets.only(bottom: 2.7.h),
       // padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
@@ -487,40 +490,41 @@ class _PostItemState extends State<PostItem> {
                       ),
                     ),
                   ),
-                // if (shouldShowIcon)...{
+                if (shouldShowIcon)...{
 
                 
-                //   IconButton(
-                //       onPressed: () async {
-                //         {
-                //           return MoreSheetInPostItem(context).then((value) {
-                //             setState(() {});
-                //           });
-                //         }
-                //       },
-                //       icon: Icon(Icons.more_vert,
-                //           color: Provider.of<Auth>(context, listen: false)
-                //                       .userData?['user_type'] ==
-                //                   'Vendor'
-                //               ? const Color(0xFF094B60)
-                //               : Provider.of<Auth>(context, listen: false)
-                //                           .userData?['user_type'] ==
-                //                       UserType.Supplier.name
-                //                   ? const Color.fromARGB(255, 26, 48, 10)
-                //                   : const Color(0xFF2E0536))),
-                //                   }
-                // //  for mantaining icon space
-                // else... {
+                  IconButton(
+                      onPressed: () async {
+                        {
+                          return MoreSheetInPostItem(context).then((value) {
+                            setState(() {});
+                          });
+                        }
+                      },
+                      icon: Icon(Icons.more_vert,
+                          color: Provider.of<Auth>(context, listen: false)
+                                      .userData?['user_type'] ==
+                                  'Vendor'
+                              ? const Color(0xFF094B60)
+                              : Provider.of<Auth>(context, listen: false)
+                                          .userData?['user_type'] ==
+                                      UserType.Supplier.name
+                                  ? const Color.fromARGB(255, 26, 48, 10)
+                                  : const Color(0xFF2E0536))),
+                                  }
+                //  for mantaining icon space
+                else... {
                 // const SizedBox(height: 50),
+                 SizedBox(height:50,width: 30,),
 
-                // }
-                 SizedBox(width:20),
+                }
                  
                 
               ],
             ),
           ),
           Space(0.5.h),
+          // posts 
           Stack(
             children: [
               !widget._isMultiple
@@ -562,6 +566,7 @@ class _PostItemState extends State<PostItem> {
                               ],
                               shape: const SmoothRectangleBorder(),
                             ),
+                            
                             child: ClipSmoothRect(
                               radius: SmoothBorderRadius(
                                 cornerRadius: 40,
@@ -591,33 +596,35 @@ class _PostItemState extends State<PostItem> {
                               width: double.infinity,
                               // Take up full width of the screen
                               decoration: ShapeDecoration(
-                                shadows: [
-                                  _isVendor
-                                      ? const BoxShadow(
-                                          offset: Offset(0, 4),
-                                          color: Color.fromRGBO(
-                                              124, 193, 191, 0.6),
-                                          blurRadius: 20,
-                                        )
-                                      : Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .userData?['user_type'] ==
-                                              UserType.Supplier.name
-                                          ? const BoxShadow(
-                                              offset: Offset(3, 4),
-                                              color: Color.fromRGBO(
-                                                  77, 191, 74, 0.5),
-                                              blurRadius: 20,
-                                            )
-                                          : const BoxShadow(
-                                              offset: Offset(3, 4),
-                                              color: Color.fromRGBO(
-                                                  158, 116, 158, 0.5),
-                                              blurRadius: 15,
-                                            )
-                                ],
-                                shape: const SmoothRectangleBorder(),
-                              ),
+                              shadows: [
+                                _isVendor
+                                    ? BoxShadow(
+                                        offset: Offset(3, 6),
+                                        color: Color.fromRGBO(124, 193, 191, 1)
+                                            .withOpacity(0.3),
+                                        blurRadius: 35,
+                                      )
+                                    : Provider.of<Auth>(context, listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Supplier.name
+                                        ? BoxShadow(
+                                            offset: Offset(1, 4),
+                                            color:
+                                                Color.fromRGBO(77, 191, 74, 1)
+                                                    .withOpacity(0.3),
+                                            blurRadius: 35,
+                                          )
+                                        : BoxShadow(
+                                            offset: Offset(3, 4),
+                                            color:
+                                                Color.fromRGBO(158, 116, 158, 1)
+                                                    .withOpacity(0.3),
+                                            blurRadius: 35,
+                                          )
+                              ],
+                              shape: const SmoothRectangleBorder(),
+                            ),
+                            
                               child: ClipSmoothRect(
                                 radius: SmoothBorderRadius(
                                   cornerRadius: 40,
@@ -650,7 +657,7 @@ class _PostItemState extends State<PostItem> {
               if (_showLikeIcon) // Show like icon if _showLikeIcon is true
                 Positioned(
                   left: 35.w,
-                  top: 15.h,
+                  top: 0.h,
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 500),
                     opacity: _showLikeIcon ? 0.8 : 0.0,
@@ -674,12 +681,12 @@ class _PostItemState extends State<PostItem> {
                     ),
                   ),
                 ),
-              //search menu items sheet icon
+              //search icon menu items sheet icon
               if (!_isVendor && widget.data['menu_items'] != null &&
                   (widget.data['menu_items'] as List<dynamic>).length != 0)
                 Positioned(
                   right: 35,
-                  bottom: 5,
+                  bottom: 0,
                   child: TouchableOpacity(
                     onTap: () async {
                       getProductDetails();
@@ -736,8 +743,9 @@ class _PostItemState extends State<PostItem> {
                 ),
             ],
           ),
+          Space(0.h),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            padding: EdgeInsets.symmetric(horizontal: 5.w,vertical: 0),
             child: Column(
               children: [
                 Row(
@@ -746,19 +754,12 @@ class _PostItemState extends State<PostItem> {
                     const SizedBox(
                       width: 3,
                     ),
-                    // Text('knknhkink'),
-                    // SvgPicture.asset(
-                    //   'assets/icons/Favorite.svg',
-                    //   color: Colors.red,
-                    //   allowDrawingOutsideViewBox: true,
-                    //   width: 100,
-                    // ),
+                    
                     //like button
                     IconButton(
                       visualDensity: const VisualDensity(
                           horizontal: VisualDensity.minimumDensity),
-                      // padding: EdgeInsets.only(left: 10),
-                      // pa
+                    
                       onPressed: () async {
                         print("abcds:: ${widget.userId}");
                         String code = '';
@@ -1191,6 +1192,7 @@ class _PostItemState extends State<PostItem> {
               ],
             ),
           ),
+       Space(0.5.h),
         ],
       ),
     );
@@ -1202,61 +1204,61 @@ class _PostItemState extends State<PostItem> {
         widget.isProfilePost
             ? Column(
                 children: [
-                  Space(4.h),
-                  Row(
-                    children: [
-                      Space(
-                        11.w,
-                        isHorizontal: true,
-                      ),
-                      PostMoreButtonRowWidget(
-                        icon: const Icon(Icons.bookmark),
-                        text: 'Save',
-                      ),
-                      Space(
-                        12.w,
-                        isHorizontal: true,
-                      ),
-                      PostMoreButtonRowWidget(
-                        icon: const Icon(Icons.qr_code),
-                        text: 'QR code',
-                      ),
-                    ],
-                  ),
-                  Space(4.h),
-                  Row(
-                    children: [
-                      Space(
-                        11.w,
-                        isHorizontal: true,
-                      ),
-                      PostMoreButtonRowWidget(
-                        icon: const Icon(Icons.edit),
-                        text: 'Edit',
-                      ),
-                      Space(
-                        13.5.w,
-                        isHorizontal: true,
-                      ),
-                      PostMoreButtonRowWidget(
-                        icon: const Icon(Icons.qr_code),
-                        text: 'View insights',
-                      ),
-                    ],
-                  ),
-                  Space(4.h),
-                  PostMoreButtonBigContainerWidget(
-                    color: const Color.fromRGBO(250, 110, 0, 1),
-                    icon: const Icon(Icons.visibility_off),
-                    text: 'Turn off commenting',
-                  ),
-                  Space(3.h),
-                  PostMoreButtonBigContainerWidget(
-                    color: const Color.fromRGBO(171, 171, 171, 1),
-                    icon: const Icon(Icons.comments_disabled),
-                    text: 'Hide like counts',
-                  ),
-                  Space(5.h),
+                  // Space(4.h),
+                  // Row(
+                  //   children: [
+                  //     Space(
+                  //       11.w,
+                  //       isHorizontal: true,
+                  //     ),
+                  //     PostMoreButtonRowWidget(
+                  //       icon: const Icon(Icons.bookmark),
+                  //       text: 'Save',
+                  //     ),
+                  //     Space(
+                  //       12.w,
+                  //       isHorizontal: true,
+                  //     ),
+                  //     PostMoreButtonRowWidget(
+                  //       icon: const Icon(Icons.qr_code),
+                  //       text: 'QR code',
+                  //     ),
+                  //   ],
+                  // ),
+                  // Space(4.h),
+                  // Row(
+                  //   children: [
+                  //     Space(
+                  //       11.w,
+                  //       isHorizontal: true,
+                  //     ),
+                  //     PostMoreButtonRowWidget(
+                  //       icon: const Icon(Icons.edit),
+                  //       text: 'Edit',
+                  //     ),
+                  //     Space(
+                  //       13.5.w,
+                  //       isHorizontal: true,
+                  //     ),
+                  //     PostMoreButtonRowWidget(
+                  //       icon: const Icon(Icons.qr_code),
+                  //       text: 'View insights',
+                  //     ),
+                  //   ],
+                  // ),
+                  // Space(4.h),
+                  // PostMoreButtonBigContainerWidget(
+                  //   color: const Color.fromRGBO(250, 110, 0, 1),
+                  //   icon: const Icon(Icons.visibility_off),
+                  //   text: 'Turn off commenting',
+                  // ),
+                  // Space(3.h),
+                  // PostMoreButtonBigContainerWidget(
+                  //   color: const Color.fromRGBO(171, 171, 171, 1),
+                  //   icon: const Icon(Icons.comments_disabled),
+                  //   text: 'Hide like counts',
+                  // ),
+                  // Space(5.h),
                   TouchableOpacity(
                     onTap: () async {
                       AppWideLoadingBanner().loadingBanner(context);
@@ -1284,7 +1286,7 @@ class _PostItemState extends State<PostItem> {
                       decoration: GlobalVariables().ContainerDecoration(
                           offset: const Offset(0, 8),
                           blurRadius: 20,
-                          boxColor: const Color.fromRGBO(255, 77, 77, 1),
+                          boxColor: Color.fromARGB(255, 227, 123, 123),
                           cornerRadius: 10,
                           shadowColor:
                               const Color.fromRGBO(152, 202, 201, 0.8)),
@@ -1320,31 +1322,6 @@ class _PostItemState extends State<PostItem> {
               )
             : Column(
                 children: [
-                  Space(4.h),
-                  Row(
-                    children: [
-                      Space(
-                        11.w,
-                        isHorizontal: true,
-                      ),
-                      PostMoreButtonRowWidget(
-                        icon: const Icon(Icons.error_outline),
-                        text: 'Report',
-                      ),
-                      // PostMoreButtonRowWidget(
-                      //   icon: Icon(Icons.bookmark),
-                      //   text: 'Save',
-                      // ),
-                      Space(
-                        12.w,
-                        isHorizontal: true,
-                      ),
-                      PostMoreButtonRowWidget(
-                        icon: const Icon(Icons.qr_code),
-                        text: 'QR code',
-                      ),
-                    ],
-                  ),
                   // Space(4.h),
                   // Row(
                   //   children: [
@@ -1353,24 +1330,29 @@ class _PostItemState extends State<PostItem> {
                   //       isHorizontal: true,
                   //     ),
                   //     PostMoreButtonRowWidget(
-                  //       icon: Icon(Icons.visibility_off),
-                  //       text: 'Hide',
+                  //       icon: const Icon(Icons.error_outline),
+                  //       text: 'Report',
                   //     ),
+                  //     // PostMoreButtonRowWidget(
+                  //     //   icon: Icon(Icons.bookmark),
+                  //     //   text: 'Save',
+                  //     // ),
                   //     Space(
-                  //       13.5.w,
+                  //       12.w,
                   //       isHorizontal: true,
                   //     ),
                   //     PostMoreButtonRowWidget(
-                  //       icon: Icon(Icons.error_outline),
-                  //       text: 'Report',
+                  //       icon: const Icon(Icons.qr_code),
+                  //       text: 'QR code',
                   //     ),
                   //   ],
                   // ),
-                  Space(5.h),
+                  
+                  // Space(5.h),
                   FollowButtonInSHeet(data: widget.data),
                 ],
               ),
-        widget.isProfilePost ? 60.h : 30.h);
+        widget.isProfilePost ? 15.h : 15.h);
   }
 }
 

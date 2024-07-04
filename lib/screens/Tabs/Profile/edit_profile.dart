@@ -20,6 +20,19 @@ class EditProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     String userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    Color boxShadowColor;
+print("userType $userType");
+    if (userType == 'Vendor') {
+      boxShadowColor = const Color(0xff0A4C61);
+    } else if (userType == 'Customer') {
+      boxShadowColor = const Color(0xff2E0536);
+    } else if (userType == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    } else {
+      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -28,10 +41,10 @@ class EditProfileWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+               Text(
                 'Edit Profile',
                 style: TextStyle(
-                  color: Color(0xFF094B60),
+                  color: boxShadowColor,
                   fontSize: 26,
                   fontFamily: 'Jost',
                   fontWeight: FontWeight.w600,
@@ -40,15 +53,19 @@ class EditProfileWidget extends StatelessWidget {
                 ),
               ),
               Space(3.h),
-              TextWidgetStoreSetup(label: 'Edit Store Name'),
+              if (userType == 'Customer')
+              TextWidgetStoreSetup(label: 'Edit Name '),
+
+              if (userType != 'Customer')
+              TextWidgetStoreSetup(label: 'Edit Store Name',color:boxShadowColor),
               Space(1.h),
               Container(
                 // rgba(165, 200, 199, 1),
-                decoration: const ShapeDecoration(
+                decoration:  ShapeDecoration(
                   shadows: [
                     BoxShadow(
-                      offset: Offset(0, 4),
-                      color: Color.fromRGBO(165, 200, 199, 0.6),
+                      offset: Offset(0, 2),
+                      color: boxShadowColor.withOpacity(0.2),
                       blurRadius: 20,
                     )
                   ],
@@ -87,7 +104,7 @@ class EditProfileWidget extends StatelessWidget {
                             contentPadding: EdgeInsets.only(left: 14),
                             hintStyle: TextStyle(
                                 fontSize: 12,
-                                color: Color(0xFF0A4C61),
+                                color: boxShadowColor,
                                 fontFamily: 'Product Sans',
                                 fontWeight: FontWeight.w400),
                             border: InputBorder.none,
@@ -152,9 +169,9 @@ class EditProfileWidget extends StatelessWidget {
                   color: Colors.red,
                 ),
                 Text(
-                  '  Remove Logo',
+                  userType == 'Customer'?'Remove profile photo':'Remove Logo',
                   style: TextStyle(
-                    color: Color(0xFF094B60),
+                    color: boxShadowColor,
                     fontSize: 17,
                     fontFamily: 'Jost',
                     fontWeight: FontWeight.w600,

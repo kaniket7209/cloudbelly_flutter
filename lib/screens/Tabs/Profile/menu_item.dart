@@ -425,8 +425,26 @@ class _MenuItemState extends State<MenuItem> {
                     ),
                     Space(4.h),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
+                        TouchableOpacity(
+                            onTap: () async {
+                              AppWideLoadingBanner().loadingBanner(context);
+                              final temp = await Provider.of<Auth>(context,
+                                      listen: false)
+                                  .updateProductImage(
+                                      data['_id'], context, 'Camera');
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              if (temp != null && temp != '') {
+                                url = temp;
+                              }
+                              print(url);
+                            },
+                            child: StocksMayBeNeedWidget(
+                                txt: 'Click photo',
+                                icon: 'assets/images/Camera.png')),
+                       
                         TouchableOpacity(
                           onTap: () async {
                             AppWideLoadingBanner().loadingBanner(context);
@@ -444,27 +462,11 @@ class _MenuItemState extends State<MenuItem> {
                             }
                             print(url);
                           },
-                          child:
-                              StocksMayBeNeedWidget(txt: 'Upload from gallery'),
+                          child: StocksMayBeNeedWidget(
+                              txt: 'Upload photo',
+                              icon: 'assets/images/gallery.png'),
                         ),
-                        TouchableOpacity(
-                            onTap: () async {
-                              AppWideLoadingBanner().loadingBanner(context);
-                              final temp = await Provider.of<Auth>(context,
-                                      listen: false)
-                                  .updateProductImage(
-                                      data['_id'], context, 'Camera');
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              if (temp != null && temp != '') {
-                                url = temp;
-                              }
-                              print(url);
-                            },
-                            child: StocksMayBeNeedWidget(txt: 'Click photo')),
-                        SizedBox(
-                          width: 15,
-                        ),
+                        
                         TouchableOpacity(
                             onTap: () async {
                               AppWideLoadingBanner().loadingBanner(context);
@@ -479,8 +481,11 @@ class _MenuItemState extends State<MenuItem> {
                               }
                               print(url);
                             },
-                            child: StocksMayBeNeedWidget(txt: 'From AI')),
-                        Space(isHorizontal: true, 5.w),
+                            child: StocksMayBeNeedWidget(
+                              txt: 'Let AI do it!',
+                              icon: 'assets/images/Bot.png',
+                            )),
+                        // Space(isHorizontal: true, 5.w),
                       ],
                     ),
                   ],

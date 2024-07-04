@@ -89,7 +89,20 @@ print("dataref ${Data}");
 
   @override
   Widget build(BuildContext context) {
+     String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+     
+    Color colorProfile;
+    if (userType == 'Vendor') {
+      colorProfile = const Color(0xFFEAF5F7) ;
+    } else if (userType == 'Customer') {
+      colorProfile = const Color(0xFFD9D9D9);
+    } else if (userType == 'Supplier') {
+      colorProfile = Color(0xFFE4F4DA);
+    } else {
+      colorProfile =const Color(0xFFEAF5F7); // Default color if user_type is none of the above
+    }
     return Scaffold(
+      backgroundColor: Color(0xffEAF5F7),
       body: RefreshIndicator(
         onRefresh: _refreshFeed,
         child: SingleChildScrollView(
@@ -127,6 +140,7 @@ print("dataref ${Data}");
                   const Text(
                     'Post',
                     style: TextStyle(
+                     
                       color: Color(0xFF094B60),
                       fontSize: 26,
                       fontFamily: 'Jost',

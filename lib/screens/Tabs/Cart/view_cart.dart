@@ -622,6 +622,9 @@ class _PaymentOptionsState extends State<PaymentOptions> {
 // show payment method section
 void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
     orderId, String sellerUpi, Map<String, dynamic> prepData) {
+
+      print("${json.encode(prepData)} prepdddd");
+      String preferred_payment_method = prepData['preferred_payment_method'];
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -917,6 +920,7 @@ class _ViewCartState extends State<ViewCart> {
     } else {
       AppWideLoadingBanner().loadingBanner(context);
       var id = Provider.of<ViewCartProvider>(context, listen: false).SellterId;
+      print("sellerid $id");
       var response = await Provider.of<Auth>(context, listen: false)
           .createProductOrder(
               convertedList, context.read<ViewCartProvider>().addressModel, id);
@@ -925,6 +929,7 @@ class _ViewCartState extends State<ViewCart> {
       if (response['message'] == 'Order processed successfully') {
         var orderId = response['order_id'];
         var sellerUpi = response['data']['seller_upi'];
+       
         var prepData = response['data'];
         print("sellerUpi  $sellerUpi");
         Navigator.pop(context);

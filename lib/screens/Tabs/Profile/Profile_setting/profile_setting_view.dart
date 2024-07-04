@@ -995,22 +995,22 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               decoration: ShapeDecoration(
                                 shadows: [
                                   BoxShadow(
-                                    offset: const Offset(0, 4),
+                                    offset: const Offset(0, 3),
                                     color: Provider.of<Auth>(context,
                                                     listen: false)
                                                 .userData?['user_type'] ==
                                             UserType.Vendor.name
                                         ? const Color.fromRGBO(
-                                            31, 111, 109, 0.6)
+                                            31, 111, 109, 0.4)
                                         : Provider.of<Auth>(context,
                                                         listen: false)
                                                     .userData?['user_type'] ==
                                                 UserType.Supplier.name
                                             ? const Color.fromRGBO(
-                                                77, 191, 74, 0.5)
+                                                77, 191, 74, 0.4)
                                             : const Color.fromRGBO(
                                                 130, 47, 130, 0.4),
-                                    blurRadius: 20,
+                                    blurRadius: 15,
                                   )
                                 ],
                                 shape: const SmoothRectangleBorder(),
@@ -1086,12 +1086,11 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                           Container(
                                             height: 25,
                                             width: 25,
-                                            decoration: const ShapeDecoration(
+                                            decoration:  ShapeDecoration(
                                               shadows: [
                                                 BoxShadow(
                                                   offset: Offset(0, 4),
-                                                  color: Color.fromRGBO(
-                                                      165, 200, 199, 0.6),
+                                                  color: boxShadowColor.withOpacity(0.3),
                                                   blurRadius: 20,
                                                 )
                                               ],
@@ -1118,11 +1117,11 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                                   .pickImageAndUpoad(context);
                                               submitUserImage(profileImage);
                                             },
-                                            child: const Text(
+                                            child:  Text(
                                               "Add logo",
                                               style: TextStyle(
                                                   fontSize: 14,
-                                                  color: Color(0xFF0A4C61),
+                                                  color: boxShadowColor,
                                                   fontFamily: 'Product Sans',
                                                   fontWeight: FontWeight.w700),
                                             ),
@@ -1135,12 +1134,11 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                           Container(
                                             height: 25,
                                             width: 25,
-                                            decoration: const ShapeDecoration(
+                                            decoration:  ShapeDecoration(
                                               shadows: [
                                                 BoxShadow(
                                                   offset: Offset(0, 4),
-                                                  color: Color.fromRGBO(
-                                                      165, 200, 199, 0.6),
+                                                  color:boxShadowColor.withOpacity(0.3),
                                                   blurRadius: 20,
                                                 )
                                               ],
@@ -1159,11 +1157,11 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                             16,
                                             isHorizontal: true,
                                           ),
-                                          const Text(
+                                           Text(
                                             "Add cover photo",
                                             style: TextStyle(
                                                 fontSize: 14,
-                                                color: Color(0xFF0A4C61),
+                                                color: boxShadowColor,
                                                 fontFamily: 'Product Sans',
                                                 fontWeight: FontWeight.w700),
                                           ),
@@ -1175,12 +1173,11 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                           Container(
                                             height: 25,
                                             width: 25,
-                                            decoration: const ShapeDecoration(
+                                            decoration:  ShapeDecoration(
                                               shadows: [
                                                 BoxShadow(
                                                   offset: Offset(0, 4),
-                                                  color: Color.fromRGBO(
-                                                      165, 200, 199, 0.6),
+                                                  color: boxShadowColor.withOpacity(0.3),
                                                   blurRadius: 20,
                                                 )
                                               ],
@@ -1208,11 +1205,11 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                               submitUserImage("");
                                               setState(() {});
                                             },
-                                            child: const Text(
+                                            child:  Text(
                                               "Remove logo",
                                               style: TextStyle(
                                                   fontSize: 14,
-                                                  color: Color(0xFF0A4C61),
+                                                  color: boxShadowColor,
                                                   fontFamily: 'Product Sans',
                                                   fontWeight: FontWeight.w700),
                                             ),
@@ -1225,16 +1222,15 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                           Container(
                                             height: 25,
                                             width: 25,
-                                            decoration: const ShapeDecoration(
+                                            decoration:  ShapeDecoration(
                                               shadows: [
                                                 BoxShadow(
                                                   offset: Offset(0, 4),
-                                                  color: Color.fromRGBO(
-                                                      165, 200, 199, 0.6),
+                                                  color: boxShadowColor.withOpacity(0.3),
                                                   blurRadius: 20,
                                                 )
                                               ],
-                                              color: Color(0xFFA5C8C799),
+                                             color: Color(0xFFA5C8C799),
                                               shape: SmoothRectangleBorder(
                                                 borderRadius:
                                                     SmoothBorderRadius.all(
@@ -1249,11 +1245,11 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                             16,
                                             isHorizontal: true,
                                           ),
-                                          const Text(
+                                           Text(
                                             "Remove cover image",
                                             style: TextStyle(
                                                 fontSize: 14,
-                                                color: Color(0xFF0A4C61),
+                                                color: boxShadowColor,
                                                 fontFamily: 'Product Sans',
                                                 fontWeight: FontWeight.w700),
                                           ),
@@ -1344,7 +1340,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               .userData?['user_type'] ==
                           UserType.Vendor.name
                       ? const TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontFamily: 'PT Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF0A4C61),
@@ -1373,7 +1369,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                             icon: const Icon(Icons.done),
                             color: const Color(0xFFFA6E00),
                           ),
-                    hintText: "Enter your brand name here",
+                    hintText: Provider.of<Auth>(context, listen: false)
+                                    .userData?['user_type'] !=
+                                UserType.Customer.name?"Enter your brand name here":"Enter your name",
                     contentPadding: const EdgeInsets.only(left: 14, top: 10),
                     hintStyle: TextStyle(
                         fontSize: 12,
@@ -1527,6 +1525,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           UserType.Vendor.name
                       ? const TextStyle(
                           color: Color(0xFF0A4C61),
+                          fontSize: 14,
+                          fontFamily: 'PT Sans',
+                          fontWeight: FontWeight.w400,
                         )
                       : const TextStyle(
                           fontSize: 14,
@@ -1624,6 +1625,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               .userData?['user_type'] ==
                           UserType.Vendor.name
                       ? const TextStyle(
+                        fontSize: 14,
+                          fontFamily: 'PT Sans',
+                          fontWeight: FontWeight.w400,
                           color: Color(0xFF0A4C61),
                         )
                       : const TextStyle(
@@ -1657,7 +1661,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     hintText: "Enter your address here",
                     contentPadding: const EdgeInsets.only(left: 14, top: 10),
                     hintStyle: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         color: boxShadowColor,
                         fontFamily: 'Product Sans',
                         fontWeight: FontWeight.w400),

@@ -1000,14 +1000,39 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color boxShadowColor;
+ String userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    if (userType == 'Vendor') {
+      boxShadowColor = const Color(0xff0A4C61);
+    } else if (userType == 'Customer') {
+      boxShadowColor = const Color(0xff2E0536);
+    } else if (userType == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    } else {
+      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Space(1.h),
+        if(userType !='Customer')
         Text(
           isLogo ? '  Add logo' : 'Add Cover Image',
           style: TextStyle(
-            color: Color(0xFF094B60),
+            color: boxShadowColor,
+            fontSize: isProfile ? 17 : 26,
+            fontFamily: 'Jost',
+            fontWeight: FontWeight.w600,
+            height: 0.03,
+            letterSpacing: 0.78,
+          ),
+        ),
+        if(userType =='Customer')
+        Text(
+          isLogo ? '  Add profile photo' : 'Add Cover Image',
+          style: TextStyle(
+            color: boxShadowColor,
             fontSize: isProfile ? 17 : 26,
             fontFamily: 'Jost',
             fontWeight: FontWeight.w600,
@@ -1052,7 +1077,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
             Navigator.of(context).pop();
             Navigator.of(context).pop();
           },
-          child: const Padding(
+          child:  Padding(
             padding: EdgeInsets.all(8.0),
             child: Row(
               children: [
@@ -1061,7 +1086,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
                 Text(
                   'Upload from gallery',
                   style: TextStyle(
-                    color: Color(0xFF094B60),
+                    color: boxShadowColor,
                     fontSize: 12,
                     fontFamily: 'Product Sans',
                     fontWeight: FontWeight.w700,
@@ -1166,7 +1191,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
             Navigator.of(context).pop();
             Navigator.of(context).pop();
           },
-          child: const Padding(
+          child:  Padding(
             padding: EdgeInsets.all(8.0),
             child: Row(
               children: [
@@ -1175,7 +1200,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
                 Text(
                   'Click Photo',
                   style: TextStyle(
-                    color: Color(0xFF094B60),
+                    color: boxShadowColor,
                     fontSize: 12,
                     fontFamily: 'Product Sans',
                     fontWeight: FontWeight.w700,

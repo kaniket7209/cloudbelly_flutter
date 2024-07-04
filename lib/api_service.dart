@@ -1050,7 +1050,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<String> storeSetup3(
-      bank_name, account_number, ifsc_code, upi_id) async {
+      bank_name, account_number, ifsc_code, upi_id,preferred_payment_method) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
     final Map<String, dynamic> requestBody = {
@@ -1059,6 +1059,7 @@ class Auth with ChangeNotifier {
       "account_number": account_number,
       "ifsc_code": ifsc_code,
       "upi_id": upi_id,
+      "preferred_payment_method":preferred_payment_method
     };
 
     try {

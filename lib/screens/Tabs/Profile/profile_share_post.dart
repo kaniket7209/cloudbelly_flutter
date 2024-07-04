@@ -79,6 +79,7 @@ class _ProfileSharePostState extends State<ProfileSharePost> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+     
       body: RefreshIndicator(
         onRefresh: _refreshFeed,
         child: SingleChildScrollView(
@@ -117,6 +118,7 @@ class _ProfileSharePostState extends State<ProfileSharePost> {
                     'Post',
                     style: TextStyle(
                       color: Color(0xFF094B60),
+                      
                       fontSize: 26,
                       fontFamily: 'Jost',
                       fontWeight: FontWeight.w600,

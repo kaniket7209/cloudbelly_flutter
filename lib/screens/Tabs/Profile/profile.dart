@@ -466,7 +466,7 @@ class _ProfileState extends State<Profile> {
                                                 .userData?['user_type'] !=
                                             UserType.Customer.name)
                                           Make_Profile_ListWidget(
-                                            color: Color(0xFFFA6E00),
+                                            color: Color.fromRGBO(10, 76, 97, 1),
                                             onTap: () {
                                               AppWideBottomSheet().showSheet(
                                                   context,
@@ -1076,11 +1076,11 @@ class Make_Profile_ListWidget extends StatelessWidget {
           height: 41,
           width: 125,
           decoration: ShapeDecoration(
-            shadows: const [
+            shadows:  [
               BoxShadow(
                   offset: Offset(0, 4),
                   spreadRadius: 0.1,
-                  color: Color.fromRGBO(232, 128, 55, 0.5),
+                  color: Color.fromRGBO(10, 76, 97, 1).withOpacity(0.5),
                   blurRadius: 10)
             ],
             color: color ?? const Color.fromRGBO(84, 166, 193, 1),
@@ -2080,9 +2080,11 @@ class FeedWidget extends StatelessWidget {
   final String isSelfProfile;
   CarouselController buttonCarouselController = CarouselController();
 
-  Color getBackgroundColor(String isSelfProfile, bool isVendor) {
+  Color getBackgroundColor(String isSelfProfile, bool isVendor, String main_user_type) {
     print("userModel ${userModel?.id}");
     var usertype = userModel?.userType;
+    if (usertype ==null)
+    usertype = main_user_type;
     if (isSelfProfile == 'Yes' && isVendor && usertype == 'Vendor') {
       return const Color.fromRGBO(10, 76, 97, 0.31);
     } else if (isSelfProfile == 'Yes' && usertype == 'Customer') {
@@ -2102,6 +2104,7 @@ class FeedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String main_user_type = Provider.of<Auth>(context, listen: false).userData?['user_type'];
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
@@ -2131,10 +2134,10 @@ class FeedWidget extends StatelessWidget {
               decoration: ShapeDecoration(
                 shadows: [
                   BoxShadow(
-                    offset: const Offset(0, 2),
+                    offset: const Offset(1, 4),
                     // color: _isVendor ? const Color.fromRGBO(10, 76, 97, 0.31) :  const Color(0xBC73BC).withOpacity(0.6),
-                    color: getBackgroundColor(isSelfProfile, _isVendor),
-                    blurRadius: 20,
+                    color: getBackgroundColor(isSelfProfile, _isVendor,main_user_type),
+                    blurRadius: 12,
                   ),
                 ],
                 shape: SmoothRectangleBorder(

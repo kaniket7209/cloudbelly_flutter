@@ -25,7 +25,7 @@ class ViewCartProvider with ChangeNotifier {
 
   void getProductList(List<ProductDetails> tempList) {
     productList = tempList;
-    // SellterId=sellerId;
+    
     notifyListeners();
   }
 }

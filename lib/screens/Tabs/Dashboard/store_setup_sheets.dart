@@ -427,6 +427,18 @@ class TextWidgetStoreSetup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     Color boxShadowColor;
+    String userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    if (userType == 'Vendor') {
+      boxShadowColor = const Color(0xff0A4C61);
+    } else if (userType == 'Customer') {
+      boxShadowColor = const Color(0xff2E0536);
+    } else if (userType == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    } else {
+      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+    }
     return Text(
       label,
       style: Provider.of<Auth>(context, listen: false)
@@ -826,6 +838,7 @@ class _Sheet3State extends State<Sheet3> with SingleTickerProviderStateMixin {
   String re_account_number = '';
   String ifsc_code = '';
   String upi_id = '';
+  String preferred_payment_method = 'both';
 
   Future<void> _SubmitForm() async {
     // final prefs = await SharedPreferences.getInstance();
@@ -836,7 +849,7 @@ class _Sheet3State extends State<Sheet3> with SingleTickerProviderStateMixin {
         upi_id != '') {
       if (account_number == re_account_number) {
         String msg = await Provider.of<Auth>(context, listen: false)
-            .storeSetup3(bank_name, account_number, ifsc_code, upi_id);
+            .storeSetup3(bank_name, account_number, ifsc_code, upi_id,preferred_payment_method);
 
         if (msg == 'User information updated successfully.') {
           Provider.of<Auth>(context, listen: false).userData?['bank_name'] =
