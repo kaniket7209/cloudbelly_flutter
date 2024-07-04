@@ -24,7 +24,6 @@ class RestaurantCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
       child: Padding(
-      
         padding: const EdgeInsets.all(20.0),
         child: Row(
           children: [
@@ -43,8 +42,7 @@ class RestaurantCard extends StatelessWidget {
                   // You can clear the userId or perform any other actions here if needed
                 });
               },
-              child:
-                Container(
+              child: Container(
                 height: 90,
                 width: 90,
                 decoration: ShapeDecoration(
@@ -57,9 +55,8 @@ class RestaurantCard extends StatelessWidget {
                   ),
                   shadows: [
                     BoxShadow(
-                      color:const Color.fromRGBO(
-                                                  130, 47, 130, 1)
-                                              .withOpacity(0.3),
+                      color: const Color.fromRGBO(130, 47, 130, 1)
+                          .withOpacity(0.3),
                       spreadRadius: 1,
                       blurRadius: 25,
                       offset: Offset(3, 6),
@@ -73,7 +70,7 @@ class RestaurantCard extends StatelessWidget {
                   ),
                   child: restaurant.profilePhoto.isNotEmpty
                       ? Image.network(
-                         restaurant.profilePhoto.isNotEmpty
+                          restaurant.profilePhoto.isNotEmpty
                               ? restaurant.profilePhoto
                               : 'https://via.placeholder.com/150', // Fallback image URL
                           fit: BoxFit.cover,
@@ -83,9 +80,7 @@ class RestaurantCard extends StatelessWidget {
                         )
                       : Image.network('https://via.placeholder.com/150'),
                 ),
-             
               ),
-           
             ),
             SizedBox(width: 20),
             Expanded(
@@ -121,10 +116,8 @@ class RestaurantCard extends StatelessWidget {
                             color: Color(0xff9428A9),
                             fontWeight: FontWeight.bold),
                       ),
-                       SizedBox(
-                          width:
-                              3.0),
-                     
+                      SizedBox(width: 3.0),
+
                       Spacer(), // Pushes the text to the right
                       Text(
                         '45-50 mins',
@@ -138,22 +131,29 @@ class RestaurantCard extends StatelessWidget {
                   ),
                   SizedBox(height: 5),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        restaurant.location,
-                        style: TextStyle(
-                          color: Color(0xff9428A9),
-                          fontSize: 12,
+                      Flexible(
+                        child: Text(
+                          restaurant.location,
+                          style: TextStyle(
+                            color: Color(0xff9428A9),
+                            fontSize: 12,
+                          ),
+                          overflow: TextOverflow
+                              .ellipsis, // This will add ellipsis (...) if text overflows
                         ),
                       ),
-                      Spacer(),
-                       Text(
-                            '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km', // Add the rating text here
-                            style: TextStyle(
-                                fontSize: 14.0,
-                                color: Color(0xffFA6E00),
-                                fontWeight: FontWeight.bold),
-                          ),
+                      // SizedBox(width: 8),
+                      // Spacer(), // Add some spacing between the location and distance
+                      Text(
+                        '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Color(0xffFA6E00),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ],

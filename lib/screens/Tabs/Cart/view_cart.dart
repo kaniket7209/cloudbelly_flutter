@@ -622,9 +622,9 @@ class _PaymentOptionsState extends State<PaymentOptions> {
 // show payment method section
 void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
     orderId, String sellerUpi, Map<String, dynamic> prepData) {
+  print("${json.encode(prepData)} prepdddd");
+  String preferred_payment_method = prepData['preferred_payment_method'];
 
-      print("${json.encode(prepData)} prepdddd");
-      String preferred_payment_method = prepData['preferred_payment_method'];
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -649,8 +649,6 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
-                  // const SizedBox(width: 20),
-
                   const Center(
                     child: Text(
                       'Payment',
@@ -682,83 +680,84 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
                   ),
                 ),
               ),
-              Space(2.h),
+              SizedBox(height: 20),
             ],
           ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: screenWidth * 0.5,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  side: const BorderSide(color: Colors.black),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                    cornerRadius: 15,
-                    cornerSmoothing: 1,
-                  )),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  // Add cash on delivery functionality here
-                  
-                   submitCustomerOrder(
-                      context, orderId, "cod", orderFromUserId, prepData);
-                  openPaymentOptions(
-                      context, orderId, sellerUpi, orderFromUserId, prepData,'cod');
-                },
-                child: const Text(
-                  'Cash on delivery',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+            if (preferred_payment_method == 'Both Online and COD' ||
+                preferred_payment_method == 'COD Only')
+              Container(
+                width: screenWidth * 0.5,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    side: const BorderSide(color: Colors.black),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
+                    shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                      cornerRadius: 15,
+                      cornerSmoothing: 1,
+                    )),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    submitCustomerOrder(
+                        context, orderId, "cod", orderFromUserId, prepData);
+                    openPaymentOptions(context, orderId, sellerUpi,
+                        orderFromUserId, prepData, 'cod');
+                  },
+                  child: const Text(
+                    'Cash on delivery',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
             const SizedBox(height: 20),
-            Container(
-              width: screenWidth * 0.5,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
-                  shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                    cornerRadius: 15,
-                    cornerSmoothing: 1,
-                  )),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  openPaymentOptions(
-                      context, orderId, sellerUpi, orderFromUserId, prepData,'online');
-                },
-                child: const Text(
-                  'Pay directly to kitchen',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+            if (preferred_payment_method == 'Both Online and COD' ||
+                preferred_payment_method == 'Online Only')
+              Container(
+                width: screenWidth * 0.5,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+                    shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                      cornerRadius: 15,
+                      cornerSmoothing: 1,
+                    )),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    openPaymentOptions(context, orderId, sellerUpi,
+                        orderFromUserId, prepData, 'online');
+                  },
+                  child: const Text(
+                    'Pay directly to kitchen',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Space(4.h)
+            SizedBox(height: 20),
           ],
         ),
       );
     },
   );
 }
-
 Future<void> submitCustomerOrder (
     // for cod
     BuildContext context,
