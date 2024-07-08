@@ -247,27 +247,15 @@ class _QrViewState extends State<QrView> {
                 size: 200, // Size of the QR code
                 roundEdges: true, // Rounded corners for the QR code elements
                 elementColor: boxShadowColor, // Color of the QR code elements
-                image: NetworkImage(profilePhoto), // Your profile photo URL
+                image: NetworkImage(profilePhoto),
+                 // Your profile photo URL
+                 
               ),
             ),
           ),
         ),
-        // ElevatedButton(
-        //   onPressed: _shareScreenshot,
-        //   child: Text(
-        //     'Share Screenshot',
-        //     style: TextStyle(color: Colors.red),
-        //   ),
-        // ),
-        // Center(
-        //   child: QrImageView(
-        //     data: profileUrl,
-        //     version: QrVersions.auto,
-        //     size: 200,
-        //     gapless: false,
-        //     foregroundColor: boxShadowColor,
-        //   ),
-        // ),
+        
+        
 
         SizedBox(height: 40),
         Padding(
@@ -301,8 +289,8 @@ class _QrViewState extends State<QrView> {
                     Expanded(
                       child: Text(
                         profileUrl,
-                        style: const TextStyle(
-                          color: Colors.black,
+                        style:  TextStyle(
+                          color: boxShadowColor,
                           fontSize: 14,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w800,
@@ -338,7 +326,7 @@ class _QrViewState extends State<QrView> {
                         },
                         icon: Image.asset(
                           'assets/images/Share.png', // Path to your image asset
-                          color: boxShadowColor, // Optional: If you want to tint the image
+                          color: Colors.white, // Optional: If you want to tint the image
                         ),
                       ),
                     ),
