@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
@@ -237,7 +237,8 @@ class _ProfileState extends State<Profile> {
                         ),
                         child: Center(
                           child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 5.w),
+                            padding: EdgeInsets.symmetric(horizontal: 40),
+                            // margin: EdgeInsets.symmetric(horizontal: 5.w),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -257,52 +258,51 @@ class _ProfileState extends State<Profile> {
                                         .AddAddressSheet(context);
                                   },
                                 ),
-                               
-                               InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const ProfileSettingView()));
-                                      },
-                                      child: Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: ShapeDecoration(
-                                          shadows: [
-                                            BoxShadow(
-                                              offset: Offset(0, 4),
-                                              color: _isVendor
-                                                  ? Color.fromRGBO(
-                                                      31, 111, 109, 0.5)
-                                                  : Color(0xBC73BC)
-                                                      .withOpacity(0.6),
-                                              blurRadius: 20,
-                                            )
-                                          ],
-                                          color: Colors.white,
-                                          shape: SmoothRectangleBorder(
-                                            borderRadius: SmoothBorderRadius(
-                                              cornerRadius: 10,
-                                              cornerSmoothing: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.settings,
-                                          color: boxShadowColor,
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const ProfileSettingView()));
+                                  },
+                                  child: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: ShapeDecoration(
+                                      shadows: [
+                                        BoxShadow(
+                                          offset: Offset(0, 4),
+                                          color: _isVendor
+                                              ? Color.fromRGBO(
+                                                  31, 111, 109, 0.5)
+                                              : Color(0xBC73BC)
+                                                  .withOpacity(0.6),
+                                          blurRadius: 20,
+                                        )
+                                      ],
+                                      color: Colors.white,
+                                      shape: SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius(
+                                          cornerRadius: 12,
+                                          cornerSmoothing: 1,
                                         ),
                                       ),
                                     ),
-                                 
+                                    child: Icon(
+                                      Icons.settings,
+                                      size: 27,
+                                      color: boxShadowColor,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
                         ),
                       ),
-                      Space(3.h),
-                    
+                      Space(2.h),
+                      //store panel
                       Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(
@@ -312,7 +312,6 @@ class _ProfileState extends State<Profile> {
                             children: [
                               Center(
                                   child: Container(
-                          
                                 width: 90.w,
                                 decoration: ShapeDecoration(
                                   shadows: [
@@ -347,26 +346,35 @@ class _ProfileState extends State<Profile> {
                                   children: [
                                     // Space(3.h),
                                     Container(
-                                      padding: EdgeInsets.all(20),
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 15, 10, 0),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
+                                          SizedBox(
+                                            width: 10,
+                                          ),
                                           Container(
-                                            // width: 40.w,
-
+                                            padding: EdgeInsets.only(left: 10),
                                             child: const StoreLogoWidget(),
                                           ),
-                                          SizedBox(width: 10,),
+                                          SizedBox(
+                                            width: 14,
+                                          ),
                                           Container(
-                                            width:50.w,
+                                            width: 50.w,
                                             child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                SizedBox(height: 20,),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
                                                 Text(
                                                   Provider.of<Auth>(context,
                                                           listen: true)
@@ -375,24 +383,55 @@ class _ProfileState extends State<Profile> {
                                                       color: boxShadowColor,
                                                       fontFamily: 'Ubuntu',
                                                       fontSize: 22,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       letterSpacing: 1),
                                                 ),
                                                 Text(
-                                                 'Enter your Description here ',
+                                                  Provider.of<Auth>(context,
+                                                          listen: true)
+                                                      .userData?['user_type'],
                                                   style: TextStyle(
                                                       color: boxShadowColor,
-                                                      fontFamily: 'Ubuntu',
+                                                      fontFamily:
+                                                          'Product Sans',
                                                       fontSize: 12,
                                                       letterSpacing: 1),
                                                 ),
                                               ],
                                             ),
                                           ),
-                                         Image.asset('assets/images/WhatsApp.png',width:30)
+                                          GestureDetector(
+                                            onTap: () async {
+                                              final phoneNumber =
+                                                  Provider.of<Auth>(context,
+                                                              listen: false)
+                                                          .userData?['phone'] ??
+                                                      '';
+                                              final url = 'https://wa.me/' + phoneNumber;
+                                              if (await canLaunch(url)) {
+                                                await launch(url);
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          'Could not launch whatsapp ')),
+                                                );
+                                              }
+                                            },
+                                            child: Container(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0, 13, 5, 2),
+                                                child: Image.asset(
+                                                    'assets/images/WhatsApp.png',
+                                                    width: 30)),
+                                          )
+                                          // https://api.whatsapp.com/send?phone=916206630515
                                         ],
                                       ),
                                     ),
-                                    // Space(3.h),
+
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
@@ -433,10 +472,10 @@ class _ProfileState extends State<Profile> {
                                         )
                                       ],
                                     ),
-                                    Space(3.h),
+                                    Space(2.h),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
+                                          MainAxisAlignment.center,
                                       children: [
                                         TouchableOpacity(
                                           onTap: () {
@@ -456,6 +495,9 @@ class _ProfileState extends State<Profile> {
                                           child: ButtonWidgetHomeScreen(
                                               txt: 'Edit profile',
                                               isActive: true),
+                                        ),
+                                        SizedBox(
+                                          width: 20,
                                         ),
                                         if (Provider.of<Auth>(context,
                                                     listen: false)
@@ -636,7 +678,7 @@ class _ProfileState extends State<Profile> {
                                           ),
                                       ],
                                     ),
-                                    Space(3.h),
+                                    Space(2.h),
                                   ],
                                 ),
                               )),
@@ -1070,20 +1112,20 @@ class Make_Profile_ListWidget extends StatelessWidget {
     return TouchableOpacity(
       onTap: onTap,
       child: Container(
-          height: 41,
-          width: 125,
+          height: 43,
+          width: 135,
           decoration: ShapeDecoration(
             shadows: [
               BoxShadow(
-                  offset: Offset(0, 4),
-                  spreadRadius: 0.1,
-                  color: Color.fromRGBO(10, 76, 97, 1).withOpacity(0.5),
-                  blurRadius: 10)
+                  offset: Offset(5, 6),
+                  spreadRadius: 0,
+                  color: Color(0xff126B87).withOpacity(0.42),
+                  blurRadius: 30)
             ],
             color: color ?? const Color.fromRGBO(84, 166, 193, 1),
             shape: SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius(
-                cornerRadius: 10,
+                cornerRadius: 14,
                 cornerSmoothing: 1,
               ),
             ),

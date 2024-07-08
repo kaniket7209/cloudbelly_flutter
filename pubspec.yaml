@@ -139,6 +139,11 @@ flutter:
       fonts:
         - asset: assets/fonts/PTSans-Bold.ttf
         - asset: assets/fonts/PTSans-Regular.ttf
+    - family: Ubuntu
+      fonts:
+        - asset:  assets/fonts/Ubuntu-Bold.ttf
+        - asset:  assets/fonts/Ubuntu-Regular.ttf
+        - asset:  assets/fonts/Ubuntu-Medium.ttf
 
 
       

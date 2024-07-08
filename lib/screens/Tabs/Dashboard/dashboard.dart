@@ -294,20 +294,20 @@ class StoreLogoWidget extends StatelessWidget {
                 decoration: ShapeDecoration(
                   shadows: [
                     userData?['user_type'] == UserType.Vendor.name
-                        ? const BoxShadow(
+                        ?  BoxShadow(
                             offset: Offset(0, 4),
-                            color: Color.fromRGBO(31, 111, 109, 0.6),
+                            color: Color(0xff1F6F6D).withOpacity(0.4),
                             blurRadius: 20,
                           )
                         : userData?['user_type'] == UserType.Supplier.name
-                            ? const BoxShadow(
+                            ?  BoxShadow(
                                 offset: Offset(0, 4),
-                                color: Color.fromRGBO(163, 220, 118, 0.6),
+                                color: Color.fromRGBO(163, 220, 118, 0.6).withOpacity(0.4),
                                 blurRadius: 20,
                               )
-                            : const BoxShadow(
+                            :  BoxShadow(
                                 offset: Offset(0, 4),
-                                color: Color.fromRGBO(188, 115, 188, 0.6),
+                                color: Color.fromRGBO(188, 115, 188, 0.6).withOpacity(0.4),
                                 blurRadius: 20,
                               ),
                   ],
@@ -315,7 +315,7 @@ class StoreLogoWidget extends StatelessWidget {
                 ),
                 child: ClipSmoothRect(
                   radius: SmoothBorderRadius(
-                    cornerRadius: 15,
+                    cornerRadius: 22,
                     cornerSmoothing: 1,
                   ),
                   child: Image.network(
@@ -883,9 +883,9 @@ class ColumnWidgetHomeScreen extends StatelessWidget {
           data,
           style:  TextStyle(
             color: colorProfile,
-            fontSize: 35,
+            fontSize: 45,
             fontFamily: 'Product Sans',
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.bold,
             height: 0,
             letterSpacing: 0.35,
           ),
@@ -895,7 +895,7 @@ class ColumnWidgetHomeScreen extends StatelessWidget {
           style:  TextStyle(
             color: colorProfile,
             fontSize: 11,
-            fontFamily: 'Product Sans',
+            fontFamily: 'Ubuntu',
             fontWeight: FontWeight.w400,
             height: 0,
             letterSpacing: 0.11,
@@ -925,16 +925,16 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height == 1 ? 41 : height,
-      width: width == 1 ? 125 : width,
+      height: height == 1 ? 43 : height,
+      width: width == 1 ? 135 : width,
       decoration: ShapeDecoration(
         shadows: isActive == true
             ? [
                 BoxShadow(
-                    offset: Offset(0, 4),
-                    spreadRadius: 0.1,
-                    color: Color.fromRGBO(232, 128, 55, 0.5),
-                    blurRadius: 10)
+                    offset: Offset(5, 6),
+                    spreadRadius: 0,
+                    color: Color(0xffE88037).withOpacity(0.5),
+                    blurRadius: 30)
               ]
             : [],
         color: isActive
@@ -942,7 +942,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
             : Colors.transparent,
         shape: SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius(
-            cornerRadius: radius == 1 ? 10 : radius,
+            cornerRadius: radius == 1 ? 14 : radius,
             cornerSmoothing: 1,
           ),
         ),

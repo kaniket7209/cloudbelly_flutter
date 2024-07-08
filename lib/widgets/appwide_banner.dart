@@ -30,11 +30,11 @@ class _AppwideBannerState extends State<AppwideBanner>
                         .userData?['cover_image'] !=
                     null ||
                 Provider.of<Auth>(context, listen: true)
-                        .userData?['cover_image'] ==
+                        .userData?['cover_image'] !=
                     ''
             ? Container(
                 width: 100.w,
-                height: widget.height == 300 ? 30.h : widget.height,
+                height: widget.height == 300 ? 23.3.h : widget.height,
                 decoration: ShapeDecoration(
                   color: Provider.of<Auth>(context, listen: false)
                               .userData?['user_type'] ==
@@ -55,7 +55,7 @@ class _AppwideBannerState extends State<AppwideBanner>
                 ))
             : Container(
                 width: 100.w,
-                height: widget.height == 300 ? 30.h : widget.height,
+                height: widget.height == 300 ? 23.3.h : widget.height,
                 decoration: const ShapeDecoration(
                   color: Color(0xFFB1D9D8),
                   shape: SmoothRectangleBorder(

@@ -65,7 +65,7 @@ class CustomIconButton extends StatelessWidget {
           color: boxColor,
           shape: SmoothRectangleBorder(
             borderRadius: SmoothBorderRadius(
-              cornerRadius: 10,
+              cornerRadius: 12,
               cornerSmoothing: 1,
             ),
           ),
