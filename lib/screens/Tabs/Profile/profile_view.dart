@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/view_cart.dart';
@@ -25,6 +26,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_plus/share_plus.dart';
@@ -216,15 +218,15 @@ class _ProfileViewState extends State<ProfileView> {
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
 
     Color boxShadowColor;
+
     if (userType == 'Vendor') {
-      boxShadowColor = const Color.fromRGBO(10, 76, 97, 0.5);
+      boxShadowColor = const Color(0xff0A4C61);
     } else if (userType == 'Customer') {
-      boxShadowColor = const Color(0xBC73BC).withOpacity(0.5);
+      boxShadowColor = const Color(0xff2E0536);
     } else if (userType == 'Supplier') {
-      boxShadowColor = Color.fromARGB(0, 115, 188, 150).withOpacity(0.5);
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
     } else {
-      boxShadowColor = const Color.fromRGBO(
-          77, 191, 74, 0.6); // Default color if user_type is none of the above
+      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
     }
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
@@ -264,7 +266,7 @@ class _ProfileViewState extends State<ProfileView> {
                                     ),
                                     child: Container(
                                       width: 100.w,
-                                      height: 30.h,
+                                      height: 23.3.h,
                                       decoration: ShapeDecoration(
                                         color: userList.first.userType ==
                                                 UserType.Vendor.name
@@ -315,175 +317,15 @@ class _ProfileViewState extends State<ProfileView> {
                                                   Navigator.pop(context);
                                                 },
                                               ),
-                                              Container(
-                                                // width: 40.w,
-                                                padding: EdgeInsets.only(
-                                                    left: 10.w, top: 15),
-                                                child: userList.first
-                                                            .profilePhoto !=
-                                                        null
-                                                    ? Container(
-                                                        height: 70,
-                                                        width: 70,
-                                                        decoration:
-                                                            ShapeDecoration(
-                                                          shadows: [
-                                                            BoxShadow(
-                                                              offset:
-                                                                  Offset(1, 4),
-                                                              color: userList
-                                                                          .first
-                                                                          .userType ==
-                                                                      UserType
-                                                                          .Vendor
-                                                                          .name
-                                                                  ? const Color
-                                                                      .fromRGBO(
-                                                                      165,
-                                                                      200,
-                                                                      199,
-                                                                      0.6)
-                                                                  : userList.first
-                                                                              .userType ==
-                                                                          UserType
-                                                                              .Supplier
-                                                                              .name
-                                                                      ? const Color
-                                                                          .fromRGBO(
-                                                                          77,
-                                                                          191,
-                                                                          74,
-                                                                          0.6)
-                                                                      : const Color
-                                                                          .fromRGBO(
-                                                                          188,
-                                                                          115,
-                                                                          188,
-                                                                          0.6),
-                                                              blurRadius: 20,
-                                                            )
-                                                          ],
-                                                          shape:
-                                                              SmoothRectangleBorder(),
-                                                        ),
-                                                        child: ClipSmoothRect(
-                                                          radius:
-                                                              SmoothBorderRadius(
-                                                            cornerRadius: 15,
-                                                            cornerSmoothing: 1,
-                                                          ),
-                                                          child: Image.network(
-                                                            userList.first
-                                                                    .profilePhoto ??
-                                                                "",
-                                                            fit: BoxFit.cover,
-                                                            loadingBuilder:
-                                                                GlobalVariables()
-                                                                    .loadingBuilderForImage,
-                                                            errorBuilder:
-                                                                GlobalVariables()
-                                                                    .ErrorBuilderForImage,
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : Container(
-                                                        height: 70,
-                                                        width: 70,
-                                                        decoration:
-                                                            ShapeDecoration(
-                                                          shadows: [
-                                                            BoxShadow(
-                                                              offset:
-                                                                  Offset(0, 4),
-                                                              color: userList
-                                                                          .first
-                                                                          .userType ==
-                                                                      UserType
-                                                                          .Vendor
-                                                                          .name
-                                                                  ? const Color
-                                                                      .fromRGBO(
-                                                                      165,
-                                                                      200,
-                                                                      199,
-                                                                      0.6)
-                                                                  : userList.first
-                                                                              .userType ==
-                                                                          UserType
-                                                                              .Supplier
-                                                                              .name
-                                                                      ? const Color
-                                                                          .fromRGBO(
-                                                                          77,
-                                                                          191,
-                                                                          74,
-                                                                          0.6)
-                                                                      : const Color
-                                                                          .fromRGBO(
-                                                                          188,
-                                                                          115,
-                                                                          188,
-                                                                          0.6),
-                                                              blurRadius: 20,
-                                                            ),
-                                                          ],
-                                                          color: userList.first
-                                                                      .userType ==
-                                                                  UserType
-                                                                      .Vendor
-                                                                      .name
-                                                              ? const Color.fromRGBO(
-                                                                  165,
-                                                                  200,
-                                                                  199,
-                                                                  0.6)
-                                                              : userList.first.userType ==
-                                                                      UserType
-                                                                          .Supplier
-                                                                          .name
-                                                                  ? const Color
-                                                                      .fromRGBO(
-                                                                      77,
-                                                                      191,
-                                                                      74,
-                                                                      0.6)
-                                                                  : const Color
-                                                                      .fromRGBO(
-                                                                      188,
-                                                                      115,
-                                                                      188,
-                                                                      0.6),
-                                                          shape:
-                                                              SmoothRectangleBorder(
-                                                                  borderRadius:
-                                                                      SmoothBorderRadius(
-                                                            cornerRadius: 15,
-                                                            cornerSmoothing: 1,
-                                                          )),
-                                                        ),
-                                                        child: Center(
-                                                          child: Text(
-                                                            userList.first
-                                                                .storeName![0]
-                                                                .toUpperCase(),
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        40),
-                                                          ),
-                                                        )),
-                                              ),
-                                              const SizedBox.shrink(),
-                                              const SizedBox.shrink(),
                                             ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                    StoreNameWidget(
-                                      name: userList.first.storeName,
-                                    ),
-                                    Space(3.h),
+                                    // StoreNameWidget(
+                                    //   name: userList.first.storeName,
+                                    // ),
+                                    Space(2.h),
                                     Center(
                                       child: ConstrainedBox(
                                         constraints: const BoxConstraints(
@@ -523,14 +365,237 @@ class _ProfileViewState extends State<ProfileView> {
                                                 shape: SmoothRectangleBorder(
                                                   borderRadius:
                                                       SmoothBorderRadius(
-                                                    cornerRadius: 20,
+                                                    cornerRadius: 53,
                                                     cornerSmoothing: 1,
                                                   ),
                                                 ),
                                               ),
                                               child: Column(
                                                 children: [
-                                                  Space(3.h),
+                                                    Space(3.h),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 15,
+                                                      ),
+                                                      Container(
+                                                       
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10),
+                                                        child: userList.first
+                                                                    .profilePhoto !=
+                                                                null
+                                                            ? Container(
+                                                                height: 70,
+                                                                width: 70,
+                                                                decoration:
+                                                                    ShapeDecoration(
+                                                                  shadows: [
+                                                                    BoxShadow(
+                                                                      offset:
+                                                                          Offset(
+                                                                              1,
+                                                                              4),
+                                                                      color: userList.first.userType ==
+                                                                              UserType
+                                                                                  .Vendor.name
+                                                                          ? const Color
+                                                                              .fromRGBO(
+                                                                              165,
+                                                                              200,
+                                                                              199,
+                                                                              0.6)
+                                                                          : userList.first.userType == UserType.Supplier.name
+                                                                              ? const Color.fromRGBO(77, 191, 74, 0.6)
+                                                                              : const Color.fromRGBO(188, 115, 188, 0.6),
+                                                                      blurRadius:
+                                                                          20,
+                                                                    )
+                                                                  ],
+                                                                  shape:
+                                                                      SmoothRectangleBorder(),
+                                                                ),
+                                                                child:
+                                                                    ClipSmoothRect(
+                                                                  radius:
+                                                                      SmoothBorderRadius(
+                                                                    cornerRadius:
+                                                                        22,
+                                                                    cornerSmoothing:
+                                                                        1,
+                                                                  ),
+                                                                  child: Image
+                                                                      .network(
+                                                                    userList.first
+                                                                            .profilePhoto ??
+                                                                        "",
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    loadingBuilder:
+                                                                        GlobalVariables()
+                                                                            .loadingBuilderForImage,
+                                                                    errorBuilder:
+                                                                        GlobalVariables()
+                                                                            .ErrorBuilderForImage,
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : Container(
+                                                                height: 70,
+                                                                width: 70,
+                                                                decoration:
+                                                                    ShapeDecoration(
+                                                                  shadows: [
+                                                                    BoxShadow(
+                                                                      offset:
+                                                                          Offset(
+                                                                              0,
+                                                                              4),
+                                                                      color: userList.first.userType ==
+                                                                              UserType.Vendor.name
+                                                                          ? const Color(0xff1F6F6D).withOpacity(0.4)
+                                                                          : userList.first.userType == UserType.Supplier.name
+                                                                              ? const Color.fromRGBO(77, 191, 74, 0.6)
+                                                                              : const Color.fromRGBO(188, 115, 188, 0.6),
+                                                                      blurRadius:
+                                                                          20,
+                                                                    ),
+                                                                  ],
+                                                                  color: userList
+                                                                              .first
+                                                                              .userType ==
+                                                                          UserType
+                                                                              .Vendor
+                                                                              .name
+                                                                      ? const Color(0xff1F6F6D)
+                                                                          .withOpacity(
+                                                                              0.4)
+                                                                      : userList.first.userType ==
+                                                                              UserType
+                                                                                  .Supplier.name
+                                                                          ? const Color
+                                                                              .fromRGBO(
+                                                                              77,
+                                                                              191,
+                                                                              74,
+                                                                              0.6)
+                                                                          : const Color
+                                                                              .fromRGBO(
+                                                                              188,
+                                                                              115,
+                                                                              188,
+                                                                              0.6),
+                                                                  shape:
+                                                                      SmoothRectangleBorder(
+                                                                          borderRadius:
+                                                                              SmoothBorderRadius(
+                                                                    cornerRadius:
+                                                                        22,
+                                                                    cornerSmoothing:
+                                                                        1,
+                                                                  )),
+                                                                ),
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    userList
+                                                                        .first
+                                                                        .storeName![
+                                                                            0]
+                                                                        .toUpperCase(),
+                                                                    style: const TextStyle(
+                                                                        fontSize:
+                                                                            40),
+                                                                  ),
+                                                                )),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Container(
+                                                        width: 50.w,
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            
+                                                            Text(
+                                                              userList.first
+                                                                      .storeName ??
+                                                                  'Unknown', // Provide a default value
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      boxShadowColor,
+                                                                  fontFamily:
+                                                                      'Ubuntu',
+                                                                  fontSize: 22,
+                                                                  letterSpacing:
+                                                                      1,
+                                                                      height: 1,
+                                                                      
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                            Text(
+                                                              userList.first
+                                                                      .userType ??
+                                                                  'Unknown', // Provide a default value
+                                                              style: TextStyle(
+                                                                color:
+                                                                    boxShadowColor,
+                                                                fontFamily:
+                                                                    'Product Sans',
+                                                                fontSize: 12,
+                                                                letterSpacing:
+                                                                    1,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          final phoneNumber = userList.first.phone ??
+                                                              '';
+                                                          final url =
+                                                              'https://wa.me/' +
+                                                                  phoneNumber;
+                                                          if (await canLaunch(
+                                                              url)) {
+                                                            await launch(url);
+                                                          } else {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              const SnackBar(
+                                                                  content: Text(
+                                                                      'Could not launch whatsapp ')),
+                                                            );
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                            padding: EdgeInsets
+                                                                .fromLTRB(0, 0,
+                                                                    20, 0),
+                                                            child: Image.asset(
+                                                                'assets/images/WhatsApp.png',
+                                                                width: 30)),
+                                                      )
+                                                      
+                                                    ],
+                                                  ),
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -565,7 +630,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                       )
                                                     ],
                                                   ),
-                                                  Space(3.h),
+                                                  Space(2.h),
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -679,7 +744,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                         ),
                                                     ],
                                                   ),
-                                                  Space(3.h),
+                                                  Space(2.h),
                                                 ],
                                               ),
                                             )),
@@ -771,8 +836,10 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 setState(() {
                                                                   _activeButtonIndex =
                                                                       2;
-                                                                       if (menuList.length !=
-                                                            0) _scrollToTop();
+                                                                  if (menuList
+                                                                          .length !=
+                                                                      0)
+                                                                    _scrollToTop();
                                                                 });
                                                               },
                                                               child:
@@ -896,8 +963,10 @@ class _ProfileViewState extends State<ProfileView> {
                                                                         () {
                                                                       _activeButtonIndex =
                                                                           2;
-                                                                           if (menuList.length !=
-                                                            0) _scrollToTop();
+                                                                      if (menuList
+                                                                              .length !=
+                                                                          0)
+                                                                        _scrollToTop();
                                                                     });
                                                                   },
                                                                   child:
@@ -1063,11 +1132,10 @@ class _ProfileViewState extends State<ProfileView> {
                                                         .userIdList.first),
                                               if (_activeButtonIndex == 3)
                                                 Container(
-                                                 constraints:
-                                                                    BoxConstraints(
-                                                                  minHeight:
-                                                                      300, // Set your minimum height here
-                                                                ),
+                                                  constraints: BoxConstraints(
+                                                    minHeight:
+                                                        300, // Set your minimum height here
+                                                  ),
                                                   child: Center(
                                                       child: Column(
                                                     mainAxisAlignment:
@@ -1097,11 +1165,10 @@ class _ProfileViewState extends State<ProfileView> {
                                                 ),
                                               if (_activeButtonIndex == 4)
                                                 Container(
-                                                  constraints:
-                                                                    BoxConstraints(
-                                                                  minHeight:
-                                                                      300, // Set your minimum height here
-                                                                ),
+                                                  constraints: BoxConstraints(
+                                                    minHeight:
+                                                        300, // Set your minimum height here
+                                                  ),
                                                   child: Center(
                                                       child: Column(
                                                     mainAxisAlignment:
