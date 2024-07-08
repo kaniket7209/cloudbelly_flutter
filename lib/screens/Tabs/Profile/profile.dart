@@ -257,58 +257,8 @@ class _ProfileState extends State<Profile> {
                                         .AddAddressSheet(context);
                                   },
                                 ),
-                                Container(
-                                  // width: 40.w,
-                                  padding: EdgeInsets.only(left: 10.w),
-                                  child: const StoreLogoWidget(),
-                                ),
-                                Row(
-                                  children: [
-                                    CustomIconButton(
-                                      boxColor: _isVendor
-                                          ? Color.fromRGBO(31, 111, 109, 0.5)
-                                          : Color(0xBC73BC).withOpacity(0.6),
-                                      // boxColor:
-                                      //     const Color.fromRGBO(38, 115, 140, 1),
-                                      color: Colors.white,
-                                      ic: Icons.add,
-                                      onTap: () async {
-                                        AppWideLoadingBanner()
-                                            .loadingBanner(context);
-
-                                        List<String> url =
-                                            await Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .pickMultipleImagesAndUpoad();
-                                        Navigator.of(context).pop();
-                                        if (url.length == 0) {
-                                          TOastNotification().showErrorToast(
-                                              context,
-                                              'Error While Uploading Image');
-                                        } else if (url
-                                            .contains('file size very large'))
-                                          TOastNotification().showErrorToast(
-                                              context, 'file size very large');
-                                        else if (!url.contains('element')) {
-                                          CreateFeed()
-                                              .showModalSheetForNewPost(
-                                                  context, url, menuList)
-                                              .then((value) {
-                                            setState(() {});
-                                          });
-                                        } else {
-                                          TOastNotification().showErrorToast(
-                                              context,
-                                              'Error While Uploading Image');
-                                        }
-                                        setState(() {});
-                                      },
-                                    ),
-                                    Space(
-                                      2.w,
-                                      isHorizontal: true,
-                                    ),
-                                    InkWell(
+                               
+                               InkWell(
                                       onTap: () {
                                         Navigator.push(
                                             context,
@@ -345,25 +295,24 @@ class _ProfileState extends State<Profile> {
                                         ),
                                       ),
                                     ),
-                                  ],
-                                )
+                                 
                               ],
                             ),
                           ),
                         ),
                       ),
-                      StoreNameWidget(),
                       Space(3.h),
+                    
                       Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(
-                            maxWidth: 420, // Set the maximum width to 800
+                            maxWidth: 420, // Set the maximum width to 420
                           ),
                           child: Column(
                             children: [
                               Center(
                                   child: Container(
-                                //height: 20.h,
+                          
                                 width: 90.w,
                                 decoration: ShapeDecoration(
                                   shadows: [
@@ -389,14 +338,61 @@ class _ProfileState extends State<Profile> {
                                   color: Colors.white,
                                   shape: SmoothRectangleBorder(
                                     borderRadius: SmoothBorderRadius(
-                                      cornerRadius: 20,
+                                      cornerRadius: 53,
                                       cornerSmoothing: 1,
                                     ),
                                   ),
                                 ),
                                 child: Column(
                                   children: [
-                                    Space(3.h),
+                                    // Space(3.h),
+                                    Container(
+                                      padding: EdgeInsets.all(20),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            // width: 40.w,
+
+                                            child: const StoreLogoWidget(),
+                                          ),
+                                          SizedBox(width: 10,),
+                                          Container(
+                                            width:50.w,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(height: 20,),
+                                                Text(
+                                                  Provider.of<Auth>(context,
+                                                          listen: true)
+                                                      .userData?['store_name'],
+                                                  style: TextStyle(
+                                                      color: boxShadowColor,
+                                                      fontFamily: 'Ubuntu',
+                                                      fontSize: 22,
+                                                      letterSpacing: 1),
+                                                ),
+                                                Text(
+                                                 'Enter your Description here ',
+                                                  style: TextStyle(
+                                                      color: boxShadowColor,
+                                                      fontFamily: 'Ubuntu',
+                                                      fontSize: 12,
+                                                      letterSpacing: 1),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                         Image.asset('assets/images/WhatsApp.png',width:30)
+                                        ],
+                                      ),
+                                    ),
+                                    // Space(3.h),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
@@ -466,7 +462,8 @@ class _ProfileState extends State<Profile> {
                                                 .userData?['user_type'] !=
                                             UserType.Customer.name)
                                           Make_Profile_ListWidget(
-                                            color: Color.fromRGBO(10, 76, 97, 1),
+                                            color:
+                                                Color.fromRGBO(10, 76, 97, 1),
                                             onTap: () {
                                               AppWideBottomSheet().showSheet(
                                                   context,
@@ -851,7 +848,7 @@ class _ProfileState extends State<Profile> {
                                                     onTap: () {
                                                       setState(() {
                                                         _activeButtonIndex = 2;
-                                                       
+
                                                         if (menuList.length !=
                                                             0) _scrollToTop();
                                                       });
@@ -1076,7 +1073,7 @@ class Make_Profile_ListWidget extends StatelessWidget {
           height: 41,
           width: 125,
           decoration: ShapeDecoration(
-            shadows:  [
+            shadows: [
               BoxShadow(
                   offset: Offset(0, 4),
                   spreadRadius: 0.1,
@@ -2080,11 +2077,11 @@ class FeedWidget extends StatelessWidget {
   final String isSelfProfile;
   CarouselController buttonCarouselController = CarouselController();
 
-  Color getBackgroundColor(String isSelfProfile, bool isVendor, String main_user_type) {
+  Color getBackgroundColor(
+      String isSelfProfile, bool isVendor, String main_user_type) {
     print("userModel ${userModel?.id}");
     var usertype = userModel?.userType;
-    if (usertype ==null)
-    usertype = main_user_type;
+    if (usertype == null) usertype = main_user_type;
     if (isSelfProfile == 'Yes' && isVendor && usertype == 'Vendor') {
       return const Color.fromRGBO(10, 76, 97, 0.31);
     } else if (isSelfProfile == 'Yes' && usertype == 'Customer') {
@@ -2104,7 +2101,8 @@ class FeedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String main_user_type = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    String main_user_type =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
@@ -2136,7 +2134,8 @@ class FeedWidget extends StatelessWidget {
                   BoxShadow(
                     offset: const Offset(1, 4),
                     // color: _isVendor ? const Color.fromRGBO(10, 76, 97, 0.31) :  const Color(0xBC73BC).withOpacity(0.6),
-                    color: getBackgroundColor(isSelfProfile, _isVendor,main_user_type),
+                    color: getBackgroundColor(
+                        isSelfProfile, _isVendor, main_user_type),
                     blurRadius: 12,
                   ),
                 ],
