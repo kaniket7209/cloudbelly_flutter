@@ -138,7 +138,7 @@ print("dataref ${Data}");
                     ),
                   ),
                   const Text(
-                    'Post',
+                    'Posts',
                     style: TextStyle(
                      
                       color: Color(0xFF094B60),

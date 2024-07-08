@@ -191,7 +191,7 @@ class _PostItemState extends State<PostItem> {
   @override
   Widget build(BuildContext context) {
     print(
-        "who is user:: ${ widget.isProfilePost}  ${widget.data['user_id']}");
+        "who is user:: ${ widget.isProfilePost}  ${widget.userId}");
     // bool shouldShowIcon = widget.isProfilePost ||
     //     (!widget.isProfilePost &&
     //         Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
@@ -203,7 +203,7 @@ class _PostItemState extends State<PostItem> {
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
-   
+    print("isSharePost ${widget.isSharePost}" );
     // final date_time = formatTimeDifference('created_at');
     CarouselController buttonCarouselController = CarouselController();
     return
@@ -222,17 +222,22 @@ class _PostItemState extends State<PostItem> {
                   10,
                   isHorizontal: true,
                 ),
-                (Provider.of<Auth>(context, listen: false).logo_url == '' &&
-                            widget.isProfilePost) ||
-                        ((widget.data['profile_photo'] == '' ||
-                                widget.data['profile_photo'] == null) &&
-                            !widget.isProfilePost)
+                // (Provider.of<Auth>(context, listen: false).logo_url == '' &&
+                //             widget.isProfilePost) ||
+                //         ((widget.data['profile_photo'] == '' ||
+                //                 widget.data['profile_photo'] == null) &&
+                //             !widget.isProfilePost)
+                (widget.isSharePost  == 'Yes' && widget.data['profile_photo'] == ''
+                         )
                     ? InkWell(
                         onTap: () {
                           if (!widget.isProfilePost) {
                             print("data:: ${widget.data}");
                             setState(() {
+                             
                               userId.add(widget.data['user_id']);
+                              
+
                             });
                             Navigator.push(
                                 context,
@@ -244,6 +249,7 @@ class _PostItemState extends State<PostItem> {
                             });
                           }
                         },
+                        //for shared post logo
                         child: Container(
                             height: 35,
                             width: 35,
@@ -316,6 +322,7 @@ class _PostItemState extends State<PostItem> {
                                             .toUpperCase(),
                                 style: const TextStyle(fontSize: 20),
                               ),
+                          
                             )),
                       )
                     : InkWell(
@@ -363,9 +370,9 @@ class _PostItemState extends State<PostItem> {
                               widget.isSharePost == "No"
                                   ? widget.userModel?.profilePhoto
                                   : widget.isProfilePost
-                                      ? Provider.of<Auth>(context,
-                                              listen: false)
-                                          .logo_url
+                                      ? (Provider.of<Auth>(context,
+                                                listen: false)
+                                            .userData?['profile_photo'])
                                       : widget.data['profile_photo'],
                               fit: BoxFit.cover,
                               loadingBuilder:
@@ -374,9 +381,11 @@ class _PostItemState extends State<PostItem> {
                                   GlobalVariables().ErrorBuilderForImage,
                             ),
                           ),
+                        
                         ),
                       ),
                 const Space(isHorizontal: true, 15),
+                
                 SizedBox(
                   width: 37.w,
                   child: Text(
@@ -524,7 +533,7 @@ class _PostItemState extends State<PostItem> {
             ),
           ),
           Space(0.5.h),
-          // posts 
+          // posts multiple
           Stack(
             children: [
               !widget._isMultiple

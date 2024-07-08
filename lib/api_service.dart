@@ -361,12 +361,13 @@ class Auth with ChangeNotifier {
 
   Future<String> signUp(email, pass, phone, type) async {
     const String url = 'https://app.cloudbelly.in/signup';
-
+final prefs = await SharedPreferences.getInstance();
     final Map<String, dynamic> requestBody = {
       "email": email,
       "password": pass,
       "phone": phone,
-      "user_type": type
+      "user_type": type,
+      "fcm_token": prefs.getString('fcmToken'),
     };
 
     try {

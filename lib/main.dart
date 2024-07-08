@@ -77,6 +77,7 @@ void main() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await UserPreferences.init();
   final fcmToken = await FirebaseMessaging.instance.getToken();
+  print("fcmToken $fcmToken");
   await prefs.setString('fcmToken', fcmToken ?? "");
   Auth().getToken(fcmToken);
   Auth().getUserData();
