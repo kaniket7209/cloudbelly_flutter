@@ -1571,7 +1571,7 @@ Future<dynamic> updateProductStockStatus(
       return responseBody;
     } catch (error) {
       // Handle exceptions
-      return {};
+      return -1;
     }
   }
 

@@ -138,7 +138,7 @@ class _ProfileState extends State<Profile> {
       setState(() {
         final extractedUserData =
             json.decode(prefs.getString('menuData')!) as Map<String, dynamic>;
-        print(extractedUserData);
+        print("extractedUserData ${extractedUserData}");
         menuList = [];
         menuList.addAll(extractedUserData['menu'] as List<dynamic>);
         _isLoading = false;

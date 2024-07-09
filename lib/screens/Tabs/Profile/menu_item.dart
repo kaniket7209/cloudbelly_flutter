@@ -27,13 +27,15 @@ class MenuItem extends StatefulWidget {
 // Function to calculate total items and total price
 
 class _MenuItemState extends State<MenuItem> {
-  bool _switchValue = true;
+  bool _stockSwitch = true;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<Auth>(context, listen: false).clearAllItems();
     });
+    print("stock_statuss${widget.data['stock_status']}");
+    _stockSwitch = widget.data['stock_status'] ?? true;
   }
 
   @override
@@ -63,10 +65,8 @@ class _MenuItemState extends State<MenuItem> {
                     ),
                   ),
                 ),
-              
                 Row(
                   children: [
-                    
                     Text('Rs  ${widget.data['price']}',
                         style: const TextStyle(
                           color: Color(0xFFFA6E00),
@@ -74,46 +74,42 @@ class _MenuItemState extends State<MenuItem> {
                           fontFamily: 'Jost',
                           fontWeight: FontWeight.w600,
                         )),
-
-                        SizedBox(width: 30.w),
-                        Container(
-                          child: Transform.scale(
-                            scale:
-                                0.75, // Adjust the scale factor to make the switch smaller
-                            child: CupertinoSwitch(
-                              thumbColor: _switchValue
-                                  ? const Color(0xFF4DAB4B)
-                                  : Color.fromARGB(
-                                      255, 196, 49, 49),
-                              activeColor: _switchValue
-                                  ? const Color(0xFFBFFC9A)
-                                  : const Color(0xFFFBCDCD),
-                              trackColor: const Color.fromARGB(
-                                      255, 196, 49, 49)
-                                  .withOpacity(0.5),
-                              value: _switchValue,
-                              onChanged: (value) async {
-                                setState(() {
-                                  _switchValue = value;
-                                });
-                                final temp = await Provider.of<Auth>(context,
+                    SizedBox(width: 30.w),
+                    if (Provider.of<Auth>(context, listen: false)
+                            .userData?['user_id'] ==
+                        widget.data['user_id'])
+                      Container(
+                        child: Transform.scale(
+                          scale:
+                              0.75, // Adjust the scale factor to make the switch smaller
+                          child: CupertinoSwitch(
+                            thumbColor: _stockSwitch
+                                ? const Color(0xFF4DAB4B)
+                                : Color.fromARGB(255, 196, 49, 49),
+                            activeColor: _stockSwitch
+                                ? const Color(0xFFBFFC9A)
+                                : const Color(0xFFFBCDCD),
+                            trackColor: const Color.fromARGB(255, 196, 49, 49)
+                                .withOpacity(0.5),
+                            value: _stockSwitch,
+                            onChanged: (value) async {
+                              setState(() {
+                                 widget.data['stock_status'] = value;
+                                _stockSwitch = value;
+                              });
+                              final temp = await Provider.of<Auth>(context,
                                       listen: false)
                                   .updateProductStockStatus(widget.data['_id'],
-                                      _switchValue, context);
-                                      print("${json.encode(temp)} status update" );
-                                // await updateProductStockStatus(); // Call the submit function after the state update
-                                print(
-                                    "switch tapped $_switchValue");
-                              },
-                            ),
+                                      _stockSwitch, context);
+                              print("${json.encode(temp)} status update");
+                              print(
+                                  "switch tapped ${widget.data['stock_status'] ?? 'no'}");
+                            },
                           ),
                         ),
-                                
+                      ),
                   ],
                 ),
-              
-              
-              
                 if (widget.data['description'] == '') Space(1.h),
                 if (Provider.of<Auth>(context, listen: false)
                         .userData?['user_id'] ==
@@ -410,7 +406,6 @@ class _MenuItemState extends State<MenuItem> {
             )
           ],
         ));
-  
   }
 
   Future<String> updateProductImageSheet(
@@ -493,7 +488,7 @@ class _MenuItemState extends State<MenuItem> {
                             child: StocksMayBeNeedWidget(
                                 txt: 'Click photo',
                                 icon: 'assets/images/Camera.png')),
-                       
+
                         TouchableOpacity(
                           onTap: () async {
                             AppWideLoadingBanner().loadingBanner(context);
@@ -515,7 +510,7 @@ class _MenuItemState extends State<MenuItem> {
                               txt: 'Upload photo',
                               icon: 'assets/images/gallery.png'),
                         ),
-                        
+
                         TouchableOpacity(
                             onTap: () async {
                               AppWideLoadingBanner().loadingBanner(context);
