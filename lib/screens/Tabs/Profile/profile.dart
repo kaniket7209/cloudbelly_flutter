@@ -1209,6 +1209,7 @@ class _ProfileState extends State<Profile> {
           Provider.of<Auth>(context, listen: false)
               .userData?['store_availability'] = false;
         });
+         TOastNotification().showErrorToast(context, 'Your Kyc status is incomplete');
     }
   }
 }
