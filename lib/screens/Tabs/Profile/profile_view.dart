@@ -372,7 +372,7 @@ class _ProfileViewState extends State<ProfileView> {
                                               ),
                                               child: Column(
                                                 children: [
-                                                    Space(3.h),
+                                                  Space(3.h),
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment

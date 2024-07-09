@@ -59,6 +59,7 @@ class _ProfileState extends State<Profile> {
   SampleItem? selectedMenu;
   List<dynamic> menuList = [];
   List<dynamic> feedList = [];
+  bool _switchValue = false;
   // final RefreshController _refreshController =
   //     RefreshController(initialRefresh: false);
 
@@ -90,12 +91,16 @@ class _ProfileState extends State<Profile> {
     setState(() {
       _isLoading = true;
     });
+
     await Provider.of<Auth>(context, listen: false)
         .getFeed(Provider.of<Auth>(context, listen: false).userData?['user_id'])
         .then((feed) {
       setState(() {
         feedList = [];
         feedList.addAll(feed);
+        _switchValue = Provider.of<Auth>(context, listen: false)
+                .userData?['store_availability'] ??
+            false;
         _isLoading = false;
       });
     });
@@ -187,6 +192,9 @@ class _ProfileState extends State<Profile> {
     super.initState();
     Provider.of<Auth>(context, listen: false).userData =
         UserPreferences.getUser();
+    _switchValue = Provider.of<Auth>(context, listen: false)
+            .userData?['store_availability'] ??
+        false; // Initialize _switchValue
     _getFeed();
     _getMenu();
     userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
@@ -408,7 +416,8 @@ class _ProfileState extends State<Profile> {
                                                               listen: false)
                                                           .userData?['phone'] ??
                                                       '';
-                                              final url = 'https://wa.me/' + phoneNumber;
+                                              final url = 'https://wa.me/' +
+                                                  phoneNumber;
                                               if (await canLaunch(url)) {
                                                 await launch(url);
                                               } else {
@@ -726,12 +735,46 @@ class _ProfileState extends State<Profile> {
                                 Container(
                                   padding: EdgeInsets.symmetric(
                                       vertical: 1.h, horizontal: 3.w),
-                                  width: 55,
+                                  width: 30,
                                   height: 6,
                                   decoration: ShapeDecoration(
-                                    color: const Color(0xFFFA6E00),
+                                    color: const Color(0xFFFA6E00)
+                                        .withOpacity(0.5),
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(6)),
+                                  ),
+                                ),
+                                Space(1.h),
+                                Text(
+                                  'Store Availability',
+                                  style: TextStyle(
+                                    color:
+                                        boxShadowColor, // Replace with the desired color
+                                    fontFamily: 'Product Sans',
+                                    fontSize: 14.0,
+                                    // fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Container(
+                                  // Adjust the height as needed
+                                  child: CupertinoSwitch(
+                                    thumbColor: _switchValue
+                                        ? const Color(0xFF4DAB4B)
+                                        : const Color(0xFFF82E52),
+                                    activeColor: _switchValue
+                                        ? const Color(0xFFBFFC9A)
+                                        : const Color(0xFFF82E52)
+                                            .withOpacity(0.5),
+                                    trackColor: const Color(0xFFF82E52)
+                                        .withOpacity(0.5),
+                                    value: _switchValue,
+                                    onChanged: (value) async {
+                                      setState(() {
+                                        _switchValue = value;
+                                      });
+                                      await submitStoreAvailability(); // Call the submit function after the state update
+                                      print("switch tapped $_switchValue");
+                                    },
                                   ),
                                 ),
                                 Space(2.h),
@@ -1092,6 +1135,25 @@ class _ProfileState extends State<Profile> {
         ),
       ),
     );
+  }
+
+  Future<void> submitStoreAvailability() async {
+    print(
+        'pp${Provider.of<Auth>(context, listen: false).userData?['store_availability']}');
+    String msg = await Provider.of<Auth>(context, listen: false)
+        .storeAvailability(_switchValue);
+    if (msg == 'User information updated successfully.') {
+      setState(() {
+        Provider.of<Auth>(context, listen: false)
+            .userData?['store_availability'] = _switchValue;
+      });
+
+      TOastNotification()
+          .showSuccesToast(context, 'Store status updated successfully');
+    } else {
+      TOastNotification().showErrorToast(context, msg);
+    }
+    print(msg);
   }
 }
 

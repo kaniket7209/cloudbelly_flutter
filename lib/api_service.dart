@@ -953,7 +953,7 @@ final prefs = await SharedPreferences.getInstance();
       'user_id': userData?['user_id'] ?? "",
       "store_availability": store_availability
     };
-
+    print("payloaddd ${json.encode(requestBody)}");
     try {
       final response = await http.post(
         Uri.parse(url),
