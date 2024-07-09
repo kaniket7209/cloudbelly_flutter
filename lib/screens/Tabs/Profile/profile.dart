@@ -1595,31 +1595,31 @@ Future<dynamic> ScannedMenuBottomSheet(
                                 width: 15.w,
                                 child: Transform.scale(
                                     scale: 0.85,
-                                    child: 
-                                    CupertinoSwitch(
-  value: list[index]['type'] == 'Non Veg',
-  onChanged: (value) async {
-    final updatedType = value ? 'Non Veg' : 'Veg';
-    if (!isUpload) {
-      await Provider.of<Auth>(context, listen: false).updateMenuItem(
-        list[index]['_id'],
-        list[index]['price'],
-        list[index]['name'],
-        updatedType,
-        list[index]['category'],
-      );
-    }
-    setState(() {
-      list[index]['type'] = updatedType;
-    });
-  },
-  activeColor: const Color.fromRGBO(232, 89, 89, 1),
-  trackColor: const Color.fromRGBO(77, 171, 75, 1),
-)
-                                    
-                                    
-                                    ),
-                             
+                                    child: CupertinoSwitch(
+                                      value: list[index]['type'] == 'Non Veg',
+                                      onChanged: (value) async {
+                                        final updatedType =
+                                            value ? 'Non Veg' : 'Veg';
+                                        if (!isUpload) {
+                                          await Provider.of<Auth>(context,
+                                                  listen: false)
+                                              .updateMenuItem(
+                                            list[index]['_id'],
+                                            list[index]['price'],
+                                            list[index]['name'],
+                                            updatedType,
+                                            list[index]['category'],
+                                          );
+                                        }
+                                        setState(() {
+                                          list[index]['type'] = updatedType;
+                                        });
+                                      },
+                                      activeColor:
+                                          const Color.fromRGBO(232, 89, 89, 1),
+                                      trackColor:
+                                          const Color.fromRGBO(77, 171, 75, 1),
+                                    )),
                               ),
                               const Spacer(),
                               SizedBox(
