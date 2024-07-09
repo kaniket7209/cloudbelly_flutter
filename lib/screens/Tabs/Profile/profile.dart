@@ -131,7 +131,7 @@ class _ProfileState extends State<Profile> {
       setState(() {
         final extractedUserData =
             json.decode(prefs.getString('menuData')!) as Map<String, dynamic>;
-        print("extractedUserData ${extractedUserData}");
+        // print("extractedUserData ${extractedUserData}");
         menuList = [];
         menuList.addAll(extractedUserData['menu'] as List<dynamic>);
         _isLoading = false;
@@ -549,6 +549,10 @@ class _ProfileState extends State<Profile> {
                                                 txt: 'Edit profile',
                                                 isActive: true),
                                           ),
+                                           if (Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .userData?['user_type'] !=
+                                            UserType.Customer.name)
                                         SizedBox(
                                           width: 20,
                                         ),
@@ -556,7 +560,7 @@ class _ProfileState extends State<Profile> {
                                                     listen: false)
                                                 .userData?['user_type'] !=
                                             UserType.Customer.name)
-                                          Make_Update_ListWidget(
+                                          Make_Profile_ListWidget(
                                             color:
                                                 Color.fromRGBO(250, 110, 0, 1),
                                             onTap: () async {
@@ -569,7 +573,7 @@ class _ProfileState extends State<Profile> {
                                                       .userData?['user_id']);
                                               (data as List<dynamic>).forEach(
                                                 (element) {
-                                                  print(element);
+                                                  // print(element);
                                                 },
                                               );
                                               // Sc
@@ -578,7 +582,14 @@ class _ProfileState extends State<Profile> {
                                             },
                                             txt: 'Edit product',
                                           ),
-                                        //editr menu
+                                        //edit menu
+                                         if (Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .userData?['user_type'] !=
+                                            UserType.Customer.name)
+                                         SizedBox(
+                                          width: 20,
+                                        ),
                                         if (Provider.of<Auth>(context,
                                                     listen: false)
                                                 .userData?['user_type'] !=
@@ -756,6 +767,7 @@ class _ProfileState extends State<Profile> {
                                             },
                                             txt: 'Add products',
                                           ),
+                                          
                                       ],
                                     ),
                                     Space(2.h),
@@ -1177,7 +1189,7 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> submitStoreAvailability() async {
-    print('storestatus${UserPreferences.getUser()?['kyc_status']}');
+    // print('storestatus${UserPreferences.getUser()?['kyc_status']}');
     bool kycStatus = UserPreferences.getUser()?['kyc_status'];
     if (kycStatus) {
       String msg = await Provider.of<Auth>(context, listen: false)
@@ -1195,7 +1207,7 @@ class _ProfileState extends State<Profile> {
       } else {
         TOastNotification().showErrorToast(context, msg);
       }
-      print(msg);
+      // print(msg);
     } else {
       setState(() {
         Provider.of<Auth>(context, listen: false)
@@ -1228,11 +1240,16 @@ class Make_Profile_ListWidget extends StatelessWidget {
           width: 135,
           decoration: ShapeDecoration(
             shadows: [
+              txt=='Add products'?
               BoxShadow(
                   offset: Offset(5, 6),
                   spreadRadius: 0,
                   color: Color(0xff126B87).withOpacity(0.42),
-                  blurRadius: 30)
+                  blurRadius: 30): BoxShadow(
+                    offset: Offset(5, 6),
+                    spreadRadius: 0,
+                    color: Color(0xffE88037).withOpacity(0.5),
+                    blurRadius: 30)
             ],
             color: color ?? const Color.fromRGBO(84, 166, 193, 1),
             shape: SmoothRectangleBorder(
@@ -1493,7 +1510,7 @@ Future<dynamic> ScannedMenuBottomSheet(
                     Column(
                       children: List.generate((list as List<dynamic>).length,
                           (index) {
-                        print(list[index]);
+                        
                         TextEditingController nameController =
                             TextEditingController(
                           text: list[index]['name'],
@@ -1670,7 +1687,7 @@ Future<dynamic> ScannedMenuBottomSheet(
                               await Provider.of<Auth>(context, listen: false)
                                   .AddProductsForMenu(list);
                           Navigator.of(context).pop(); // Remove loading banner
-                          print("code $code"); // Debug print
+                          // print("code $code"); // Debug print
 
                           if (code == '200') {
                             // Ensure code is compared as an integer
@@ -1718,8 +1735,8 @@ Future<dynamic> ScannedMenuBottomSheet(
                                                   .updateDescriptionAndType();
                                           Navigator.of(context)
                                               .pop(); // Remove loading banner
-                                          print(
-                                              "code upd $updateCode"); // Debug print
+                                          // print(
+                                          //     "code upd $updateCode"); // Debug print
 
                                           if (updateCode == '200') {
                                             // Ensure updateCode is compared correctly
@@ -2265,10 +2282,10 @@ class FeedWidget extends StatelessWidget {
 
     return TouchableOpacity(
       onTap: () async {
-        print("fullData:: $fulldata");
+        // print("fullData:: $fulldata");
         final Data = await Provider.of<Auth>(context, listen: false)
             .getFeed(userId) as List<dynamic>;
-        print("userId:: $userId");
+        // print("userId:: $userId");
         Navigator.of(context).pushNamed(PostsScreen.routeName, arguments: {
           'data': Data,
           'index': index,

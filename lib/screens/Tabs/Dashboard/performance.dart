@@ -488,7 +488,7 @@ Future<dynamic> ScannedMenuBottomSheet(
                     Column(
                       children: List.generate((list as List<dynamic>).length,
                           (index) {
-                        print(list[index]);
+                        
                         TextEditingController nameController =
                             TextEditingController(
                           text: list[index]['name'],
@@ -665,7 +665,7 @@ Future<dynamic> ScannedMenuBottomSheet(
                               await Provider.of<Auth>(context, listen: false)
                                   .AddProductsForMenu(list);
                           Navigator.of(context).pop(); // Remove loading banner
-                          print("code $code"); // Debug print
+                          // print("code $code"); // Debug print
 
                           if (code == '200') {
                             // Ensure code is compared as an integer
@@ -713,8 +713,8 @@ Future<dynamic> ScannedMenuBottomSheet(
                                                   .updateDescriptionAndType();
                                           Navigator.of(context)
                                               .pop(); // Remove loading banner
-                                          print(
-                                              "code upd $updateCode"); // Debug print
+                                          // print(
+                                          //     "code upd $updateCode"); // Debug print
 
                                           if (updateCode == '200') {
                                             // Ensure updateCode is compared correctly
