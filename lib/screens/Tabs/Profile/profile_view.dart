@@ -591,7 +591,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     20, 0),
                                                             child: Image.asset(
                                                                 'assets/images/WhatsApp.png',
-                                                                width: 30)),
+                                                                width: 25)),
                                                       )
                                                       
                                                     ],

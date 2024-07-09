@@ -1546,6 +1546,34 @@ final prefs = await SharedPreferences.getInstance();
       return '-1';
     }
   }
+Future<dynamic> updateProductStockStatus(
+      String product_id, bool status, BuildContext context) async {
+    final String url = 'https://app.cloudbelly.in/product/update';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      'product_id': product_id,
+      'stock_status': status,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+      TOastNotification().showSuccesToast(context, 'Status updated ');
+      final responseBody = jsonDecode(response.body);
+      print("resim ${jsonDecode(response.body)}");
+      return responseBody;
+    } catch (error) {
+      // Handle exceptions
+      return {};
+    }
+  }
 
   Future<String> commentPost(String id, String comment) async {
     final String url = 'https://app.cloudbelly.in/update-posts';

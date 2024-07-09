@@ -790,39 +790,8 @@ class _ProfileState extends State<Profile> {
                                         borderRadius: BorderRadius.circular(6)),
                                   ),
                                 ),
-                                Space(1.h),
-                                // Text(
-                                //   'Store Availability',
-                                //   style: TextStyle(
-                                //     color:
-                                //         boxShadowColor, // Replace with the desired color
-                                //     fontFamily: 'Product Sans',
-                                //     fontSize: 14.0,
-                                //     // fontWeight: FontWeight.w400,
-                                //   ),
-                                // ),
-                                // Container(
-                                //   // Adjust the height as needed
-                                //   child: CupertinoSwitch(
-                                //     thumbColor: _switchValue
-                                //         ? const Color(0xFF4DAB4B)
-                                //         : const Color(0xFFF82E52),
-                                //     activeColor: _switchValue
-                                //         ? const Color(0xFFBFFC9A)
-                                //         : const Color(0xFFF82E52)
-                                //             .withOpacity(0.5),
-                                //     trackColor: const Color(0xFFF82E52)
-                                //         .withOpacity(0.5),
-                                //     value: _switchValue,
-                                //     onChanged: (value) async {
-                                //       setState(() {
-                                //         _switchValue = value;
-                                //       });
-                                //       await submitStoreAvailability(); // Call the submit function after the state update
-                                //       print("switch tapped $_switchValue");
-                                //     },
-                                //   ),
-                                // ),
+                                
+                               
                                 Space(2.h),
                                 userType == UserType.Supplier.name
                                     ? Container(

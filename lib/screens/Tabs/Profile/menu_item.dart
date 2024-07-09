@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:convert';
+
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/model.dart';
@@ -25,6 +27,7 @@ class MenuItem extends StatefulWidget {
 // Function to calculate total items and total price
 
 class _MenuItemState extends State<MenuItem> {
+  bool _switchValue = true;
   @override
   void initState() {
     super.initState();
@@ -49,7 +52,7 @@ class _MenuItemState extends State<MenuItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: 55.w,
+                  width: 60.w,
                   child: Text(
                     widget.data['name'],
                     style: TextStyle(
@@ -61,19 +64,62 @@ class _MenuItemState extends State<MenuItem> {
                   ),
                 ),
               
-                Text('Rs  ${widget.data['price']}',
-                    style: const TextStyle(
-                      color: Color(0xFFFA6E00),
-                      fontSize: 14,
-                      fontFamily: 'Jost',
-                      fontWeight: FontWeight.w600,
-                    )),
+                Row(
+                  children: [
+                    
+                    Text('Rs  ${widget.data['price']}',
+                        style: const TextStyle(
+                          color: Color(0xFFFA6E00),
+                          fontSize: 14,
+                          fontFamily: 'Jost',
+                          fontWeight: FontWeight.w600,
+                        )),
+
+                        SizedBox(width: 30.w),
+                        Container(
+                          child: Transform.scale(
+                            scale:
+                                0.75, // Adjust the scale factor to make the switch smaller
+                            child: CupertinoSwitch(
+                              thumbColor: _switchValue
+                                  ? const Color(0xFF4DAB4B)
+                                  : Color.fromARGB(
+                                      255, 196, 49, 49),
+                              activeColor: _switchValue
+                                  ? const Color(0xFFBFFC9A)
+                                  : const Color(0xFFFBCDCD),
+                              trackColor: const Color.fromARGB(
+                                      255, 196, 49, 49)
+                                  .withOpacity(0.5),
+                              value: _switchValue,
+                              onChanged: (value) async {
+                                setState(() {
+                                  _switchValue = value;
+                                });
+                                final temp = await Provider.of<Auth>(context,
+                                      listen: false)
+                                  .updateProductStockStatus(widget.data['_id'],
+                                      _switchValue, context);
+                                      print("${json.encode(temp)} status update" );
+                                // await updateProductStockStatus(); // Call the submit function after the state update
+                                print(
+                                    "switch tapped $_switchValue");
+                              },
+                            ),
+                          ),
+                        ),
+                                
+                  ],
+                ),
+              
+              
+              
                 if (widget.data['description'] == '') Space(1.h),
                 if (Provider.of<Auth>(context, listen: false)
                         .userData?['user_id'] ==
                     widget.data['user_id'])
                   Container(
-                    width: 55.w,
+                    width: 60.w,
                     decoration: widget.data['description'] == ''
                         ? ShapeDecoration(
                             color: const Color.fromRGBO(239, 255, 254, 1),
