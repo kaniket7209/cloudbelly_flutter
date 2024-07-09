@@ -97,10 +97,10 @@ class _ProfileState extends State<Profile> {
         .then((feed) {
       setState(() {
         feedList = [];
+        // _switchValue = Provider.of<Auth>(context, listen: false)
+        //         .userData?['store_availability'] ??
+        //     false;
         feedList.addAll(feed);
-        _switchValue = Provider.of<Auth>(context, listen: false)
-                .userData?['store_availability'] ??
-            false;
         _isLoading = false;
       });
     });
@@ -192,9 +192,10 @@ class _ProfileState extends State<Profile> {
     super.initState();
     Provider.of<Auth>(context, listen: false).userData =
         UserPreferences.getUser();
+    print("_switchValue $_switchValue");
     _switchValue = Provider.of<Auth>(context, listen: false)
             .userData?['store_availability'] ??
-        false; // Initialize _switchValue
+        false;
     _getFeed();
     _getMenu();
     userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
@@ -266,6 +267,51 @@ class _ProfileState extends State<Profile> {
                                         .AddAddressSheet(context);
                                   },
                                 ),
+                                // store switch
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    SizedBox(height: 10),
+                                    Container(
+                                      child: Transform.scale(
+                                        scale:
+                                            0.75, // Adjust the scale factor to make the switch smaller
+                                        child: CupertinoSwitch(
+                                          thumbColor: _switchValue
+                                              ? const Color(0xFF4DAB4B)
+                                              : Color.fromARGB(
+                                                  255, 196, 49, 49),
+                                          activeColor: _switchValue
+                                              ? const Color(0xFFBFFC9A)
+                                              : const Color(0xFFFBCDCD),
+                                          trackColor: const Color.fromARGB(
+                                                  255, 196, 49, 49)
+                                              .withOpacity(0.5),
+                                          value: _switchValue,
+                                          onChanged: (value) async {
+                                            setState(() {
+                                              _switchValue = value;
+                                            });
+                                            await submitStoreAvailability(); // Call the submit function after the state update
+                                            print(
+                                                "switch tapped $_switchValue");
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Store Status',
+                                      style: TextStyle(
+                                        color:
+                                            boxShadowColor, // Replace with the desired color
+                                        fontFamily: 'Product Sans',
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                // store switch
                                 InkWell(
                                   onTap: () {
                                     Navigator.push(
@@ -381,7 +427,7 @@ class _ProfileState extends State<Profile> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  height: 20,
+                                                  height: 10,
                                                 ),
                                                 Text(
                                                   Provider.of<Auth>(context,
@@ -431,10 +477,10 @@ class _ProfileState extends State<Profile> {
                                             },
                                             child: Container(
                                                 padding: EdgeInsets.fromLTRB(
-                                                    0, 13, 5, 2),
+                                                    0, 7, 12, 2),
                                                 child: Image.asset(
                                                     'assets/images/WhatsApp.png',
-                                                    width: 30)),
+                                                    width: 27)),
                                           )
                                           // https://api.whatsapp.com/send?phone=916206630515
                                         ],
@@ -449,7 +495,7 @@ class _ProfileState extends State<Profile> {
                                           data: Provider.of<Auth>(context,
                                                       listen: false)
                                                   .userData?['rating'] ??
-                                              "",
+                                              "0",
                                           txt: 'Rating',
                                         ),
                                         ColumnWidgetHomeScreen(
@@ -745,38 +791,38 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 Space(1.h),
-                                Text(
-                                  'Store Availability',
-                                  style: TextStyle(
-                                    color:
-                                        boxShadowColor, // Replace with the desired color
-                                    fontFamily: 'Product Sans',
-                                    fontSize: 14.0,
-                                    // fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                Container(
-                                  // Adjust the height as needed
-                                  child: CupertinoSwitch(
-                                    thumbColor: _switchValue
-                                        ? const Color(0xFF4DAB4B)
-                                        : const Color(0xFFF82E52),
-                                    activeColor: _switchValue
-                                        ? const Color(0xFFBFFC9A)
-                                        : const Color(0xFFF82E52)
-                                            .withOpacity(0.5),
-                                    trackColor: const Color(0xFFF82E52)
-                                        .withOpacity(0.5),
-                                    value: _switchValue,
-                                    onChanged: (value) async {
-                                      setState(() {
-                                        _switchValue = value;
-                                      });
-                                      await submitStoreAvailability(); // Call the submit function after the state update
-                                      print("switch tapped $_switchValue");
-                                    },
-                                  ),
-                                ),
+                                // Text(
+                                //   'Store Availability',
+                                //   style: TextStyle(
+                                //     color:
+                                //         boxShadowColor, // Replace with the desired color
+                                //     fontFamily: 'Product Sans',
+                                //     fontSize: 14.0,
+                                //     // fontWeight: FontWeight.w400,
+                                //   ),
+                                // ),
+                                // Container(
+                                //   // Adjust the height as needed
+                                //   child: CupertinoSwitch(
+                                //     thumbColor: _switchValue
+                                //         ? const Color(0xFF4DAB4B)
+                                //         : const Color(0xFFF82E52),
+                                //     activeColor: _switchValue
+                                //         ? const Color(0xFFBFFC9A)
+                                //         : const Color(0xFFF82E52)
+                                //             .withOpacity(0.5),
+                                //     trackColor: const Color(0xFFF82E52)
+                                //         .withOpacity(0.5),
+                                //     value: _switchValue,
+                                //     onChanged: (value) async {
+                                //       setState(() {
+                                //         _switchValue = value;
+                                //       });
+                                //       await submitStoreAvailability(); // Call the submit function after the state update
+                                //       print("switch tapped $_switchValue");
+                                //     },
+                                //   ),
+                                // ),
                                 Space(2.h),
                                 userType == UserType.Supplier.name
                                     ? Container(
@@ -1138,22 +1184,32 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> submitStoreAvailability() async {
-    print(
-        'pp${Provider.of<Auth>(context, listen: false).userData?['store_availability']}');
-    String msg = await Provider.of<Auth>(context, listen: false)
-        .storeAvailability(_switchValue);
-    if (msg == 'User information updated successfully.') {
-      setState(() {
-        Provider.of<Auth>(context, listen: false)
-            .userData?['store_availability'] = _switchValue;
-      });
-
-      TOastNotification()
-          .showSuccesToast(context, 'Store status updated successfully');
-    } else {
-      TOastNotification().showErrorToast(context, msg);
+    print('storestatus${UserPreferences.getUser()?['kyc_status']}');
+    bool kycStatus = UserPreferences.getUser()?['kyc_status'];
+    if (kycStatus) {
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .storeAvailability(_switchValue);
+      if (msg == 'User information updated successfully.') {
+        Map<String, dynamic>? userData = UserPreferences.getUser();
+        userData?['store_availability'] = _switchValue;
+        await UserPreferences.setUser(userData!);
+        setState(() {
+          Provider.of<Auth>(context, listen: false)
+              .userData?['store_availability'] = _switchValue;
+        });
+        TOastNotification()
+            .showSuccesToast(context, 'Store status updated successfully');
+      } else {
+        TOastNotification().showErrorToast(context, msg);
+      }
+      print(msg);
     }
-    print(msg);
+    else{
+       setState(() {
+          Provider.of<Auth>(context, listen: false)
+              .userData?['store_availability'] = false;
+        });
+    }
   }
 }
 
@@ -1865,7 +1921,8 @@ class _MenuState extends State<Menu> {
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(bottom: 15),
+                                    padding: const EdgeInsets.only(
+                                        bottom: 15, top: 0),
                                     child: Row(
                                       children: [
                                         for (int i = 0;
@@ -1900,7 +1957,7 @@ class _MenuState extends State<Menu> {
                                                   BoxShadow(
                                                     color: const Color.fromRGBO(
                                                             112, 186, 210, 1)
-                                                        .withOpacity(0.8),
+                                                        .withOpacity(0.5),
                                                     spreadRadius: 0,
                                                     blurRadius: 10,
                                                     offset: Offset(1, 4),
@@ -2339,7 +2396,7 @@ class CommonButtonProfile extends StatelessWidget {
                     style: TextStyle(
                       color: colorProfile,
                       fontSize: 14,
-                      fontFamily: 'Product Sans',
+                      fontFamily: 'Ubuntu',
                       fontWeight: FontWeight.w700,
                       height: 0.10,
                       letterSpacing: 0.42,

@@ -372,7 +372,7 @@ class _ProfileViewState extends State<ProfileView> {
                                               ),
                                               child: Column(
                                                 children: [
-                                                  Space(3.h),
+                                                    Space(3.h),
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -516,7 +516,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 )),
                                                       ),
                                                       SizedBox(
-                                                        width: 5,
+                                                        width: 10,
                                                       ),
                                                       Container(
                                                         width: 50.w,

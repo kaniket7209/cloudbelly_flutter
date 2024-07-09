@@ -40,11 +40,12 @@ class _MenuItemState extends State<MenuItem> {
 
     return Container(
         width: double.infinity,
-        margin: EdgeInsets.only(bottom: 1.h),
+        margin: EdgeInsets.only(bottom: 2.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
@@ -59,6 +60,7 @@ class _MenuItemState extends State<MenuItem> {
                     ),
                   ),
                 ),
+              
                 Text('Rs  ${widget.data['price']}',
                     style: const TextStyle(
                       color: Color(0xFFFA6E00),
@@ -88,7 +90,7 @@ class _MenuItemState extends State<MenuItem> {
                         maxLines: null,
                         style: const TextStyle(
                           color: Color(0xFF094B60),
-                          fontSize: 10,
+                          fontSize: 12,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                         ),
@@ -99,7 +101,7 @@ class _MenuItemState extends State<MenuItem> {
                               : '',
                           hintStyle: const TextStyle(
                             color: Color(0xFF094B60),
-                            fontSize: 10,
+                            fontSize: 12,
                             fontFamily: 'Product Sans',
                             fontWeight: FontWeight.w400,
                           ),
@@ -119,13 +121,13 @@ class _MenuItemState extends State<MenuItem> {
                     ),
                   )
                 else
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.6,
                     child: Text(
                       widget.data['description'] ?? '',
                       style: const TextStyle(
                         color: Color(0xFF094B60),
-                        fontSize: 10,
+                        fontSize: 12,
                         fontFamily: 'Product Sans',
                         fontWeight: FontWeight.w400,
                       ),
@@ -136,7 +138,7 @@ class _MenuItemState extends State<MenuItem> {
             Stack(
               children: [
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 2.h),
+                  margin: EdgeInsets.symmetric(vertical: 1.4.h),
                   height: 11.h,
                   width: 24.w,
                   decoration: ShapeDecoration(
@@ -175,7 +177,7 @@ class _MenuItemState extends State<MenuItem> {
                 ),
                 Positioned(
                   right: 0.5.w,
-                  top: 2.2.h,
+                  top: 1.5.h,
                   child: Container(
                     width: 10,
                     height: 10,
@@ -362,6 +364,7 @@ class _MenuItemState extends State<MenuItem> {
             )
           ],
         ));
+  
   }
 
   Future<String> updateProductImageSheet(
