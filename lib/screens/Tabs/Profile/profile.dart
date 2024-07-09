@@ -86,39 +86,31 @@ class _ProfileState extends State<Profile> {
     super.dispose();
   }
 
-  Future<void> _loading() async {
-    final prefs = await SharedPreferences.getInstance();
+Future<void> _loading() async {
+  final prefs = await SharedPreferences.getInstance();
+  setState(() {
+    _isLoading = true;
+  });
+
+  final authProvider = Provider.of<Auth>(context, listen: false);
+  final userData = authProvider.userData;
+
+  await authProvider.getFeed(userData?['user_id']).then((feed) {
     setState(() {
-      _isLoading = true;
+      feedList = feed;
+      _isLoading = false;
     });
+  });
 
-    await Provider.of<Auth>(context, listen: false)
-        .getFeed(Provider.of<Auth>(context, listen: false).userData?['user_id'])
-        .then((feed) {
-      setState(() {
-        feedList = [];
-        // _switchValue = Provider.of<Auth>(context, listen: false)
-        //         .userData?['store_availability'] ??
-        //     false;
-        feedList.addAll(feed);
-        _isLoading = false;
-      });
+  await authProvider.getMenu(userData?['user_id']).then((menu) {
+    setState(() {
+      menuList = menu;
+      _isLoading = false;
     });
-    await Provider.of<Auth>(context, listen: false)
-        .getMenu(Provider.of<Auth>(context, listen: false).userData?['user_id'])
-        .then((menu) {
-      setState(() {
-        menuList = [];
-        menuList.addAll(menu);
-        _isLoading = false;
-      });
-      final feedData = json.encode({
-        'menu': menu,
-      });
-      prefs.setString('menuData', feedData);
-    });
-  }
-
+    final menuData = json.encode({'menu': menu});
+    prefs.setString('menuData', menuData);
+  });
+}
   bool _isLoading = false;
   ScrollController t1 = new ScrollController();
   List<String> categories = [];
@@ -187,19 +179,16 @@ class _ProfileState extends State<Profile> {
     });
   }
 
+  
   @override
-  void initState() {
-    super.initState();
-    Provider.of<Auth>(context, listen: false).userData =
-        UserPreferences.getUser();
-    print("_switchValue $_switchValue");
-    _switchValue = Provider.of<Auth>(context, listen: false)
-            .userData?['store_availability'] ??
-        false;
-    _getFeed();
-    _getMenu();
-    userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-  }
+void initState() {
+  super.initState();
+  Provider.of<Auth>(context, listen: false).userData = UserPreferences.getUser();
+  _switchValue = Provider.of<Auth>(context, listen: false).userData?['store_availability'] ?? false;
+  _getFeed();
+  _getMenu();
+  userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+}
 
   @override
   Widget build(BuildContext context) {

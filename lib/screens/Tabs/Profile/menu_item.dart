@@ -201,21 +201,33 @@ class _MenuItemState extends State<MenuItem> {
                     ),
                   ),
                   child: (widget.data['images'] as List<dynamic>).isNotEmpty
-                      ? ClipSmoothRect(
-                          radius: SmoothBorderRadius(
-                            cornerRadius: 24,
-                            cornerSmoothing: 1,
-                          ),
-                          child: Image.network(
-                            widget.data['images'][0],
-                            fit: BoxFit.cover,
-                            loadingBuilder:
-                                GlobalVariables().loadingBuilderForImage,
-                            errorBuilder:
-                                GlobalVariables().ErrorBuilderForImage,
-                          ),
-                        )
-                      : null,
+  ? ClipSmoothRect(
+      radius: SmoothBorderRadius(
+        cornerRadius: 24,
+        cornerSmoothing: 1,
+      ),
+      child: ColorFiltered(
+        colorFilter: (_stockSwitch == false || widget.data['stock_status'] == false)
+          ? ColorFilter.matrix([
+              0.2126, 0.7152, 0.0722, 0, 0,
+              0.2126, 0.7152, 0.0722, 0, 0,
+              0.2126, 0.7152, 0.0722, 0, 0,
+              0,      0,      0,      1, 0,
+            ])
+          : ColorFilter.mode(
+              Colors.transparent,
+              BlendMode.multiply,
+            ),
+        child: Image.network(
+          widget.data['images'][0],
+          fit: BoxFit.cover,
+          loadingBuilder: GlobalVariables().loadingBuilderForImage,
+          errorBuilder: GlobalVariables().ErrorBuilderForImage,
+        ),
+      ),
+    )
+  : null,
+
                 ),
                 Positioned(
                   right: 0.5.w,
