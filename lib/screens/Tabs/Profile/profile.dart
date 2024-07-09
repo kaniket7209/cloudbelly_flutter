@@ -1268,13 +1268,13 @@ Future<dynamic> ScannedMenuBottomSheet(
   List<Map<String, dynamic>> list = [];
 
   for (var item in data) {
-    print("sssitem ${json.encode(item)}");
     var newItem = Map<String, dynamic>.from(item);
-    isUpload
-        ? newItem['VEG'] = true
-        : item['type'] == 'Veg' ? newItem['VEG'] = true:newItem['VEG'] = false; // Adding VEG element with value true
+    if (isUpload) {
+      newItem['type'] = 'Veg';
+    } else {
+      newItem['type'] = item['type'] == 'Veg' ? 'Veg' : 'Non Veg';
+    }
     list.add(newItem);
-
     list.reversed;
   }
   var uniqueCategories = data.map((e) => e['category']).toSet();
@@ -1594,64 +1594,64 @@ Future<dynamic> ScannedMenuBottomSheet(
                               SizedBox(
                                 width: 15.w,
                                 child: Transform.scale(
-                                  scale: 0.85,
-                                  child: CupertinoSwitch(
-                                    value: !list[index]['VEG'],
-                                    onChanged: (value) async {
-                                      if (!isUpload) {
-                                        await Provider.of<Auth>(context,
-                                                listen: false)
-                                            .updateMenuItem(
-                                          list[index]['_id'],
-                                          list[index]['price'],
-                                          list[index]['name'],
-                                          !value,
-                                          list[index]['category'],
-                                        );
-                                      }
-                                      setState(() {
-                                        list[index]['VEG'] = !value;
-                                      });
-                                    },
-                                    activeColor:
-                                        const Color.fromRGBO(232, 89, 89, 1),
-                                    trackColor:
-                                        const Color.fromRGBO(77, 171, 75, 1),
-                                  ),
-                                ),
+                                    scale: 0.85,
+                                    child: 
+                                    CupertinoSwitch(
+  value: list[index]['type'] == 'Non Veg',
+  onChanged: (value) async {
+    final updatedType = value ? 'Non Veg' : 'Veg';
+    if (!isUpload) {
+      await Provider.of<Auth>(context, listen: false).updateMenuItem(
+        list[index]['_id'],
+        list[index]['price'],
+        list[index]['name'],
+        updatedType,
+        list[index]['category'],
+      );
+    }
+    setState(() {
+      list[index]['type'] = updatedType;
+    });
+  },
+  activeColor: const Color.fromRGBO(232, 89, 89, 1),
+  trackColor: const Color.fromRGBO(77, 171, 75, 1),
+)
+                                    
+                                    
+                                    ),
+                             
                               ),
                               const Spacer(),
                               SizedBox(
                                 width: 20.w,
                                 child: TextField(
-                                  maxLines: null,
-                                  style: const TextStyle(
-                                    color: Color(0xFF094B60),
-                                    fontSize: 13,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  controller: categoryController,
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                  ),
-                                  textInputAction: TextInputAction.done,
-                                  onSubmitted: (newValue) async {
-                                    if (!isUpload) {
-                                      await Provider.of<Auth>(context,
-                                              listen: false)
-                                          .updateMenuItem(
-                                              list[index]['_id'],
-                                              list[index]['price'],
-                                              list[index]['name'],
-                                              list[index]['VEG'],
-                                              newValue);
-                                    }
-                                    setState(() {
-                                      list[index]['category'] = newValue;
-                                    });
-                                  },
-                                ),
+                                    maxLines: null,
+                                    style: const TextStyle(
+                                      color: Color(0xFF094B60),
+                                      fontSize: 13,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    controller: categoryController,
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                    ),
+                                    textInputAction: TextInputAction.done,
+                                    onSubmitted: (newValue) async {
+                                      if (!isUpload) {
+                                        await Provider.of<Auth>(context,
+                                                listen: false)
+                                            .updateMenuItem(
+                                                list[index]['_id'],
+                                                list[index]['price'],
+                                                list[index]['name'],
+                                                list[index]['type'],
+                                                newValue);
+                                      }
+                                      setState(() {
+                                        list[index]['category'] = newValue;
+                                      });
+                                    }),
                               ),
                             ],
                           ),

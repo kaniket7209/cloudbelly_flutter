@@ -768,7 +768,7 @@ final prefs = await SharedPreferences.getInstance();
   }
 
   Future<String> updateMenuItem(String product_id, String price, String name,
-      bool VEG, String category) async {
+      String type, String category) async {
     final String url = 'https://app.cloudbelly.in/product/update';
     // print(VEG);
 
@@ -778,7 +778,7 @@ final prefs = await SharedPreferences.getInstance();
       'price': price,
       'category': category,
       'name': name,
-      'VEG': VEG,
+      'type': type,
     };
 
     try {

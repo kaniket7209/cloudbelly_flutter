@@ -148,19 +148,18 @@ class _PerformanceState extends State<Performance> {
                       ),
                     ),
                     25.h);
-              
               },
               txt: 'Add products',
             ),
-            
             const Space(
               25,
               isHorizontal: true,
             ),
             Make_Update_ListWidget(
               onTap: () async {
-                final data =
-                    await Provider.of<Auth>(context, listen: false).getMenu(Provider.of<Auth>(context, listen: false).userData?['user_id']);
+                final data = await Provider.of<Auth>(context, listen: false)
+                    .getMenu(Provider.of<Auth>(context, listen: false)
+                        .userData?['user_id']);
                 (data as List<dynamic>).forEach(
                   (element) {
                     print(element);
@@ -591,31 +590,32 @@ class _PerformanceState extends State<Performance> {
                                 SizedBox(
                                   width: 15.w,
                                   child: Transform.scale(
-                                    scale: 0.9,
-                                    child: CupertinoSwitch(
-                                      value: !list[index]['VEG'],
-                                      onChanged: (value) async {
-                                        if (!isUpload) {
-                                          await Provider.of<Auth>(context,
-                                                  listen: false)
-                                              .updateMenuItem(
-                                            list[index]['_id'],
-                                            list[index]['price'],
-                                            list[index]['name'],
-                                            !value,
-                                            list[index]['category'],
-                                          );
-                                        }
-                                        setState(() {
-                                          list[index]['VEG'] = !value;
-                                        });
-                                      },
-                                      activeColor:
-                                          const Color.fromRGBO(232, 89, 89, 1),
-                                      trackColor:
-                                          const Color.fromRGBO(77, 171, 75, 1),
-                                    ),
-                                  ),
+                                      scale: 0.9,
+                                      child: CupertinoSwitch(
+                                        value: list[index]['type'] == 'Non Veg',
+                                        onChanged: (value) async {
+                                          final updatedType =
+                                              value ? 'Non Veg' : 'Veg';
+                                          if (!isUpload) {
+                                            await Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .updateMenuItem(
+                                              list[index]['_id'],
+                                              list[index]['price'],
+                                              list[index]['name'],
+                                              updatedType,
+                                              list[index]['category'],
+                                            );
+                                          }
+                                          setState(() {
+                                            list[index]['type'] = updatedType;
+                                          });
+                                        },
+                                        activeColor: const Color.fromRGBO(
+                                            232, 89, 89, 1),
+                                        trackColor: const Color.fromRGBO(
+                                            77, 171, 75, 1),
+                                      )),
                                 ),
                                 const Spacer(),
                                 SizedBox(
@@ -689,7 +689,6 @@ class _PerformanceState extends State<Performance> {
       },
     );
   }
-
 }
 
 class TopSellingItemWidget extends StatelessWidget {
