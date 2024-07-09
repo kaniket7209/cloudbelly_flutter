@@ -98,7 +98,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
           ),
           Space(3.h),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Make_Update_ListWidget(
                 txt: 'From gallery',
@@ -127,6 +127,10 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                   }
                 },
               ),
+             const Space(
+              25,
+              isHorizontal: true,
+            ),
               Make_Update_ListWidget(
                 txt: 'Click photo',
                 onTap: () async {

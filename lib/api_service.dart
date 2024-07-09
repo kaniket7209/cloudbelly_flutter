@@ -342,7 +342,7 @@ class Auth with ChangeNotifier {
       'end_time': userProfileData?['working_hours']['end_time'] ?? '',
       'bank_name': userProfileData?['bank_name'] ?? '',
       'pincode': userProfileData?['pincode'] ?? '',
-      'rating': userProfileData?['rating'] ?? '-',
+      'rating': userProfileData?['rating'] ?? 'NA',
       'followers': userProfileData?['followers'] ?? [],
       'followings': userProfileData?['followings'] ?? [],
       'cover_image': userProfileData?['cover_image'] ?? '',
@@ -350,7 +350,7 @@ class Auth with ChangeNotifier {
       'ifsc_code': userProfileData?['ifsc_code'] ?? '',
       'phone': userProfileData?['phone'] ?? '',
       'upi_id': userProfileData?['upi_id'] ?? '',
-      'user_type': userProfileData?['user_type'] ?? 'Vendor',
+      'user_type': userProfileData?['user_type'] ?? '',
     };
     print("userDtat:: $userData");
     await UserPreferences.setUser(userData);

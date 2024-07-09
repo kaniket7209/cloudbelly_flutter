@@ -72,7 +72,7 @@ class _ProfileState extends State<Profile> {
   void _scrollToTop() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       t1.animateTo(
-        MediaQuery.sizeOf(context).height / 2.5, // Scroll to the top
+        MediaQuery.sizeOf(context).height / 3.5, // Scroll to the top
         duration:
             const Duration(milliseconds: 300), // Duration of the animation
         curve: Curves.linearToEaseOut, // Curve of the animation
@@ -86,31 +86,32 @@ class _ProfileState extends State<Profile> {
     super.dispose();
   }
 
-Future<void> _loading() async {
-  final prefs = await SharedPreferences.getInstance();
-  setState(() {
-    _isLoading = true;
-  });
-
-  final authProvider = Provider.of<Auth>(context, listen: false);
-  final userData = authProvider.userData;
-
-  await authProvider.getFeed(userData?['user_id']).then((feed) {
+  Future<void> _loading() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      feedList = feed;
-      _isLoading = false;
+      _isLoading = true;
     });
-  });
 
-  await authProvider.getMenu(userData?['user_id']).then((menu) {
-    setState(() {
-      menuList = menu;
-      _isLoading = false;
+    final authProvider = Provider.of<Auth>(context, listen: false);
+    final userData = authProvider.userData;
+
+    await authProvider.getFeed(userData?['user_id']).then((feed) {
+      setState(() {
+        feedList = feed;
+        _isLoading = false;
+      });
     });
-    final menuData = json.encode({'menu': menu});
-    prefs.setString('menuData', menuData);
-  });
-}
+
+    await authProvider.getMenu(userData?['user_id']).then((menu) {
+      setState(() {
+        menuList = menu;
+        _isLoading = false;
+      });
+      final menuData = json.encode({'menu': menu});
+      prefs.setString('menuData', menuData);
+    });
+  }
+
   bool _isLoading = false;
   ScrollController t1 = new ScrollController();
   List<String> categories = [];
@@ -179,16 +180,18 @@ Future<void> _loading() async {
     });
   }
 
-  
   @override
-void initState() {
-  super.initState();
-  Provider.of<Auth>(context, listen: false).userData = UserPreferences.getUser();
-  _switchValue = Provider.of<Auth>(context, listen: false).userData?['store_availability'] ?? false;
-  _getFeed();
-  _getMenu();
-  userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-}
+  void initState() {
+    super.initState();
+    Provider.of<Auth>(context, listen: false).userData =
+        UserPreferences.getUser();
+    _switchValue = Provider.of<Auth>(context, listen: false)
+            .userData?['store_availability'] ??
+        false;
+    _getFeed();
+    _getMenu();
+    userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +214,7 @@ void initState() {
     return RefreshIndicator(
       onRefresh: _loading,
       // controller: _refreshController,
-      // enablePullDown: true,
+
       // enablePullUp: false,
       // onLoading: _loading,
       child: SingleChildScrollView(
@@ -257,49 +260,50 @@ void initState() {
                                   },
                                 ),
                                 // store switch
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    SizedBox(height: 10),
-                                    Container(
-                                      child: Transform.scale(
-                                        scale:
-                                            0.75, // Adjust the scale factor to make the switch smaller
-                                        child: CupertinoSwitch(
-                                          thumbColor: _switchValue
-                                              ? const Color(0xFF4DAB4B)
-                                              : Color.fromARGB(
-                                                  255, 196, 49, 49),
-                                          activeColor: _switchValue
-                                              ? const Color(0xFFBFFC9A)
-                                              : const Color(0xFFFBCDCD),
-                                          trackColor: const Color.fromARGB(
-                                                  255, 196, 49, 49)
-                                              .withOpacity(0.5),
-                                          value: _switchValue,
-                                          onChanged: (value) async {
-                                            setState(() {
-                                              _switchValue = value;
-                                            });
-                                            await submitStoreAvailability(); // Call the submit function after the state update
-                                            print(
-                                                "switch tapped $_switchValue");
-                                          },
+                                if (userType == 'Vendor')
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(height: 10),
+                                      Container(
+                                        child: Transform.scale(
+                                          scale:
+                                              0.75, // Adjust the scale factor to make the switch smaller
+                                          child: CupertinoSwitch(
+                                            thumbColor: _switchValue
+                                                ? const Color(0xFF4DAB4B)
+                                                : Color.fromARGB(
+                                                    255, 196, 49, 49),
+                                            activeColor: _switchValue
+                                                ? const Color(0xFFBFFC9A)
+                                                : const Color(0xFFFBCDCD),
+                                            trackColor: const Color.fromARGB(
+                                                    255, 196, 49, 49)
+                                                .withOpacity(0.5),
+                                            value: _switchValue,
+                                            onChanged: (value) async {
+                                              setState(() {
+                                                _switchValue = value;
+                                              });
+                                              await submitStoreAvailability(); // Call the submit function after the state update
+                                              print(
+                                                  "switch tapped $_switchValue");
+                                            },
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Text(
-                                      'Store Status',
-                                      style: TextStyle(
-                                        color:
-                                            boxShadowColor, // Replace with the desired color
-                                        fontFamily: 'Product Sans',
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.bold,
+                                      Text(
+                                        'Store Status',
+                                        style: TextStyle(
+                                          color:
+                                              boxShadowColor, // Replace with the desired color
+                                          fontFamily: 'Product Sans',
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                    ],
+                                  ),
                                 // store switch
                                 InkWell(
                                   onTap: () {
@@ -416,7 +420,7 @@ void initState() {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  height: 10,
+                                                  height: 15,
                                                 ),
                                                 Text(
                                                   Provider.of<Auth>(context,
@@ -425,7 +429,7 @@ void initState() {
                                                   style: TextStyle(
                                                       color: boxShadowColor,
                                                       fontFamily: 'Ubuntu',
-                                                      fontSize: 22,
+                                                      fontSize: 20,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       letterSpacing: 1),
@@ -484,7 +488,7 @@ void initState() {
                                           data: Provider.of<Auth>(context,
                                                       listen: false)
                                                   .userData?['rating'] ??
-                                              "0",
+                                              "",
                                           txt: 'Rating',
                                         ),
                                         ColumnWidgetHomeScreen(
@@ -521,28 +525,60 @@ void initState() {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        TouchableOpacity(
-                                          onTap: () {
-                                            TextEditingController _controller =
-                                                TextEditingController(
-                                                    text: Provider.of<Auth>(
-                                                                context,
-                                                                listen: false)
-                                                            .userData?[
-                                                        'store_name']);
-                                            AppWideBottomSheet().showSheet(
-                                                context,
-                                                EditProfileWidget(
-                                                    controller: _controller),
-                                                75.h);
-                                          },
-                                          child: ButtonWidgetHomeScreen(
-                                              txt: 'Edit profile',
-                                              isActive: true),
-                                        ),
+                                        if (Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .userData?['user_type'] ==
+                                            UserType.Customer.name)
+                                          TouchableOpacity(
+                                            onTap: () {
+                                              TextEditingController
+                                                  _controller =
+                                                  TextEditingController(
+                                                      text: Provider.of<Auth>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .userData?[
+                                                          'store_name']);
+                                              AppWideBottomSheet().showSheet(
+                                                  context,
+                                                  EditProfileWidget(
+                                                      controller: _controller),
+                                                  75.h);
+                                            },
+                                            child: ButtonWidgetHomeScreen(
+                                                txt: 'Edit profile',
+                                                isActive: true),
+                                          ),
                                         SizedBox(
                                           width: 20,
                                         ),
+                                        if (Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .userData?['user_type'] !=
+                                            UserType.Customer.name)
+                                          Make_Update_ListWidget(
+                                            color:
+                                                Color.fromRGBO(250, 110, 0, 1),
+                                            onTap: () async {
+                                              final data = await Provider.of<
+                                                          Auth>(context,
+                                                      listen: false)
+                                                  .getMenu(Provider.of<Auth>(
+                                                          context,
+                                                          listen: false)
+                                                      .userData?['user_id']);
+                                              (data as List<dynamic>).forEach(
+                                                (element) {
+                                                  print(element);
+                                                },
+                                              );
+                                              // Sc
+                                              ScannedMenuBottomSheet(
+                                                  context, data, false);
+                                            },
+                                            txt: 'Edit product',
+                                          ),
+                                        //editr menu
                                         if (Provider.of<Auth>(context,
                                                     listen: false)
                                                 .userData?['user_type'] !=
@@ -779,8 +815,7 @@ void initState() {
                                         borderRadius: BorderRadius.circular(6)),
                                   ),
                                 ),
-                                
-                               
+
                                 Space(2.h),
                                 userType == UserType.Supplier.name
                                     ? Container(
@@ -1161,13 +1196,13 @@ void initState() {
         TOastNotification().showErrorToast(context, msg);
       }
       print(msg);
-    }
-    else{
-       setState(() {
-          Provider.of<Auth>(context, listen: false)
-              .userData?['store_availability'] = false;
-        });
-         TOastNotification().showErrorToast(context, 'Your Kyc status is incomplete');
+    } else {
+      setState(() {
+        Provider.of<Auth>(context, listen: false)
+            .userData?['store_availability'] = false;
+      });
+      TOastNotification()
+          .showErrorToast(context, 'Your Kyc status is incomplete');
     }
   }
 }
@@ -1233,10 +1268,11 @@ Future<dynamic> ScannedMenuBottomSheet(
   List<Map<String, dynamic>> list = [];
 
   for (var item in data) {
+    print("sssitem ${json.encode(item)}");
     var newItem = Map<String, dynamic>.from(item);
     isUpload
         ? newItem['VEG'] = true
-        : newItem['VEG'] = newItem['VEG']; // Adding VEG element with value true
+        : item['type'] == 'Veg' ? newItem['VEG'] = true:newItem['VEG'] = false; // Adding VEG element with value true
     list.add(newItem);
 
     list.reversed;
@@ -1558,7 +1594,7 @@ Future<dynamic> ScannedMenuBottomSheet(
                               SizedBox(
                                 width: 15.w,
                                 child: Transform.scale(
-                                  scale: 0.9,
+                                  scale: 0.85,
                                   child: CupertinoSwitch(
                                     value: !list[index]['VEG'],
                                     onChanged: (value) async {

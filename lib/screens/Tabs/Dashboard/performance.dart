@@ -44,7 +44,7 @@ class _PerformanceState extends State<Performance> {
         ),
         Space(2.5.h),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Make_Update_ListWidget(
               onTap: () {
@@ -151,6 +151,11 @@ class _PerformanceState extends State<Performance> {
               
               },
               txt: 'Add products',
+            ),
+            
+            const Space(
+              25,
+              isHorizontal: true,
             ),
             Make_Update_ListWidget(
               onTap: () async {

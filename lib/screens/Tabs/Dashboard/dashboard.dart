@@ -15,6 +15,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
@@ -33,6 +34,19 @@ class _DashBoardState extends State<DashBoard>
 
   @override
   Widget build(BuildContext context) {
+    String userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    Color boxShadowColor;
+
+    if (userType == 'Vendor') {
+      boxShadowColor = const Color(0xff0A4C61);
+    } else if (userType == 'Customer') {
+      boxShadowColor = const Color(0xff2E0536);
+    } else if (userType == 'Supplier') {
+      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    } else {
+      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+    }
     return RefreshIndicator(
       onRefresh: _refreshFeed,
       child: SingleChildScrollView(
@@ -59,12 +73,7 @@ class _DashBoardState extends State<DashBoard>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              // SvgPicture.asset(
-                              //   Assets.notification_svg,
-                              //   color: Colors.red,
-                              //   width: 20, // Adjust width and height as needed
-                              //   height: 20,
-                              // ),
+                             
                               CustomIconButton(
                                 text: 'notification',
                                 ic: Icons.notifications_outlined,
@@ -75,7 +84,7 @@ class _DashBoardState extends State<DashBoard>
                                   // Navigator.of(context).pushNamed('/map');
                                 },
                               ),
-                              Container(width: 40.w, child: StoreLogoWidget()),
+                              
                               CustomIconButton(
                                 ic: Icons.settings,
                                 onTap: () {
@@ -90,7 +99,7 @@ class _DashBoardState extends State<DashBoard>
                           ),
                         ),
                       ),
-                      StoreNameWidget(),
+                      
                       Center(
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 5.w),
@@ -98,8 +107,9 @@ class _DashBoardState extends State<DashBoard>
                             children: [
                               Space(3.h),
                               Center(
-                                child: Container(
-                                  height: 20.h,
+                                child: 
+                                Container(
+                                 
                                   decoration: ShapeDecoration(
                                     shadows: const [
                                       BoxShadow(
@@ -112,14 +122,102 @@ class _DashBoardState extends State<DashBoard>
                                     color: Colors.white,
                                     shape: SmoothRectangleBorder(
                                       borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 15,
+                                        cornerRadius: 53,
                                         cornerSmoothing: 1,
                                       ),
                                     ),
                                   ),
                                   child: Column(
                                     children: [
-                                      Space(3.h),
+                                      // Space(1.h),
+                                       Container(
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 15, 10, 0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.only(left: 10),
+                                            child: const StoreLogoWidget(),
+                                          ),
+                                          SizedBox(
+                                            width: 14,
+                                          ),
+                                          Container(
+                                            width: 50.w,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  height: 15,
+                                                ),
+                                                Text(
+                                                  Provider.of<Auth>(context,
+                                                          listen: true)
+                                                      .userData?['store_name'],
+                                                  style: TextStyle(
+                                                      color: boxShadowColor,
+                                                      fontFamily: 'Ubuntu',
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      letterSpacing: 1),
+                                                ),
+                                                Text(
+                                                  Provider.of<Auth>(context,
+                                                          listen: true)
+                                                      .userData?['user_type'],
+                                                  style: TextStyle(
+                                                      color: boxShadowColor,
+                                                      fontFamily:
+                                                          'Product Sans',
+                                                      fontSize: 12,
+                                                      letterSpacing: 1),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              final phoneNumber =
+                                                  Provider.of<Auth>(context,
+                                                              listen: false)
+                                                          .userData?['phone'] ??
+                                                      '';
+                                              final url = 'https://wa.me/' +
+                                                  phoneNumber;
+                                              if (await canLaunch(url)) {
+                                                await launch(url);
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          'Could not launch whatsapp ')),
+                                                );
+                                              }
+                                            },
+                                            child: Container(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0, 7, 12, 2),
+                                                child: Image.asset(
+                                                    'assets/images/WhatsApp.png',
+                                                    width: 27)),
+                                          )
+                                          // https://api.whatsapp.com/send?phone=916206630515
+                                        ],
+                                      ),
+                                    ),
+
                                       // Adjusted the width of buttons based on screen width
                                       _activeButtonIndex == 1
                                           ? Row(
@@ -238,6 +336,7 @@ class _DashBoardState extends State<DashBoard>
                                           )
                                         ],
                                       )
+                                  , Space(3.h)
                                     ],
                                   ),
                                 ),

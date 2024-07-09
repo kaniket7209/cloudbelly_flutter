@@ -83,7 +83,7 @@ class _ProfileViewState extends State<ProfileView> {
   void _scrollToTop() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       t1.animateTo(
-        MediaQuery.sizeOf(context).height / 2.5, // Scroll to the top
+        MediaQuery.sizeOf(context).height / 2.9, // Scroll to the top
         duration:
             const Duration(milliseconds: 300), // Duration of the animation
         curve: Curves.linearToEaseOut, // Curve of the animation
@@ -528,7 +528,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                               CrossAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            
+                                                            SizedBox(height: 5,),
                                                             Text(
                                                               userList.first
                                                                       .storeName ??
