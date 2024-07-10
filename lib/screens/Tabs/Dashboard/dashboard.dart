@@ -954,34 +954,41 @@ class ToolsButtonWidgetHomeSCreen extends StatelessWidget {
 }
 
 class ColumnWidgetHomeScreen extends StatelessWidget {
-  String data;
-  String txt;
+  final String data;
+  final String txt;
+  final Color? color; // Optional color parameter
 
   ColumnWidgetHomeScreen({
     required this.data,
     required this.txt,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-     
+    
+    // Determine the profile color based on the user type
     Color colorProfile;
     if (userType == 'Vendor') {
-      colorProfile = const Color(0xFF094B60) ;
+      colorProfile = const Color(0xFF094B60);
     } else if (userType == 'Customer') {
       colorProfile = const Color(0xFF2E0536);
     } else if (userType == 'Supplier') {
       colorProfile = Color.fromARGB(255, 26, 48, 10);
     } else {
-      colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+      colorProfile = const Color.fromRGBO(77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
+
+    // Use the provided color if it exists, otherwise fall back to colorProfile
+    Color finalColor = color ?? colorProfile;
+
     return Column(
       children: [
         Text(
           data,
-          style:  TextStyle(
-            color: colorProfile,
+          style: TextStyle(
+            color: finalColor,
             fontSize: 45,
             fontFamily: 'Product Sans',
             fontWeight: FontWeight.bold,
@@ -991,20 +998,19 @@ class ColumnWidgetHomeScreen extends StatelessWidget {
         ),
         Text(
           txt,
-          style:  TextStyle(
-            color: colorProfile,
+          style: TextStyle(
+            color: finalColor,
             fontSize: 11,
             fontFamily: 'Ubuntu',
             fontWeight: FontWeight.w400,
             height: 0,
             letterSpacing: 0.11,
           ),
-        )
+        ),
       ],
     );
   }
 }
-
 class ButtonWidgetHomeScreen extends StatelessWidget {
   final txt;
   bool isActive;

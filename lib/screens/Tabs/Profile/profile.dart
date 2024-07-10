@@ -2412,12 +2412,15 @@ class CommonButtonProfile extends StatelessWidget {
   bool isActive;
   String txt;
   double width;
+  final Color? color;
+
 
   CommonButtonProfile({
     super.key,
     required this.isActive,
     required this.txt,
     required this.width,
+    this.color,
   });
 
   @override
@@ -2435,6 +2438,7 @@ class CommonButtonProfile extends StatelessWidget {
       colorProfile = const Color.fromRGBO(
           77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
+     Color finalColor = color ?? colorProfile;
     return Container(
         child: Center(
       child: Padding(
@@ -2451,7 +2455,7 @@ class CommonButtonProfile extends StatelessWidget {
                   child: Text(
                     txt,
                     style: TextStyle(
-                      color: colorProfile,
+                      color: finalColor,
                       fontSize: 14,
                       fontFamily: 'Ubuntu',
                       fontWeight: FontWeight.w700,

@@ -230,6 +230,22 @@ class _ProfileViewState extends State<ProfileView> {
     } else {
       boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
     }
+
+Color sharedProfileColour(userType){
+  Color profileColour;
+  // userType= userList.first.userType;
+  if (userType == 'Vendor') {
+      profileColour = const Color(0xff0A4C61);
+    } else if (userType == 'Customer') {
+      profileColour = const Color(0xff2E0536);
+    } else if (userType == 'Supplier') {
+      profileColour = Color.fromARGB(0, 115, 188, 150);
+    } else {
+      profileColour = const Color.fromRGBO(77, 191, 74, 0.6);
+    }
+    return profileColour;
+}
+
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
@@ -318,6 +334,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                 onTap: () {
                                                   Navigator.pop(context);
                                                 },
+                                                color: sharedProfileColour(userList.first.userType).withOpacity(0.4)
                                               ),
                                             ],
                                           ),
@@ -538,7 +555,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   'Unknown', // Provide a default value
                                                               style: TextStyle(
                                                                   color:
-                                                                      boxShadowColor,
+                                                                      sharedProfileColour(userList.first.userType),
                                                                   fontFamily:
                                                                       'Ubuntu',
                                                                   fontSize: 22,
@@ -555,7 +572,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   'Unknown', // Provide a default value
                                                               style: TextStyle(
                                                                 color:
-                                                                    boxShadowColor,
+                                                                    sharedProfileColour(userList.first.userType),
                                                                 fontFamily:
                                                                     'Product Sans',
                                                                 fontSize: 12,
@@ -609,6 +626,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 listen: false)
                                                             .userData?['rating'],
                                                         txt: 'Rating',
+                                                        color: sharedProfileColour(userList.first.userType),
                                                       ),
                                                       ColumnWidgetHomeScreen(
                                                         data: userList
@@ -618,6 +636,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 .toString() ??
                                                             "",
                                                         txt: 'Followers',
+                                                        color: sharedProfileColour(userList.first.userType)
                                                       ),
                                                       ColumnWidgetHomeScreen(
                                                         data: (Provider.of<Auth>(
@@ -629,6 +648,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                             .length
                                                             .toString(),
                                                         txt: 'Following',
+                                                        color: sharedProfileColour(userList.first.userType)
                                                       )
                                                     ],
                                                   ),
@@ -831,6 +851,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                         1,
                                                                 txt: 'Content',
                                                                 width: 52,
+                                                                color: sharedProfileColour(userList.first.userType)
                                                               ),
                                                             ),
                                                             TouchableOpacity(
@@ -851,6 +872,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                         2,
                                                                 txt: 'Menu',
                                                                 width: 52,
+                                                                color: sharedProfileColour(userList.first.userType)
                                                               ),
                                                             ),
                                                             TouchableOpacity(
@@ -867,6 +889,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                         3,
                                                                 txt: 'About',
                                                                 width: 52,
+                                                                color: sharedProfileColour(userList.first.userType)
                                                               ),
                                                             ),
                                                             TouchableOpacity(
@@ -883,6 +906,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                         4,
                                                                 txt: 'Reviews',
                                                                 width: 52,
+                                                                color: sharedProfileColour(userList.first.userType)
                                                               ),
                                                             ),
                                                           ]),
@@ -912,6 +936,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     txt:
                                                                         'Content',
                                                                     width: 52,
+                                                                    color: sharedProfileColour(userList.first.userType)
                                                                   ),
                                                                 ),
                                                                 TouchableOpacity(
@@ -930,6 +955,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     txt:
                                                                         'Reviews',
                                                                     width: 52,
+                                                                    color: sharedProfileColour(userList.first.userType)
                                                                   ),
                                                                 ),
                                                               ]),
@@ -957,6 +983,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     txt:
                                                                         'Content',
                                                                     width: 52,
+                                                                    color: sharedProfileColour(userList.first.userType)
                                                                   ),
                                                                 ),
                                                                 TouchableOpacity(
@@ -978,6 +1005,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                             2,
                                                                     txt: 'Menu',
                                                                     width: 40,
+                                                                    color: sharedProfileColour(userList.first.userType)
                                                                   ),
                                                                 ),
                                                                 TouchableOpacity(
@@ -996,6 +1024,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     txt:
                                                                         'Reviews',
                                                                     width: 52,
+                                                                    color: sharedProfileColour(userList.first.userType)
                                                                   ),
                                                                 ),
                                                               ]),
