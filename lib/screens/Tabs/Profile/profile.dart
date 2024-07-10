@@ -465,16 +465,25 @@ class _ProfileState extends State<Profile> {
                                                               listen: false)
                                                           .userData?['phone'] ??
                                                       '';
-                                              final url = 'https://wa.me/' +
-                                                  phoneNumber;
-                                              if (await canLaunch(url)) {
-                                                await launch(url);
+                                              if (phoneNumber.length == 10) {
+                                                final url = 'https://wa.me/91' +
+                                                    phoneNumber;
+                                                if (await canLaunch(url)) {
+                                                  await launch(url);
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                        content: Text(
+                                                            'Could not launch whatsapp ')),
+                                                  );
+                                                }
                                               } else {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   const SnackBar(
                                                       content: Text(
-                                                          'Could not launch whatsapp ')),
+                                                          ' Whatsapp number is incorrect. Its not 10 digit ')),
                                                 );
                                               }
                                             },
@@ -485,7 +494,6 @@ class _ProfileState extends State<Profile> {
                                                     'assets/images/WhatsApp.png',
                                                     width: 27)),
                                           )
-                                          // https://api.whatsapp.com/send?phone=916206630515
                                         ],
                                       ),
                                     ),
@@ -2414,7 +2422,6 @@ class CommonButtonProfile extends StatelessWidget {
   double width;
   final Color? color;
 
-
   CommonButtonProfile({
     super.key,
     required this.isActive,
@@ -2438,7 +2445,7 @@ class CommonButtonProfile extends StatelessWidget {
       colorProfile = const Color.fromRGBO(
           77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
-     Color finalColor = color ?? colorProfile;
+    Color finalColor = color ?? colorProfile;
     return Container(
         child: Center(
       child: Padding(

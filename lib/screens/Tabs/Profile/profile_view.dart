@@ -583,36 +583,43 @@ Color sharedProfileColour(userType){
                                                           ],
                                                         ),
                                                       ),
-                                                      GestureDetector(
-                                                        onTap: () async {
-                                                          final phoneNumber =
-                                                              userList.first
-                                                                      .phone ??
-                                                                  '';
-                                                          final url =
-                                                              'https://wa.me/' +
-                                                                  phoneNumber;
-                                                          if (await canLaunch(
-                                                              url)) {
-                                                            await launch(url);
-                                                          } else {
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              const SnackBar(
-                                                                  content: Text(
-                                                                      'Could not launch whatsapp ')),
-                                                            );
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                            padding: EdgeInsets
-                                                                .fromLTRB(0, 0,
-                                                                    20, 0),
-                                                            child: Image.asset(
-                                                                'assets/images/WhatsApp.png',
-                                                                width: 25)),
-                                                      )
+                                                       GestureDetector(
+                                            onTap: () async {
+                                              final phoneNumber =
+                                                   userList.first.phone ??
+                                                      '';
+                                                      print("phnlen $phoneNumber ${phoneNumber.length}");
+                                              if (phoneNumber.length == 10) {
+                                                final url = 'https://wa.me/91' +
+                                                    phoneNumber;
+                                                if (await canLaunch(url)) {
+                                                  await launch(url);
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                        content: Text(
+                                                            'Could not launch whatsapp ')),
+                                                  );
+                                                }
+                                              }
+                                              else {
+                                                ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                    content: Text(
+                                                        ' Whatsapp number is incorrect. Its not 10 digit ')),
+                                              );
+                                              }
+                                            },
+                                            child: Container(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0, 7, 12, 2),
+                                                child: Image.asset(
+                                                    'assets/images/WhatsApp.png',
+                                                    width: 27)),
+                                          )
+                                         
                                                     ],
                                                   ),
                                                   Row(
