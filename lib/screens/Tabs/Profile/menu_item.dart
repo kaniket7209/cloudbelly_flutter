@@ -183,7 +183,7 @@ class _MenuItemState extends State<MenuItem> {
               children: [
                 GestureDetector(
                   onTap: () {
-    openFullScreen(context, widget.data['images'][0],widget.data['description'] ?? '',widget.data['name'] ?? '',widget.data['price'] ?? '');
+    openFullScreen(context, widget.data['images'][0],widget.data['description'] ?? '',widget.data['name'] ?? '',widget.data['price'] ?? '', widget.data['type'] ?? 'Veg');
   },
                   child: Container(
                     margin: EdgeInsets.symmetric(vertical: 1.4.h),
@@ -276,6 +276,7 @@ class _MenuItemState extends State<MenuItem> {
                     ),
                   ),
                 ),
+               
                 // vendor login - stock_status null || stock_status true //visited profile  - 
                 if(widget.storeAvailability)
                 if (widget.data['stock_status'] == null || widget.data['stock_status'] )...{
@@ -585,17 +586,18 @@ class _MenuItemState extends State<MenuItem> {
     return url;
   }
 
-  Future<void> openFullScreen(BuildContext context, String imageUrl,String description, String name, String price) async {
+  Future<void> openFullScreen(BuildContext context, String imageUrl, String description, String name, String price, String type) async {
   await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.black, // Make background transparent
+    backgroundColor: Colors.black,
     builder: (BuildContext context) {
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
           return Container(
-            height: MediaQuery.of(context).size.height - 50,
+            height: MediaQuery.of(context).size.height /1.5,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
                   onTap: () {
@@ -606,25 +608,96 @@ class _MenuItemState extends State<MenuItem> {
                       margin: EdgeInsets.only(top: 10),
                       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                       width: 65,
-                      height: 9,
+                      height: 6,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFA6E00), // Match your color scheme
+                        color: const Color(0xFFFA6E00),
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                // SizedBox(height: 20),
                 Expanded(
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: Colors.black,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      ),
                       image: DecorationImage(
                         image: NetworkImage(imageUrl),
-                        fit: BoxFit.contain,
+                        fit: BoxFit.fitWidth,
                       ),
                     ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.6,
+                            child: Text(
+                              name,
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 10),
+                            width: 10,
+                            height: 10,
+                            decoration: ShapeDecoration(
+                              color: type == 'Veg'
+                                  ? Color(0xFF4CF910)
+                                  : Colors.red,
+                              shape: const OvalBorder(),
+                              // shadows: const [
+                              //   BoxShadow(
+                              //     color: Color(0x7FB1D9D8),
+                              //     blurRadius: 6,
+                              //     offset: Offset(-2, 4),
+                              //     spreadRadius: 0,
+                              //   )
+                              // ],
+                            ),
+                          ),
+               Spacer(),
+                           Text(
+                            'Rs $price',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Container(
+                         width: MediaQuery.of(context).size.width * 0.9,
+                        child: Text(
+                          description,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                     
+                    ],
                   ),
                 ),
               ],
@@ -635,5 +708,4 @@ class _MenuItemState extends State<MenuItem> {
     },
   );
 }
-
 }
