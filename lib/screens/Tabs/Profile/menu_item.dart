@@ -691,7 +691,7 @@ class _MenuItemState extends State<MenuItem> {
                           description,
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.grey[600],
+                            color: Colors.grey[700],
                           ),
                         ),
                       ),
