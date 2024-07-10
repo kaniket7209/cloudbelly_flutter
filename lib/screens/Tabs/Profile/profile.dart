@@ -88,6 +88,7 @@ class _ProfileState extends State<Profile> {
 
   Future<void> _loading() async {
     final prefs = await SharedPreferences.getInstance();
+    fetchUserDetailsbyKey();
     setState(() {
       _isLoading = true;
     });
@@ -179,14 +180,44 @@ class _ProfileState extends State<Profile> {
       });
     });
   }
+void fetchUserDetailsbyKey() async {
+    final res = await getUserDetailsbyKey(Provider.of<Auth>(context, listen: false).userData?['user_id'], ['store_availability','kyc_status']);
+    print(" resssp ${json.encode(res)}");
+    setState(() {
+      _switchValue = res['store_availability'] ?? true;
+    });
+     Map<String, dynamic>? userData = UserPreferences.getUser();
+        if (userData != null) {
+          userData['store_availability'] = _switchValue;
+          userData['kyc_status'] = res['kyc_status'] ?? 'verified';
+          await UserPreferences.setUser(userData);
+          setState(() {
+            Provider.of<Auth>(context, listen: false).userData?['kyc_status'] = res['kyc_status'] ?? 'verified';
+          });
+          
+        }
+  }
+  Future<Map<String, dynamic>> getUserDetailsbyKey(
+      String userId, List<String> projectKey) async {
+    try {
+      final res = await Provider.of<Auth>(context, listen: false)
+          .getUserDataByKey(userId, projectKey);
+      print(res);
+      return res;
+    } catch (e) {
+      print('Error: $e');
+      return {};
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     Provider.of<Auth>(context, listen: false).userData =
         UserPreferences.getUser();
-    _switchValue = Provider.of<Auth>(context, listen: false)
-            .userData?['store_availability'] ??
+    // _switchValue = Provider.of<Auth>(context, listen: false)
+    //         .userData?['store_availability'] ??
+    fetchUserDetailsbyKey();
         false;
     _getFeed();
     _getMenu();
@@ -275,13 +306,14 @@ class _ProfileState extends State<Profile> {
                                           ),
                                         ),
                                       ),
+                                     
                                       Text(
                                         'Store Status',
                                         style: TextStyle(
                                           color:
                                               boxShadowColor, // Replace with the desired color
                                           fontFamily: 'Product Sans',
-                                          fontSize: 16.0,
+                                          fontSize: 18.0,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -1205,33 +1237,30 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  Future<void> submitStoreAvailability() async {
-    // print('storestatus${UserPreferences.getUser()?['kyc_status']}');
-    bool kycStatus = UserPreferences.getUser()?['kyc_status'];
-    if (kycStatus) {
-      String msg = await Provider.of<Auth>(context, listen: false)
-          .storeAvailability(_switchValue);
+ Future<void> submitStoreAvailability() async {
+    // Fetch the kyc_status safely
+    String kycStatus = UserPreferences.getUser()?['kyc_status'];
+    
+    if (kycStatus == 'verified') { // Check for true value explicitly
+      String msg = await Provider.of<Auth>(context, listen: false).storeAvailability(_switchValue);
       if (msg == 'User information updated successfully.') {
         Map<String, dynamic>? userData = UserPreferences.getUser();
-        userData?['store_availability'] = _switchValue;
-        await UserPreferences.setUser(userData!);
-        setState(() {
-          Provider.of<Auth>(context, listen: false)
-              .userData?['store_availability'] = _switchValue;
-        });
-        TOastNotification()
-            .showSuccesToast(context, 'Store status updated successfully');
+        if (userData != null) {
+          userData['store_availability'] = _switchValue;
+          await UserPreferences.setUser(userData);
+          setState(() {
+            Provider.of<Auth>(context, listen: false).userData?['store_availability'] = _switchValue;
+          });
+          TOastNotification().showSuccesToast(context, 'Store status updated successfully');
+        }
       } else {
         TOastNotification().showErrorToast(context, msg);
       }
-      // print(msg);
     } else {
       setState(() {
-        Provider.of<Auth>(context, listen: false)
-            .userData?['store_availability'] = false;
+        Provider.of<Auth>(context, listen: false).userData?['store_availability'] = false;
       });
-      TOastNotification()
-          .showErrorToast(context, 'Your Kyc status is incomplete');
+      TOastNotification().showErrorToast(context, 'Your KYC status is incomplete');
     }
   }
 }

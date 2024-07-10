@@ -32,7 +32,7 @@ class _PerformanceState extends State<Performance> {
       children: [
         Space(2.h),
         const Text(
-          'Manage your menu',
+          'Sample data',
           style: TextStyle(
             color: Color(0xFF094B60),
             fontSize: 20,
@@ -43,136 +43,136 @@ class _PerformanceState extends State<Performance> {
           ),
         ),
         Space(2.5.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Make_Update_ListWidget(
-              onTap: () {
-                AppWideBottomSheet().showSheet(
-                    context,
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Space(1.h),
-                          const Text(
-                            '  Scan your menu',
-                            style: TextStyle(
-                              color: Color(0xFF094B60),
-                              fontSize: 26,
-                              fontFamily: 'Jost',
-                              fontWeight: FontWeight.w600,
-                              height: 0.03,
-                              letterSpacing: 0.78,
-                            ),
-                          ),
-                          Space(3.h),
-                          TouchableOpacity(
-                            onTap: () async {
-                              AppWideLoadingBanner().loadingBanner(context);
-                              dynamic data = await Provider.of<Auth>(context,
-                                      listen: false)
-                                  .ScanMenu('Gallery');
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              if (data == 'file size very large') {
-                                TOastNotification().showErrorToast(
-                                    context, 'file size very large');
-                              } else if (data != 'No image picked' &&
-                                  data != '') {
-                                ScannedMenuBottomSheet(
-                                    context, data['data'], true);
-                              }
-                            },
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.photo_album_outlined),
-                                  Space(isHorizontal: true, 15),
-                                  Text(
-                                    'Upload from gallery',
-                                    style: TextStyle(
-                                      color: Color(0xFF094B60),
-                                      fontSize: 12,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w700,
-                                      height: 0.10,
-                                      letterSpacing: 0.36,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          TouchableOpacity(
-                            onTap: () async {
-                              AppWideLoadingBanner().loadingBanner(context);
-                              dynamic data = await Provider.of<Auth>(context,
-                                      listen: false)
-                                  .ScanMenu('Camera');
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              // print(data);
-                              if (data == 'file size very large') {
-                                TOastNotification().showErrorToast(
-                                    context, 'file size very large');
-                              } else if (data != 'No image picked' &&
-                                  data != '') {
-                                ScannedMenuBottomSheet(
-                                    context, data['data'], true);
-                              }
-                            },
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.camera),
-                                  Space(isHorizontal: true, 15),
-                                  Text(
-                                    'Click photo',
-                                    style: TextStyle(
-                                      color: Color(0xFF094B60),
-                                      fontSize: 12,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w700,
-                                      height: 0.10,
-                                      letterSpacing: 0.36,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    25.h);
-              },
-              txt: 'Add products',
-            ),
-            const Space(
-              25,
-              isHorizontal: true,
-            ),
-            Make_Update_ListWidget(
-              onTap: () async {
-                final data = await Provider.of<Auth>(context, listen: false)
-                    .getMenu(Provider.of<Auth>(context, listen: false)
-                        .userData?['user_id']);
-                (data as List<dynamic>).forEach(
-                  (element) {
-                    print(element);
-                  },
-                );
-                // Sc
-                ScannedMenuBottomSheet(context, data, false);
-              },
-              txt: 'Edit product',
-            )
-          ],
-        ),
-        Space(4.h),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     Make_Update_ListWidget(
+        //       onTap: () {
+        //         AppWideBottomSheet().showSheet(
+        //             context,
+        //             Container(
+        //               child: Column(
+        //                 crossAxisAlignment: CrossAxisAlignment.start,
+        //                 children: [
+        //                   Space(1.h),
+        //                   const Text(
+        //                     '  Scan your menu',
+        //                     style: TextStyle(
+        //                       color: Color(0xFF094B60),
+        //                       fontSize: 26,
+        //                       fontFamily: 'Jost',
+        //                       fontWeight: FontWeight.w600,
+        //                       height: 0.03,
+        //                       letterSpacing: 0.78,
+        //                     ),
+        //                   ),
+        //                   Space(3.h),
+        //                   TouchableOpacity(
+        //                     onTap: () async {
+        //                       AppWideLoadingBanner().loadingBanner(context);
+        //                       dynamic data = await Provider.of<Auth>(context,
+        //                               listen: false)
+        //                           .ScanMenu('Gallery');
+        //                       Navigator.of(context).pop();
+        //                       Navigator.of(context).pop();
+        //                       if (data == 'file size very large') {
+        //                         TOastNotification().showErrorToast(
+        //                             context, 'file size very large');
+        //                       } else if (data != 'No image picked' &&
+        //                           data != '') {
+        //                         ScannedMenuBottomSheet(
+        //                             context, data['data'], true);
+        //                       }
+        //                     },
+        //                     child: const Padding(
+        //                       padding: EdgeInsets.all(8.0),
+        //                       child: Row(
+        //                         children: [
+        //                           Icon(Icons.photo_album_outlined),
+        //                           Space(isHorizontal: true, 15),
+        //                           Text(
+        //                             'Upload from gallery',
+        //                             style: TextStyle(
+        //                               color: Color(0xFF094B60),
+        //                               fontSize: 12,
+        //                               fontFamily: 'Product Sans',
+        //                               fontWeight: FontWeight.w700,
+        //                               height: 0.10,
+        //                               letterSpacing: 0.36,
+        //                             ),
+        //                           )
+        //                         ],
+        //                       ),
+        //                     ),
+        //                   ),
+        //                   TouchableOpacity(
+        //                     onTap: () async {
+        //                       AppWideLoadingBanner().loadingBanner(context);
+        //                       dynamic data = await Provider.of<Auth>(context,
+        //                               listen: false)
+        //                           .ScanMenu('Camera');
+        //                       Navigator.of(context).pop();
+        //                       Navigator.of(context).pop();
+        //                       // print(data);
+        //                       if (data == 'file size very large') {
+        //                         TOastNotification().showErrorToast(
+        //                             context, 'file size very large');
+        //                       } else if (data != 'No image picked' &&
+        //                           data != '') {
+        //                         ScannedMenuBottomSheet(
+        //                             context, data['data'], true);
+        //                       }
+        //                     },
+        //                     child: const Padding(
+        //                       padding: EdgeInsets.all(8.0),
+        //                       child: Row(
+        //                         children: [
+        //                           Icon(Icons.camera),
+        //                           Space(isHorizontal: true, 15),
+        //                           Text(
+        //                             'Click photo',
+        //                             style: TextStyle(
+        //                               color: Color(0xFF094B60),
+        //                               fontSize: 12,
+        //                               fontFamily: 'Product Sans',
+        //                               fontWeight: FontWeight.w700,
+        //                               height: 0.10,
+        //                               letterSpacing: 0.36,
+        //                             ),
+        //                           )
+        //                         ],
+        //                       ),
+        //                     ),
+        //                   )
+        //                 ],
+        //               ),
+        //             ),
+        //             25.h);
+        //       },
+        //       txt: 'Add products',
+        //     ),
+        //     const Space(
+        //       25,
+        //       isHorizontal: true,
+        //     ),
+        //     Make_Update_ListWidget(
+        //       onTap: () async {
+        //         final data = await Provider.of<Auth>(context, listen: false)
+        //             .getMenu(Provider.of<Auth>(context, listen: false)
+        //                 .userData?['user_id']);
+        //         (data as List<dynamic>).forEach(
+        //           (element) {
+        //             print(element);
+        //           },
+        //         );
+        //         // Sc
+        //         ScannedMenuBottomSheet(context, data, false);
+        //       },
+        //       txt: 'Edit product',
+        //     )
+        //   ],
+        // ),
+        Space(1.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

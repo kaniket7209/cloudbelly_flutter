@@ -127,10 +127,10 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                   }
                 },
               ),
-             const Space(
-              25,
-              isHorizontal: true,
-            ),
+              const Space(
+                25,
+                isHorizontal: true,
+              ),
               Make_Update_ListWidget(
                 txt: 'Click photo',
                 onTap: () async {
@@ -163,179 +163,30 @@ class _SocialStatusContentState extends State<SocialStatusContent>
             ],
           ),
           Space(4.h),
-
-          Row(
-            children: [
-              const BoldTextWidgetHomeScreen(
-                txt: 'Customer visits',
+          const Center(
+            child: Text(
+              'Sample data',
+              style: TextStyle(
+                color: Color(0xFF094B60),
+                fontSize: 20,
+                fontFamily: 'Jost',
+                fontWeight: FontWeight.w600,
+                height: 0.05,
+                letterSpacing: 0.60,
               ),
-              Spacer(),
-              IconButton(
-                  onPressed: () {
-                    if (_dailyIndex == 0)
-                      return null;
-                    else {
-                      setState(() {
-                        _dailyIndex--;
-                      });
-                    }
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    size: 14,
-                    color: Color(0xFFFA6E00),
-                  )),
-              SizedBox(
-                width: 14.w,
-                child: Center(
-                  child: Text(
-                    _dailyList[_dailyIndex],
-                    style: TextStyle(
-                      color: Color(0xFF094B60),
-                      fontSize: 12,
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.w700,
-                      height: 0.14,
-                      letterSpacing: 0.36,
-                    ),
-                  ),
-                ),
-              ),
-              IconButton(
-                  onPressed: () {
-                    if (_dailyIndex == _dailyList.length - 1)
-                      return null;
-                    else {
-                      setState(() {
-                        _dailyIndex++;
-                      });
-                    }
-                  },
-                  icon: Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                    color: Color(0xFFFA6E00),
-                  ))
-            ],
+            ),
           ),
-          Space(1.h),
+          Space(3.h),
           Container(
-            //  height: 27.h,
-            width: double.infinity,
-            decoration: GlobalVariables().ContainerDecoration(
-              offset: Offset(0, 4),
-              blurRadius: 25,
-              boxColor: Colors.white,
-              cornerRadius: 20,
-              shadowColor: Color.fromRGBO(165, 200, 199, 0.6),
-            ),
-            child: Column(
-              children: [
-                Space(2.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Space(
-                      10.w,
-                      isHorizontal: true,
-                    ),
-                    CustomerVisitWidget(
-                      title: 'Total visits',
-                      number: '345',
-                      text: 'Vs 221 visits',
-                      date: 'last mon, Jan 29',
-                    ),
-                    CustomerVisitWidget(
-                      title: 'Unique visits',
-                      number: '+34',
-                      text: 'Vs 221 visits',
-                      date: 'last mon, Jan 29',
-                    ),
-                  ],
-                ),
-                Space(1.5.h),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10.w),
-                  width: double.infinity,
-                  height: 2,
-                  decoration: BoxDecoration(color: Color(0xFFD9D9D9)),
-                ),
-                Space(1.5.h),
-                Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Space(
-                      10.w,
-                      isHorizontal: true,
-                    ),
-                    CustomerVisitWidget(
-                      title: 'Total \nconversion',
-                      number: '+34',
-                      text: 'Vs 221 visits',
-                      date: 'last mon, Jan 29',
-                    ),
-                    CustomerVisitWidget(
-                      title: 'Conversion from\n unique visit',
-                      number: '+34',
-                      text: 'Vs 221 visits',
-                      date: 'last mon, Jan 29',
-                    ),
-                  ],
-                ),
-                Space(2.h),
-              ],
-            ),
-          ),
-          Space(4.h),
-          const BoldTextWidgetHomeScreen(
-            txt: 'Top 3 performing posts',
-          ),
-          Space(1.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              TopPerformingPostWidget(),
-              TopPerformingPostWidget(),
-              TopPerformingPostWidget(),
-            ],
-          ),
-          Space(4.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const BoldTextWidgetHomeScreen(
-                txt: 'Customer’s review',
-              ),
-              SeeAllWidget(),
-            ],
-          ),
-          Space(1.h),
-          CustomerReviewWidget(),
-          CustomerReviewWidget(),
-          CustomerReviewWidget(),
-          Space(2.h),
-
-          const BoldTextWidgetHomeScreen(
-            txt: 'Most activities on store (views)',
-          ),
-
-          Space(1.h),
-
-          Container(
-            //height: 34.h,
-            width: double.infinity,
-            decoration: GlobalVariables().ContainerDecoration(
-              offset: Offset(0, 4),
-              blurRadius: 15,
-              boxColor: Colors.white,
-              cornerRadius: 15,
-              shadowColor: Color.fromRGBO(177, 202, 202, 0.6),
-            ),
+        
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    const BoldTextWidgetHomeScreen(
+                      txt: 'Customer visits',
+                    ),
+                    Spacer(),
                     IconButton(
                         onPressed: () {
                           if (_dailyIndex == 0)
@@ -384,352 +235,192 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                         ))
                   ],
                 ),
-                FineBarChart(
-                    barWidth: 25,
-                    barHeight: 20.h,
-                    backgroundColors: Colors.white,
-                    isBottomNameDisable: false,
-                    isValueDisable: false,
-                    textStyle: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black,
-                    ),
-                    barBackgroundColors: Colors.grey.withOpacity(0.3),
-                    barValue: barValue,
-                    barColors: barColors,
-                    barBottomName: bottomBarName),
                 Space(1.h),
+                Container(
+                  //  height: 27.h,
+                  width: double.infinity,
+                  decoration: GlobalVariables().ContainerDecoration(
+                    offset: Offset(0, 4),
+                    blurRadius: 25,
+                    boxColor: Colors.white,
+                    cornerRadius: 20,
+                    shadowColor: Color.fromRGBO(165, 200, 199, 0.6),
+                  ),
+                  child: Column(
+                    children: [
+                      Space(2.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Space(
+                            10.w,
+                            isHorizontal: true,
+                          ),
+                          CustomerVisitWidget(
+                            title: 'Total visits',
+                            number: '345',
+                            text: 'Vs 221 visits',
+                            date: 'last mon, Jan 29',
+                          ),
+                          CustomerVisitWidget(
+                            title: 'Unique visits',
+                            number: '+34',
+                            text: 'Vs 221 visits',
+                            date: 'last mon, Jan 29',
+                          ),
+                        ],
+                      ),
+                      Space(1.5.h),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 10.w),
+                        width: double.infinity,
+                        height: 2,
+                        decoration: BoxDecoration(color: Color(0xFFD9D9D9)),
+                      ),
+                      Space(1.5.h),
+                      Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Space(
+                            10.w,
+                            isHorizontal: true,
+                          ),
+                          CustomerVisitWidget(
+                            title: 'Total \nconversion',
+                            number: '+34',
+                            text: 'Vs 221 visits',
+                            date: 'last mon, Jan 29',
+                          ),
+                          CustomerVisitWidget(
+                            title: 'Conversion from\n unique visit',
+                            number: '+34',
+                            text: 'Vs 221 visits',
+                            date: 'last mon, Jan 29',
+                          ),
+                        ],
+                      ),
+                      Space(2.h),
+                    ],
+                  ),
+                ),
+                Space(4.h),
+                const BoldTextWidgetHomeScreen(
+                  txt: 'Top 3 performing posts',
+                ),
+                Space(1.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    TopPerformingPostWidget(),
+                    TopPerformingPostWidget(),
+                    TopPerformingPostWidget(),
+                  ],
+                ),
+                Space(4.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const BoldTextWidgetHomeScreen(
+                      txt: 'Customer’s review',
+                    ),
+                    SeeAllWidget(),
+                  ],
+                ),
+                Space(1.h),
+                CustomerReviewWidget(),
+                CustomerReviewWidget(),
+                CustomerReviewWidget(),
+                Space(2.h),
+                const BoldTextWidgetHomeScreen(
+                  txt: 'Most activities on store (views)',
+                ),
+                Space(1.h),
+                Container(
+                  //height: 34.h,
+                  width: double.infinity,
+                  decoration: GlobalVariables().ContainerDecoration(
+                    offset: Offset(0, 4),
+                    blurRadius: 15,
+                    boxColor: Colors.white,
+                    cornerRadius: 15,
+                    shadowColor: Color.fromRGBO(177, 202, 202, 0.6),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                if (_dailyIndex == 0)
+                                  return null;
+                                else {
+                                  setState(() {
+                                    _dailyIndex--;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                Icons.arrow_back_ios,
+                                size: 14,
+                                color: Color(0xFFFA6E00),
+                              )),
+                          SizedBox(
+                            width: 14.w,
+                            child: Center(
+                              child: Text(
+                                _dailyList[_dailyIndex],
+                                style: TextStyle(
+                                  color: Color(0xFF094B60),
+                                  fontSize: 12,
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.w700,
+                                  height: 0.14,
+                                  letterSpacing: 0.36,
+                                ),
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                if (_dailyIndex == _dailyList.length - 1)
+                                  return null;
+                                else {
+                                  setState(() {
+                                    _dailyIndex++;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                Icons.arrow_forward_ios,
+                                size: 14,
+                                color: Color(0xFFFA6E00),
+                              ))
+                        ],
+                      ),
+                      FineBarChart(
+                          barWidth: 25,
+                          barHeight: 20.h,
+                          backgroundColors: Colors.white,
+                          isBottomNameDisable: false,
+                          isValueDisable: false,
+                          textStyle: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                          ),
+                          barBackgroundColors: Colors.grey.withOpacity(0.3),
+                          barValue: barValue,
+                          barColors: barColors,
+                          barBottomName: bottomBarName),
+                      Space(1.h),
+                    ],
+                  ),
+                ),
+                Space(4.h),
               ],
             ),
           ),
-          Space(4.h),
-          // const BoldTextWidgetHomeScreen(txt: 'Tools & essentials'),
-          // Space(2.h),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     TouchableOpacity(
-          //         onTap: () async {
-          //           final prefs = await SharedPreferences.getInstance();
-
-          //           final counter = prefs.getInt('counter') ?? 1;
-
-          //           if (counter < 4) {
-          //             return SlidingSheet().showAlertDialog(context, counter);
-          //           } else {
-          //             TOastNotification().showSuccesToast(context, 'All Set ');
-          //           }
-          //         },
-          //         child: ToolsButtonWidgetHomeSCreen(
-          //             width: 15.w, txt: 'Setup Store')),
-          //     ToolsButtonWidgetHomeSCreen(
-          //       width: 15.w,
-          //       txt: 'Photos & Videos',
-          //     ),
-          //     TouchableOpacity(
-          //         onTap: () {
-          //           return Navigator.of(context)
-          //               .pushNamed(InventoryHub.routeName);
-          //         },
-          //         child: ToolsButtonWidgetHomeSCreen(
-          //           width: 15.w,
-          //           txt: 'Inventory Manage',
-          //         )),
-          //     TouchableOpacity(
-          //       onTap: () {
-          //         return showModalBottomSheet(
-          //           // useSafeArea: true,
-          //           context: context,
-          //           isScrollControlled: true,
-          //           builder: (BuildContext context) {
-          //             return StatefulBuilder(
-          //               builder: (BuildContext context, StateSetter setState) {
-          //                 return Container(
-          //                   decoration: const ShapeDecoration(
-          //                     color: Colors.white,
-          //                     shape: SmoothRectangleBorder(
-          //                       borderRadius: SmoothBorderRadius.only(
-          //                           topLeft: SmoothRadius(
-          //                               cornerRadius: 35, cornerSmoothing: 1),
-          //                           topRight: SmoothRadius(
-          //                               cornerRadius: 35, cornerSmoothing: 1)),
-          //                     ),
-          //                   ),
-          //                   height: MediaQuery.of(context).size.height * 0.3,
-          //                   width: double.infinity,
-          //                   padding: EdgeInsets.only(
-          //                       left: 10.w, right: 10.w, top: 2.h, bottom: 2.h),
-          //                   child: SingleChildScrollView(
-          //                     child: Column(
-          //                       crossAxisAlignment: CrossAxisAlignment.start,
-          //                       children: [
-          //                         TouchableOpacity(
-          //                           onTap: () {
-          //                             return Navigator.of(context).pop();
-          //                           },
-          //                           child: Center(
-          //                             child: Container(
-          //                               padding: EdgeInsets.symmetric(
-          //                                   vertical: 1.h, horizontal: 3.w),
-          //                               width: 65,
-          //                               height: 9,
-          //                               decoration: ShapeDecoration(
-          //                                 color: const Color(0xFFFA6E00),
-          //                                 shape: RoundedRectangleBorder(
-          //                                     borderRadius:
-          //                                         BorderRadius.circular(6)),
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ),
-          //                         Space(6.h),
-          //                         const Text(
-          //                           'Scan your menu',
-          //                           style: TextStyle(
-          //                             color: Color(0xFF094B60),
-          //                             fontSize: 26,
-          //                             fontFamily: 'Jost',
-          //                             fontWeight: FontWeight.w600,
-          //                             height: 0.03,
-          //                             letterSpacing: 0.78,
-          //                           ),
-          //                         ),
-          //                         Space(4.h),
-          //                         Row(
-          //                           mainAxisAlignment: MainAxisAlignment.start,
-          //                           children: [
-          //                             TouchableOpacity(
-          //                               onTap: !_isLoading
-          // ? () async {
-          //     setState(() {
-          //       _isLoading = true;
-          //     });
-          //     dynamic data =
-          //         await ScanMenu('Gallery');
-          //     // print(data);
-          //     Navigator.of(context).pop();
-          //     ScannedMenuBottomSheet(
-          //         context, data);
-          //     setState(() {
-          //       _isLoading = false;
-          //     });
-          //   }
-          //                                   : null,
-          //                               child: StocksMayBeNeedWidget(
-          //                                   url: '',
-          //                                   txt: 'Upload from gallery'),
-          //                             ),
-          //                             TouchableOpacity(
-          //                                 onTap: !_isLoading
-          //                                     ? () async {
-          //                                         setState(() {
-          //                                           _isLoading = true;
-          //                                         });
-          //                                         final data =
-          //                                             await ScanMenu('Camera');
-          //                                         Navigator.of(context).pop();
-          //                                         ScannedMenuBottomSheet(
-          //                                             context, data);
-          //                                         setState(() {
-          //                                           _isLoading = false;
-          //                                         });
-          //                                       }
-          //                                     : null,
-          //                                 child: StocksMayBeNeedWidget(
-          //                                     url: '', txt: 'Click photo')),
-          //                             Space(isHorizontal: true, 5.w),
-          //                             if (_isLoading)
-          //                               const Center(
-          //                                 child: CircularProgressIndicator(),
-          //                               ),
-          //                           ],
-          //                         ),
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 );
-          //               },
-          //             );
-          //           },
-          //         );
-          //       },
-          //       child: ToolsButtonWidgetHomeSCreen(
-          //         width: 15.w,
-          //         txt: 'Upload Menu',
-          //       ),
-          //     ),
-          //     ToolsButtonWidgetHomeSCreen(
-          //       width: 15.w,
-          //       txt: 'Dashboard',
-          //     ),
-          //   ],
-          // ),
-          // Space(3.h),
-          // Center(
-          //   child: Card(
-          //     elevation: 10,
-          //     child: Container(
-          //         height: 6.h,
-          //         width: 75.w,
-          //         padding: EdgeInsets.only(left: 1.w, right: 1.w),
-          //         decoration: ShapeDecoration(
-          //           color: Colors.white,
-          //           shape: SmoothRectangleBorder(
-          //             borderRadius: SmoothBorderRadius(
-          //               cornerRadius: 10,
-          //               cornerSmoothing: 1,
-          //             ),
-          //           ),
-          //         ),
-          //         child: const Center(
-          //           child: Text.rich(
-          //             TextSpan(
-          //               children: [
-          //                 TextSpan(
-          //                   text: 'Gaon',
-          //                   style: TextStyle(
-          //                     color: Color(0xFF0A4C61),
-          //                     fontSize: 24,
-          //                     fontFamily: 'Jost',
-          //                     fontWeight: FontWeight.w700,
-          //                     letterSpacing: 0.24,
-          //                   ),
-          //                 ),
-          //                 TextSpan(
-          //                   text: 'FRESH',
-          //                   style: TextStyle(
-          //                     color: Color(0xFF63AFC7),
-          //                     fontSize: 24,
-          //                     fontFamily: 'Jost',
-          //                     fontWeight: FontWeight.w700,
-          //                     letterSpacing: 0.24,
-          //                   ),
-          //                 ),
-          //               ],
-          //             ),
-          //           ),
-          //         )),
-          //   ),
-          // ),
-          // Space(3.h),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     const BoldTextWidgetHomeScreen(txt: 'Inventory forecasting'),
-          //     Column(
-          //       children: [
-          //         Text(
-          //           'Expand',
-          //           style: GoogleFonts.ptSans(
-          //               color: const Color.fromRGBO(10, 76, 97, 1),
-          //               fontWeight: FontWeight.w700,
-          //               fontSize: 12),
-          //         ),
-          //         Container(
-          //           height: 2,
-          //           width: 45,
-          //           color: const Color.fromRGBO(250, 110, 0, 1),
-          //         )
-          //       ],
-          //     )
-          //   ],
-          // ),
-          // Space(2.h),
-          // InventoryForcastingWidget(isBuy: true),
-          // Space(3.h),
-          // const BoldTextWidgetHomeScreen(txt: 'Inventory based recipe'),
-          // Space(1.5.h),
-          // SingleChildScrollView(
-          //   scrollDirection: Axis.horizontal,
-          //   child: SizedBox(
-          //     height: 18.h,
-          //     child: Center(
-          //       child: Row(
-          //         children: [
-          //           InvetoryBasedReciepeWidget(),
-          //           InvetoryBasedReciepeWidget(),
-          //           InvetoryBasedReciepeWidget(),
-          //           InvetoryBasedReciepeWidget(),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          // Space(3.h),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     const BoldTextWidgetHomeScreen(txt: 'Inventory wastage'),
-          //     Column(
-          //       children: [
-          //         Text(
-          //           'Expand',
-          //           style: GoogleFonts.ptSans(
-          //               color: const Color.fromRGBO(10, 76, 97, 1),
-          //               fontWeight: FontWeight.w700,
-          //               fontSize: 12),
-          //         ),
-          //         Container(
-          //           height: 2,
-          //           width: 45,
-          //           color: const Color.fromRGBO(250, 110, 0, 1),
-          //         )
-          //       ],
-          //     )
-          //   ],
-          // ),
-          // Space(2.h),
-          // InventoryForcastingWidget(
-          //   isBuy: false,
-          // ),
-          // Space(3.h),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     const BoldTextWidgetHomeScreen(txt: 'Reselling marketplace'),
-          //     Column(
-          //       children: [
-          //         Text(
-          //           'Expand',
-          //           style: GoogleFonts.ptSans(
-          //               color: const Color.fromRGBO(10, 76, 97, 1),
-          //               fontWeight: FontWeight.w700,
-          //               fontSize: 12),
-          //         ),
-          //         Container(
-          //           height: 2,
-          //           width: 45,
-          //           color: const Color.fromRGBO(250, 110, 0, 1),
-          //         )
-          //       ],
-          //     )
-          //   ],
-          // ),
-          // Space(1.h),
-          // SingleChildScrollView(
-          //   scrollDirection: Axis.horizontal,
-          //   child: SizedBox(
-          //     height: 18.h,
-          //     child: Center(
-          //       child: Row(
-          //         children: [
-          //           InvetoryBasedReciepeWidget(
-          //             isResell: true,
-          //           ),
-          //           InvetoryBasedReciepeWidget(
-          //             isResell: true,
-          //           ),
-          //           InvetoryBasedReciepeWidget(
-          //             isResell: true,
-          //           ),
-          //           InvetoryBasedReciepeWidget(
-          //             isResell: true,
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
+          
         ],
       ),
     );
@@ -1005,7 +696,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color boxShadowColor;
- String userType =
+    String userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
     if (userType == 'Vendor') {
       boxShadowColor = const Color(0xff0A4C61);
@@ -1020,30 +711,30 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Space(1.h),
-        if(userType !='Customer')
-        Text(
-          isLogo ? '  Add logo' : 'Add Cover Image',
-          style: TextStyle(
-            color: boxShadowColor,
-            fontSize: isProfile ? 17 : 26,
-            fontFamily: 'Jost',
-            fontWeight: FontWeight.w600,
-            height: 0.03,
-            letterSpacing: 0.78,
+        if (userType != 'Customer')
+          Text(
+            isLogo ? '  Add logo' : 'Add Cover Image',
+            style: TextStyle(
+              color: boxShadowColor,
+              fontSize: isProfile ? 17 : 26,
+              fontFamily: 'Jost',
+              fontWeight: FontWeight.w600,
+              height: 0.03,
+              letterSpacing: 0.78,
+            ),
           ),
-        ),
-        if(userType =='Customer')
-        Text(
-          isLogo ? '  Add profile photo' : 'Add Cover Image',
-          style: TextStyle(
-            color: boxShadowColor,
-            fontSize: isProfile ? 17 : 26,
-            fontFamily: 'Jost',
-            fontWeight: FontWeight.w600,
-            height: 0.03,
-            letterSpacing: 0.78,
+        if (userType == 'Customer')
+          Text(
+            isLogo ? '  Add profile photo' : 'Add Cover Image',
+            style: TextStyle(
+              color: boxShadowColor,
+              fontSize: isProfile ? 17 : 26,
+              fontFamily: 'Jost',
+              fontWeight: FontWeight.w600,
+              height: 0.03,
+              letterSpacing: 0.78,
+            ),
           ),
-        ),
         Space(3.h),
         TouchableOpacity(
           onTap: () async {
@@ -1081,7 +772,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
             Navigator.of(context).pop();
             Navigator.of(context).pop();
           },
-          child:  Padding(
+          child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Row(
               children: [
@@ -1102,68 +793,13 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
             ),
           ),
         ),
-        
-        // TouchableOpacity(
-        //   onTap: () async {
-        //     AppWideLoadingBanner().loadingBanner(context);
-        //     final _url = await Provider.of<Auth>(context, listen: false)
-        //         .pickImageAndUpoad(context, src: 'Camera');
-        //     if (_url == 'file size very large') {
-        //       TOastNotification()
-        //           .showErrorToast(context, 'file size very large');
-        //     } else if (_url != '') {
-        //       String code = isLogo
-        //           ? await Provider.of<Auth>(context, listen: false)
-        //               .updateProfilePhoto(_url)
-        //           : await Provider.of<Auth>(context, listen: false)
-        //               .updateCoverImage(_url, context);
-        //       if (code == '200') {
-        //         if (isLogo) {
-        //           Provider.of<Auth>(context, listen: false).logo_url = _url;
-        //         } else {
-        //           Provider.of<Auth>(context, listen: false)
-        //               .userData?['cover_image'] = _url;
-        //         }
-        //         TOastNotification().showSuccesToast(context,
-        //             '${isLogo ? 'Store logo' : 'Cover Image'}  updated');
-        //         // Navigator.of(context)
-        //         // .pushNamed(Tabs.routeName);
-        //       } else {
-        //         TOastNotification().showErrorToast(
-        //             context, 'Error happend while updating image');
-        //       }
-        //       // Provider.of<Auth>(context, listen: false).logo_url=
-        //     }
 
-        //     Navigator.of(context).pop();
-        //     Navigator.of(context).pop();
-        //   },
-        //   child: const Padding(
-        //     padding: EdgeInsets.all(8.0),
-        //     child: Row(
-        //       children: [
-        //         Icon(Icons.camera),
-        //         Space(isHorizontal: true, 15),
-        //         Text(
-        //           'Click photo',
-        //           style: TextStyle(
-        //             color: Color(0xFF094B60),
-        //             fontSize: 12,
-        //             fontFamily: 'Product Sans',
-        //             fontWeight: FontWeight.w700,
-        //             height: 0.10,
-        //             letterSpacing: 0.36,
-        //           ),
-        //         )
-        //       ],
-        //     ),
-        //   ),
-        // ),
-      TouchableOpacity(
+        
+        TouchableOpacity(
           onTap: () async {
             AppWideLoadingBanner().loadingBanner(context);
             final _url = await Provider.of<Auth>(context, listen: false)
-                .pickImageAndUpoad(context,src: 'Camera');
+                .pickImageAndUpoad(context, src: 'Camera');
             if (_url == 'file size very large') {
               TOastNotification()
                   .showErrorToast(context, 'file size very large');
@@ -1195,7 +831,7 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
             Navigator.of(context).pop();
             Navigator.of(context).pop();
           },
-          child:  Padding(
+          child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Row(
               children: [
@@ -1216,7 +852,6 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
             ),
           ),
         ),
-        
       ],
     );
   }
