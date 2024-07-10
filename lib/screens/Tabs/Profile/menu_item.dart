@@ -59,18 +59,51 @@ class _MenuItemState extends State<MenuItem> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: 60.w,
-                  child: Text(
-                    widget.data['name'],
-                    style: TextStyle(
-                      color: Color(0xFF094B60),
-                      fontSize: 16,
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.w700,
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                       constraints:  BoxConstraints(
+                          maxWidth: 60.w, // Set your maximum width here
+                        ),
+                      // width: 60.w,
+                      child: Text(
+                        widget.data['name'],
+                        style: TextStyle(
+                          color: Color(0xFF094B60),
+                          fontSize: 16,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
-                  ),
+                    SizedBox(width: 10,),
+                    Container(
+                      
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: ShapeDecoration(
+                          color: widget.data['type'] == 'Veg'
+                              ? Color(0xFF4CF910)
+                              : Colors.red,
+                          shape: OvalBorder(),
+                          shadows: const [
+                            BoxShadow(
+                              color: Color(0x7FB1D9D8),
+                              blurRadius: 6,
+                              offset: Offset(-2, 4),
+                              spreadRadius: 0,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+
                 Row(
                   children: [
                     Text('Rs  ${widget.data['price']}',
@@ -265,28 +298,7 @@ class _MenuItemState extends State<MenuItem> {
                         : null,
                   ),
                 ),
-                Positioned(
-                  right: 0.5.w,
-                  top: 1.5.h,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: ShapeDecoration(
-                      color: widget.data['type'] == 'Veg'
-                          ? Color(0xFF4CF910)
-                          : Colors.red,
-                      shape: OvalBorder(),
-                      shadows: const [
-                        BoxShadow(
-                          color: Color(0x7FB1D9D8),
-                          blurRadius: 6,
-                          offset: Offset(-2, 4),
-                          spreadRadius: 0,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+                
 
                 // vendor login - stock_status null || stock_status true //visited profile  -
                 if (widget.storeAvailability)
@@ -334,7 +346,7 @@ class _MenuItemState extends State<MenuItem> {
                                 }
                               },
                               child: ButtonWidgetHomeScreen(
-                                  radius: 4,
+                                  radius: 8,
                                   isActive: true,
                                   height: 2.5.h,
                                   width: 15.w,

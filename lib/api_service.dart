@@ -780,7 +780,7 @@ final prefs = await SharedPreferences.getInstance();
       'name': name,
       'type': type,
     };
-
+    print("reqBody ${json.encode(requestBody)}");
     try {
       final response = await http.post(
         Uri.parse(url),

@@ -203,7 +203,7 @@ class _PostItemState extends State<PostItem> {
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
-    print("isSharePost ${widget.isSharePost}" );
+    // print("isSharePost ${widget.isSharePost}" );
     // final date_time = formatTimeDifference('created_at');
     CarouselController buttonCarouselController = CarouselController();
     return

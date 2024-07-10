@@ -244,27 +244,10 @@ class _ProfileState extends State<Profile> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                CustomIconButton(
-                                  text: '',
-                                  ic: Icons.qr_code,
-                                  onTap: () {
-                                    print(" profilepic" +
-                                        Provider.of<Auth>(context,
-                                                listen: false)
-                                            .userData?['profile_photo']);
-                                    context
-                                        .read<TransitionEffect>()
-                                        .setBlurSigma(5.0);
-                                    ProfileShareBottomSheet()
-                                        .AddAddressSheet(context);
-                                  },
-                                ),
-                                // store switch
                                 if (userType == 'Vendor')
-                                  Column(
+                                  Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      SizedBox(height: 10),
                                       Container(
                                         child: Transform.scale(
                                           scale:
@@ -298,50 +281,77 @@ class _ProfileState extends State<Profile> {
                                           color:
                                               boxShadowColor, // Replace with the desired color
                                           fontFamily: 'Product Sans',
-                                          fontSize: 14.0,
+                                          fontSize: 16.0,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ],
                                   ),
                                 // store switch
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const ProfileSettingView()));
-                                  },
-                                  child: Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: ShapeDecoration(
-                                      shadows: [
-                                        BoxShadow(
-                                          offset: Offset(0, 4),
-                                          color: _isVendor
-                                              ? Color.fromRGBO(
-                                                  31, 111, 109, 0.5)
-                                              : Color(0xBC73BC)
-                                                  .withOpacity(0.6),
-                                          blurRadius: 20,
-                                        )
-                                      ],
-                                      color: Colors.white,
-                                      shape: SmoothRectangleBorder(
-                                        borderRadius: SmoothBorderRadius(
-                                          cornerRadius: 12,
-                                          cornerSmoothing: 1,
+                                Row(
+                                  children: [
+                                    CustomIconButton(
+                                      text: '',
+                                      ic: Icons.qr_code,
+                                      onTap: () {
+                                        print(" profilepic" +
+                                            Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .userData?['profile_photo']);
+                                        context
+                                            .read<TransitionEffect>()
+                                            .setBlurSigma(5.0);
+                                        ProfileShareBottomSheet()
+                                            .AddAddressSheet(context);
+                                      },
+                                    ),
+                                    if (userType != 'Customer')
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                    if (userType == 'Customer')
+                                      SizedBox(
+                                        width: 60.w,
+                                      ),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const ProfileSettingView()));
+                                      },
+                                      child: Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: ShapeDecoration(
+                                          shadows: [
+                                            BoxShadow(
+                                              offset: Offset(0, 4),
+                                              color: _isVendor
+                                                  ? Color.fromRGBO(
+                                                      31, 111, 109, 0.5)
+                                                  : Color(0xBC73BC)
+                                                      .withOpacity(0.6),
+                                              blurRadius: 20,
+                                            )
+                                          ],
+                                          color: Colors.white,
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                              cornerRadius: 12,
+                                              cornerSmoothing: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.settings,
+                                          size: 27,
+                                          color: boxShadowColor,
                                         ),
                                       ),
                                     ),
-                                    child: Icon(
-                                      Icons.settings,
-                                      size: 27,
-                                      color: boxShadowColor,
-                                    ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -549,13 +559,13 @@ class _ProfileState extends State<Profile> {
                                                 txt: 'Edit profile',
                                                 isActive: true),
                                           ),
-                                           if (Provider.of<Auth>(context,
+                                        if (Provider.of<Auth>(context,
                                                     listen: false)
                                                 .userData?['user_type'] !=
                                             UserType.Customer.name)
-                                        SizedBox(
-                                          width: 20,
-                                        ),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
                                         if (Provider.of<Auth>(context,
                                                     listen: false)
                                                 .userData?['user_type'] !=
@@ -583,13 +593,13 @@ class _ProfileState extends State<Profile> {
                                             txt: 'Edit product',
                                           ),
                                         //edit menu
-                                         if (Provider.of<Auth>(context,
+                                        if (Provider.of<Auth>(context,
                                                     listen: false)
                                                 .userData?['user_type'] !=
                                             UserType.Customer.name)
-                                         SizedBox(
-                                          width: 20,
-                                        ),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
                                         if (Provider.of<Auth>(context,
                                                     listen: false)
                                                 .userData?['user_type'] !=
@@ -767,7 +777,6 @@ class _ProfileState extends State<Profile> {
                                             },
                                             txt: 'Add products',
                                           ),
-                                          
                                       ],
                                     ),
                                     Space(2.h),
@@ -1240,16 +1249,17 @@ class Make_Profile_ListWidget extends StatelessWidget {
           width: 135,
           decoration: ShapeDecoration(
             shadows: [
-              txt=='Add products'?
-              BoxShadow(
-                  offset: Offset(5, 6),
-                  spreadRadius: 0,
-                  color: Color(0xff126B87).withOpacity(0.42),
-                  blurRadius: 30): BoxShadow(
-                    offset: Offset(5, 6),
-                    spreadRadius: 0,
-                    color: Color(0xffE88037).withOpacity(0.5),
-                    blurRadius: 30)
+              txt == 'Add products'
+                  ? BoxShadow(
+                      offset: Offset(5, 6),
+                      spreadRadius: 0,
+                      color: Color(0xff126B87).withOpacity(0.42),
+                      blurRadius: 30)
+                  : BoxShadow(
+                      offset: Offset(5, 6),
+                      spreadRadius: 0,
+                      color: Color(0xffE88037).withOpacity(0.5),
+                      blurRadius: 30)
             ],
             color: color ?? const Color.fromRGBO(84, 166, 193, 1),
             shape: SmoothRectangleBorder(
@@ -1362,7 +1372,7 @@ Future<dynamic> ScannedMenuBottomSheet(
                                   'category': 'Category',
                                   'name': 'Item',
                                   'price': '00.00',
-                                  'VEG': true
+                                  'type': 'Veg'
                                 });
                               });
                             },
@@ -1510,7 +1520,6 @@ Future<dynamic> ScannedMenuBottomSheet(
                     Column(
                       children: List.generate((list as List<dynamic>).length,
                           (index) {
-                        
                         TextEditingController nameController =
                             TextEditingController(
                           text: list[index]['name'],
@@ -1523,7 +1532,7 @@ Future<dynamic> ScannedMenuBottomSheet(
                             TextEditingController(
                           text: list[index]['category'],
                         );
-
+                        bool isNonVeg = list[index]['type'] == 'Non Veg';
                         return Container(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -1549,9 +1558,10 @@ Future<dynamic> ScannedMenuBottomSheet(
                                               listen: false)
                                           .updateMenuItem(
                                         list[index]['_id'],
-                                        list[index]['price'],
+                                        list[index]['price']
+                                            .toString(), // Ensure price is passed as a string
                                         newValue,
-                                        list[index]['VEG'],
+                                        list[index]['type'],
                                         list[index]['category'],
                                       );
                                     }
@@ -1595,12 +1605,13 @@ Future<dynamic> ScannedMenuBottomSheet(
                                               list[index]['_id'],
                                               newValue,
                                               list[index]['name'],
-                                              list[index]['VEG'],
+                                              list[index]['type'],
                                               list[index]['category'],
                                             );
                                           }
                                           setState(() {
-                                            list[index]['price'] = newValue;
+                                            list[index]['price'] =
+                                                newValue; // Ensure price is updated as a string
                                           });
                                         },
                                       ),
@@ -1611,64 +1622,67 @@ Future<dynamic> ScannedMenuBottomSheet(
                               SizedBox(
                                 width: 15.w,
                                 child: Transform.scale(
-                                    scale: 0.85,
-                                    child: CupertinoSwitch(
-                                      value: list[index]['type'] == 'Non Veg',
-                                      onChanged: (value) async {
-                                        final updatedType =
-                                            value ? 'Non Veg' : 'Veg';
-                                        if (!isUpload) {
-                                          await Provider.of<Auth>(context,
-                                                  listen: false)
-                                              .updateMenuItem(
-                                            list[index]['_id'],
-                                            list[index]['price'],
-                                            list[index]['name'],
-                                            updatedType,
-                                            list[index]['category'],
-                                          );
-                                        }
-                                        setState(() {
-                                          list[index]['type'] = updatedType;
-                                        });
-                                      },
-                                      activeColor:
-                                          const Color.fromRGBO(232, 89, 89, 1),
-                                      trackColor:
-                                          const Color.fromRGBO(77, 171, 75, 1),
-                                    )),
+                                  scale: 0.85,
+                                  child: CupertinoSwitch(
+                                    value: isNonVeg,
+                                    onChanged: (value) async {
+                                      final updatedType =
+                                          value ? 'Non Veg' : 'Veg';
+                                      if (!isUpload) {
+                                        await Provider.of<Auth>(context,
+                                                listen: false)
+                                            .updateMenuItem(
+                                          list[index]['_id'],
+                                          list[index]['price'].toString(),
+                                          list[index]['name'],
+                                          updatedType,
+                                          list[index]['category'],
+                                        );
+                                      }
+                                      setState(() {
+                                        list[index]['type'] = updatedType;
+                                      });
+                                    },
+                                    activeColor:
+                                        const Color.fromRGBO(232, 89, 89, 1),
+                                    trackColor:
+                                        const Color.fromRGBO(77, 171, 75, 1),
+                                  ),
+                                ),
                               ),
                               const Spacer(),
                               SizedBox(
                                 width: 20.w,
                                 child: TextField(
-                                    maxLines: null,
-                                    style: const TextStyle(
-                                      color: Color(0xFF094B60),
-                                      fontSize: 13,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    controller: categoryController,
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                    ),
-                                    textInputAction: TextInputAction.done,
-                                    onSubmitted: (newValue) async {
-                                      if (!isUpload) {
-                                        await Provider.of<Auth>(context,
-                                                listen: false)
-                                            .updateMenuItem(
-                                                list[index]['_id'],
-                                                list[index]['price'],
-                                                list[index]['name'],
-                                                list[index]['type'],
-                                                newValue);
-                                      }
-                                      setState(() {
-                                        list[index]['category'] = newValue;
-                                      });
-                                    }),
+                                  maxLines: null,
+                                  style: const TextStyle(
+                                    color: Color(0xFF094B60),
+                                    fontSize: 13,
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  controller: categoryController,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  textInputAction: TextInputAction.done,
+                                  onSubmitted: (newValue) async {
+                                    if (!isUpload) {
+                                      await Provider.of<Auth>(context,
+                                              listen: false)
+                                          .updateMenuItem(
+                                        list[index]['_id'],
+                                        list[index]['price'].toString(),
+                                        list[index]['name'],
+                                        list[index]['type'],
+                                        newValue,
+                                      );
+                                    }
+                                    setState(() {
+                                      list[index]['category'] = newValue;
+                                    });
+                                  },
+                                ),
                               ),
                             ],
                           ),
@@ -1862,26 +1876,28 @@ class _MenuState extends State<Menu> {
   bool _iscategorySearch = false;
   bool _searchOn = false;
 
- bool storeAvailability = true;
+  bool storeAvailability = true;
   @override
   void initState() {
     super.initState();
 
     // getUserDetailsbyKey()
     fetchUserDetailsbyKey();
-
   }
+
   void fetchUserDetailsbyKey() async {
     final res = await getUserDetailsbyKey(widget.user, ['store_availability']);
     // print(" resss ${json.encode(res)}");
     setState(() {
-      storeAvailability = res['store_availability']?? true;
+      storeAvailability = res['store_availability'] ?? true;
     });
   }
 
-  Future<Map<String, dynamic>> getUserDetailsbyKey(String userId, List<String> projectKey) async {
+  Future<Map<String, dynamic>> getUserDetailsbyKey(
+      String userId, List<String> projectKey) async {
     try {
-      final res = await Provider.of<Auth>(context, listen: false).getUserDataByKey(userId, projectKey);
+      final res = await Provider.of<Auth>(context, listen: false)
+          .getUserDataByKey(userId, projectKey);
       print(res);
       return res;
     } catch (e) {
@@ -1889,15 +1905,15 @@ class _MenuState extends State<Menu> {
       return {};
     }
   }
+
   @override
   Widget build(BuildContext context) {
-
     // print("storeAvailabilitydata $storeAvailability");
-  
+
     String userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
     Color boxShadowColor;
-
+    Color categorySelected = Color(0xff70BAD2);
     if (userType == 'Vendor') {
       boxShadowColor = const Color(0xff0A4C61);
     } else if (userType == 'Customer') {
@@ -1971,6 +1987,7 @@ class _MenuState extends State<Menu> {
                                                 _controller.text =
                                                     widget.categories[i];
                                               });
+                                              categorySelected = Colors.red;
                                             },
                                             child: Container(
                                               margin:
@@ -1979,8 +1996,7 @@ class _MenuState extends State<Menu> {
                                                   vertical: 1.h,
                                                   horizontal: 5.w),
                                               decoration: ShapeDecoration(
-                                                color: const Color.fromRGBO(
-                                                    112, 186, 210, 1),
+                                                color: categorySelected,
                                                 shape: SmoothRectangleBorder(
                                                   borderRadius:
                                                       SmoothBorderRadius(
@@ -2118,7 +2134,8 @@ class _MenuState extends State<Menu> {
                                               .toString()
                                               .contains(_controller.text))
                                             MenuItem(
-                                              storeAvailability:storeAvailability,
+                                                storeAvailability:
+                                                    storeAvailability,
                                                 data: widget.menuList[index],
                                                 scroll: widget.scroll),
                                       if (!_iscategorySearch && _searchOn)
@@ -2131,7 +2148,8 @@ class _MenuState extends State<Menu> {
                                               .contains(_controller.text
                                                   .toLowerCase()))
                                             MenuItem(
-                                              storeAvailability:storeAvailability,
+                                                storeAvailability:
+                                                    storeAvailability,
                                                 data: widget.menuList[index],
                                                 scroll: widget.scroll),
                                       if (!_searchOn)
@@ -2139,7 +2157,8 @@ class _MenuState extends State<Menu> {
                                             index < widget.menuList.length;
                                             index++)
                                           MenuItem(
-                                            storeAvailability:storeAvailability,
+                                              storeAvailability:
+                                                  storeAvailability,
                                               data: widget.menuList[index],
                                               scroll: widget.scroll),
                                       const SizedBox(height: 150),
