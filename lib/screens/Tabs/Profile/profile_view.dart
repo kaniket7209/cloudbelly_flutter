@@ -44,6 +44,7 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   int _activeButtonIndex = 1;
+
   SampleItem? selectedMenu;
   List<dynamic> menuList = [];
   List<dynamic> feedList = [];
@@ -107,6 +108,7 @@ class _ProfileViewState extends State<ProfileView> {
     //Navigator.pop(context);
   }
 
+ 
   Future<void> _loading() async {
     getUserInfo(widget.userIdList);
     final prefs = await SharedPreferences.getInstance();
@@ -372,7 +374,7 @@ class _ProfileViewState extends State<ProfileView> {
                                               ),
                                               child: Column(
                                                 children: [
-                                                    Space(3.h),
+                                                  Space(3.h),
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -385,7 +387,6 @@ class _ProfileViewState extends State<ProfileView> {
                                                         width: 15,
                                                       ),
                                                       Container(
-                                                       
                                                         padding:
                                                             EdgeInsets.only(
                                                                 left: 10),
@@ -528,7 +529,9 @@ class _ProfileViewState extends State<ProfileView> {
                                                               CrossAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            SizedBox(height: 5,),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
                                                             Text(
                                                               userList.first
                                                                       .storeName ??
@@ -541,8 +544,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   fontSize: 22,
                                                                   letterSpacing:
                                                                       1,
-                                                                      height: 1,
-                                                                      
+                                                                  height: 1,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold),
@@ -564,11 +566,12 @@ class _ProfileViewState extends State<ProfileView> {
                                                           ],
                                                         ),
                                                       ),
-
                                                       GestureDetector(
                                                         onTap: () async {
-                                                          final phoneNumber = userList.first.phone ??
-                                                              '';
+                                                          final phoneNumber =
+                                                              userList.first
+                                                                      .phone ??
+                                                                  '';
                                                           final url =
                                                               'https://wa.me/' +
                                                                   phoneNumber;
@@ -593,7 +596,6 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 'assets/images/WhatsApp.png',
                                                                 width: 25)),
                                                       )
-                                                      
                                                     ],
                                                   ),
                                                   Row(

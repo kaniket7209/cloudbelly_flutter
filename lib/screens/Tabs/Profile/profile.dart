@@ -1861,16 +1861,39 @@ class _MenuState extends State<Menu> {
   TextEditingController _controller = TextEditingController();
   bool _iscategorySearch = false;
   bool _searchOn = false;
-  // @override
-  // void initState() {
-  //   super.initState();
 
-  //   // Scroll to the top 10 items after the first frame is rendered
+ bool storeAvailability = true;
+  @override
+  void initState() {
+    super.initState();
 
-  // }
+    // getUserDetailsbyKey()
+    fetchUserDetailsbyKey();
 
+  }
+  void fetchUserDetailsbyKey() async {
+    final res = await getUserDetailsbyKey(widget.user, ['store_availability']);
+    // print(" resss ${json.encode(res)}");
+    setState(() {
+      storeAvailability = res['store_availability']?? true;
+    });
+  }
+
+  Future<Map<String, dynamic>> getUserDetailsbyKey(String userId, List<String> projectKey) async {
+    try {
+      final res = await Provider.of<Auth>(context, listen: false).getUserDataByKey(userId, projectKey);
+      print(res);
+      return res;
+    } catch (e) {
+      print('Error: $e');
+      return {};
+    }
+  }
   @override
   Widget build(BuildContext context) {
+
+    // print("storeAvailabilitydata $storeAvailability");
+  
     String userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
     Color boxShadowColor;
@@ -2095,6 +2118,7 @@ class _MenuState extends State<Menu> {
                                               .toString()
                                               .contains(_controller.text))
                                             MenuItem(
+                                              storeAvailability:storeAvailability,
                                                 data: widget.menuList[index],
                                                 scroll: widget.scroll),
                                       if (!_iscategorySearch && _searchOn)
@@ -2107,6 +2131,7 @@ class _MenuState extends State<Menu> {
                                               .contains(_controller.text
                                                   .toLowerCase()))
                                             MenuItem(
+                                              storeAvailability:storeAvailability,
                                                 data: widget.menuList[index],
                                                 scroll: widget.scroll),
                                       if (!_searchOn)
@@ -2114,6 +2139,7 @@ class _MenuState extends State<Menu> {
                                             index < widget.menuList.length;
                                             index++)
                                           MenuItem(
+                                            storeAvailability:storeAvailability,
                                               data: widget.menuList[index],
                                               scroll: widget.scroll),
                                       const SizedBox(height: 150),

@@ -1822,6 +1822,33 @@ Future<dynamic> updateProductStockStatus(
       return null;
     }
   }
+//for user info by Key
+  Future<dynamic> getUserDataByKey(String userId,List<String> projectKey) async {
+    final String url = '${baseUrl}get-user-details-by-key';
+
+    // bool _isOK = false;
+    Map<String, dynamic> requestBody = {};
+    requestBody = {
+      "user_id": userId,
+      "keys":projectKey
+    };
+
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+      print("userDetailsForKey:: ${response.body}");
+
+      return jsonDecode(response.body);
+    } catch (error) {
+      // Handle exceptions
+      return {};
+    }
+  }
 
 // for getting upi
   Future<dynamic> getSellerQr(String? orderId, id, amount) async {
@@ -1910,7 +1937,7 @@ Future<dynamic> updateProductStockStatus(
 
       List<UserModel> userList =
           jsonResponse.map((json) => UserModel.fromJson(json)).toList();
-      print("ucidi: ${userList.length}");
+      print("ucidi: ${userList[0]}");
       notifyListeners();
       return userList;
     } catch (error) {

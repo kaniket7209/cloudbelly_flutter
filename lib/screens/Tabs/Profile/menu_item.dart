@@ -17,10 +17,10 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MenuItem extends StatefulWidget {
-  MenuItem({super.key, required this.data, required this.scroll});
+  MenuItem({super.key, required this.data, required this.scroll, required this.storeAvailability});
   var scroll;
   dynamic data;
-
+  bool storeAvailability;
   @override
   State<MenuItem> createState() => _MenuItemState();
 }
@@ -34,12 +34,13 @@ class _MenuItemState extends State<MenuItem> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<Auth>(context, listen: false).clearAllItems();
     });
-    print("stock_statuss${widget.data['stock_status']}");
+    // print("stock_statuss${widget.data['stock_status']}");
     _stockSwitch = widget.data['stock_status'] ?? true;
   }
 
   @override
   Widget build(BuildContext context) {
+    // print("${widget.storeAvailability} widstoreAvailability");
     TextEditingController _controller =
         TextEditingController(text: widget.data['description']);
 
@@ -97,13 +98,13 @@ class _MenuItemState extends State<MenuItem> {
                                 widget.data['stock_status'] = value;
                                 _stockSwitch = value;
                               });
-                              final temp = await Provider.of<Auth>(context,
+                               await Provider.of<Auth>(context,
                                       listen: false)
                                   .updateProductStockStatus(widget.data['_id'],
                                       _stockSwitch, context);
-                              print("${json.encode(temp)} status update");
-                              print(
-                                  "switch tapped ${widget.data['stock_status'] ?? 'no'}");
+                              // print("${json.encode(temp)} status update");
+                              // print(
+                              //     "switch tapped ${widget.data['stock_status'] ?? 'no'}");
                             },
                           ),
                         ),
@@ -151,7 +152,7 @@ class _MenuItemState extends State<MenuItem> {
                         ),
                         textInputAction: TextInputAction.done,
                         onSubmitted: (newValue) async {
-                          print(newValue);
+                          // print(newValue);
                           await Provider.of<Auth>(context, listen: false)
                               .updateProductDetails(
                                   widget.data['_id'], '', newValue);
@@ -207,7 +208,7 @@ class _MenuItemState extends State<MenuItem> {
                             cornerSmoothing: 1,
                           ),
                           child: ColorFiltered(
-                            colorFilter: (_stockSwitch == false ||
+                            colorFilter: (!widget.storeAvailability || _stockSwitch == false ||
                                     widget.data['stock_status'] == false)
                                 ? const ColorFilter.matrix([
                                     0.2126,
@@ -270,6 +271,7 @@ class _MenuItemState extends State<MenuItem> {
                   ),
                 ),
                 // vendor login - stock_status null || stock_status true //visited profile  - 
+                if(widget.storeAvailability)
                 if (widget.data['stock_status'] == null || widget.data['stock_status'] )...{
                 Positioned(
                   bottom: 0,
@@ -289,9 +291,9 @@ class _MenuItemState extends State<MenuItem> {
                           .isEmpty)
                       ? TouchableOpacity(
                           onTap: () async {
-                            print("widget.data ${widget.data}");
-                            print(Provider.of<Auth>(context, listen: false)
-                                .userData?['user_id']);
+                            // print("widget.data ${widget.data}");
+                            // print(Provider.of<Auth>(context, listen: false)
+                            //     .userData?['user_id']);
                             if (Provider.of<Auth>(context, listen: false)
                                     .userData?['user_id'] !=
                                 widget.data['user_id']) {
@@ -304,11 +306,11 @@ class _MenuItemState extends State<MenuItem> {
                             // ignore: use_build_context_synchronously
                             final url = await updateProductImageSheet(
                                 context, widget.data);
-                            print("url: $url");
+                            // print("url: $url");
                             if (url != '') {
                               setState(() {
                                 widget.data['images'] = [url];
-                                print(url);
+                                // print(url);
                               });
                             }
                           },
@@ -395,7 +397,7 @@ class _MenuItemState extends State<MenuItem> {
                               InkWell(
                                 onTap: () {
                                   if (widget.scroll != null) {
-                                    print("scrolling");
+                                    // print("scrolling");
                                     // Handle scroll action if needed
                                   }
                                   Provider.of<Auth>(context, listen: false)
@@ -516,7 +518,7 @@ class _MenuItemState extends State<MenuItem> {
                               if (temp != null && temp != '') {
                                 url = temp;
                               }
-                              print(url);
+                              // print(url);
                             },
                             child: StocksMayBeNeedWidget(
                                 txt: 'Click photo',
@@ -537,7 +539,7 @@ class _MenuItemState extends State<MenuItem> {
                             if (temp != null && temp != '') {
                               url = temp;
                             }
-                            print(url);
+                            // print(url);
                           },
                           child: StocksMayBeNeedWidget(
                               txt: 'Upload photo',
@@ -556,7 +558,7 @@ class _MenuItemState extends State<MenuItem> {
                               if (temp != null && temp != '') {
                                 url = temp;
                               }
-                              print(url);
+                              // print(url);
                             },
                             child: StocksMayBeNeedWidget(
                               txt: 'Let AI do it!',
