@@ -18,7 +18,11 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MenuItem extends StatefulWidget {
-  MenuItem({super.key, required this.data, required this.scroll, required this.storeAvailability});
+  MenuItem(
+      {super.key,
+      required this.data,
+      required this.scroll,
+      required this.storeAvailability});
   var scroll;
   dynamic data;
   bool storeAvailability;
@@ -99,8 +103,7 @@ class _MenuItemState extends State<MenuItem> {
                                 widget.data['stock_status'] = value;
                                 _stockSwitch = value;
                               });
-                               await Provider.of<Auth>(context,
-                                      listen: false)
+                              await Provider.of<Auth>(context, listen: false)
                                   .updateProductStockStatus(widget.data['_id'],
                                       _stockSwitch, context);
                               // print("${json.encode(temp)} status update");
@@ -183,8 +186,15 @@ class _MenuItemState extends State<MenuItem> {
               children: [
                 GestureDetector(
                   onTap: () {
-    openFullScreen(context, widget.data['images'][0],widget.data['description'] ?? '',widget.data['name'] ?? '',widget.data['price'] ?? '', widget.data['type'] ?? 'Veg');
-  },
+                    if(widget.data['images'].length != 0)
+                    openFullScreen(
+                        context,
+                        widget.data['images'][0],
+                        widget.data['description'] ?? '',
+                        widget.data['name'] ?? '',
+                        widget.data['price'] ?? '',
+                        widget.data['type'] ?? 'Veg');
+                  },
                   child: Container(
                     margin: EdgeInsets.symmetric(vertical: 1.4.h),
                     height: 11.h,
@@ -213,7 +223,8 @@ class _MenuItemState extends State<MenuItem> {
                               cornerSmoothing: 1,
                             ),
                             child: ColorFiltered(
-                              colorFilter: (!widget.storeAvailability || _stockSwitch == false ||
+                              colorFilter: (!widget.storeAvailability ||
+                                      _stockSwitch == false ||
                                       widget.data['stock_status'] == false)
                                   ? const ColorFilter.matrix([
                                       0.2126,
@@ -276,174 +287,177 @@ class _MenuItemState extends State<MenuItem> {
                     ),
                   ),
                 ),
-               
-                // vendor login - stock_status null || stock_status true //visited profile  - 
-                if(widget.storeAvailability)
-                if (widget.data['stock_status'] == null || widget.data['stock_status'] )...{
-                Positioned(
-                  bottom: 0,
-                  left: (Provider.of<Auth>(context)
-                          .itemAdd
-                          .where(
-                            (element) => element.id == widget.data["_id"],
-                          )
-                          .isEmpty)
-                      ? 2.5.h
-                      : 0.h,
-                  child: (Provider.of<Auth>(context)
-                          .itemAdd
-                          .where(
-                            (element) => element.id == widget.data["_id"],
-                          )
-                          .isEmpty)
-                      ? TouchableOpacity(
-                          onTap: () async {
-                            // print("widget.data ${widget.data}");
-                            // print(Provider.of<Auth>(context, listen: false)
-                            //     .userData?['user_id']);
-                            if (Provider.of<Auth>(context, listen: false)
-                                    .userData?['user_id'] !=
-                                widget.data['user_id']) {
-                              Provider.of<Auth>(context, listen: false)
-                                  .bannerTogger(
-                                      ProductDetails.fromJson(widget.data));
-                              return;
-                            }
-                            print(widget.data);
-                            // ignore: use_build_context_synchronously
-                            final url = await updateProductImageSheet(
-                                context, widget.data);
-                            // print("url: $url");
-                            if (url != '') {
-                              setState(() {
-                                widget.data['images'] = [url];
-                                // print(url);
-                              });
-                            }
-                          },
-                          child: ButtonWidgetHomeScreen(
-                              radius: 4,
-                              isActive: true,
-                              height: 2.5.h,
-                              width: 15.w,
-                              txt: 'ADD'),
-                        )
-                      : Container(
-                          width: 24.w,
-                          // padding: EdgeInsets.symmetric(horizontal: 2.w),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              InkWell(
-                                onTap: () {
+
+                // vendor login - stock_status null || stock_status true //visited profile  -
+                if (widget.storeAvailability)
+                  if (widget.data['stock_status'] == null ||
+                      widget.data['stock_status']) ...{
+                    Positioned(
+                      bottom: 0,
+                      left: (Provider.of<Auth>(context)
+                              .itemAdd
+                              .where(
+                                (element) => element.id == widget.data["_id"],
+                              )
+                              .isEmpty)
+                          ? 2.5.h
+                          : 0.h,
+                      child: (Provider.of<Auth>(context)
+                              .itemAdd
+                              .where(
+                                (element) => element.id == widget.data["_id"],
+                              )
+                              .isEmpty)
+                          ? TouchableOpacity(
+                              onTap: () async {
+                                // print("widget.data ${widget.data}");
+                                // print(Provider.of<Auth>(context, listen: false)
+                                //     .userData?['user_id']);
+                                if (Provider.of<Auth>(context, listen: false)
+                                        .userData?['user_id'] !=
+                                    widget.data['user_id']) {
                                   Provider.of<Auth>(context, listen: false)
-                                      .removeItem(
+                                      .bannerTogger(
                                           ProductDetails.fromJson(widget.data));
-                                },
-                                child: Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: ShapeDecoration(
-                                    color: const Color(0xFFFA6E00),
-                                    shape: SmoothRectangleBorder(
-                                      borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 12,
-                                        cornerSmoothing: 1,
+                                  return;
+                                }
+                                print(widget.data);
+                                // ignore: use_build_context_synchronously
+                                final url = await updateProductImageSheet(
+                                    context, widget.data);
+                                // print("url: $url");
+                                if (url != '') {
+                                  setState(() {
+                                    widget.data['images'] = [url];
+                                    // print(url);
+                                  });
+                                }
+                              },
+                              child: ButtonWidgetHomeScreen(
+                                  radius: 4,
+                                  isActive: true,
+                                  height: 2.5.h,
+                                  width: 15.w,
+                                  txt: 'ADD'),
+                            )
+                          : Container(
+                              width: 24.w,
+                              // padding: EdgeInsets.symmetric(horizontal: 2.w),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Provider.of<Auth>(context, listen: false)
+                                          .removeItem(ProductDetails.fromJson(
+                                              widget.data));
+                                    },
+                                    child: Container(
+                                      height: 30,
+                                      width: 30,
+                                      decoration: ShapeDecoration(
+                                        color: const Color(0xFFFA6E00),
+                                        shape: SmoothRectangleBorder(
+                                          borderRadius: SmoothBorderRadius(
+                                            cornerRadius: 12,
+                                            cornerSmoothing: 1,
+                                          ),
+                                        ),
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          '-',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontFamily: 'Product Sans',
+                                            fontWeight: FontWeight.w700,
+                                            height: 1.0,
+                                            letterSpacing: 0.14,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  child: const Center(
-                                    child: Text(
-                                      '-',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontFamily: 'Product Sans',
-                                        fontWeight: FontWeight.w700,
-                                        height: 1.0,
-                                        letterSpacing: 0.14,
+                                  Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: ShapeDecoration(
+                                      color: const Color(0xff0A4C61),
+                                      shape: SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius(
+                                          cornerRadius: 12,
+                                          cornerSmoothing: 1,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        Provider.of<Auth>(context)
+                                            .itemAdd
+                                            .lastWhere(
+                                              (element) =>
+                                                  element.id ==
+                                                  widget.data["_id"],
+                                            )
+                                            .quantity
+                                            .toString(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontFamily: 'Product Sans',
+                                          fontWeight: FontWeight.w700,
+                                          height: 1.0,
+                                          letterSpacing: 0.14,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                  InkWell(
+                                    onTap: () {
+                                      if (widget.scroll != null) {
+                                        // print("scrolling");
+                                        // Handle scroll action if needed
+                                      }
+                                      Provider.of<Auth>(context, listen: false)
+                                          .addItem(ProductDetails.fromJson(
+                                              widget.data));
+                                    },
+                                    child: Container(
+                                      height: 30,
+                                      width: 30,
+                                      decoration: ShapeDecoration(
+                                        color: const Color(0xFFFA6E00),
+                                        shape: SmoothRectangleBorder(
+                                          borderRadius: SmoothBorderRadius(
+                                            cornerRadius: 12,
+                                            cornerSmoothing: 1,
+                                          ),
+                                        ),
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          '+',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontFamily: 'Product Sans',
+                                            fontWeight: FontWeight.w700,
+                                            height: 1.0,
+                                            letterSpacing: 0.14,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Container(
-                                height: 30,
-                                width: 30,
-                                decoration: ShapeDecoration(
-                                  color: const Color(0xff0A4C61),
-                                  shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius(
-                                      cornerRadius: 12,
-                                      cornerSmoothing: 1,
-                                    ),
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    Provider.of<Auth>(context)
-                                        .itemAdd
-                                        .lastWhere(
-                                          (element) =>
-                                              element.id == widget.data["_id"],
-                                        )
-                                        .quantity
-                                        .toString(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.0,
-                                      letterSpacing: 0.14,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  if (widget.scroll != null) {
-                                    // print("scrolling");
-                                    // Handle scroll action if needed
-                                  }
-                                  Provider.of<Auth>(context, listen: false)
-                                      .addItem(
-                                          ProductDetails.fromJson(widget.data));
-                                },
-                                child: Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: ShapeDecoration(
-                                    color: const Color(0xFFFA6E00),
-                                    shape: SmoothRectangleBorder(
-                                      borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 12,
-                                        cornerSmoothing: 1,
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      '+',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontFamily: 'Product Sans',
-                                        fontWeight: FontWeight.w700,
-                                        height: 1.0,
-                                        letterSpacing: 0.14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                ),
-                }
+                            ),
+                    ),
+                  }
               ],
             )
           ],
@@ -586,139 +600,154 @@ class _MenuItemState extends State<MenuItem> {
     return url;
   }
 
-  Future<void> openFullScreen(BuildContext context, String imageUrl, String description, String name, String price, String type) async {
-  await showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.black,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return Container(
+  Future<void> openFullScreen(BuildContext context, String imageUrl,
+      String description, String name, String price, String type) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
               decoration: const ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x7FB1D9D8),
+                    blurRadius: 6,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                ],
                 color: Colors.white,
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                    topLeft: SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                    topRight:
+                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                  ),
                 ),
               ),
-            height: MediaQuery.of(context).size.height /1.5,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Center(
-                    child: Container(
-                      margin: EdgeInsets.only(top: 10),
-                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                      width: 65,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFA6E00),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                    ),
-                  ),
-                ),
-                // SizedBox(height: 20),
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.all(20),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
-                      ),
-                      image: DecorationImage(
-                        image: NetworkImage(imageUrl),
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.6,
-                            child: Text(
-                              name,
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontFamily: 'Product Sans'
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 10),
-                            width: 10,
-                            height: 10,
-                            decoration: ShapeDecoration(
-                              color: type == 'Veg'
-                                  ? Color(0xFF4CF910)
-                                  : Colors.red,
-                              shape: const OvalBorder(),
-                              // shadows: const [
-                              //   BoxShadow(
-                              //     color: Color(0x7FB1D9D8),
-                              //     blurRadius: 6,
-                              //     offset: Offset(-2, 4),
-                              //     spreadRadius: 0,
-                              //   )
-                              // ],
-                            ),
-                          ),
-               Spacer(),
-                           Text(
-                            'Rs $price',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 5),
-                      Container(
-                         width: MediaQuery.of(context).size.width * 0.9,
-                        child: Text(
-                          description,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[700],
-                             fontFamily: 'Product Sans'
-                          ),
+              height: MediaQuery.of(context).size.height * 0.58,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Center(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 10),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                        width: 65,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFA6E00),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                       ),
-                      SizedBox(height: 10),
-                     
-                    ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    },
-  );
-}
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      margin: EdgeInsets.all(20),
+                      width: double.infinity,
+                      
+                      decoration: ShapeDecoration(
+                        shadows: const [
+                          BoxShadow(
+                            color: Color(0x7FB1D9D8),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                            spreadRadius: 0,
+                          ),
+                        ],
+                        color: const Color.fromRGBO(239, 255, 254, 1),
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 24,
+                            cornerSmoothing: 1,
+                          ),
+                        ),
+                        image: DecorationImage(
+                          image: NetworkImage(imageUrl),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              child: Text(
+                                name,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF0A4C61),
+                                  fontFamily: 'Ubuntu',
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              width: 10,
+                              height: 10,
+                              decoration: ShapeDecoration(
+                                color: type == 'Veg'
+                                    ? Color(0xFF4CF910)
+                                    : Colors.red,
+                                shape: const OvalBorder(),
+                              ),
+                            ),
+                            Spacer(),
+                            Container(
+                              
+                              child: Text(
+                                'Rs $price',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xffFA6E00),
+                                  fontFamily: 'Product Sans'
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: Text(
+                            description,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xff0A4C61),
+                              fontFamily: 'Product Sans',
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }
