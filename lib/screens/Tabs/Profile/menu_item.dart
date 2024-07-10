@@ -595,6 +595,16 @@ class _MenuItemState extends State<MenuItem> {
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
           return Container(
+              decoration: const ShapeDecoration(
+                color: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.only(
+                      topLeft:
+                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                      topRight:
+                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+                ),
+              ),
             height: MediaQuery.of(context).size.height /1.5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -619,9 +629,10 @@ class _MenuItemState extends State<MenuItem> {
                 // SizedBox(height: 20),
                 Expanded(
                   child: Container(
+                    margin: EdgeInsets.all(20),
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.black,
+                      color: Colors.white,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
@@ -650,7 +661,8 @@ class _MenuItemState extends State<MenuItem> {
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white
+                                color: Colors.white,
+                                fontFamily: 'Product Sans'
                               ),
                             ),
                           ),
@@ -692,6 +704,7 @@ class _MenuItemState extends State<MenuItem> {
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[700],
+                             fontFamily: 'Product Sans'
                           ),
                         ),
                       ),

@@ -7,11 +7,13 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class Menu extends StatefulWidget {
   Menu({super.key,this.id});
   String? id;
+  
   @override
   State<Menu> createState() => _MenuState();
 }
 
 class _MenuState extends State<Menu> {
+  bool storeAvailability = true;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -36,7 +38,7 @@ class _MenuState extends State<Menu> {
                   //     'Indian delicacies served with tasty gravy, all from your very own kitchen...';
 
                   return data[index]['VEG'] != null
-                      ? MenuItem(data: data[index], scroll: null,)
+                      ? MenuItem(data: data[index], scroll: null, storeAvailability: storeAvailability,)
                       : SizedBox.shrink();
                 });
           } else
