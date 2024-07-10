@@ -13,6 +13,7 @@ import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -180,73 +181,78 @@ class _MenuItemState extends State<MenuItem> {
             ),
             Stack(
               children: [
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 1.4.h),
-                  height: 11.h,
-                  width: 24.w,
-                  decoration: ShapeDecoration(
-                    shadows: const [
-                      BoxShadow(
-                        color: Color(0x7FB1D9D8),
-                        blurRadius: 6,
-                        offset: Offset(0, 4),
-                        spreadRadius: 0,
-                      ),
-                    ],
-                    color: const Color.fromRGBO(239, 255, 254, 1),
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                        cornerRadius: 24,
-                        cornerSmoothing: 1,
+                GestureDetector(
+                  onTap: () {
+    openFullScreen(context, widget.data['images'][0],widget.data['description'] ?? '',widget.data['name'] ?? '',widget.data['price'] ?? '');
+  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 1.4.h),
+                    height: 11.h,
+                    width: 24.w,
+                    decoration: ShapeDecoration(
+                      shadows: const [
+                        BoxShadow(
+                          color: Color(0x7FB1D9D8),
+                          blurRadius: 6,
+                          offset: Offset(0, 4),
+                          spreadRadius: 0,
+                        ),
+                      ],
+                      color: const Color.fromRGBO(239, 255, 254, 1),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 24,
+                          cornerSmoothing: 1,
+                        ),
                       ),
                     ),
-                  ),
-                  child: (widget.data['images'] as List<dynamic>).isNotEmpty
-                      ? ClipSmoothRect(
-                          radius: SmoothBorderRadius(
-                            cornerRadius: 24,
-                            cornerSmoothing: 1,
-                          ),
-                          child: ColorFiltered(
-                            colorFilter: (!widget.storeAvailability || _stockSwitch == false ||
-                                    widget.data['stock_status'] == false)
-                                ? const ColorFilter.matrix([
-                                    0.2126,
-                                    0.7152,
-                                    0.0722,
-                                    0,
-                                    0,
-                                    0.2126,
-                                    0.7152,
-                                    0.0722,
-                                    0,
-                                    0,
-                                    0.2126,
-                                    0.7152,
-                                    0.0722,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    1,
-                                    0,
-                                  ])
-                                : const ColorFilter.mode(
-                                    Colors.transparent,
-                                    BlendMode.multiply,
-                                  ),
-                            child: Image.network(
-                              widget.data['images'][0],
-                              fit: BoxFit.cover,
-                              loadingBuilder:
-                                  GlobalVariables().loadingBuilderForImage,
-                              errorBuilder:
-                                  GlobalVariables().ErrorBuilderForImage,
+                    child: (widget.data['images'] as List<dynamic>).isNotEmpty
+                        ? ClipSmoothRect(
+                            radius: SmoothBorderRadius(
+                              cornerRadius: 24,
+                              cornerSmoothing: 1,
                             ),
-                          ),
-                        )
-                      : null,
+                            child: ColorFiltered(
+                              colorFilter: (!widget.storeAvailability || _stockSwitch == false ||
+                                      widget.data['stock_status'] == false)
+                                  ? const ColorFilter.matrix([
+                                      0.2126,
+                                      0.7152,
+                                      0.0722,
+                                      0,
+                                      0,
+                                      0.2126,
+                                      0.7152,
+                                      0.0722,
+                                      0,
+                                      0,
+                                      0.2126,
+                                      0.7152,
+                                      0.0722,
+                                      0,
+                                      0,
+                                      0,
+                                      0,
+                                      0,
+                                      1,
+                                      0,
+                                    ])
+                                  : const ColorFilter.mode(
+                                      Colors.transparent,
+                                      BlendMode.multiply,
+                                    ),
+                              child: Image.network(
+                                widget.data['images'][0],
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    GlobalVariables().loadingBuilderForImage,
+                                errorBuilder:
+                                    GlobalVariables().ErrorBuilderForImage,
+                              ),
+                            ),
+                          )
+                        : null,
+                  ),
                 ),
                 Positioned(
                   right: 0.5.w,
@@ -578,4 +584,56 @@ class _MenuItemState extends State<MenuItem> {
 
     return url;
   }
+
+  Future<void> openFullScreen(BuildContext context, String imageUrl,String description, String name, String price) async {
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.black, // Make background transparent
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return Container(
+            height: MediaQuery.of(context).size.height - 50,
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Center(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                      width: 65,
+                      height: 9,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFA6E00), // Match your color scheme
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      image: DecorationImage(
+                        image: NetworkImage(imageUrl),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
 }
