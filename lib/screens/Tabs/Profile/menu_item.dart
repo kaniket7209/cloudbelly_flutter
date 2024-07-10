@@ -697,11 +697,14 @@ class _MenuItemState extends State<MenuItem> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              width: MediaQuery.of(context).size.width * 0.6,
+                              constraints:  BoxConstraints(
+                          maxWidth:MediaQuery.of(context).size.width * 0.6, // Set your maximum width here
+                        ),
+                             
                               child: Text(
                                 name,
                                 style: TextStyle(
@@ -712,6 +715,7 @@ class _MenuItemState extends State<MenuItem> {
                                 ),
                               ),
                             ),
+                            SizedBox(width: 10,),
                             Container(
                               margin: EdgeInsets.only(top: 10),
                               width: 10,
