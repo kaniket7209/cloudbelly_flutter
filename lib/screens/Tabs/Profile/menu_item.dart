@@ -657,11 +657,11 @@ class _MenuItemState extends State<MenuItem> {
                       width: double.infinity,
                       
                       decoration: ShapeDecoration(
-                        shadows: const [
+                        shadows:  [
                           BoxShadow(
-                            color: Color(0x7FB1D9D8),
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
+                            color: Color(0xff0F3A47).withOpacity(0.45),
+                            blurRadius: 25,
+                            offset: Offset(3, 4),
                             spreadRadius: 0,
                           ),
                         ],
@@ -693,7 +693,7 @@ class _MenuItemState extends State<MenuItem> {
                               child: Text(
                                 name,
                                 style: TextStyle(
-                                  fontSize: 24,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF0A4C61),
                                   fontFamily: 'Ubuntu',
