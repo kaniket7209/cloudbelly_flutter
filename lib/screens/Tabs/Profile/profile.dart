@@ -817,6 +817,9 @@ void fetchUserDetailsbyKey() async {
                                             },
                                             txt: 'Add products',
                                           ),
+                                       SizedBox(
+                                            width: 20,
+                                          ),
                                       ],
                                     ),
                                     Space(2.h),

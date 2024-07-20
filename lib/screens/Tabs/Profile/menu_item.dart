@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MenuItem extends StatefulWidget {
   MenuItem(
@@ -250,52 +251,50 @@ class _MenuItemState extends State<MenuItem> {
                       ),
                     ),
                     child: (widget.data['images'] as List<dynamic>).isNotEmpty
-                        ? ClipSmoothRect(
-                            radius: SmoothBorderRadius(
-                              cornerRadius: 24,
-                              cornerSmoothing: 1,
-                            ),
-                            child: ColorFiltered(
-                              colorFilter: (!widget.storeAvailability ||
-                                      _stockSwitch == false ||
-                                      widget.data['stock_status'] == false)
-                                  ? const ColorFilter.matrix([
-                                      0.2126,
-                                      0.7152,
-                                      0.0722,
-                                      0,
-                                      0,
-                                      0.2126,
-                                      0.7152,
-                                      0.0722,
-                                      0,
-                                      0,
-                                      0.2126,
-                                      0.7152,
-                                      0.0722,
-                                      0,
-                                      0,
-                                      0,
-                                      0,
-                                      0,
-                                      1,
-                                      0,
-                                    ])
-                                  : const ColorFilter.mode(
-                                      Colors.transparent,
-                                      BlendMode.multiply,
-                                    ),
-                              child: Image.network(
-                                widget.data['images'][0],
-                                fit: BoxFit.cover,
-                                loadingBuilder:
-                                    GlobalVariables().loadingBuilderForImage,
-                                errorBuilder:
-                                    GlobalVariables().ErrorBuilderForImage,
-                              ),
-                            ),
-                          )
-                        : null,
+    ? ClipSmoothRect(
+        radius: SmoothBorderRadius(
+          cornerRadius: 24,
+          cornerSmoothing: 1,
+        ),
+        child: ColorFiltered(
+          colorFilter: (!widget.storeAvailability ||
+                  _stockSwitch == false ||
+                  widget.data['stock_status'] == false)
+              ? const ColorFilter.matrix([
+                  0.2126,
+                  0.7152,
+                  0.0722,
+                  0,
+                  0,
+                  0.2126,
+                  0.7152,
+                  0.0722,
+                  0,
+                  0,
+                  0.2126,
+                  0.7152,
+                  0.0722,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                ])
+              : const ColorFilter.mode(
+                  Colors.transparent,
+                  BlendMode.multiply,
+                ),
+          child: CachedNetworkImage(
+            imageUrl: widget.data['images'][0],
+            fit: BoxFit.cover,
+             placeholder: (context, url) => GlobalVariables().imageloadingBuilderForImage(context, null),
+            errorWidget: (context, url, error) => GlobalVariables().imageErrorBuilderForImage(context, error, null),
+          ),
+        ),
+      )
+    : null,
                   ),
                 ),
                 

@@ -130,12 +130,14 @@ class _DashBoardState extends State<DashBoard>
                                   child: Column(
                                     children: [
                                       // Space(1.h),
+                                      
                                        Container(
+                                        
                                       padding:
                                           EdgeInsets.fromLTRB(10, 15, 10, 0),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.start,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
@@ -186,34 +188,7 @@ class _DashBoardState extends State<DashBoard>
                                               ],
                                             ),
                                           ),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              final phoneNumber =
-                                                  Provider.of<Auth>(context,
-                                                              listen: false)
-                                                          .userData?['phone'] ??
-                                                      '';
-                                              final url = 'https://wa.me/' +
-                                                  phoneNumber;
-                                              if (await canLaunch(url)) {
-                                                await launch(url);
-                                              } else {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  const SnackBar(
-                                                      content: Text(
-                                                          'Could not launch whatsapp ')),
-                                                );
-                                              }
-                                            },
-                                            child: Container(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 7, 12, 2),
-                                                child: Image.asset(
-                                                    'assets/images/WhatsApp.png',
-                                                    width: 27)),
-                                          )
-                                          // https://api.whatsapp.com/send?phone=916206630515
+                                          
                                         ],
                                       ),
                                     ),

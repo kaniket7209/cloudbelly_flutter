@@ -6,41 +6,7 @@ import 'package:provider/provider.dart';
 class GlobalVariables {
   static final GlobalVariables _instance = GlobalVariables._internal();
 
-  // List<String> bankNames = [
-  //   'State Bank of India',
-  //   'ICICI Bank',
-  //   'HDFC Bank',
-  //   'Axis Bank',
-  //   'Punjab National Bank',
-  //   'Kotak Mahindra Bank',
-  //   'Bank of Baroda',
-  //   'Canara Bank',
-  //   'Union Bank of India',
-  //   'IDBI Bank',
-  //   'Bank of India',
-  //   'IndusInd Bank',
-  //   'Yes Bank',
-  //   'Federal Bank',
-  //   'South Indian Bank',
-  //   'Karur Vysya Bank',
-  //   'Punjab & Sind Bank',
-  //   'Central Bank of India',
-  //   'Indian Bank',
-  //   'Indian Overseas Bank',
-  //   'UCO Bank',
-  //   'Syndicate Bank',
-  //   'Dena Bank',
-  //   'Vijaya Bank',
-  //   'Andhra Bank',
-  //   'Bank of Maharashtra',
-  //   'Corporation Bank',
-  //   'Oriental Bank of Commerce',
-  //   'United Bank of India',
-  //   'Allahabad Bank',
-  //   'Jammu & Kashmir Bank',
-  //   // Add more banks as needed
-  // ];
-
+ 
   List<String> bankNames = [
     'Airtel Payments Bank',
     'Andhra Pradesh Grameena Vikas',
@@ -135,6 +101,7 @@ class GlobalVariables {
         height: 10,
         width: 10,
         child: CircularProgressIndicator(
+          color: const Color(0xffFA6E00),
           value: loadingProgress.expectedTotalBytes != null
               ? loadingProgress.cumulativeBytesLoaded /
                   loadingProgress.expectedTotalBytes!
@@ -143,7 +110,26 @@ class GlobalVariables {
       ),
     );
   }
+ Widget imageloadingBuilderForImage(BuildContext context, ImageChunkEvent? loadingProgress) {
+    return Center(
+      child: CircularProgressIndicator(
+        color: const Color(0xffFA6E00),
+        value: loadingProgress != null && loadingProgress.expectedTotalBytes != null
+            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+            : null,
+      ),
+    );
+  }
 
+  // Error widget for failed image loading
+  Widget imageErrorBuilderForImage(BuildContext context, Object error, StackTrace? stackTrace) {
+    return Center(
+      child: Icon(
+        Icons.error,
+        color: Colors.red,
+      ),
+    );
+  }
   ShapeDecoration ContainerDecoration(
       {required Offset offset,
       required double blurRadius,
