@@ -1,8 +1,6 @@
 // ignore_for_file: must_be_immutable, prefer_is_empty, use_build_context_synchronously, curly_braces_in_flow_control_structures
 
 import 'dart:convert';
-import 'dart:ffi';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloudbelly_app/api_service.dart';
@@ -38,8 +36,6 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -181,7 +177,7 @@ class _ProfileState extends State<Profile> {
     });
   }
 void fetchUserDetailsbyKey() async {
-    final res = await getUserDetailsbyKey(Provider.of<Auth>(context, listen: false).userData?['user_id'], ['store_availability','kyc_status']);
+    final res = await getUserDetailsbyKey(Provider.of<Auth>(context, listen: false).userData?['user_id'], ['store_availability','kyc_status','followings','followers']);
     print(" resssp ${json.encode(res)}");
     setState(() {
       _switchValue = res['store_availability'] ?? true;
@@ -193,6 +189,8 @@ void fetchUserDetailsbyKey() async {
           await UserPreferences.setUser(userData);
           setState(() {
             Provider.of<Auth>(context, listen: false).userData?['kyc_status'] = res['kyc_status'] ?? 'verified';
+            Provider.of<Auth>(context,listen: false).userData?['followers'] = res['followers'] ?? [];
+            Provider.of<Auth>(context,listen: false).userData?['followings'] = res['followings'] ?? [];
           });
           
         }

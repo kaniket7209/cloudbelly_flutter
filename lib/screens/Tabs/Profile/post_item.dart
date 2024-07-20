@@ -55,6 +55,7 @@ class PostItem extends StatefulWidget {
 }
 
 class _PostItemState extends State<PostItem> {
+  bool _isFollowing = false;
   bool _didUpdate = true;
 
   String discription = '';
@@ -62,10 +63,16 @@ class _PostItemState extends State<PostItem> {
   String caption1 = '';
   String caption2 = '';
   List<ProductDetails> productDetails = [];
+  @override
+  void initState() {
+    super.initState();
+    _isFollowing = checkFollow();
+  }
 
   @override
   void didChangeDependencies() {
     if (_didUpdate) {
+      _isFollowing = checkFollow();
       checkFollow();
       discription = widget.data['caption'] ?? '';
 
@@ -173,7 +180,6 @@ class _PostItemState extends State<PostItem> {
   List<dynamic> _likeData = [];
   List<String> userId = [];
   int itemsToShow = 0;
-  bool _isFollowing = false;
 
   bool checkFollow() {
     String id = widget.isProfilePost ? "" : widget.data['user_id'];
@@ -181,7 +187,6 @@ class _PostItemState extends State<PostItem> {
         Provider.of<Auth>(context, listen: false).userData?['followings'] ?? [];
     for (var user in temp) {
       if (user['user_id'] == id) {
-        _isFollowing = true;
         return true;
       }
     }
@@ -190,24 +195,21 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "who is user:: ${ widget.isProfilePost}  ${widget.userId}");
+    print("who is user:: ${widget.isProfilePost}  ${widget.userId}");
     // bool shouldShowIcon = widget.isProfilePost ||
     //     (!widget.isProfilePost &&
     //         Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
     //             widget.data['user_id']);
-    bool shouldShowIcon = 
-        (widget.isProfilePost );
+    bool shouldShowIcon = (widget.isProfilePost);
     // bool shouldShowIcon = false;
-    bool _isFollowing = checkFollow();
+    // bool _isFollowing = checkFollow();
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
     // print("isSharePost ${widget.isSharePost}" );
     // final date_time = formatTimeDifference('created_at');
     CarouselController buttonCarouselController = CarouselController();
-    return
-     Container(
+    return Container(
       // height: caption1 != '' ? 67.h : 63.h,
       margin: EdgeInsets.only(bottom: 2.7.h),
       // padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
@@ -227,17 +229,14 @@ class _PostItemState extends State<PostItem> {
                 //         ((widget.data['profile_photo'] == '' ||
                 //                 widget.data['profile_photo'] == null) &&
                 //             !widget.isProfilePost)
-                (widget.isSharePost  == 'Yes' && widget.data['profile_photo'] == ''
-                         )
+                (widget.isSharePost == 'Yes' &&
+                        widget.data['profile_photo'] == '')
                     ? InkWell(
                         onTap: () {
                           if (!widget.isProfilePost) {
                             print("data:: ${widget.data}");
                             setState(() {
-                             
                               userId.add(widget.data['user_id']);
-                              
-
                             });
                             Navigator.push(
                                 context,
@@ -322,7 +321,6 @@ class _PostItemState extends State<PostItem> {
                                             .toUpperCase(),
                                 style: const TextStyle(fontSize: 20),
                               ),
-                          
                             )),
                       )
                     : InkWell(
@@ -371,8 +369,8 @@ class _PostItemState extends State<PostItem> {
                                   ? widget.userModel?.profilePhoto
                                   : widget.isProfilePost
                                       ? (Provider.of<Auth>(context,
-                                                listen: false)
-                                            .userData?['profile_photo'])
+                                              listen: false)
+                                          .userData?['profile_photo'])
                                       : widget.data['profile_photo'],
                               fit: BoxFit.cover,
                               loadingBuilder:
@@ -381,11 +379,10 @@ class _PostItemState extends State<PostItem> {
                                   GlobalVariables().ErrorBuilderForImage,
                             ),
                           ),
-                        
                         ),
                       ),
                 const Space(isHorizontal: true, 15),
-                
+
                 SizedBox(
                   width: 37.w,
                   child: Text(
@@ -499,9 +496,7 @@ class _PostItemState extends State<PostItem> {
                       ),
                     ),
                   ),
-                if (shouldShowIcon)...{
-
-                
+                if (shouldShowIcon) ...{
                   IconButton(
                       onPressed: () async {
                         {
@@ -520,15 +515,15 @@ class _PostItemState extends State<PostItem> {
                                       UserType.Supplier.name
                                   ? const Color.fromARGB(255, 26, 48, 10)
                                   : const Color(0xFF2E0536))),
-                                  }
-                //  for mantaining icon space
-                else... {
-                // const SizedBox(height: 50),
-                 SizedBox(height:50,width: 30,),
-
                 }
-                 
-                
+                //  for mantaining icon space
+                else ...{
+                  // const SizedBox(height: 50),
+                  SizedBox(
+                    height: 50,
+                    width: 30,
+                  ),
+                }
               ],
             ),
           ),
@@ -575,7 +570,6 @@ class _PostItemState extends State<PostItem> {
                               ],
                               shape: const SmoothRectangleBorder(),
                             ),
-                            
                             child: ClipSmoothRect(
                               radius: SmoothBorderRadius(
                                 cornerRadius: 40,
@@ -605,35 +599,37 @@ class _PostItemState extends State<PostItem> {
                               width: double.infinity,
                               // Take up full width of the screen
                               decoration: ShapeDecoration(
-                              shadows: [
-                                _isVendor
-                                    ? BoxShadow(
-                                        offset: Offset(3, 6),
-                                        color: Color.fromRGBO(124, 193, 191, 1)
-                                            .withOpacity(0.3),
-                                        blurRadius: 35,
-                                      )
-                                    : Provider.of<Auth>(context, listen: false)
-                                                .userData?['user_type'] ==
-                                            UserType.Supplier.name
-                                        ? BoxShadow(
-                                            offset: Offset(1, 4),
-                                            color:
-                                                Color.fromRGBO(77, 191, 74, 1)
-                                                    .withOpacity(0.3),
-                                            blurRadius: 35,
-                                          )
-                                        : BoxShadow(
-                                            offset: Offset(3, 4),
-                                            color:
-                                                Color.fromRGBO(158, 116, 158, 1)
-                                                    .withOpacity(0.3),
-                                            blurRadius: 35,
-                                          )
-                              ],
-                              shape: const SmoothRectangleBorder(),
-                            ),
-                            
+                                shadows: [
+                                  _isVendor
+                                      ? BoxShadow(
+                                          offset: Offset(3, 6),
+                                          color:
+                                              Color.fromRGBO(124, 193, 191, 1)
+                                                  .withOpacity(0.3),
+                                          blurRadius: 35,
+                                        )
+                                      : Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .userData?['user_type'] ==
+                                              UserType.Supplier.name
+                                          ? BoxShadow(
+                                              offset: Offset(1, 4),
+                                              color:
+                                                  Color.fromRGBO(77, 191, 74, 1)
+                                                      .withOpacity(0.3),
+                                              blurRadius: 35,
+                                            )
+                                          : BoxShadow(
+                                              offset: Offset(3, 4),
+                                              color: Color.fromRGBO(
+                                                      158, 116, 158, 1)
+                                                  .withOpacity(0.3),
+                                              blurRadius: 35,
+                                            )
+                                ],
+                                shape: const SmoothRectangleBorder(),
+                              ),
+
                               child: ClipSmoothRect(
                                 radius: SmoothBorderRadius(
                                   cornerRadius: 40,
@@ -691,7 +687,8 @@ class _PostItemState extends State<PostItem> {
                   ),
                 ),
               //search icon menu items sheet icon
-              if (!_isVendor && widget.data['menu_items'] != null &&
+              if (!_isVendor &&
+                  widget.data['menu_items'] != null &&
                   (widget.data['menu_items'] as List<dynamic>).length != 0)
                 Positioned(
                   right: 35,
@@ -715,31 +712,29 @@ class _PostItemState extends State<PostItem> {
                           ],
                         ),
                         shadows: [
-                                _isVendor
-                                    ? BoxShadow(
-                                        offset: Offset(3, 6),
-                                        color: Color.fromRGBO(124, 193, 191, 1)
-                                            .withOpacity(0.3),
-                                        blurRadius: 35,
-                                      )
-                                    : Provider.of<Auth>(context, listen: false)
-                                                .userData?['user_type'] ==
-                                            UserType.Supplier.name
-                                        ? BoxShadow(
-                                            offset: Offset(1, 4),
-                                            color:
-                                                Color.fromRGBO(77, 191, 74, 1)
-                                                    .withOpacity(0.3),
-                                            blurRadius: 35,
-                                          )
-                                        : BoxShadow(
-                                            offset: Offset(3, 4),
-                                            color:
-                                                Color.fromRGBO(158, 116, 158, 1)
-                                                    .withOpacity(0.3),
-                                            blurRadius: 35,
-                                          )
-                              ],
+                          _isVendor
+                              ? BoxShadow(
+                                  offset: Offset(3, 6),
+                                  color: Color.fromRGBO(124, 193, 191, 1)
+                                      .withOpacity(0.3),
+                                  blurRadius: 35,
+                                )
+                              : Provider.of<Auth>(context, listen: false)
+                                          .userData?['user_type'] ==
+                                      UserType.Supplier.name
+                                  ? BoxShadow(
+                                      offset: Offset(1, 4),
+                                      color: Color.fromRGBO(77, 191, 74, 1)
+                                          .withOpacity(0.3),
+                                      blurRadius: 35,
+                                    )
+                                  : BoxShadow(
+                                      offset: Offset(3, 4),
+                                      color: Color.fromRGBO(158, 116, 158, 1)
+                                          .withOpacity(0.3),
+                                      blurRadius: 35,
+                                    )
+                        ],
                         shape: SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius(
                           cornerRadius: 15,
@@ -754,7 +749,7 @@ class _PostItemState extends State<PostItem> {
           ),
           Space(0.h),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.w,vertical: 0),
+            padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
             child: Column(
               children: [
                 Row(
@@ -763,12 +758,11 @@ class _PostItemState extends State<PostItem> {
                     const SizedBox(
                       width: 3,
                     ),
-                    
+
                     //like button
                     IconButton(
                       visualDensity: const VisualDensity(
                           horizontal: VisualDensity.minimumDensity),
-                    
                       onPressed: () async {
                         print("abcds:: ${widget.userId}");
                         String code = '';
@@ -1201,7 +1195,7 @@ class _PostItemState extends State<PostItem> {
               ],
             ),
           ),
-       Space(0.5.h),
+          Space(0.5.h),
         ],
       ),
     );
@@ -1356,7 +1350,7 @@ class _PostItemState extends State<PostItem> {
                   //     ),
                   //   ],
                   // ),
-                  
+
                   // Space(5.h),
                   FollowButtonInSHeet(data: widget.data),
                 ],

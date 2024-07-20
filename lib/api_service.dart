@@ -1406,6 +1406,7 @@ final prefs = await SharedPreferences.getInstance();
         headers: headers,
         body: jsonEncode(requestBody),
       );
+      notifyListeners();
       return {
         'body': jsonDecode((response.body)),
         'code': response.statusCode,
@@ -1431,6 +1432,7 @@ final prefs = await SharedPreferences.getInstance();
         body: jsonEncode(requestBody),
       );
       print(response.body);
+      notifyListeners();
       return {
         'body': jsonDecode((response.body)),
         'code': response.statusCode,

@@ -212,6 +212,7 @@ class _FeedState extends State<Feed> {
                               // return SizedBox.shrink();
                             }).toList(),
                     ),
+             
               _isLoadingMore == true
                   ? Padding(
                       padding: EdgeInsets.only(bottom: 2.h),
