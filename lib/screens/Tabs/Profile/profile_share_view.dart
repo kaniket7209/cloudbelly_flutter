@@ -177,7 +177,7 @@ class _QrViewState extends State<QrView> {
             message = 'Image not saved';
           }
         } else {
-          message = 'No image captured';
+          message = 'No image captured. Please close and open the popup again';
         }
       } catch (e) {
         print("$e error");
