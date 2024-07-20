@@ -36,6 +36,7 @@ class _SearchViewState extends State<SearchView> {
   String currentAddress = 'Fetching location...';
   PageController _pageController = PageController();
   bool _locationFetched = false;
+  Position? _selectedPosition;
 
   Map<String, String> headers = {
     'Content-Type': 'application/json; charset=UTF-8'
@@ -45,14 +46,12 @@ class _SearchViewState extends State<SearchView> {
   void initState() {
     super.initState();
     _initializeData();
-
-    
     _searchController.addListener(_onSearchChanged);
   }
 
   Future<void> _initializeData() async {
     if (!_locationFetched) {
-    await _checkLocationPermission();
+      await _checkLocationPermission();
       await _getCurrentLocation();
     }
     _fetchData();
@@ -60,15 +59,15 @@ class _SearchViewState extends State<SearchView> {
 
   Future<void> _checkLocationPermission() async {
     PermissionStatus permission = await Permission.locationWhenInUse.status;
+    if (permission != PermissionStatus.granted) {
+      permission = await Permission.locationWhenInUse.request();
+    }
     if (permission == PermissionStatus.granted) {
-      _getCurrentLocation();
-    } else {
-      await Permission.locationWhenInUse.request();
+      await _getCurrentLocation();
     }
   }
 
   Future<void> _getCurrentLocation() async {
-    AppWideLoadingBanner().loadingBanner(context);
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
@@ -100,23 +99,9 @@ class _SearchViewState extends State<SearchView> {
     } catch (e) {
       print('Error: $e');
     }
-    Navigator.pop(context);
-    setState(() {});
   }
 
   Future<void> _fetchData() async {
-    // if (_currentPosition == null) {
-    //   await _getCurrentLocation();
-    // }
-
-    if (_currentPosition == null) {
-      if (!_locationFetched) {
-        await _getCurrentLocation();
-      } else {
-        return; // Skip fetching data if location is not available and location is already fetched once
-      }
-    }
-
     if (isLoading || !hasMoreData) return;
 
     setState(() {
@@ -126,24 +111,16 @@ class _SearchViewState extends State<SearchView> {
     String function = isDishesSelected ? 'products' : 'vendors';
     var response = await http.post(
       Uri.parse('https://app.cloudbelly.in/search/$function'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      headers: headers,
       body: jsonEncode(<String, dynamic>{
         'page': page,
         'limit': limit,
-        'latitude': _currentPosition!.latitude,
-        'longitude': _currentPosition!.longitude,
+        'latitude': _selectedPosition?.latitude ?? _currentPosition?.latitude,
+        'longitude': _selectedPosition?.longitude ?? _currentPosition?.longitude,
         'query': _searchController.text,
       }),
     );
-    print("apicall ${json.encode({
-          'page': page,
-          'limit': limit,
-          'latitude': _currentPosition!.latitude,
-          'longitude': _currentPosition!.longitude,
-          'query': _searchController.text,
-        })}");
+
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       setState(() {
@@ -160,7 +137,6 @@ class _SearchViewState extends State<SearchView> {
         }
       });
     } else {
-      // Handle error
       print("Failed to load data");
     }
 
