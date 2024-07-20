@@ -51,11 +51,14 @@ class _ProfileViewState extends State<ProfileView> {
   List<UserModel> userList = [];
   bool _isFollowing = false;
   bool _isLoad = false;
+  String countFollowers = '';
+  String countFollowings = '';
   ScrollController t1 = new ScrollController();
 
   bool checkFollow() {
     String id = widget.userIdList.first;
     List<dynamic> temp =
+    // userList.first.followings
         Provider.of<Auth>(context, listen: false).userData?['followings'];
     for (var user in temp) {
       if (user['user_id'] == id) {
@@ -100,11 +103,12 @@ class _ProfileViewState extends State<ProfileView> {
 
   Future<void> getUserInfo(List<String> userIds) async {
     // AppWideLoadingBanner().loadingBanner(context);
-    _isLoad = true;
+    // _isLoad = true;
     userList =
         await Provider.of<Auth>(context, listen: false).getUserDetails(userIds);
-    _isLoad = false;
-    setState(() {});
+        // print(" viewProfi ${userList.first.followers?.length}  followers ${userList.first.followings?.length}  followings  ");
+    // _isLoad = false;
+   
     //Navigator.pop(context);
   }
 
@@ -646,14 +650,12 @@ Color sharedProfileColour(userType){
                                                         color: sharedProfileColour(userList.first.userType)
                                                       ),
                                                       ColumnWidgetHomeScreen(
-                                                        data: (Provider.of<Auth>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .userData?[
-                                                                'followings'])
-                                                            .length
-                                                            .toString(),
+                                                        data:  userList
+                                                                .first
+                                                                .followings
+                                                                ?.length
+                                                                .toString() ??
+                                                            "",
                                                         txt: 'Following',
                                                         color: sharedProfileColour(userList.first.userType)
                                                       )
@@ -682,6 +684,7 @@ Color sharedProfileColour(userType){
                                                                   .follow(widget
                                                                       .userIdList
                                                                       .first);
+                                                                     getUserInfo(widget.userIdList);
                                                               if (response[
                                                                       'code'] ==
                                                                   200) {
@@ -744,6 +747,7 @@ Color sharedProfileColour(userType){
                                                                         widget
                                                                             .userIdList
                                                                             .first);
+                                                                           getUserInfo(widget.userIdList);
                                                                 setState(() {
                                                                   _isFollowing =
                                                                       false;
