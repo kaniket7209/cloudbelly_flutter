@@ -5,6 +5,8 @@ import android.net.Uri
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
 import android.util.Log
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugins.GeneratedPluginRegistrant
 
 class MainActivity: FlutterActivity() {
     override fun onNewIntent(intent: Intent) {
@@ -26,5 +28,9 @@ class MainActivity: FlutterActivity() {
         } else {
             Log.d("DeepLink", "No data in intent");
         }
+    }
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine)
     }
 }

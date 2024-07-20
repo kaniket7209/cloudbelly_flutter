@@ -1,1002 +1,414 @@
-import 'dart:convert';
-
-import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/constants/enums.dart';
-import 'package:cloudbelly_app/constants/globalVaribales.dart';
-import 'package:cloudbelly_app/models/model.dart';
-import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
-import 'package:cloudbelly_app/screens/Tabs/Cart/view_cart.dart';
-import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
-import 'package:cloudbelly_app/screens/Tabs/Profile/customer_widgets_profile.dart';
-import 'package:cloudbelly_app/screens/Tabs/Profile/menu_item.dart';
-import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
-import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
-import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
-import 'package:cloudbelly_app/widgets/appwide_banner.dart';
-import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
-import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
-import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
-import 'package:cloudbelly_app/widgets/space.dart';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:uni_links/uni_links.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
-class ProfileView extends StatefulWidget {
-  List<String> userIdList = [];
-
-  ProfileView({super.key, required this.userIdList});
-
-  @override
-  State<ProfileView> createState() => _ProfileViewState();
+//  for QR code sharing (profile)
+class ProfileShareBottomSheet {
+  Future<dynamic> AddAddressSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return PopScope(
+          canPop: true,
+          onPopInvoked: (_) {
+            context.read<TransitionEffect>().setBlurSigma(0);
+          },
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                child: Container(
+                  decoration: const ShapeDecoration(
+                    color: Colors.white,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.only(
+                          topLeft: SmoothRadius(
+                              cornerRadius: 35, cornerSmoothing: 1),
+                          topRight: SmoothRadius(
+                              cornerRadius: 35, cornerSmoothing: 1)),
+                    ),
+                  ),
+                  width: double.infinity,
+                  padding: EdgeInsets.only(
+                      top: 2.h,
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TouchableOpacity(
+                          onTap: () {
+                            return Navigator.of(context).pop();
+                          },
+                          child: Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 1.h, horizontal: 3.w),
+                              width: 55,
+                              height: 5,
+                              decoration: ShapeDecoration(
+                                color: const Color(0xFFFA6E00),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const QrView(),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 }
 
-class _ProfileViewState extends State<ProfileView> {
-  int _activeButtonIndex = 1;
-  SampleItem? selectedMenu;
-  List<dynamic> menuList = [];
-  List<dynamic> feedList = [];
-  List<UserModel> userList = [];
-  bool _isFollowing = false;
-  bool _isLoad = false;
-  ScrollController t1 = new ScrollController();
-
-  bool checkFollow() {
-    String id = widget.userIdList.first;
-    List<dynamic> temp =
-        Provider.of<Auth>(context, listen: false).userData?['followings'];
-    for (var user in temp) {
-      if (user['user_id'] == id) {
-        _isFollowing = true;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // final RefreshController _refreshController =
-  //     RefreshController(initialRefresh: false);
-
-  void _onRefresh() async {
-    try {
-      await getUserInfo(widget.userIdList);
-      await _getFeed();
-      await _getMenu();
-      // _refreshController.refreshCompleted();
-      _scrollToTop();
-    } catch (error) {
-      // _refreshController.refreshFailed();
-    }
-  }
-
-  void _scrollToTop() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      t1.animateTo(
-        MediaQuery.sizeOf(context).height / 2.5, // Scroll to the top
-        duration:
-            const Duration(milliseconds: 300), // Duration of the animation
-        curve: Curves.linearToEaseOut, // Curve of the animation
-      );
-    });
-  }
+class QrView extends StatefulWidget {
+  const QrView({super.key});
 
   @override
-  void dispose() {
-    t1.dispose();
-    super.dispose();
-  }
+  State<QrView> createState() => _QrViewState();
+}
 
-  Future<void> getUserInfo(List<String> userIds) async {
-    // AppWideLoadingBanner().loadingBanner(context);
-    _isLoad = true;
-    userList =
-        await Provider.of<Auth>(context, listen: false).getUserDetails(userIds);
-    _isLoad = false;
-    setState(() {});
-    //Navigator.pop(context);
-  }
-
-  Future<void> _loading() async {
-    getUserInfo(widget.userIdList);
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isLoading = true;
-    });
-    await Provider.of<Auth>(context, listen: false)
-        .getFeed(widget.userIdList.first)
-        .then((feed) {
-      setState(() {
-        feedList = [];
-        feedList.addAll(feed);
-        _isLoading = false;
-        // _refreshController.refreshCompleted();
-      });
-    });
-    await Provider.of<Auth>(context, listen: false)
-        .getMenu(widget.userIdList.first)
-        .then((menu) {
-      setState(() {
-        menuList = [];
-        menuList.addAll(menu);
-        _isLoading = false;
-        // _refreshController.refreshCompleted();
-      });
-      final feedData = json.encode(
-        {
-          'menu': menu,
-        },
-      );
-      prefs.setString('menuData', feedData);
-    });
-  }
-
-  bool _isLoading = false;
-  List<String> categories = [];
-  String userType = "";
-
-  Future<void> _getMenu() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final prefs = await SharedPreferences.getInstance();
-
-    await Provider.of<Auth>(context, listen: false)
-        .getMenu(widget.userIdList.first)
-        .then((menu) {
-      menuList = [];
-      menuList.addAll(menu);
-      _isLoading = false;
-      /* setState(() {
-
-        });*/
-      final menuData = json.encode(
-        {
-          'menu': menu,
-        },
-      );
-      prefs.setString('menuData', menuData);
-    });
-    for (var item in menuList) {
-      if (item.containsKey('category')) {
-        String category = item['category'];
-        if (!categories.contains(category)) {
-          categories.add(category);
-        }
-      }
-    }
-  }
-
-  Future<void> _getFeed() async {
-    setState(() {
-      _isLoading = true;
-    });
-    await Provider.of<Auth>(context, listen: false)
-        .getFeed(widget.userIdList.first)
-        .then((feed) {
-      setState(() {
-        feedList = [];
-        feedList.addAll(feed);
-        _isLoading = false;
-      });
-    });
-  }
-
-  @override
+class _QrViewState extends State<QrView> {
+  bool showButtons = true;
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      final userId = ModalRoute.of(context)?.settings.arguments as String?;
-      if (userId != null) {
-        widget.userIdList = [userId];
-      }
-      _loadAllData();
+    showButtons = true;
+    setState(() {
+      showButtons = true;
     });
-  }
-
-  void _loadAllData() {
-    getUserInfo(widget.userIdList);
-    _getFeed();
-    _getMenu();
-    userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    // print("stock_statuss${widget.data['stock_status']}");
   }
 
   @override
   Widget build(BuildContext context) {
-    bool _isFollowing = checkFollow();
-    String? userType =
-        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    final String userId =
+        Provider.of<Auth>(context, listen: false).userData?['user_id'] ?? '';
+    print(
+        "prof ${Provider.of<Auth>(context, listen: false).userData?['profile_photo']}");
+    final String profileUrl =
+        "https://app.cloudbelly.in/profile?profileId=$userId";
+    final String profilePhoto =
+        Provider.of<Auth>(context, listen: false).userData?['profile_photo'] ??
+            '';
+    final String store_name =
+        Provider.of<Auth>(context, listen: false).userData?['store_name'] ?? '';
 
-     Color boxShadowColor;
+    final String user_type =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'] ?? '';
 
-    if (userType == 'Vendor') {
+    final ScreenshotController _screenshotController = ScreenshotController();
+
+    void _shareScreenshot() async {
+      setState(() {
+        showButtons = false;
+      });
+      final image = await _screenshotController.capture();
+      print("share $image");
+      if (image != null) {
+        final directory = await getTemporaryDirectory();
+        final imagePath =
+            await File('${directory.path}/screenshot.png').create();
+        await imagePath.writeAsBytes(image);
+        print("user_typed $user_type");
+        if (user_type == 'Vendor') {
+          await Share.shareFiles([imagePath.path],
+              text:
+                  '🍽️ Check out my store and menu for delicious meals at unbeatable prices! 🍲\n\nExplore our offerings and place your order now: ${profileUrl}\n\n#DeliciousMeals #AffordableDining #SupportLocalKitchens');
+        } else if (user_type == 'Customer') {
+          await Share.shareFiles([imagePath.path],
+              text:
+                  '🍴 Hey foodies! Discover amazing meals at unbeatable prices! 🍲\n\nI’ve partnered with this fantastic kitchen to bring you delicious food. Check out their menu and support local businesses: ${profileUrl}\n\n#FoodieFinds #SupportLocal #DeliciousMeals');
+        } else {
+          await Share.shareFiles([imagePath.path],
+              text:
+                  '🚚 Partner with us to supply the best ingredients and products for our kitchen. 🌿\n\nJoin our network and contribute to serving delicious meals: ${profileUrl}\n\n#SupplierNetwork #QualityIngredients #SupportLocalBusinesses');
+        }
+      }
+    }
+
+    Future<void> _downloadScreenshot() async {
+      String? message;
+
+      try {
+        setState(() {
+          showButtons = false;
+        });
+        final image = await _screenshotController.capture();
+        if (image != null) {
+          final directory = await getTemporaryDirectory();
+          final String imagePath =
+              '${directory.path}/screenshot.jpeg';
+          final File imageFile = File(imagePath);
+          await imageFile.writeAsBytes(image);
+
+          // Save image using flutter_file_dialog
+          final params = SaveFileDialogParams(sourceFilePath: imagePath);
+          final finalPath = await FlutterFileDialog.saveFile(params: params);
+
+          if (finalPath != null) {
+            message = 'Image saved to disk';
+          } else {
+            message = 'Image not saved';
+          }
+        } else {
+          message = 'No image captured';
+        }
+      } catch (e) {
+        print("$e error");
+        message = 'An error occurred while saving the image';
+      }
+
+      if (message != null) {
+        TOastNotification().showErrorToast(context, message);
+      }
+    }
+
+    Color boxShadowColor;
+
+    if (user_type == 'Vendor') {
       boxShadowColor = const Color(0xff0A4C61);
-    } else if (userType == 'Customer') {
+    } else if (user_type == 'Customer') {
       boxShadowColor = const Color(0xff2E0536);
-    } else if (userType == 'Supplier') {
+    } else if (user_type == 'Supplier') {
       boxShadowColor = Color.fromARGB(0, 115, 188, 150);
     } else {
-      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+      boxShadowColor = const Color(
+          0xff0A4C61); // Default color if user_type is none of the above
     }
-    bool _isVendor =
-        Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
-            'Vendor';
-    return Scaffold(
-      backgroundColor:
-          Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
-                  UserType.Vendor.name
-              ? const Color.fromRGBO(234, 245, 247, 1)
-              : userType == UserType.Supplier.name
-                  ? const Color(0xFFF6FFEE)
-                  : const Color.fromRGBO(255, 248, 255, 1),
-      body: RefreshIndicator(
-        onRefresh: _loading,
-        // controller: _refreshController,
-        // enablePullDown: true,
-        // enablePullUp: false,
-        // onLoading: _loading,
-        child: userList.isNotEmpty
-            ? SingleChildScrollView(
-                controller: t1,
-                child: _isLoad == false
-                    ? Container(
-                        constraints: const BoxConstraints(
-                          maxWidth: 800, // Set your maximum width here
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Stack(
-                              children: [
-                                Center(
-                                  child: ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      maxWidth:
-                                          800, // Set the maximum width to 800
-                                    ),
-                                    child: Container(
-                                      width: 100.w,
-                                      height:  23.3.h,
-                                      decoration: ShapeDecoration(
-                                        color: userList.first.userType ==
-                                                UserType.Vendor.name
-                                            ? const Color.fromRGBO(
-                                                165, 200, 199, 0.6)
-                                            : userList.first.userType ==
-                                                    UserType.Supplier.name
-                                                ? const Color.fromRGBO(
-                                                    77, 191, 74, 0.6)
-                                                : const Color(0xBC73BC)
-                                                    .withOpacity(0.5),
-                                        shape: const SmoothRectangleBorder(
-                                          borderRadius: SmoothBorderRadius.only(
-                                              bottomLeft: SmoothRadius(
-                                                  cornerRadius: 40,
-                                                  cornerSmoothing: 1),
-                                              bottomRight: SmoothRadius(
-                                                  cornerRadius: 40,
-                                                  cornerSmoothing: 1)),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Column(
-                                  children: [
-                                    Space(6.h),
-                                    ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                        maxWidth:
-                                            800, // Set the maximum width to 800
-                                      ),
-                                      child: Center(
-                                        child: Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 5.w),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              CustomIconButton(
-                                                text: 'back',
-                                                ic: Icons
-                                                    .arrow_back_ios_new_outlined,
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                             
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    // StoreNameWidget(
-                                    //   name: userList.first.storeName,
-                                    // ),
-                                    Space(2.h),
-                                    Center(
-                                      child: ConstrainedBox(
-                                        constraints: const BoxConstraints(
-                                          maxWidth:
-                                              420, // Set the maximum width to 800
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Center(
-                                                child: Container(
-                                              //height: 20.h,
-                                              width: 90.w,
-                                              decoration: ShapeDecoration(
-                                                shadows: [
-                                                  BoxShadow(
-                                                    offset: const Offset(0, 4),
-                                                    color: userList.first
-                                                                .userType ==
-                                                            UserType.Vendor.name
-                                                        ? const Color.fromRGBO(
-                                                            165, 200, 199, 0.6)
-                                                        : userList.first
-                                                                    .userType ==
-                                                                UserType
-                                                                    .Supplier
-                                                                    .name
-                                                            ? const Color
-                                                                .fromRGBO(77,
-                                                                191, 74, 0.6)
-                                                            : const Color
-                                                                .fromRGBO(188,
-                                                                115, 188, 0.6),
-                                                    blurRadius: 25,
-                                                  )
-                                                ],
-                                                color: Colors.white,
-                                                shape: SmoothRectangleBorder(
-                                                  borderRadius:
-                                                      SmoothBorderRadius(
-                                                    cornerRadius: 53,
-                                                    cornerSmoothing: 1,
-                                                  ),
-                                                ),
-                                              ),
-                                              child: Column(
-                                                children: [
-                                                 
-                                                  Container(
-                                                      padding:
-                                          EdgeInsets.fromLTRB(10, 15, 10, 0),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                            
-                                                      children: [
-                                                        ColumnWidgetHomeScreen(
-                                                          data: Provider.of<Auth>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .userData?['rating'],
-                                                          txt: 'Rating',
-                                                        ),
-                                                        ColumnWidgetHomeScreen(
-                                                          data: userList
-                                                                  .first
-                                                                  .followers
-                                                                  ?.length
-                                                                  .toString() ??
-                                                              "",
-                                                          txt: 'Followers',
-                                                        ),
-                                                        ColumnWidgetHomeScreen(
-                                                          data: (Provider.of<Auth>(
-                                                                          context,
-                                                                          listen:
-                                                                              false)
-                                                                      .userData?[
-                                                                  'followings'])
-                                                              .length
-                                                              .toString(),
-                                                          txt: 'Following',
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Space(3.h),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      if (widget.userIdList
-                                                              .first !=
-                                                          Provider.of<Auth>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .userData?['user_id'])
-                                                        TouchableOpacity(
-                                                          onTap: () async {
-                                                            if (!_isFollowing) {
-                                                              final dynamic response = await Provider.of<
-                                                                          Auth>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .follow(widget
-                                                                      .userIdList
-                                                                      .first);
-                                                              if (response[
-                                                                      'code'] ==
-                                                                  200) {
-                                                                TOastNotification()
-                                                                    .showSuccesToast(
-                                                                        context,
-                                                                        response['body']
-                                                                            [
-                                                                            'message']);
-                                                                Provider.of<Auth>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .userData?[
-                                                                        'followings']
-                                                                    .add({
-                                                                  'user_id': widget
-                                                                      .userIdList
-                                                                      .first
-                                                                });
-                                                                setState(() {
-                                                                  _isFollowing =
-                                                                      true;
-                                                                });
-                                                              } else {
-                                                                TOastNotification()
-                                                                    .showErrorToast(
-                                                                        context,
-                                                                        response['body']
-                                                                            [
-                                                                            'message']);
-                                                              }
-                                                            } else {
-                                                              final dynamic response = await Provider.of<
-                                                                          Auth>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .unfollow(widget
-                                                                      .userIdList
-                                                                      .first);
-                                                              if (response[
-                                                                      'code'] ==
-                                                                  200) {
-                                                                TOastNotification()
-                                                                    .showSuccesToast(
-                                                                        context,
-                                                                        response['body']
-                                                                            [
-                                                                            'message']);
-                                                                Provider.of<Auth>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .userData?[
-                                                                        'followings']
-                                                                    .removeWhere((element) =>
-                                                                        element[
-                                                                            'user_id'] ==
-                                                                        widget
-                                                                            .userIdList
-                                                                            .first);
-                                                                setState(() {
-                                                                  _isFollowing =
-                                                                      false;
-                                                                });
-                                                              } else {
-                                                                TOastNotification()
-                                                                    .showErrorToast(
-                                                                        context,
-                                                                        response['body']
-                                                                            [
-                                                                            'message']);
-                                                              }
-                                                            }
-                                                            print(Provider.of<
-                                                                            Auth>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .userData?[
-                                                                'followings']);
-                                                          },
-                                                          child: ButtonWidgetHomeScreen(
-                                                              txt: _isFollowing
-                                                                  ? 'Unfollow'
-                                                                  : 'Follow',
-                                                              isActive: true),
-                                                        ),
-                                                    ],
-                                                  ),
-                                                  Space(3.h),
-                                                ],
-                                              ),
-                                            )),
-                                            Space(3.h),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Center(
-                                      child: Container(
-                                        width: 100.w,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 1.5.h, horizontal: 4.w),
-                                        decoration: ShapeDecoration(
-                                          shadows: [
-                                            BoxShadow(
-                                              offset: const Offset(0, 4),
-                                              color: userList.first.userType ==
-                                                      UserType.Vendor.name
-                                                  ? const Color.fromRGBO(
-                                                      165, 200, 199, 0.6)
-                                                  : userList.first.userType ==
-                                                          UserType.Supplier.name
-                                                      ? const Color.fromRGBO(
-                                                          77, 191, 74, 0.6)
-                                                      : const Color.fromRGBO(
-                                                          188, 115, 188, 0.6),
-                                              blurRadius: 30,
-                                            )
-                                          ],
-                                          color: Colors.white,
-                                          shape: SmoothRectangleBorder(
-                                            borderRadius: SmoothBorderRadius(
-                                              cornerRadius: 30,
-                                              cornerSmoothing: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              if (_isVendor)
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 1.h,
-                                                      horizontal: 3.w),
-                                                  width: 55,
-                                                  height: 6,
-                                                  decoration: ShapeDecoration(
-                                                    color:
-                                                        const Color(0xFFFA6E00),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        6)),
-                                                  ),
-                                                ),
-                                              Space(2.h),
-                                              userList.first.userType ==
-                                                      UserType.Supplier.name
-                                                  ? Container(
-                                                      width: 95.w,
-                                                      child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceAround,
-                                                          children: [
-                                                            TouchableOpacity(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  _activeButtonIndex =
-                                                                      1;
-                                                                });
-                                                              },
-                                                              child:
-                                                                  CommonButtonProfile(
-                                                                isActive:
-                                                                    _activeButtonIndex ==
-                                                                        1,
-                                                                txt: 'Content',
-                                                                width: 52,
-                                                              ),
-                                                            ),
-                                                            TouchableOpacity(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  _activeButtonIndex =
-                                                                      2;
-                                                                       if (menuList.length !=
-                                                            0) _scrollToTop();
-                                                                });
-                                                              },
-                                                              child:
-                                                                  CommonButtonProfile(
-                                                                isActive:
-                                                                    _activeButtonIndex ==
-                                                                        2,
-                                                                txt: 'Menu',
-                                                                width: 52,
-                                                              ),
-                                                            ),
-                                                            TouchableOpacity(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  _activeButtonIndex =
-                                                                      3;
-                                                                });
-                                                              },
-                                                              child:
-                                                                  CommonButtonProfile(
-                                                                isActive:
-                                                                    _activeButtonIndex ==
-                                                                        3,
-                                                                txt: 'About',
-                                                                width: 52,
-                                                              ),
-                                                            ),
-                                                            TouchableOpacity(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  _activeButtonIndex =
-                                                                      4;
-                                                                });
-                                                              },
-                                                              child:
-                                                                  CommonButtonProfile(
-                                                                isActive:
-                                                                    _activeButtonIndex ==
-                                                                        4,
-                                                                txt: 'Reviews',
-                                                                width: 52,
-                                                              ),
-                                                            ),
-                                                          ]),
-                                                    )
-                                                  : userList.first.userType ==
-                                                          UserType.Customer.name
-                                                      ? Container(
-                                                          width: 95.w,
-                                                          child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceAround,
-                                                              children: [
-                                                                TouchableOpacity(
-                                                                  onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      _activeButtonIndex =
-                                                                          1;
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      CommonButtonProfile(
-                                                                    isActive:
-                                                                        _activeButtonIndex ==
-                                                                            1,
-                                                                    txt:
-                                                                        'Content',
-                                                                    width: 52,
-                                                                  ),
-                                                                ),
-                                                                TouchableOpacity(
-                                                                  onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      _activeButtonIndex =
-                                                                          3;
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      CommonButtonProfile(
-                                                                    isActive:
-                                                                        _activeButtonIndex ==
-                                                                            3,
-                                                                    txt:
-                                                                        'Reviews',
-                                                                    width: 52,
-                                                                  ),
-                                                                ),
-                                                              ]),
-                                                        )
-                                                      : Container(
-                                                          width: 95.w,
-                                                          child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceAround,
-                                                              children: [
-                                                                TouchableOpacity(
-                                                                  onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      _activeButtonIndex =
-                                                                          1;
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      CommonButtonProfile(
-                                                                    isActive:
-                                                                        _activeButtonIndex ==
-                                                                            1,
-                                                                    txt:
-                                                                        'Content',
-                                                                    width: 52,
-                                                                  ),
-                                                                ),
-                                                                TouchableOpacity(
-                                                                  onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      _activeButtonIndex =
-                                                                          2;
-                                                                           if (menuList.length !=
-                                                            0) _scrollToTop();
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      CommonButtonProfile(
-                                                                    isActive:
-                                                                        _activeButtonIndex ==
-                                                                            2,
-                                                                    txt: 'Menu',
-                                                                    width: 40,
-                                                                  ),
-                                                                ),
-                                                                TouchableOpacity(
-                                                                  onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      _activeButtonIndex =
-                                                                          3;
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      CommonButtonProfile(
-                                                                    isActive:
-                                                                        _activeButtonIndex ==
-                                                                            3,
-                                                                    txt:
-                                                                        'Reviews',
-                                                                    width: 52,
-                                                                  ),
-                                                                ),
-                                                              ]),
-                                                        ),
-                                              //  _isVendor ? Space(1.h) : Space(0.h),
-                                              const Space(20),
-                                              if (_activeButtonIndex == 1)
-                                                Center(
-                                                    // width:
-                                                    child: _isLoading
-                                                        ? const Center(
-                                                            child:
-                                                                CircularProgressIndicator(),
-                                                          )
-                                                        : feedList.length == 0
-                                                            ? Container(
-                                                                constraints:
-                                                                    BoxConstraints(
-                                                                  minHeight:
-                                                                      300, // Set your minimum height here
-                                                                ),
-                                                                child: Center(
-                                                                    child:
-                                                                        Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Text(
-                                                                      'No items  ',
-                                                                      style: TextStyle(
-                                                                          color: boxShadowColor.withOpacity(
-                                                                              0.2),
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          fontSize:
-                                                                              35,
-                                                                          fontFamily:
-                                                                              'Product Sans'),
-                                                                    ),
-                                                                    Text(
-                                                                      'in content  ',
-                                                                      style: TextStyle(
-                                                                          color: boxShadowColor.withOpacity(
-                                                                              0.2),
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          fontSize:
-                                                                              35,
-                                                                          fontFamily:
-                                                                              'Product Sans'),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          200,
-                                                                    )
-                                                                  ],
-                                                                )),
-                                                              )
-                                                            : Container(
-                                                                constraints:
-                                                                    BoxConstraints(
-                                                                  minHeight:
-                                                                      300, // Set your minimum height here
-                                                                ),
-                                                                child: GridView
-                                                                    .builder(
-                                                                  physics:
-                                                                      const NeverScrollableScrollPhysics(),
-                                                                  // Disable scrolling
-                                                                  shrinkWrap:
-                                                                      true,
-                                                                  // Allow the GridView to shrink-wrap its content
-                                                                  addAutomaticKeepAlives:
-                                                                      true,
-
-                                                                  padding: EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          0.8.h,
-                                                                      horizontal:
-                                                                          _isVendor
-                                                                              ? 1.w
-                                                                              : 0),
-                                                                  gridDelegate:
-                                                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                                                    childAspectRatio:
-                                                                        1,
-                                                                    crossAxisCount:
-                                                                        3, // Number of items in a row
-                                                                    crossAxisSpacing:
-                                                                        _isVendor
-                                                                            ? 2.w
-                                                                            : 2.w,
-                                                                    mainAxisSpacing:
-                                                                        1.h, // Spacing between rows
-                                                                  ),
-                                                                  itemCount:
-                                                                      feedList
-                                                                          .length,
-                                                                  // Total number of items
-                                                                  itemBuilder:
-                                                                      (context,
-                                                                          index) {
-                                                                    // You can replace this container with your custom item widget
-                                                                    return FeedWidget(
-                                                                        index:
-                                                                            index,
-                                                                        isSelfProfile:
-                                                                            "No",
-                                                                        type:
-                                                                            "not self",
-                                                                        userModel:
-                                                                            userList
-                                                                                .first,
-                                                                        userId: widget
-                                                                            .userIdList
-                                                                            .first,
-                                                                        fulldata:
-                                                                            feedList,
-                                                                        data: feedList[
-                                                                            index]);
-                                                                  },
-                                                                ),
-                                                              )),
-
-                                              if (_activeButtonIndex == 2)
-                                                Menu(
-                                                    isLoading: _isLoading,
-                                                    menuList: menuList,
-                                                    scroll: t1,
-                                                    categories: categories,
-                                                    user: widget
-                                                        .userIdList.first),
-                                              if (_activeButtonIndex == 3)
-                                                Container(
-                                                 constraints:
-                                                                    BoxConstraints(
-                                                                  minHeight:
-                                                                      300, // Set your minimum height here
-                                                                ),
-                                                  child: Center(
-                                                      child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        'No reviews',
-                                                        style: TextStyle(
-                                                            color: boxShadowColor
-                                                                .withOpacity(
-                                                                    0.2),
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 35,
-                                                            fontFamily:
-                                                                'Product Sans'),
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 200,
-                                                      )
-                                                    ],
-                                                  )),
-                                                ),
-                                              if (_activeButtonIndex == 4)
-                                                Container(
-                                                  constraints:
-                                                                    BoxConstraints(
-                                                                  minHeight:
-                                                                      300, // Set your minimum height here
-                                                                ),
-                                                  child: Center(
-                                                      child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        'No data',
-                                                        style: TextStyle(
-                                                            color: boxShadowColor
-                                                                .withOpacity(
-                                                                    0.2),
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 35,
-                                                            fontFamily:
-                                                                'Product Sans'),
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 200,
-                                                      )
-                                                    ],
-                                                  )),
-                                                )
-                                            ]),
-                                      ),
-                                    ),
-                                    Space(10.h),
-                                  ],
-                                ),
-                              ],
+    return Screenshot(
+      controller: _screenshotController,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (showButtons)
+                Container(
+                  margin: EdgeInsets.only(top: 4),
+                  width: 100,
+                  height: 100,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: ShapeDecoration(
+                          color: Color(0xffFA6E00),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 15,
+                              cornerSmoothing: 1,
+                            ),
+                          ),
+                          shadows: [
+                            BoxShadow(
+                              color: boxShadowColor
+                                  .withOpacity(0.3), // Color with 35% opacity
+                              blurRadius: 15, // Blur amount
+                              offset: Offset(0, 4), // X and Y offset
                             ),
                           ],
                         ),
-                      )
-                    : Center(
-                        child: CircularProgressIndicator(
-                        color: Colors.black,
-                      )),
-              )
-            : Center(
-                child: CircularProgressIndicator(
-                  color: Colors.black,
+                        child: IconButton(
+                          onPressed: () async {
+                            _downloadScreenshot();
+                            // Share.share(profileUrl);
+                          },
+                          icon: Image.asset(
+                            'assets/images/Download.png', // Path to your image asset
+                            color: Colors
+                                .white, // Optional: If you want to tint the image
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              Center(
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: ShapeDecoration(
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 22,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: boxShadowColor
+                            .withOpacity(0.3), // Color with 35% opacity
+                        blurRadius: 15, // Blur amount
+                        offset: Offset(0, 4), // X and Y offset
+                      ),
+                    ],
+                    image: DecorationImage(
+                      image: NetworkImage(profilePhoto),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
+              if (showButtons)
+                Container(
+                  margin: EdgeInsets.only(top: 4),
+                  width: 100,
+                  height: 100,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: ShapeDecoration(
+                          color: Color(0xffFA6E00),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 15,
+                              cornerSmoothing: 1,
+                            ),
+                          ),
+                          shadows: [
+                            BoxShadow(
+                              color: boxShadowColor
+                                  .withOpacity(0.3), // Color with 35% opacity
+                              blurRadius: 15, // Blur amount
+                              offset: Offset(0, 4), // X and Y offset
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          onPressed: () async {
+                            _shareScreenshot();
+                            // Share.share(profileUrl);
+                          },
+                          icon: Image.asset(
+                            'assets/images/Share.png', // Path to your image asset
+                            color: Colors
+                                .white, // Optional: If you want to tint the image
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Center(
+            child: Text(
+              Provider.of<Auth>(context, listen: false)
+                      .userData?['store_name'] ??
+                  '',
+              style: TextStyle(
+                color: boxShadowColor,
+                fontSize: 26,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w800,
+                height: 1.2,
+                letterSpacing: 0.35,
+              ),
+            ),
+          ),
+          SizedBox(height: 5),
+          SizedBox(height: 10),
+          Center(
+            child: Container(
+              padding: EdgeInsets.all(8), // Optional for some spacing
+              decoration: BoxDecoration(
+                color: Colors.white, // Background color of the container
+                borderRadius: BorderRadius.circular(
+                    20), // Rounded corners of the container
+              ),
+              child: PrettyQr(
+                data: profileUrl, // Your data variable
+                size: 200, // Size of the QR code
+                roundEdges: true, // Rounded corners for the QR code elements
+                elementColor: boxShadowColor, // Color of the QR code elements
+                // image: NetworkImage(profilePhoto),
+                // Your profile photo URL
+              ),
+            ),
+          ),
+          SizedBox(height: 40),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  padding: EdgeInsets.all(10),
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 17,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: boxShadowColor
+                            .withOpacity(0.15), // Color with 35% opacity
+                        blurRadius: 15, // Blur amount
+                        offset: Offset(0, 4), // X and Y offset
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const SizedBox(width: 10),
+                      Expanded(
+                        flex: 1,
+                        child: Text(
+                          profileUrl,
+                          style: TextStyle(
+                            color: boxShadowColor,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w800,
+                            height: 1.2,
+                            letterSpacing: 0.35,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 30),
+        ],
       ),
     );
   }

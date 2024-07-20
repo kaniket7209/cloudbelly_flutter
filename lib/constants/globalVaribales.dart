@@ -101,7 +101,7 @@ class GlobalVariables {
         height: 10,
         width: 10,
         child: CircularProgressIndicator(
-          color: const Color(0xffFA6E00),
+          color: const Color(0xff0A4C61),
           value: loadingProgress.expectedTotalBytes != null
               ? loadingProgress.cumulativeBytesLoaded /
                   loadingProgress.expectedTotalBytes!
@@ -112,18 +112,22 @@ class GlobalVariables {
   }
  Widget imageloadingBuilderForImage(BuildContext context, ImageChunkEvent? loadingProgress) {
     return Center(
-      child: CircularProgressIndicator(
-        color: const Color(0xffFA6E00),
-        value: loadingProgress != null && loadingProgress.expectedTotalBytes != null
-            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-            : null,
+      child: SizedBox(
+         height: 10,
+        width: 10,
+        child: CircularProgressIndicator(
+          color: const Color(0xff0A4C61),
+          value: loadingProgress != null && loadingProgress.expectedTotalBytes != null
+              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+              : null,
+        ),
       ),
     );
   }
 
   // Error widget for failed image loading
   Widget imageErrorBuilderForImage(BuildContext context, Object error, StackTrace? stackTrace) {
-    return Center(
+    return const Center(
       child: Icon(
         Icons.error,
         color: Colors.red,

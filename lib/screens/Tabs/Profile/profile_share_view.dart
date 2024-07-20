@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -15,7 +16,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
 //  for QR code sharing (profile)
@@ -93,6 +93,16 @@ class QrView extends StatefulWidget {
 }
 
 class _QrViewState extends State<QrView> {
+  bool showButtons = true;
+  void initState() {
+    super.initState();
+    showButtons = true;
+    setState(() {
+      showButtons = true;
+    });
+    // print("stock_statuss${widget.data['stock_status']}");
+  }
+
   @override
   Widget build(BuildContext context) {
     final String userId =
@@ -116,6 +126,9 @@ class _QrViewState extends State<QrView> {
       final image = await _screenshotController.capture();
       print("share $image");
       if (image != null) {
+        setState(() {
+          showButtons = false;
+        });
         final directory = await getTemporaryDirectory();
         final imagePath =
             await File('${directory.path}/screenshot.png').create();
@@ -134,26 +147,52 @@ class _QrViewState extends State<QrView> {
               text:
                   '🚚 Partner with us to supply the best ingredients and products for our kitchen. 🌿\n\nJoin our network and contribute to serving delicious meals: ${profileUrl}\n\n#SupplierNetwork #QualityIngredients #SupportLocalBusinesses');
         }
+        setState(() {
+          showButtons = true;
+        });
       }
     }
 
-    void _downloadScreenshot() async {
-      final image = await _screenshotController.capture();
-      if (image != null) {
-        final directory = await getTemporaryDirectory();
-        final String imagePath = '${directory.path}/screenshot.png';
-        final File imageFile = File(imagePath);
-        await imageFile.writeAsBytes(image);
+    Future<void> _downloadScreenshot() async {
+      String? message;
 
-        // Save image using flutter_file_dialog
-        final params = SaveFileDialogParams(
-          sourceFilePath: imagePath,
-          fileName: 'screenshot.png',
-        );
-        final result = await FlutterFileDialog.saveFile(params: params);
-        print('Image saved to storage: $result');
+      try {
+        setState(() {
+          showButtons = false;
+        });
+        final image = await _screenshotController.capture();
+        if (image != null) {
+          final directory = await getTemporaryDirectory();
+          final String imagePath = '${directory.path}/screenshot.jpeg';
+          final File imageFile = File(imagePath);
+          await imageFile.writeAsBytes(image);
+
+          // Save image using flutter_file_dialog
+          final params = SaveFileDialogParams(sourceFilePath: imagePath);
+          final finalPath = await FlutterFileDialog.saveFile(params: params);
+
+          if (finalPath != null) {
+            message = 'Image saved to disk';
+            
+          } else {
+            message = 'Image not saved';
+          }
+        } else {
+          message = 'No image captured';
+        }
+      } catch (e) {
+        print("$e error");
+        message = 'An error occurred while saving the image';
       }
-      print('No Image ');
+setState(() {
+          showButtons = true;
+        });
+      if (message == 'Image saved to disk') {
+        TOastNotification().showSuccesToast(context, message);
+      }
+      else{
+         TOastNotification().showErrorToast(context, message);
+      }
     }
 
     Color boxShadowColor;
@@ -179,6 +218,7 @@ class _QrViewState extends State<QrView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
+                margin: EdgeInsets.only(top: 4),
                 width: 100,
                 height: 100,
                 child: Column(
@@ -187,7 +227,9 @@ class _QrViewState extends State<QrView> {
                       width: 40,
                       height: 40,
                       decoration: ShapeDecoration(
-                        color: Color(0xffFA6E00),
+                        color: showButtons
+                            ? Color(0xffFA6E00)
+                            : Colors.transparent,
                         shape: SmoothRectangleBorder(
                           borderRadius: SmoothBorderRadius(
                             cornerRadius: 15,
@@ -196,8 +238,9 @@ class _QrViewState extends State<QrView> {
                         ),
                         shadows: [
                           BoxShadow(
-                            color: boxShadowColor
-                                .withOpacity(0.3), // Color with 35% opacity
+                            color: showButtons
+                                ? boxShadowColor.withOpacity(0.3)
+                                : Colors.transparent, // Color with 35% opacity
                             blurRadius: 15, // Blur amount
                             offset: Offset(0, 4), // X and Y offset
                           ),
@@ -210,8 +253,10 @@ class _QrViewState extends State<QrView> {
                         },
                         icon: Image.asset(
                           'assets/images/Download.png', // Path to your image asset
-                          color: Colors
-                              .white, // Optional: If you want to tint the image
+                          color: showButtons
+                              ? Colors.white
+                              : Colors
+                                  .transparent, // Optional: If you want to tint the image
                         ),
                       ),
                     ),
@@ -245,6 +290,7 @@ class _QrViewState extends State<QrView> {
                 ),
               ),
               Container(
+                margin: EdgeInsets.only(top: 4),
                 width: 100,
                 height: 100,
                 child: Column(
@@ -253,7 +299,9 @@ class _QrViewState extends State<QrView> {
                       width: 40,
                       height: 40,
                       decoration: ShapeDecoration(
-                        color: Color(0xffFA6E00),
+                        color: showButtons
+                            ? Color(0xffFA6E00)
+                            : Colors.transparent,
                         shape: SmoothRectangleBorder(
                           borderRadius: SmoothBorderRadius(
                             cornerRadius: 15,
@@ -262,8 +310,9 @@ class _QrViewState extends State<QrView> {
                         ),
                         shadows: [
                           BoxShadow(
-                            color: boxShadowColor
-                                .withOpacity(0.3), // Color with 35% opacity
+                            color: showButtons
+                                ? boxShadowColor.withOpacity(0.3)
+                                : Colors.transparent, // Color with 35% opacity
                             blurRadius: 15, // Blur amount
                             offset: Offset(0, 4), // X and Y offset
                           ),
@@ -276,8 +325,10 @@ class _QrViewState extends State<QrView> {
                         },
                         icon: Image.asset(
                           'assets/images/Share.png', // Path to your image asset
-                          color: Colors
-                              .white, // Optional: If you want to tint the image
+                          color: showButtons
+                              ? Colors.white
+                              : Colors
+                                  .transparent, // Optional: If you want to tint the image
                         ),
                       ),
                     ),
