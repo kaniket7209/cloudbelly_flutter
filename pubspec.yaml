@@ -81,6 +81,9 @@ dependencies:
   smooth_corner: ^1.1.0
   pretty_qr_code: ^3.3.0
   cached_network_image: ^3.3.1
+  image_gallery_saver: ^2.0.3
+  flutter_file_dialog: ^3.0.2
+
   # multiple_images_picker: ^1.0.1
 
 dev_dependencies:

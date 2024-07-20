@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
@@ -14,6 +15,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
 //  for QR code sharing (profile)
 class ProfileShareBottomSheet {
@@ -124,8 +127,8 @@ class _QrViewState extends State<QrView> {
                   '🍽️ Check out my store and menu for delicious meals at unbeatable prices! 🍲\n\nExplore our offerings and place your order now: ${profileUrl}\n\n#DeliciousMeals #AffordableDining #SupportLocalKitchens');
         } else if (user_type == 'Customer') {
           await Share.shareFiles([imagePath.path],
-          text: '🍴 Hey foodies! Discover amazing meals at unbeatable prices! 🍲\n\nI’ve partnered with this fantastic kitchen to bring you delicious food. Check out their menu and support local businesses: ${profileUrl}\n\n#FoodieFinds #SupportLocal #DeliciousMeals'
-              );
+              text:
+                  '🍴 Hey foodies! Discover amazing meals at unbeatable prices! 🍲\n\nI’ve partnered with this fantastic kitchen to bring you delicious food. Check out their menu and support local businesses: ${profileUrl}\n\n#FoodieFinds #SupportLocal #DeliciousMeals');
         } else {
           await Share.shareFiles([imagePath.path],
               text:
@@ -134,6 +137,11 @@ class _QrViewState extends State<QrView> {
       }
     }
 
+   void _downloadScreenshot() async {
+    final image = await _screenshotController.capture();
+   
+  }
+  
     Color boxShadowColor;
 
     if (user_type == 'Vendor') {
@@ -151,33 +159,118 @@ class _QrViewState extends State<QrView> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(height: 20),
-        Center(
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: ShapeDecoration(
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius(
-                  cornerRadius: 22,
-                  cornerSmoothing: 1,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              width: 100,
+              height: 100,
+              child: Column(children: [Container(
+                    width: 40,
+                    height: 40,
+                    decoration: ShapeDecoration(
+                      color: Color(0xffFA6E00),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 15,
+                          cornerSmoothing: 1,
+                        ),
+                      ),
+                      shadows: [
+                        BoxShadow(
+                          color: boxShadowColor
+                              .withOpacity(0.3), // Color with 35% opacity
+                          blurRadius: 15, // Blur amount
+                          offset: Offset(0, 4), // X and Y offset
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: () async {
+                        _downloadScreenshot();
+                        // Share.share(profileUrl);
+                      },
+                      icon: Image.asset(
+                        'assets/images/Download.png', // Path to your image asset
+                        color: Colors
+                            .white, // Optional: If you want to tint the image
+                      ),
+                    ),
+                  ),
+                  ],),
+            ),
+            Center(
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: ShapeDecoration(
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 22,
+                      cornerSmoothing: 1,
+                    ),
+                  ),
+                  shadows: [
+                    BoxShadow(
+                      color: boxShadowColor
+                          .withOpacity(0.3), // Color with 35% opacity
+                      blurRadius: 15, // Blur amount
+                      offset: Offset(0, 4), // X and Y offset
+                    ),
+                  ],
+                  image: DecorationImage(
+                    image: NetworkImage(profilePhoto),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              shadows: [
-                BoxShadow(
-                  color:
-                      boxShadowColor.withOpacity(0.3), // Color with 35% opacity
-                  blurRadius: 15, // Blur amount
-                  offset: Offset(0, 4), // X and Y offset
-                ),
-              ],
-              image: DecorationImage(
-                image: NetworkImage(profilePhoto),
-                fit: BoxFit.cover,
               ),
             ),
-          ),
+            Container(
+              width: 100,
+              height: 100,
+              child: Column(
+               
+                children: [
+                  
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: ShapeDecoration(
+                      color: Color(0xffFA6E00),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 15,
+                          cornerSmoothing: 1,
+                        ),
+                      ),
+                      shadows: [
+                        BoxShadow(
+                          color: boxShadowColor
+                              .withOpacity(0.3), // Color with 35% opacity
+                          blurRadius: 15, // Blur amount
+                          offset: Offset(0, 4), // X and Y offset
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: () async {
+                        _shareScreenshot();
+                        // Share.share(profileUrl);
+                      },
+                      icon: Image.asset(
+                        'assets/images/Share.png', // Path to your image asset
+                        color: Colors
+                            .white, // Optional: If you want to tint the image
+                      ),
+                    ),
+                  ),
+               
+                ],
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Center(
           child: Text(
             Provider.of<Auth>(context, listen: false).userData?['store_name'] ??
@@ -193,44 +286,6 @@ class _QrViewState extends State<QrView> {
           ),
         ),
         SizedBox(height: 5),
-
-        // GestureDetector(
-        //   onTap: () async {
-        //     final phoneNumber =
-        //         Provider.of<Auth>(context, listen: false).userData?['phone'] ??
-        //             '';
-        //     final url = 'tel:$phoneNumber';
-        //     if (await canLaunch(url)) {
-        //       await launch(url);
-        //     } else {
-        //       ScaffoldMessenger.of(context).showSnackBar(
-        //         const SnackBar(content: Text('Could not launch phone call')),
-        //       );
-        //     }
-        //   },
-        //   child: Text(
-        //     Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '',
-        //     style: TextStyle(
-        //       color: boxShadowColor,
-        //       fontSize: 18,
-        //       fontFamily: 'Product Sans',
-        //       fontWeight: FontWeight.w800,
-        //       height: 1.2,
-        //       letterSpacing: 0.35,
-        //     ),
-        //   ),
-        //   // child: CircleAvatar(
-        //   //   radius: 10,
-        //   //   backgroundColor: const Color(0xFFFA6E00),
-        //   //   child: Image.asset(
-        //   //     'assets/images/Phone.png',
-        //   //     width: 30,
-        //   //     height: 30,
-        //   //     fit: BoxFit.fill,
-        //   //   ),
-        //   // ),
-        // ),
-
         SizedBox(height: 10),
         Center(
           child: Screenshot(
@@ -248,15 +303,11 @@ class _QrViewState extends State<QrView> {
                 roundEdges: true, // Rounded corners for the QR code elements
                 elementColor: boxShadowColor, // Color of the QR code elements
                 // image: NetworkImage(profilePhoto),
-                 // Your profile photo URL
-                 
+                // Your profile photo URL
               ),
             ),
           ),
         ),
-        
-        
-
         SizedBox(height: 40),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -264,20 +315,20 @@ class _QrViewState extends State<QrView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: MediaQuery.of(context).size.width * 0.80,
+                width: MediaQuery.of(context).size.width * 0.85,
                 padding: EdgeInsets.all(10),
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(
-                      cornerRadius: 13,
+                      cornerRadius: 17,
                       cornerSmoothing: 1,
                     ),
                   ),
                   shadows: [
                     BoxShadow(
                       color: boxShadowColor
-                          .withOpacity(0.3), // Color with 35% opacity
+                          .withOpacity(0.15), // Color with 35% opacity
                       blurRadius: 15, // Blur amount
                       offset: Offset(0, 4), // X and Y offset
                     ),
@@ -286,47 +337,18 @@ class _QrViewState extends State<QrView> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    const SizedBox(width: 10),
                     Expanded(
+                      flex: 1,
                       child: Text(
                         profileUrl,
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: boxShadowColor,
                           fontSize: 14,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w800,
                           height: 1.2,
                           letterSpacing: 0.35,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: ShapeDecoration(
-                        color: Color(0xffFA6E00),
-                        shape: SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius(
-                            cornerRadius: 13,
-                            cornerSmoothing: 1,
-                          ),
-                        ),
-                        shadows: [
-                          BoxShadow(
-                            color: boxShadowColor
-                                .withOpacity(0.3), // Color with 35% opacity
-                            blurRadius: 15, // Blur amount
-                            offset: Offset(0, 4), // X and Y offset
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        onPressed: () async {
-                          _shareScreenshot();
-                          // Share.share(profileUrl);
-                        },
-                        icon: Image.asset(
-                          'assets/images/Share.png', // Path to your image asset
-                          color: Colors.white, // Optional: If you want to tint the image
                         ),
                       ),
                     ),

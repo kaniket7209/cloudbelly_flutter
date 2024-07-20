@@ -267,7 +267,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         children: [
                           Text(
                             showAll ? 'See less' : 'See all',
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.transparent,
                                 // color: boxShadowColor,
                                 fontWeight: FontWeight.bold,
