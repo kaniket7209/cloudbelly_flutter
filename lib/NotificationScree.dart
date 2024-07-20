@@ -268,8 +268,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           Text(
                             showAll ? 'See less' : 'See all',
                             style: TextStyle(
-                                color: boxShadowColor,
+                                color: Colors.transparent,
+                                // color: boxShadowColor,
                                 fontWeight: FontWeight.bold,
+                                
                                 fontFamily: 'Product Sans'),
                           ),
                           SizedBox(width: 5),
@@ -1435,7 +1437,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             Text(
                               showAll ? 'See less' : 'See all',
                               style: TextStyle(
-                                  color: Color(0xff0A4C61),
+                                  // color: Color(0xff0A4C61),
+                                   color: Colors.transparent,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Product Sans'),
                             ),
