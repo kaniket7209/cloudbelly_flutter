@@ -51,7 +51,6 @@ class _SearchViewState extends State<SearchView> {
   Future<void> _initializeData() async {
     if (!_locationFetched) {
       await _checkLocationPermission();
-      await _getCurrentLocation();
     }
     _fetchData();
   }
@@ -93,7 +92,7 @@ class _SearchViewState extends State<SearchView> {
           _currentPosition?.latitude, _currentPosition?.longitude);
 
       setState(() {
-        _locationFetched = true; // Set location fetched flag
+        _locationFetched = true; 
       });
     } catch (e) {
       print('Error: $e');
