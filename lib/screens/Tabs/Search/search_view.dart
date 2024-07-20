@@ -36,7 +36,6 @@ class _SearchViewState extends State<SearchView> {
   String currentAddress = 'Fetching location...';
   PageController _pageController = PageController();
   bool _locationFetched = false;
-  Position? _selectedPosition;
 
   Map<String, String> headers = {
     'Content-Type': 'application/json; charset=UTF-8'
@@ -115,8 +114,8 @@ class _SearchViewState extends State<SearchView> {
       body: jsonEncode(<String, dynamic>{
         'page': page,
         'limit': limit,
-        'latitude': _selectedPosition?.latitude ?? _currentPosition?.latitude,
-        'longitude': _selectedPosition?.longitude ?? _currentPosition?.longitude,
+        'latitude': _currentPosition?.latitude,
+        'longitude': _currentPosition?.longitude,
         'query': _searchController.text,
       }),
     );
@@ -193,7 +192,6 @@ class _SearchViewState extends State<SearchView> {
     _pageController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
