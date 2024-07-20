@@ -1,4 +1,5 @@
 // lib/widgets/dish_card.dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -59,18 +60,19 @@ class DishCard extends StatelessWidget {
                     cornerSmoothing: 1,
                   ),
                   child: dish.images.isNotEmpty
-                      ? Image.network(
-                          dish.images.isNotEmpty
-                              ? dish.images.first
-                              : 'https://via.placeholder.com/150', // Fallback image URL
+                      ?
+                     
+                      CachedNetworkImage(
+                          imageUrl: dish.images.first,
                           fit: BoxFit.cover,
-                          loadingBuilder:
-                              GlobalVariables().loadingBuilderForImage,
-                          errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                          placeholder: (context, url) => GlobalVariables()
+                              .imageloadingBuilderForImage(context, null),
+                          errorWidget: (context, url, error) =>
+                              GlobalVariables().imageErrorBuilderForImage(
+                                  context, error, null),
                         )
                       : Image.network('https://via.placeholder.com/150'),
                 ),
-             
               ),
             ),
             SizedBox(width: 20),
@@ -87,7 +89,7 @@ class DishCard extends StatelessWidget {
                         width: MediaQuery.of(context).size.width * 0.3,
                         child: Text(
                           dish.name,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Product Sans',
                             fontSize: 16,
@@ -157,7 +159,9 @@ class DishCard extends StatelessWidget {
                           fontSize: 12,
                         ),
                       ),
-                             SizedBox(width: 10,),          
+                      SizedBox(
+                        width: 10,
+                      ),
                       Text(
                         '${double.parse(dish.distance_km).toStringAsFixed(2)} km',
                         style: TextStyle(

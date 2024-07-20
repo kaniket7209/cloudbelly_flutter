@@ -1,4 +1,5 @@
 // lib/widgets/restaurant_card.dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -69,14 +70,14 @@ class RestaurantCard extends StatelessWidget {
                     cornerSmoothing: 1,
                   ),
                   child: restaurant.profilePhoto.isNotEmpty
-                      ? Image.network(
-                          restaurant.profilePhoto.isNotEmpty
-                              ? restaurant.profilePhoto
-                              : 'https://via.placeholder.com/150', // Fallback image URL
+                      ?   CachedNetworkImage(
+                          imageUrl: restaurant.profilePhoto,
                           fit: BoxFit.cover,
-                          loadingBuilder:
-                              GlobalVariables().loadingBuilderForImage,
-                          errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                          placeholder: (context, url) => GlobalVariables()
+                              .imageloadingBuilderForImage(context, null),
+                          errorWidget: (context, url, error) =>
+                              GlobalVariables().imageErrorBuilderForImage(
+                                  context, error, null),
                         )
                       : Image.network('https://via.placeholder.com/150'),
                 ),
