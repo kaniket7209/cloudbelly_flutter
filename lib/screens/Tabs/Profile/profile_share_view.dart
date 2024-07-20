@@ -247,7 +247,7 @@ class _QrViewState extends State<QrView> {
                 size: 200, // Size of the QR code
                 roundEdges: true, // Rounded corners for the QR code elements
                 elementColor: boxShadowColor, // Color of the QR code elements
-                image: NetworkImage(profilePhoto),
+                // image: NetworkImage(profilePhoto),
                  // Your profile photo URL
                  
               ),
