@@ -60,15 +60,14 @@ class _MenuItemState extends State<MenuItem> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                       constraints:  BoxConstraints(
-                          maxWidth: 60.w, // Set your maximum width here
-                        ),
+                      constraints: BoxConstraints(
+                        maxWidth: 60.w, // Set your maximum width here
+                      ),
                       // width: 60.w,
                       child: Text(
                         widget.data['name'],
@@ -80,9 +79,10 @@ class _MenuItemState extends State<MenuItem> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 10,),
+                    SizedBox(
+                      width: 10,
+                    ),
                     Container(
-                      
                       child: Container(
                         width: 10,
                         height: 10,
@@ -104,7 +104,6 @@ class _MenuItemState extends State<MenuItem> {
                     ),
                   ],
                 ),
-
                 Row(
                   children: [
                     Text('Rs  ${widget.data['price']}',
@@ -220,14 +219,14 @@ class _MenuItemState extends State<MenuItem> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    if(widget.data['images'].length != 0)
-                    openFullScreen(
-                        context,
-                        widget.data['images'][0],
-                        widget.data['description'] ?? '',
-                        widget.data['name'] ?? '',
-                        widget.data['price'] ?? '',
-                        widget.data['type'] ?? 'Veg');
+                    if (widget.data['images'].length != 0)
+                      openFullScreen(
+                          context,
+                          widget.data['images'][0],
+                          widget.data['description'] ?? '',
+                          widget.data['name'] ?? '',
+                          widget.data['price'] ?? '',
+                          widget.data['type'] ?? 'Veg');
                   },
                   child: Container(
                     margin: EdgeInsets.symmetric(vertical: 1.4.h),
@@ -251,53 +250,55 @@ class _MenuItemState extends State<MenuItem> {
                       ),
                     ),
                     child: (widget.data['images'] as List<dynamic>).isNotEmpty
-    ? ClipSmoothRect(
-        radius: SmoothBorderRadius(
-          cornerRadius: 24,
-          cornerSmoothing: 1,
-        ),
-        child: ColorFiltered(
-          colorFilter: (!widget.storeAvailability ||
-                  _stockSwitch == false ||
-                  widget.data['stock_status'] == false)
-              ? const ColorFilter.matrix([
-                  0.2126,
-                  0.7152,
-                  0.0722,
-                  0,
-                  0,
-                  0.2126,
-                  0.7152,
-                  0.0722,
-                  0,
-                  0,
-                  0.2126,
-                  0.7152,
-                  0.0722,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  1,
-                  0,
-                ])
-              : const ColorFilter.mode(
-                  Colors.transparent,
-                  BlendMode.multiply,
-                ),
-          child: CachedNetworkImage(
-            imageUrl: widget.data['images'][0],
-            fit: BoxFit.cover,
-             placeholder: (context, url) => GlobalVariables().imageloadingBuilderForImage(context, null),
-            errorWidget: (context, url, error) => GlobalVariables().imageErrorBuilderForImage(context, error, null),
-          ),
-        ),
-      )
-    : null,
+                        ? ClipSmoothRect(
+                            radius: SmoothBorderRadius(
+                              cornerRadius: 24,
+                              cornerSmoothing: 1,
+                            ),
+                            child: ColorFiltered(
+                              colorFilter: (!widget.storeAvailability ||
+                                      _stockSwitch == false ||
+                                      widget.data['stock_status'] == false)
+                                  ? const ColorFilter.matrix([
+                                      0.2126,
+                                      0.7152,
+                                      0.0722,
+                                      0,
+                                      0,
+                                      0.2126,
+                                      0.7152,
+                                      0.0722,
+                                      0,
+                                      0,
+                                      0.2126,
+                                      0.7152,
+                                      0.0722,
+                                      0,
+                                      0,
+                                      0,
+                                      0,
+                                      0,
+                                      1,
+                                      0,
+                                    ])
+                                  : const ColorFilter.mode(
+                                      Colors.transparent,
+                                      BlendMode.multiply,
+                                    ),
+                              child: CachedNetworkImage(
+                                imageUrl: widget.data['images'][0],
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => GlobalVariables()
+                                    .imageloadingBuilderForImage(context, null),
+                                errorWidget: (context, url, error) =>
+                                    GlobalVariables().imageErrorBuilderForImage(
+                                        context, error, null),
+                              ),
+                            ),
+                          )
+                        : null,
                   ),
                 ),
-                
 
                 // vendor login - stock_status null || stock_status true //visited profile  -
                 if (widget.storeAvailability)
@@ -666,9 +667,8 @@ class _MenuItemState extends State<MenuItem> {
                     child: Container(
                       margin: EdgeInsets.all(20),
                       width: double.infinity,
-                      
                       decoration: ShapeDecoration(
-                        shadows:  [
+                        shadows: [
                           BoxShadow(
                             color: Color(0xff0F3A47).withOpacity(0.45),
                             blurRadius: 25,
@@ -683,10 +683,14 @@ class _MenuItemState extends State<MenuItem> {
                             cornerSmoothing: 1,
                           ),
                         ),
-                        image: DecorationImage(
-                          image: NetworkImage(imageUrl),
-                          fit: BoxFit.cover,
-                        ),
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => GlobalVariables()
+                            .imageloadingBuilderForImage(context, null),
+                        errorWidget: (context, url, error) => GlobalVariables()
+                            .imageErrorBuilderForImage(context, error, null),
                       ),
                     ),
                   ),
@@ -700,10 +704,10 @@ class _MenuItemState extends State<MenuItem> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              constraints:  BoxConstraints(
-                          maxWidth:MediaQuery.of(context).size.width * 0.6, // Set your maximum width here
-                        ),
-                             
+                              constraints: BoxConstraints(
+                                maxWidth: MediaQuery.of(context).size.width *
+                                    0.6, // Set your maximum width here
+                              ),
                               child: Text(
                                 name,
                                 style: TextStyle(
@@ -714,7 +718,9 @@ class _MenuItemState extends State<MenuItem> {
                                 ),
                               ),
                             ),
-                            SizedBox(width: 10,),
+                            SizedBox(
+                              width: 10,
+                            ),
                             Container(
                               margin: EdgeInsets.only(top: 10),
                               width: 10,
@@ -728,15 +734,13 @@ class _MenuItemState extends State<MenuItem> {
                             ),
                             Spacer(),
                             Container(
-                              
                               child: Text(
                                 'Rs $price',
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xffFA6E00),
-                                  fontFamily: 'Product Sans'
-                                ),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xffFA6E00),
+                                    fontFamily: 'Product Sans'),
                               ),
                             ),
                           ],

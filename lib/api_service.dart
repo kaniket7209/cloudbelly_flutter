@@ -2092,6 +2092,33 @@ Future<dynamic> updateProductStockStatus(
     userData = newUserData;
     notifyListeners();
   }
+
+  Future<void> deleteMenuItem(productId) async {
+    print("$productId  delete product_id");
+    final String url = '${baseUrl}product/delete';
+
+    final Map<String, dynamic> requestBody = {
+      "user_id": userData?['user_id'] ?? "",
+      "product_id": productId,
+    };
+    // Login successful
+    print("resquestbody:: $requestBody");
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      print("response:: ${response.body}");
+      final DataMap = jsonDecode(response.body);
+      return DataMap['message'];
+    } catch (error) {
+      
+
+      // Handle exceptions
+      
+    }
+  }
 }
 
 class TransitionEffect with ChangeNotifier {

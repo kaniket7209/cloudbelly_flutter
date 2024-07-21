@@ -1348,363 +1348,323 @@ Future<dynamic> ScannedMenuBottomSheet(
   var numberOfCategories = uniqueCategories.length;
 
   return showModalBottomSheet(
-    // useSafeArea: true,
-    context: context,
-    isScrollControlled: true,
-
-    builder: (BuildContext context) {
-      // print(data);
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return SingleChildScrollView(
-            child: Container(
-              decoration: const ShapeDecoration(
-                color: Colors.white,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1)),
+  context: context,
+  isScrollControlled: true,
+  builder: (BuildContext context) {
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return SingleChildScrollView(
+          child: Container(
+            decoration: const ShapeDecoration(
+              color: Colors.white,
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.only(
+                  topLeft: SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                  topRight: SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
                 ),
               ),
-              height: MediaQuery.of(context).size.height * 0.9,
-              width: double.infinity,
-              padding: EdgeInsets.only(
-                  left: 6.w,
-                  right: 6.w,
-                  top: 2.h,
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TouchableOpacity(
-                      onTap: () {
-                        return Navigator.of(context).pop();
-                      },
-                      child: Center(
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 1.h, horizontal: 3.w),
-                          width: 65,
-                          height: 6,
-                          decoration: ShapeDecoration(
-                            color: const Color(0xFFFA6E00),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6)),
+            ),
+            height: MediaQuery.of(context).size.height * 0.9,
+            width: double.infinity,
+            padding: EdgeInsets.only(
+              left: 6.w,
+              right: 6.w,
+              top: 2.h,
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TouchableOpacity(
+                    onTap: () {
+                      return Navigator.of(context).pop();
+                    },
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+                        width: 65,
+                        height: 6,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFFA6E00),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
                           ),
                         ),
                       ),
                     ),
-                    Space(1.h),
-                    if (isUpload)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TouchableOpacity(
-                            onTap: () {
-                              setState(() {
-                                list.insert(0, {
-                                  'category': 'Category',
-                                  'name': 'Item',
-                                  'price': '00.00',
-                                  'type': 'Veg'
-                                });
-                              });
-                            },
-                            child: Container(
-                                height: 4.h,
-                                width: 30.w,
-                                decoration: const ShapeDecoration(
-                                  color: Color.fromRGBO(177, 217, 216, 1),
-                                  shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius.all(
-                                      SmoothRadius(
-                                          cornerRadius: 15, cornerSmoothing: 1),
-                                    ),
-                                  ),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    'Add more  +  ',
-                                    style: TextStyle(
-                                      color: Color(0xFF094B60),
-                                      fontSize: 12,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0.14,
-                                      letterSpacing: 0.36,
-                                    ),
-                                  ),
-                                )),
-                          )
-                        ],
-                      ),
-                    Space(2.5.h),
+                  ),
+                  Space(1.h),
+                  if (isUpload )
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        TouchableOpacity(
+                          onTap: () {
+                            setState(() {
+                              list.insert(0, {
+                                'category': 'Category',
+                                'name': 'Item',
+                                'price': '00.00',
+                                'type': 'Veg',
+                              });
+                            });
+                          },
+                          child: Container(
+                            height: 4.h,
+                            width: 30.w,
+                            decoration: const ShapeDecoration(
+                              color: Color.fromRGBO(177, 217, 216, 1),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius.all(
+                                  SmoothRadius(cornerRadius: 15, cornerSmoothing: 1),
+                                ),
+                              ),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'Add more  +  ',
+                                style: TextStyle(
+                                  color: Color(0xFF094B60),
+                                  fontSize: 12,
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.w400,
+                                  height: 0.14,
+                                  letterSpacing: 0.36,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  Space(2.5.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        isUpload ? 'Scan complete' : 'Edit your menu',
+                        style: const TextStyle(
+                          color: Color(0xFF094B60),
+                          fontSize: 30,
+                          fontFamily: 'Jost',
+                          fontWeight: FontWeight.w600,
+                          height: 0.02,
+                          letterSpacing: 0.90,
+                        ),
+                      ),
+                      const Text(
+                        'Powered by BellyAI',
+                        style: TextStyle(
+                          color: Color(0xFFFA6E00),
+                          fontSize: 13,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400,
+                          height: 0.15,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (isUpload) Space(5.h),
+                  if (isUpload)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const Text(
+                          'Categories Scanned',
+                          style: TextStyle(
+                            color: Color(0xFF1E6F6D),
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w400,
+                            height: 0.10,
+                            letterSpacing: 0.42,
+                          ),
+                        ),
                         Text(
-                          isUpload ? 'Scan complete' : 'Edit your menu',
+                          numberOfCategories.toString(),
                           style: const TextStyle(
-                            color: Color(0xFF094B60),
-                            fontSize: 30,
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w600,
-                            height: 0.02,
-                            letterSpacing: 0.90,
+                            color: Color(0xFFFA6E00),
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w700,
+                            height: 0.10,
+                            letterSpacing: 0.42,
                           ),
                         ),
                         const Text(
-                          'Powered by BellyAI',
+                          'Products Scanned',
                           style: TextStyle(
-                            color: Color(0xFFFA6E00),
-                            fontSize: 13,
+                            color: Color(0xFF1E6F6D),
+                            fontSize: 14,
                             fontFamily: 'Product Sans',
                             fontWeight: FontWeight.w400,
-                            height: 0.15,
+                            height: 0.10,
+                            letterSpacing: 0.42,
                           ),
-                        )
+                        ),
+                        Text(
+                          (data as List<dynamic>).length.toString(),
+                          style: const TextStyle(
+                            color: Color(0xFFFA6E00),
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w700,
+                            height: 0.10,
+                            letterSpacing: 0.42,
+                          ),
+                        ),
                       ],
                     ),
-                    if (isUpload) Space(5.h),
-                    if (isUpload)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          const Text(
-                            'Categories Scanned',
-                            style: TextStyle(
-                              color: Color(0xFF1E6F6D),
-                              fontSize: 14,
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w400,
-                              height: 0.10,
-                              letterSpacing: 0.42,
-                            ),
-                          ),
-                          Text(
-                            numberOfCategories.toString(),
-                            style: const TextStyle(
-                              color: Color(0xFFFA6E00),
-                              fontSize: 14,
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w700,
-                              height: 0.10,
-                              letterSpacing: 0.42,
-                            ),
-                          ),
-                          const Text(
-                            'Products Scanned',
-                            style: TextStyle(
-                              color: Color(0xFF1E6F6D),
-                              fontSize: 14,
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w400,
-                              height: 0.10,
-                              letterSpacing: 0.42,
-                            ),
-                          ),
-                          Text(
-                            (data as List<dynamic>).length.toString(),
-                            style: const TextStyle(
-                              color: Color(0xFFFA6E00),
-                              fontSize: 14,
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w700,
-                              height: 0.10,
-                              letterSpacing: 0.42,
-                            ),
-                          )
-                        ],
+                  Space(3.h),
+                  const Divider(
+                    color: Color(0xFFFA6E00),
+                  ),
+                  Space(1.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SheetLabelWidget(
+                        txt: 'Product',
+                        width: 20.w,
                       ),
-                    Space(3.h),
-                    const Divider(
-                      color: Color(0xFFFA6E00),
-                    ),
-                    Space(1.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SheetLabelWidget(
-                          txt: 'Product',
-                          width: 25.w,
-                        ),
-                        SheetLabelWidget(
-                          txt: 'Price',
-                          width: 22.w,
-                        ),
-                        SheetLabelWidget(
-                          txt: 'V/N',
-                          width: 15.w,
-                        ),
-                        Space(
-                          5.w,
-                          isHorizontal: true,
-                        ),
-                        SheetLabelWidget(
-                          txt: 'Category',
-                          width: 20.w,
-                        ),
-                      ],
-                    ),
-                    Space(1.h),
-                    const Divider(
-                      color: Color(0xFFFA6E00),
-                    ),
-                    Space(1.5.h),
-                    Column(
-                      children: List.generate((list as List<dynamic>).length,
-                          (index) {
-                        TextEditingController nameController =
-                            TextEditingController(
-                          text: list[index]['name'],
-                        );
-                        TextEditingController priceController =
-                            TextEditingController(
-                          text: list[index]['price'],
-                        );
-                        TextEditingController categoryController =
-                            TextEditingController(
-                          text: list[index]['category'],
-                        );
-                        bool isNonVeg = list[index]['type'] == 'Non Veg';
-                        return Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 25.w,
-                                child: TextField(
-                                  maxLines: null,
-                                  style: const TextStyle(
-                                    color: Color(0xFF094B60),
-                                    fontSize: 13,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  textInputAction: TextInputAction.done,
-                                  controller: nameController,
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                  ),
-                                  onSubmitted: (newValue) async {
-                                    if (!isUpload) {
-                                      await Provider.of<Auth>(context,
-                                              listen: false)
-                                          .updateMenuItem(
-                                        list[index]['_id'],
-                                        list[index]['price']
-                                            .toString(), // Ensure price is passed as a string
-                                        newValue,
-                                        list[index]['type'],
-                                        list[index]['category'],
-                                      );
-                                    }
-                                    setState(() {
-                                      list[index]['name'] = newValue;
-                                    });
-                                  },
+                      SheetLabelWidget(
+                        txt: 'Price',
+                        width: 18.w,
+                      ),
+                      SheetLabelWidget(
+                        txt: 'V/N',
+                        width: 10.w,
+                      ),
+                      Space(2.w, isHorizontal: true),
+                      SheetLabelWidget(
+                        txt: 'Category',
+                        width: 20.w,
+                      ),
+                      Spacer(),
+                     
+                      SheetLabelWidget(
+                        txt: 'Action',
+                        width: 18.w,
+                      ),
+                    ],
+                  ),
+                  Space(1.h),
+                  const Divider(
+                    color: Color(0xFFFA6E00),
+                  ),
+                  Space(1.5.h),
+                                    Column(
+                    children: List.generate((list as List<dynamic>).length,
+                        (index) {
+                      TextEditingController nameController =
+                          TextEditingController(
+                        text: list[index]['name'],
+                      );
+                      TextEditingController priceController =
+                          TextEditingController(
+                        text: list[index]['price'],
+                      );
+                      TextEditingController categoryController =
+                          TextEditingController(
+                        text: list[index]['category'],
+                      );
+                      bool isNonVeg = list[index]['type'] == 'Non Veg';
+                      return Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 20.w,
+                              child: TextField(
+                                maxLines: null,
+                                style: const TextStyle(
+                                  color: Color(0xFF094B60),
+                                  fontSize: 13,
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.w400,
                                 ),
+                                textInputAction: TextInputAction.done,
+                                controller: nameController,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: (newValue) async {
+                                  if (!isUpload) {
+                                    await Provider.of<Auth>(context,
+                                            listen: false)
+                                        .updateMenuItem(
+                                      list[index]['_id'],
+                                      list[index]['price']
+                                          .toString(), 
+                                      newValue,
+                                      list[index]['type'],
+                                      list[index]['category'],
+                                    );
+                                  }
+                                  setState(() {
+                                    list[index]['name'] = newValue;
+                                  });
+                                },
                               ),
-                              SizedBox(
-                                child: Row(
-                                  children: [
-                                    const Text(
-                                      'Rs ',
-                                      style: TextStyle(
+                            ),
+                            SizedBox(
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'Rs ',
+                                    style: TextStyle(
+                                      color: Color(0xFF094B60),
+                                      fontSize: 13,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 15.w,
+                                    child: TextField(
+                                      style: const TextStyle(
                                         color: Color(0xFF094B60),
                                         fontSize: 13,
                                         fontFamily: 'Product Sans',
                                         fontWeight: FontWeight.w400,
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: 15.w,
-                                      child: TextField(
-                                        style: const TextStyle(
-                                          color: Color(0xFF094B60),
-                                          fontSize: 13,
-                                          fontFamily: 'Product Sans',
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                        controller: priceController,
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                        ),
-                                        textInputAction: TextInputAction.done,
-                                        onSubmitted: (newValue) async {
-                                          if (!isUpload) {
-                                            await Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .updateMenuItem(
-                                              list[index]['_id'],
-                                              newValue,
-                                              list[index]['name'],
-                                              list[index]['type'],
-                                              list[index]['category'],
-                                            );
-                                          }
-                                          setState(() {
-                                            list[index]['price'] =
-                                                newValue; // Ensure price is updated as a string
-                                          });
-                                        },
+                                      controller: priceController,
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
                                       ),
+                                      textInputAction: TextInputAction.done,
+                                      onChanged: (newValue) async {
+                                        if (!isUpload) {
+                                          await Provider.of<Auth>(context,
+                                                  listen: false)
+                                              .updateMenuItem(
+                                            list[index]['_id'],
+                                            newValue,
+                                            list[index]['name'],
+                                            list[index]['type'],
+                                            list[index]['category'],
+                                          );
+                                        }
+                                        setState(() {
+                                          list[index]['price'] = newValue;
+                                        });
+                                      },
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                width: 15.w,
-                                child: Transform.scale(
-                                  scale: 0.85,
-                                  child: CupertinoSwitch(
-                                    value: isNonVeg,
-                                    onChanged: (value) async {
-                                      final updatedType =
-                                          value ? 'Non Veg' : 'Veg';
-                                      if (!isUpload) {
-                                        await Provider.of<Auth>(context,
-                                                listen: false)
-                                            .updateMenuItem(
-                                          list[index]['_id'],
-                                          list[index]['price'].toString(),
-                                          list[index]['name'],
-                                          updatedType,
-                                          list[index]['category'],
-                                        );
-                                      }
-                                      setState(() {
-                                        list[index]['type'] = updatedType;
-                                      });
-                                    },
-                                    activeColor:
-                                        const Color.fromRGBO(232, 89, 89, 1),
-                                    trackColor:
-                                        const Color.fromRGBO(77, 171, 75, 1),
-                                  ),
-                                ),
-                              ),
-                              const Spacer(),
-                              SizedBox(
-                                width: 20.w,
-                                child: TextField(
-                                  maxLines: null,
-                                  style: const TextStyle(
-                                    color: Color(0xFF094B60),
-                                    fontSize: 13,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  controller: categoryController,
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                  ),
-                                  textInputAction: TextInputAction.done,
-                                  onSubmitted: (newValue) async {
+                            ),
+                            SizedBox(
+                              width: 10.w,
+                              child: Transform.scale(
+                                scale: 0.85,
+                                child: CupertinoSwitch(
+                                  value: isNonVeg,
+                                  onChanged: (value) async {
+                                    final updatedType =
+                                                                            value ? 'Non Veg' : 'Veg';
                                     if (!isUpload) {
                                       await Provider.of<Auth>(context,
                                               listen: false)
@@ -1712,181 +1672,227 @@ Future<dynamic> ScannedMenuBottomSheet(
                                         list[index]['_id'],
                                         list[index]['price'].toString(),
                                         list[index]['name'],
-                                        list[index]['type'],
-                                        newValue,
+                                        updatedType,
+                                        list[index]['category'],
                                       );
                                     }
                                     setState(() {
-                                      list[index]['category'] = newValue;
+                                      list[index]['type'] = updatedType;
                                     });
                                   },
+                                  activeColor: const Color.fromRGBO(232, 89, 89, 1),
+                                  trackColor: const Color.fromRGBO(77, 171, 75, 1),
                                 ),
                               ),
-                            ],
-                          ),
-                        );
-                      }),
-                    ),
-                    Space(1.h),
-                    if (isUpload)
-                      AppWideButton(
-                        onTap: () async {
-                          // Show loading banner
-                          AppWideLoadingBanner().loadingBanner(context);
+                            ),
+                            const Spacer(),
+                            SizedBox(
+                              width: 20.w,
+                              child: TextField(
+                                maxLines: null,
+                                style: const TextStyle(
+                                  color: Color(0xFF094B60),
+                                  fontSize: 13,
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                controller: categoryController,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                ),
+                                textInputAction: TextInputAction.done,
+                                onChanged: (newValue) async {
+                                  if (!isUpload) {
+                                    await Provider.of<Auth>(context,
+                                            listen: false)
+                                        .updateMenuItem(
+                                      list[index]['_id'],
+                                      list[index]['price'].toString(),
+                                      list[index]['name'],
+                                      list[index]['type'],
+                                      newValue,
+                                    );
+                                  }
+                                  setState(() {
+                                    list[index]['category'] = newValue;
+                                  });
+                                },
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete_outline_rounded, color: Color(0xffFF5A77)),
+                              onPressed: () async {
+                                if (!isUpload) {
+                                  await Provider.of<Auth>(context, listen: false)
+                                      .deleteMenuItem(list[index]['_id']);
+                                }
+                                setState(() {
+                                  list.removeAt(index);
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ),
+                  Space(1.h),
+                  if (isUpload)
+                    AppWideButton(
+                      onTap: () async {
+                        // Show loading banner
+                        AppWideLoadingBanner().loadingBanner(context);
 
-                          // Call the API to add products
-                          final code =
-                              await Provider.of<Auth>(context, listen: false)
-                                  .AddProductsForMenu(list);
-                          Navigator.of(context).pop(); // Remove loading banner
-                          // print("code $code"); // Debug print
+                        // Call the API to add products
+                        final code =
+                            await Provider.of<Auth>(context, listen: false)
+                                .AddProductsForMenu(list);
+                        Navigator.of(context).pop(); // Remove loading banner
+                        // print("code $code"); // Debug print
 
-                          if (code == '200') {
-                            // Ensure code is compared as an integer
-                            TOastNotification().showSuccesToast(
-                                context, 'Menu Uploaded successfully');
+                        if (code == '200') {
+                          // Ensure code is compared as an integer
+                          TOastNotification().showSuccesToast(
+                              context, 'Menu Uploaded successfully');
 
-                            AppWideBottomSheet().showSheet(
-                                context,
-                                Container(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                20,
-                                        padding: const EdgeInsets.all(
-                                            8.0), // Add padding for better readability
-                                        child: const Text(
-                                          'Do you want to generate description and type using AI',
-                                          style: TextStyle(
-                                            color: Color(0xFF094B60),
-                                            fontSize: 24,
-                                            fontFamily: 'Jost',
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 0.78,
-                                          ),
-                                          softWrap:
-                                              true, // Enable soft wrapping
+                          AppWideBottomSheet().showSheet(
+                              context,
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          20,
+                                      padding: const EdgeInsets.all(
+                                          8.0), // Add padding for better readability
+                                      child: const Text(
+                                        'Do you want to generate description and type using AI',
+                                        style: TextStyle(
+                                          color: Color(0xFF094B60),
+                                          fontSize: 24,
+                                          fontFamily: 'Jost',
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.78,
                                         ),
+                                        softWrap: true, // Enable soft wrapping
                                       ),
-                                      Space(3.h),
-                                      TouchableOpacity(
-                                        onTap: () async {
-                                          // Show loading banner
-                                          AppWideLoadingBanner()
-                                              .loadingBanner(context);
+                                    ),
+                                    Space(3.h),
+                                    TouchableOpacity(
+                                      onTap: () async {
+                                        // Show loading banner
+                                        AppWideLoadingBanner()
+                                            .loadingBanner(context);
 
-                                          // Call the API to update description and type
+                                        // Call the API to update description and type
 
-                                          final updateCode =
-                                              await Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .updateDescriptionAndType();
-                                          Navigator.of(context)
-                                              .pop(); // Remove loading banner
-                                          // print(
-                                          //     "code upd $updateCode"); // Debug print
+                                        final updateCode =
+                                            await Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .updateDescriptionAndType();
+                                        Navigator.of(context)
+                                            .pop(); // Remove loading banner
+                                        // print(
+                                        //     "code upd $updateCode"); // Debug print
 
-                                          if (updateCode == '200') {
-                                            // Ensure updateCode is compared correctly
-                                            TOastNotification().showSuccesToast(
-                                                context,
-                                                'Menu Updated successfully');
-                                            Navigator.of(context)
-                                                .pop(); // Close the bottom sheet
-                                            Navigator.of(context)
-                                                .pop(); // Close the bottom sheet
-                                          } else {
-                                            TOastNotification().showErrorToast(
-                                                context,
-                                                'Error happened while updating menu');
-                                            Navigator.of(context)
-                                                .pop(); // Close the bottom sheet
-                                          }
-                                        },
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.done_rounded,
-                                                color: Colors.green,
-                                              ),
-                                              Space(isHorizontal: true, 15),
-                                              Text(
-                                                'Yes, I know it can be edited as well',
-                                                style: TextStyle(
-                                                  color: Color(0xFF094B60),
-                                                  fontSize: 14,
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w700,
-                                                  height: 0.10,
-                                                  letterSpacing: 0.36,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      TouchableOpacity(
-                                        onTap: () async {
-                                          print("Closing bar");
+                                        if (updateCode == '200') {
+                                          // Ensure updateCode is compared correctly
+                                          TOastNotification().showSuccesToast(
+                                              context,
+                                              'Menu Updated successfully');
                                           Navigator.of(context)
                                               .pop(); // Close the bottom sheet
                                           Navigator.of(context)
-                                              .pop(); // Close the previous bottom sheet
-                                        },
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.close_rounded,
-                                                color: Colors.red,
+                                              .pop(); // Close the bottom sheet
+                                        } else {
+                                          TOastNotification().showErrorToast(
+                                              context,
+                                              'Error happened while updating menu');
+                                          Navigator.of(context)
+                                              .pop(); // Close the bottom sheet
+                                        }
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.done_rounded,
+                                              color: Colors.green,
+                                            ),
+                                            Space(isHorizontal: true, 15),
+                                            Text(
+                                              'Yes, I know it can be edited as well',
+                                              style: TextStyle(
+                                                color: Color(0xFF094B60),
+                                                fontSize: 14,
+                                                fontFamily: 'Product Sans',
+                                                fontWeight: FontWeight.w700,
+                                                height: 0.10,
+                                                letterSpacing: 0.36,
                                               ),
-                                              Space(isHorizontal: true, 15),
-                                              Text(
-                                                'No, I want to add it manually',
-                                                style: TextStyle(
-                                                  color: Color(0xFF094B60),
-                                                  fontSize: 14,
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w700,
-                                                  height: 0.10,
-                                                  letterSpacing: 0.36,
-                                                ),
-                                              )
-                                            ],
-                                          ),
+                                            )
+                                          ],
                                         ),
-                                      )
-                                    ],
-                                  ),
+                                      ),
+                                    ),
+                                    TouchableOpacity(
+                                      onTap: () async {
+                                        print("Closing bar");
+                                        Navigator.of(context)
+                                            .pop(); // Close the bottom sheet
+                                        Navigator.of(context)
+                                            .pop(); // Close the previous bottom sheet
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.close_rounded,
+                                              color: Colors.red,
+                                            ),
+                                            Space(isHorizontal: true, 15),
+                                            Text(
+                                              'No, I want to add it manually',
+                                              style: TextStyle(
+                                                color: Color(0xFF094B60),
+                                                fontSize: 14,
+                                                fontFamily: 'Product Sans',
+                                                fontWeight: FontWeight.w700,
+                                                height: 0.10,
+                                                letterSpacing: 0.36,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                30.h);
-                          } else {
-                            TOastNotification().showErrorToast(
-                                context, 'Unexpected error. Please try again');
-                            Navigator.of(context)
-                                .pop(); // Remove loading banner
-                          }
-                        },
-                        num: 1,
-                        txt: 'Complete menu upload',
-                      ),
-                    Space(2.h),
-                  ],
-                ),
+                              ),
+                              30.h);
+                        } else {
+                          TOastNotification().showErrorToast(
+                              context, 'Unexpected error. Please try again');
+                          Navigator.of(context).pop(); // Remove loading banner
+                        }
+                      },
+                      num: 1,
+                      txt: 'Complete menu upload',
+                    ),
+                  Space(2.h),
+                ],
               ),
             ),
-          );
-        },
-      );
-    },
-  );
+          ),
+        );
+      },
+    );
+  },
+);
 }
 
 class Menu extends StatefulWidget {
