@@ -570,18 +570,57 @@ class _PostItemState extends State<PostItem> {
                               ],
                               shape: const SmoothRectangleBorder(),
                             ),
-                            child: ClipSmoothRect(
-                              radius: SmoothBorderRadius(
-                                cornerRadius: 40,
-                                cornerSmoothing: 1,
-                              ),
-                              child: Image.network(
-                                widget.data['file_path'],
-                                fit: BoxFit.cover,
-                                loadingBuilder:
-                                    GlobalVariables().loadingBuilderForImage,
-                                errorBuilder:
-                                    GlobalVariables().ErrorBuilderForImage,
+                            child: GestureDetector(
+                              onDoubleTap: () {
+                              
+                                 setState(() {
+                            _isLiked = !_isLiked;
+                            if (_isLiked) {
+                              setState(() {
+                                _likeData.add({
+                                  'id':
+                                      Provider.of<Auth>(context, listen: false)
+                                          .userData?['user_id'],
+                                  'profile_photo':
+                                      Provider.of<Auth>(context, listen: false)
+                                          .logo_url,
+                                  'name':
+                                      Provider.of<Auth>(context, listen: false)
+                                          .userData?['store_name'],
+                                });
+                              });
+                            } else {
+                              setState(() {
+                                _likeData.removeWhere(
+                                  (element) =>
+                                      element['id'] ==
+                                      Provider.of<Auth>(context, listen: false)
+                                          .userData?['user_id'],
+                                );
+                              });
+                            }
+                            if (_isLiked == true) _showLikeIcon = true;
+                          });
+                        
+                          Future.delayed(const Duration(seconds: 2), () {
+                            setState(() {
+                              _showLikeIcon = false;
+                            });
+                          });
+                              },
+                              child: ClipSmoothRect(
+                                radius: SmoothBorderRadius(
+                                  cornerRadius: 40,
+                                  cornerSmoothing: 1,
+                                ),
+                                child: Image.network(
+                                  widget.data['file_path'],
+                                  fit: BoxFit.cover,
+                                  loadingBuilder:
+                                      GlobalVariables().loadingBuilderForImage,
+                                  errorBuilder:
+                                      GlobalVariables().ErrorBuilderForImage,
+                                ),
                               ),
                             ),
                           ),
@@ -661,14 +700,14 @@ class _PostItemState extends State<PostItem> {
                     ),
               if (_showLikeIcon) // Show like icon if _showLikeIcon is true
                 Positioned(
-                  left: 35.w,
-                  top: 0.h,
+                  left: 30.w,
+                  top: 15.h,
                   child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 300),
                     opacity: _showLikeIcon ? 0.8 : 0.0,
                     child: TweenAnimationBuilder<double>(
-                      duration: const Duration(milliseconds: 500),
-                      tween: Tween<double>(begin: 0.8, end: 1.0),
+                      duration: const Duration(milliseconds: 300),
+                      tween: Tween<double>(begin: 0.2, end: 1.0),
                       builder: (_, scale, __) {
                         return Transform.scale(
                           scale: scale,
@@ -678,7 +717,7 @@ class _PostItemState extends State<PostItem> {
                             child: Icon(
                               Icons.favorite,
                               color: Colors.red,
-                              size: 100, // Adjust size as needed
+                              size: 150, // Adjust size as needed
                             ),
                           ),
                         );
@@ -804,6 +843,7 @@ class _PostItemState extends State<PostItem> {
                             }
                             if (_isLiked == true) _showLikeIcon = true;
                           });
+                        
                           Future.delayed(const Duration(seconds: 2), () {
                             setState(() {
                               _showLikeIcon = false;
