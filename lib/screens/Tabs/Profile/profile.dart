@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, prefer_is_empty, use_build_context_synchronously, curly_braces_in_flow_control_structures
 
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloudbelly_app/api_service.dart';
@@ -176,25 +177,40 @@ class _ProfileState extends State<Profile> {
       });
     });
   }
-void fetchUserDetailsbyKey() async {
-    final res = await getUserDetailsbyKey(Provider.of<Auth>(context, listen: false).userData?['user_id'], ['store_availability','kyc_status','followings','followers']);
+
+  void fetchUserDetailsbyKey() async {
+    final res = await getUserDetailsbyKey(
+        Provider.of<Auth>(context, listen: false).userData?['user_id'], [
+      'store_availability',
+      'kyc_status',
+      'followings',
+      'followers',
+      'fssai'
+    ]);
     print(" resssp ${json.encode(res)}");
     setState(() {
       _switchValue = res['store_availability'] ?? true;
     });
-     Map<String, dynamic>? userData = UserPreferences.getUser();
-        if (userData != null) {
-          userData['store_availability'] = _switchValue;
-          userData['kyc_status'] = res['kyc_status'] ?? 'verified';
-          await UserPreferences.setUser(userData);
-          setState(() {
-            Provider.of<Auth>(context, listen: false).userData?['kyc_status'] = res['kyc_status'] ?? 'verified';
-            Provider.of<Auth>(context,listen: false).userData?['followers'] = res['followers'] ?? [];
-            Provider.of<Auth>(context,listen: false).userData?['followings'] = res['followings'] ?? [];
-          });
-          
-        }
+    Map<String, dynamic>? userData = UserPreferences.getUser();
+    if (userData != null) {
+      userData['store_availability'] = _switchValue;
+      userData['fssai'] = res['fssai'];
+      userData['kyc_status'] = res['kyc_status'] ?? 'verified';
+      await UserPreferences.setUser(userData);
+
+      setState(() {
+        Provider.of<Auth>(context, listen: false).userData?['kyc_status'] =
+            res['kyc_status'] ?? 'verified';
+        Provider.of<Auth>(context, listen: false).userData?['followers'] =
+            res['followers'] ?? [];
+        Provider.of<Auth>(context, listen: false).userData?['followings'] =
+            res['followings'] ?? [];
+        Provider.of<Auth>(context, listen: false).userData?['fssai'] =
+            res['fssai'] ?? "";
+      });
+    }
   }
+
   Future<Map<String, dynamic>> getUserDetailsbyKey(
       String userId, List<String> projectKey) async {
     try {
@@ -216,7 +232,7 @@ void fetchUserDetailsbyKey() async {
     // _switchValue = Provider.of<Auth>(context, listen: false)
     //         .userData?['store_availability'] ??
     fetchUserDetailsbyKey();
-        false;
+    false;
     _getFeed();
     _getMenu();
     userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
@@ -304,7 +320,6 @@ void fetchUserDetailsbyKey() async {
                                           ),
                                         ),
                                       ),
-                                     
                                       Text(
                                         'Store Status',
                                         style: TextStyle(
@@ -815,9 +830,9 @@ void fetchUserDetailsbyKey() async {
                                             },
                                             txt: 'Add products',
                                           ),
-                                       SizedBox(
-                                            width: 20,
-                                          ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
                                       ],
                                     ),
                                     Space(2.h),
@@ -949,23 +964,6 @@ void fetchUserDetailsbyKey() async {
                                     : userType == UserType.Customer.name
                                         ? Container(
                                             width: 95.w,
-                                            /* decoration: ShapeDecoration(
-                                          shadows: const [
-                                            BoxShadow(
-                                              offset: Offset(0, 4),
-                                              color: Color.fromRGBO(
-                                                  165, 200, 199, 0.6),
-                                              blurRadius: 20,
-                                            )
-                                          ],
-                                          color: Colors.white,
-                                          shape: SmoothRectangleBorder(
-                                            borderRadius: SmoothBorderRadius(
-                                              cornerRadius: 15,
-                                              cornerSmoothing: 1,
-                                            ),
-                                          ),
-                                        ),*/
                                             child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -1055,14 +1053,14 @@ void fetchUserDetailsbyKey() async {
                                                   TouchableOpacity(
                                                     onTap: () {
                                                       setState(() {
-                                                        _activeButtonIndex = 3;
+                                                        _activeButtonIndex = 4;
                                                       });
                                                     },
                                                     child: CommonButtonProfile(
                                                       isActive:
                                                           _activeButtonIndex ==
-                                                              3,
-                                                      txt: 'Reviews',
+                                                              4,
+                                                      txt: 'About',
                                                       width: 52,
                                                     ),
                                                   ),
@@ -1198,30 +1196,65 @@ void fetchUserDetailsbyKey() async {
 
                                 if (_activeButtonIndex == 4)
                                   Container(
-                                    height:
-                                        MediaQuery.sizeOf(context).height / 2.7,
+                                    
                                     child: Center(
-                                        child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'No data',
-                                          style: TextStyle(
-                                              color: boxShadowColor
-                                                  .withOpacity(0.2),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 35,
-                                              fontFamily: 'Product Sans'),
-                                        ),
-                                        const SizedBox(
-                                          height: 100,
-                                        )
-                                      ],
-                                    )),
-                                  )
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          if (Provider.of<Auth>(context,
+                                                          listen: false)
+                                                      .userData?['fssai'] ==
+                                                  '' ||
+                                              Provider.of<Auth>(context,
+                                                          listen: false)
+                                                      .userData?['fssai'] ==
+                                                  null)
+                                            Text(
+                                              'No data',
+                                              style: TextStyle(
+                                                color: boxShadowColor
+                                                    .withOpacity(0.2),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 35,
+                                                fontFamily: 'Product Sans',
+                                              ),
+                                            )
+                                          else
+                                            Container(
+                                              color: Colors.white,
+                                              child: ClipSmoothRect(
+                                                radius: SmoothBorderRadius(
+                                                  cornerRadius: 22,
+                                                  cornerSmoothing: 1,
+                                                ),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: Provider.of<Auth>(
+                                                          context,
+                                                          listen: false)
+                                                      .userData?['fssai'],
+                                                  fit: BoxFit.cover,
+                                                  placeholder: (context, url) =>
+                                                      Center(
+                                                    child:
+                                                        CircularProgressIndicator(color: Color.fromARGB(255, 33, 229, 243),),
+                                                  ),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Icon(Icons.error),
+                                                ),
+                                              ),
+                                            ),
+                                          const SizedBox(
+                                            height: 100,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                             
                               ]),
                         ),
                       ),
@@ -1238,30 +1271,36 @@ void fetchUserDetailsbyKey() async {
     );
   }
 
- Future<void> submitStoreAvailability() async {
+  Future<void> submitStoreAvailability() async {
     // Fetch the kyc_status safely
     String kycStatus = UserPreferences.getUser()?['kyc_status'];
-    
-    if (kycStatus == 'verified') { // Check for true value explicitly
-      String msg = await Provider.of<Auth>(context, listen: false).storeAvailability(_switchValue);
+
+    if (kycStatus == 'verified') {
+      // Check for true value explicitly
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .storeAvailability(_switchValue);
       if (msg == 'User information updated successfully.') {
         Map<String, dynamic>? userData = UserPreferences.getUser();
         if (userData != null) {
           userData['store_availability'] = _switchValue;
           await UserPreferences.setUser(userData);
           setState(() {
-            Provider.of<Auth>(context, listen: false).userData?['store_availability'] = _switchValue;
+            Provider.of<Auth>(context, listen: false)
+                .userData?['store_availability'] = _switchValue;
           });
-          TOastNotification().showSuccesToast(context, 'Store status updated successfully');
+          TOastNotification()
+              .showSuccesToast(context, 'Store status updated successfully');
         }
       } else {
         TOastNotification().showErrorToast(context, msg);
       }
     } else {
       setState(() {
-        Provider.of<Auth>(context, listen: false).userData?['store_availability'] = false;
+        Provider.of<Auth>(context, listen: false)
+            .userData?['store_availability'] = false;
       });
-      TOastNotification().showErrorToast(context, 'Your KYC status is incomplete');
+      TOastNotification()
+          .showErrorToast(context, 'Your KYC status is incomplete');
     }
   }
 }
@@ -1348,323 +1387,363 @@ Future<dynamic> ScannedMenuBottomSheet(
   var numberOfCategories = uniqueCategories.length;
 
   return showModalBottomSheet(
-  context: context,
-  isScrollControlled: true,
-  builder: (BuildContext context) {
-    return StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
-        return SingleChildScrollView(
-          child: Container(
-            decoration: const ShapeDecoration(
-              color: Colors.white,
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius.only(
-                  topLeft: SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                  topRight: SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+    context: context,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return SingleChildScrollView(
+            child: Container(
+              decoration: const ShapeDecoration(
+                color: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.only(
+                    topLeft: SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                    topRight:
+                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                  ),
                 ),
               ),
-            ),
-            height: MediaQuery.of(context).size.height * 0.9,
-            width: double.infinity,
-            padding: EdgeInsets.only(
-              left: 6.w,
-              right: 6.w,
-              top: 2.h,
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TouchableOpacity(
-                    onTap: () {
-                      return Navigator.of(context).pop();
-                    },
-                    child: Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
-                        width: 65,
-                        height: 6,
-                        decoration: ShapeDecoration(
-                          color: const Color(0xFFFA6E00),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
+              height: MediaQuery.of(context).size.height * 0.9,
+              width: double.infinity,
+              padding: EdgeInsets.only(
+                left: 6.w,
+                right: 6.w,
+                top: 2.h,
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TouchableOpacity(
+                      onTap: () {
+                        return Navigator.of(context).pop();
+                      },
+                      child: Center(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 1.h, horizontal: 3.w),
+                          width: 65,
+                          height: 6,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFFFA6E00),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Space(1.h),
-                  if (isUpload )
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TouchableOpacity(
-                          onTap: () {
-                            setState(() {
-                              list.insert(0, {
-                                'category': 'Category',
-                                'name': 'Item',
-                                'price': '00.00',
-                                'type': 'Veg',
+                    Space(1.h),
+                    if (isUpload)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TouchableOpacity(
+                            onTap: () {
+                              setState(() {
+                                list.insert(0, {
+                                  'category': 'Category',
+                                  'name': 'Item',
+                                  'price': '00.00',
+                                  'type': 'Veg',
+                                });
                               });
-                            });
-                          },
-                          child: Container(
-                            height: 4.h,
-                            width: 30.w,
-                            decoration: const ShapeDecoration(
-                              color: Color.fromRGBO(177, 217, 216, 1),
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius.all(
-                                  SmoothRadius(cornerRadius: 15, cornerSmoothing: 1),
-                                ),
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Add more  +  ',
-                                style: TextStyle(
-                                  color: Color(0xFF094B60),
-                                  fontSize: 12,
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0.14,
-                                  letterSpacing: 0.36,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  Space(2.5.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        isUpload ? 'Scan complete' : 'Edit your menu',
-                        style: const TextStyle(
-                          color: Color(0xFF094B60),
-                          fontSize: 30,
-                          fontFamily: 'Jost',
-                          fontWeight: FontWeight.w600,
-                          height: 0.02,
-                          letterSpacing: 0.90,
-                        ),
-                      ),
-                      const Text(
-                        'Powered by BellyAI',
-                        style: TextStyle(
-                          color: Color(0xFFFA6E00),
-                          fontSize: 13,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w400,
-                          height: 0.15,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (isUpload) Space(5.h),
-                  if (isUpload)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        const Text(
-                          'Categories Scanned',
-                          style: TextStyle(
-                            color: Color(0xFF1E6F6D),
-                            fontSize: 14,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w400,
-                            height: 0.10,
-                            letterSpacing: 0.42,
-                          ),
-                        ),
-                        Text(
-                          numberOfCategories.toString(),
-                          style: const TextStyle(
-                            color: Color(0xFFFA6E00),
-                            fontSize: 14,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w700,
-                            height: 0.10,
-                            letterSpacing: 0.42,
-                          ),
-                        ),
-                        const Text(
-                          'Products Scanned',
-                          style: TextStyle(
-                            color: Color(0xFF1E6F6D),
-                            fontSize: 14,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w400,
-                            height: 0.10,
-                            letterSpacing: 0.42,
-                          ),
-                        ),
-                        Text(
-                          (data as List<dynamic>).length.toString(),
-                          style: const TextStyle(
-                            color: Color(0xFFFA6E00),
-                            fontSize: 14,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w700,
-                            height: 0.10,
-                            letterSpacing: 0.42,
-                          ),
-                        ),
-                      ],
-                    ),
-                  Space(3.h),
-                  const Divider(
-                    color: Color(0xFFFA6E00),
-                  ),
-                  Space(1.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SheetLabelWidget(
-                        txt: 'Product',
-                        width: 20.w,
-                      ),
-                      SheetLabelWidget(
-                        txt: 'Price',
-                        width: 18.w,
-                      ),
-                      SheetLabelWidget(
-                        txt: 'V/N',
-                        width: 10.w,
-                      ),
-                      Space(2.w, isHorizontal: true),
-                      SheetLabelWidget(
-                        txt: 'Category',
-                        width: 20.w,
-                      ),
-                      Spacer(),
-                     
-                      SheetLabelWidget(
-                        txt: 'Action',
-                        width: 18.w,
-                      ),
-                    ],
-                  ),
-                  Space(1.h),
-                  const Divider(
-                    color: Color(0xFFFA6E00),
-                  ),
-                  Space(1.5.h),
-                                    Column(
-                    children: List.generate((list as List<dynamic>).length,
-                        (index) {
-                      TextEditingController nameController =
-                          TextEditingController(
-                        text: list[index]['name'],
-                      );
-                      TextEditingController priceController =
-                          TextEditingController(
-                        text: list[index]['price'],
-                      );
-                      TextEditingController categoryController =
-                          TextEditingController(
-                        text: list[index]['category'],
-                      );
-                      bool isNonVeg = list[index]['type'] == 'Non Veg';
-                      return Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 20.w,
-                              child: TextField(
-                                maxLines: null,
-                                style: const TextStyle(
-                                  color: Color(0xFF094B60),
-                                  fontSize: 13,
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                textInputAction: TextInputAction.done,
-                                controller: nameController,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                ),
-                                onChanged: (newValue) async {
-                                  if (!isUpload) {
-                                    await Provider.of<Auth>(context,
-                                            listen: false)
-                                        .updateMenuItem(
-                                      list[index]['_id'],
-                                      list[index]['price']
-                                          .toString(), 
-                                      newValue,
-                                      list[index]['type'],
-                                      list[index]['category'],
-                                    );
-                                  }
-                                  setState(() {
-                                    list[index]['name'] = newValue;
-                                  });
-                                },
-                              ),
-                            ),
-                            SizedBox(
-                              child: Row(
-                                children: [
-                                  const Text(
-                                    'Rs ',
-                                    style: TextStyle(
-                                      color: Color(0xFF094B60),
-                                      fontSize: 13,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                            },
+                            child: Container(
+                              height: 4.h,
+                              width: 30.w,
+                              decoration: const ShapeDecoration(
+                                color: Color.fromRGBO(177, 217, 216, 1),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius.all(
+                                    SmoothRadius(
+                                        cornerRadius: 15, cornerSmoothing: 1),
                                   ),
-                                  SizedBox(
-                                    width: 15.w,
-                                    child: TextField(
-                                      style: const TextStyle(
+                                ),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'Add more  +  ',
+                                  style: TextStyle(
+                                    color: Color(0xFF094B60),
+                                    fontSize: 12,
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0.14,
+                                    letterSpacing: 0.36,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    Space(2.5.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          isUpload ? 'Scan complete' : 'Edit your menu',
+                          style: const TextStyle(
+                            color: Color(0xFF094B60),
+                            fontSize: 30,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                            height: 0.02,
+                            letterSpacing: 0.90,
+                          ),
+                        ),
+                        const Text(
+                          'Powered by BellyAI',
+                          style: TextStyle(
+                            color: Color(0xFFFA6E00),
+                            fontSize: 13,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w400,
+                            height: 0.15,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (isUpload) Space(5.h),
+                    if (isUpload)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const Text(
+                            'Categories Scanned',
+                            style: TextStyle(
+                              color: Color(0xFF1E6F6D),
+                              fontSize: 14,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w400,
+                              height: 0.10,
+                              letterSpacing: 0.42,
+                            ),
+                          ),
+                          Text(
+                            numberOfCategories.toString(),
+                            style: const TextStyle(
+                              color: Color(0xFFFA6E00),
+                              fontSize: 14,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w700,
+                              height: 0.10,
+                              letterSpacing: 0.42,
+                            ),
+                          ),
+                          const Text(
+                            'Products Scanned',
+                            style: TextStyle(
+                              color: Color(0xFF1E6F6D),
+                              fontSize: 14,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w400,
+                              height: 0.10,
+                              letterSpacing: 0.42,
+                            ),
+                          ),
+                          Text(
+                            (data as List<dynamic>).length.toString(),
+                            style: const TextStyle(
+                              color: Color(0xFFFA6E00),
+                              fontSize: 14,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w700,
+                              height: 0.10,
+                              letterSpacing: 0.42,
+                            ),
+                          ),
+                        ],
+                      ),
+                    Space(3.h),
+                    const Divider(
+                      color: Color(0xFFFA6E00),
+                    ),
+                    Space(1.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SheetLabelWidget(
+                          txt: 'Product',
+                          width: 20.w,
+                        ),
+                        SheetLabelWidget(
+                          txt: 'Price',
+                          width: 18.w,
+                        ),
+                        SheetLabelWidget(
+                          txt: 'V/N',
+                          width: 10.w,
+                        ),
+                        Space(2.w, isHorizontal: true),
+                        SheetLabelWidget(
+                          txt: 'Category',
+                          width: 20.w,
+                        ),
+                        Spacer(),
+                        SheetLabelWidget(
+                          txt: 'Action',
+                          width: 18.w,
+                        ),
+                      ],
+                    ),
+                    Space(1.h),
+                    const Divider(
+                      color: Color(0xFFFA6E00),
+                    ),
+                    Space(1.5.h),
+                    Column(
+                      children: List.generate((list as List<dynamic>).length,
+                          (index) {
+                        TextEditingController nameController =
+                            TextEditingController(
+                          text: list[index]['name'],
+                        );
+                        TextEditingController priceController =
+                            TextEditingController(
+                          text: list[index]['price'],
+                        );
+                        TextEditingController categoryController =
+                            TextEditingController(
+                          text: list[index]['category'],
+                        );
+                        bool isNonVeg = list[index]['type'] == 'Non Veg';
+                        return Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 20.w,
+                                child: TextField(
+                                  maxLines: null,
+                                  style: const TextStyle(
+                                    color: Color(0xFF094B60),
+                                    fontSize: 13,
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  textInputAction: TextInputAction.done,
+                                  controller: nameController,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  onChanged: (newValue) async {
+                                    if (!isUpload) {
+                                      await Provider.of<Auth>(context,
+                                              listen: false)
+                                          .updateMenuItem(
+                                        list[index]['_id'],
+                                        list[index]['price'].toString(),
+                                        newValue,
+                                        list[index]['type'],
+                                        list[index]['category'],
+                                      );
+                                    }
+                                    setState(() {
+                                      list[index]['name'] = newValue;
+                                    });
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      'Rs ',
+                                      style: TextStyle(
                                         color: Color(0xFF094B60),
                                         fontSize: 13,
                                         fontFamily: 'Product Sans',
                                         fontWeight: FontWeight.w400,
                                       ),
-                                      controller: priceController,
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                      ),
-                                      textInputAction: TextInputAction.done,
-                                      onChanged: (newValue) async {
-                                        if (!isUpload) {
-                                          await Provider.of<Auth>(context,
-                                                  listen: false)
-                                              .updateMenuItem(
-                                            list[index]['_id'],
-                                            newValue,
-                                            list[index]['name'],
-                                            list[index]['type'],
-                                            list[index]['category'],
-                                          );
-                                        }
-                                        setState(() {
-                                          list[index]['price'] = newValue;
-                                        });
-                                      },
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(
+                                      width: 15.w,
+                                      child: TextField(
+                                        style: const TextStyle(
+                                          color: Color(0xFF094B60),
+                                          fontSize: 13,
+                                          fontFamily: 'Product Sans',
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        controller: priceController,
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                        ),
+                                        textInputAction: TextInputAction.done,
+                                        onChanged: (newValue) async {
+                                          if (!isUpload) {
+                                            await Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .updateMenuItem(
+                                              list[index]['_id'],
+                                              newValue,
+                                              list[index]['name'],
+                                              list[index]['type'],
+                                              list[index]['category'],
+                                            );
+                                          }
+                                          setState(() {
+                                            list[index]['price'] = newValue;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 10.w,
-                              child: Transform.scale(
-                                scale: 0.85,
-                                child: CupertinoSwitch(
-                                  value: isNonVeg,
-                                  onChanged: (value) async {
-                                    final updatedType =
-                                                                            value ? 'Non Veg' : 'Veg';
+                              SizedBox(
+                                width: 10.w,
+                                child: Transform.scale(
+                                  scale: 0.85,
+                                  child: CupertinoSwitch(
+                                    value: isNonVeg,
+                                    onChanged: (value) async {
+                                      final updatedType =
+                                          value ? 'Non Veg' : 'Veg';
+                                      if (!isUpload) {
+                                        await Provider.of<Auth>(context,
+                                                listen: false)
+                                            .updateMenuItem(
+                                          list[index]['_id'],
+                                          list[index]['price'].toString(),
+                                          list[index]['name'],
+                                          updatedType,
+                                          list[index]['category'],
+                                        );
+                                      }
+                                      setState(() {
+                                        list[index]['type'] = updatedType;
+                                      });
+                                    },
+                                    activeColor:
+                                        const Color.fromRGBO(232, 89, 89, 1),
+                                    trackColor:
+                                        const Color.fromRGBO(77, 171, 75, 1),
+                                  ),
+                                ),
+                              ),
+                              const Spacer(),
+                              SizedBox(
+                                width: 20.w,
+                                child: TextField(
+                                  maxLines: null,
+                                  style: const TextStyle(
+                                    color: Color(0xFF094B60),
+                                    fontSize: 13,
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  controller: categoryController,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  textInputAction: TextInputAction.done,
+                                  onChanged: (newValue) async {
                                     if (!isUpload) {
                                       await Provider.of<Auth>(context,
                                               listen: false)
@@ -1672,227 +1751,195 @@ Future<dynamic> ScannedMenuBottomSheet(
                                         list[index]['_id'],
                                         list[index]['price'].toString(),
                                         list[index]['name'],
-                                        updatedType,
-                                        list[index]['category'],
+                                        list[index]['type'],
+                                        newValue,
                                       );
                                     }
                                     setState(() {
-                                      list[index]['type'] = updatedType;
+                                      list[index]['category'] = newValue;
                                     });
                                   },
-                                  activeColor: const Color.fromRGBO(232, 89, 89, 1),
-                                  trackColor: const Color.fromRGBO(77, 171, 75, 1),
                                 ),
                               ),
-                            ),
-                            const Spacer(),
-                            SizedBox(
-                              width: 20.w,
-                              child: TextField(
-                                maxLines: null,
-                                style: const TextStyle(
-                                  color: Color(0xFF094B60),
-                                  fontSize: 13,
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                controller: categoryController,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                ),
-                                textInputAction: TextInputAction.done,
-                                onChanged: (newValue) async {
+                              IconButton(
+                                icon: Icon(Icons.delete_outline_rounded,
+                                    color: Color(0xffFF5A77)),
+                                onPressed: () async {
                                   if (!isUpload) {
                                     await Provider.of<Auth>(context,
                                             listen: false)
-                                        .updateMenuItem(
-                                      list[index]['_id'],
-                                      list[index]['price'].toString(),
-                                      list[index]['name'],
-                                      list[index]['type'],
-                                      newValue,
-                                    );
+                                        .deleteMenuItem(list[index]['_id']);
                                   }
                                   setState(() {
-                                    list[index]['category'] = newValue;
+                                    list.removeAt(index);
                                   });
                                 },
                               ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.delete_outline_rounded, color: Color(0xffFF5A77)),
-                              onPressed: () async {
-                                if (!isUpload) {
-                                  await Provider.of<Auth>(context, listen: false)
-                                      .deleteMenuItem(list[index]['_id']);
-                                }
-                                setState(() {
-                                  list.removeAt(index);
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  ),
-                  Space(1.h),
-                  if (isUpload)
-                    AppWideButton(
-                      onTap: () async {
-                        // Show loading banner
-                        AppWideLoadingBanner().loadingBanner(context);
-
-                        // Call the API to add products
-                        final code =
-                            await Provider.of<Auth>(context, listen: false)
-                                .AddProductsForMenu(list);
-                        Navigator.of(context).pop(); // Remove loading banner
-                        // print("code $code"); // Debug print
-
-                        if (code == '200') {
-                          // Ensure code is compared as an integer
-                          TOastNotification().showSuccesToast(
-                              context, 'Menu Uploaded successfully');
-
-                          AppWideBottomSheet().showSheet(
-                              context,
-                              Container(
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: MediaQuery.of(context).size.width -
-                                          20,
-                                      padding: const EdgeInsets.all(
-                                          8.0), // Add padding for better readability
-                                      child: const Text(
-                                        'Do you want to generate description and type using AI',
-                                        style: TextStyle(
-                                          color: Color(0xFF094B60),
-                                          fontSize: 24,
-                                          fontFamily: 'Jost',
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 0.78,
-                                        ),
-                                        softWrap: true, // Enable soft wrapping
-                                      ),
-                                    ),
-                                    Space(3.h),
-                                    TouchableOpacity(
-                                      onTap: () async {
-                                        // Show loading banner
-                                        AppWideLoadingBanner()
-                                            .loadingBanner(context);
-
-                                        // Call the API to update description and type
-
-                                        final updateCode =
-                                            await Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .updateDescriptionAndType();
-                                        Navigator.of(context)
-                                            .pop(); // Remove loading banner
-                                        // print(
-                                        //     "code upd $updateCode"); // Debug print
-
-                                        if (updateCode == '200') {
-                                          // Ensure updateCode is compared correctly
-                                          TOastNotification().showSuccesToast(
-                                              context,
-                                              'Menu Updated successfully');
-                                          Navigator.of(context)
-                                              .pop(); // Close the bottom sheet
-                                          Navigator.of(context)
-                                              .pop(); // Close the bottom sheet
-                                        } else {
-                                          TOastNotification().showErrorToast(
-                                              context,
-                                              'Error happened while updating menu');
-                                          Navigator.of(context)
-                                              .pop(); // Close the bottom sheet
-                                        }
-                                      },
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.done_rounded,
-                                              color: Colors.green,
-                                            ),
-                                            Space(isHorizontal: true, 15),
-                                            Text(
-                                              'Yes, I know it can be edited as well',
-                                              style: TextStyle(
-                                                color: Color(0xFF094B60),
-                                                fontSize: 14,
-                                                fontFamily: 'Product Sans',
-                                                fontWeight: FontWeight.w700,
-                                                height: 0.10,
-                                                letterSpacing: 0.36,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    TouchableOpacity(
-                                      onTap: () async {
-                                        print("Closing bar");
-                                        Navigator.of(context)
-                                            .pop(); // Close the bottom sheet
-                                        Navigator.of(context)
-                                            .pop(); // Close the previous bottom sheet
-                                      },
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.close_rounded,
-                                              color: Colors.red,
-                                            ),
-                                            Space(isHorizontal: true, 15),
-                                            Text(
-                                              'No, I want to add it manually',
-                                              style: TextStyle(
-                                                color: Color(0xFF094B60),
-                                                fontSize: 14,
-                                                fontFamily: 'Product Sans',
-                                                fontWeight: FontWeight.w700,
-                                                height: 0.10,
-                                                letterSpacing: 0.36,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              30.h);
-                        } else {
-                          TOastNotification().showErrorToast(
-                              context, 'Unexpected error. Please try again');
-                          Navigator.of(context).pop(); // Remove loading banner
-                        }
-                      },
-                      num: 1,
-                      txt: 'Complete menu upload',
+                            ],
+                          ),
+                        );
+                      }),
                     ),
-                  Space(2.h),
-                ],
+                    Space(1.h),
+                    if (isUpload)
+                      AppWideButton(
+                        onTap: () async {
+                          // Show loading banner
+                          AppWideLoadingBanner().loadingBanner(context);
+
+                          // Call the API to add products
+                          final code =
+                              await Provider.of<Auth>(context, listen: false)
+                                  .AddProductsForMenu(list);
+                          Navigator.of(context).pop(); // Remove loading banner
+                          // print("code $code"); // Debug print
+
+                          if (code == '200') {
+                            // Ensure code is compared as an integer
+                            TOastNotification().showSuccesToast(
+                                context, 'Menu Uploaded successfully');
+
+                            AppWideBottomSheet().showSheet(
+                                context,
+                                Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                20,
+                                        padding: const EdgeInsets.all(
+                                            8.0), // Add padding for better readability
+                                        child: const Text(
+                                          'Do you want to generate description and type using AI',
+                                          style: TextStyle(
+                                            color: Color(0xFF094B60),
+                                            fontSize: 24,
+                                            fontFamily: 'Jost',
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.78,
+                                          ),
+                                          softWrap:
+                                              true, // Enable soft wrapping
+                                        ),
+                                      ),
+                                      Space(3.h),
+                                      TouchableOpacity(
+                                        onTap: () async {
+                                          // Show loading banner
+                                          AppWideLoadingBanner()
+                                              .loadingBanner(context);
+
+                                          // Call the API to update description and type
+
+                                          final updateCode =
+                                              await Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .updateDescriptionAndType();
+                                          Navigator.of(context)
+                                              .pop(); // Remove loading banner
+                                          // print(
+                                          //     "code upd $updateCode"); // Debug print
+
+                                          if (updateCode == '200') {
+                                            // Ensure updateCode is compared correctly
+                                            TOastNotification().showSuccesToast(
+                                                context,
+                                                'Menu Updated successfully');
+                                            Navigator.of(context)
+                                                .pop(); // Close the bottom sheet
+                                            Navigator.of(context)
+                                                .pop(); // Close the bottom sheet
+                                          } else {
+                                            TOastNotification().showErrorToast(
+                                                context,
+                                                'Error happened while updating menu');
+                                            Navigator.of(context)
+                                                .pop(); // Close the bottom sheet
+                                          }
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.done_rounded,
+                                                color: Colors.green,
+                                              ),
+                                              Space(isHorizontal: true, 15),
+                                              Text(
+                                                'Yes, I know it can be edited as well',
+                                                style: TextStyle(
+                                                  color: Color(0xFF094B60),
+                                                  fontSize: 14,
+                                                  fontFamily: 'Product Sans',
+                                                  fontWeight: FontWeight.w700,
+                                                  height: 0.10,
+                                                  letterSpacing: 0.36,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      TouchableOpacity(
+                                        onTap: () async {
+                                          print("Closing bar");
+                                          Navigator.of(context)
+                                              .pop(); // Close the bottom sheet
+                                          Navigator.of(context)
+                                              .pop(); // Close the previous bottom sheet
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.close_rounded,
+                                                color: Colors.red,
+                                              ),
+                                              Space(isHorizontal: true, 15),
+                                              Text(
+                                                'No, I want to add it manually',
+                                                style: TextStyle(
+                                                  color: Color(0xFF094B60),
+                                                  fontSize: 14,
+                                                  fontFamily: 'Product Sans',
+                                                  fontWeight: FontWeight.w700,
+                                                  height: 0.10,
+                                                  letterSpacing: 0.36,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                30.h);
+                          } else {
+                            TOastNotification().showErrorToast(
+                                context, 'Unexpected error. Please try again');
+                            Navigator.of(context)
+                                .pop(); // Remove loading banner
+                          }
+                        },
+                        num: 1,
+                        txt: 'Complete menu upload',
+                      ),
+                    Space(2.h),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
-    );
-  },
-);
+          );
+        },
+      );
+    },
+  );
 }
 
 class Menu extends StatefulWidget {
