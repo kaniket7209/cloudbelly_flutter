@@ -999,9 +999,10 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 print(
                     'OTP verified successfully. Proceeding with account deletion.');
                 TOastNotification().showSuccesToast(context,
-                    'OTP verified successfully. Account deletion in progress');
-                   Provider.of<Auth>(context, listen: false).deleteProfile(Provider.of<Auth>(context, listen: false)
+                    'Account Deleted Successfully');
+                  await  Provider.of<Auth>(context, listen: false).deleteProfile(Provider.of<Auth>(context, listen: false)
                           .userData?['phone']);
+                         await logout();
                            
 
                           
