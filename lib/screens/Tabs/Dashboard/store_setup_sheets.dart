@@ -446,15 +446,15 @@ class TextWidgetStoreSetup extends StatelessWidget {
           UserType.Vendor.name
           ? TextStyle(
         color: color ?? const Color(0xFF0A4C61),
-        fontSize: 14,
-        fontFamily: 'Product Sans',
-        fontWeight: FontWeight.w700,
+        fontSize: 16,
+        fontFamily: 'PT Sans Black',
+        fontWeight: FontWeight.bold,
        // letterSpacing: 1,
       ) : TextStyle(
         color: color ?? const Color(0xFF494949),
         fontSize: 16,
-        fontFamily: 'Jost',
-        fontWeight: FontWeight.bold,
+        fontFamily: 'PT Sans',
+        fontWeight: FontWeight.w700,
         height: 0,
         letterSpacing: 0.14,
       ),

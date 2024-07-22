@@ -777,7 +777,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       if (msg == 'User information updated successfully.') {
         Provider.of<Auth>(context, listen: false)
             .userData?['store_availability'] = _switchValue;
-        Map<String, dynamic>? userData =  UserPreferences.getUser();
+        Map<String, dynamic>? userData = UserPreferences.getUser();
         userData?['store_availability'] = _switchValue;
         await UserPreferences.setUser(userData!);
         userDetails = UserPreferences.getUser();
@@ -840,6 +840,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -986,11 +987,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                           Container(
                                             height: 25,
                                             width: 25,
-                                            decoration:  ShapeDecoration(
+                                            decoration: ShapeDecoration(
                                               shadows: [
                                                 BoxShadow(
                                                   offset: Offset(0, 4),
-                                                  color: boxShadowColor.withOpacity(0.3),
+                                                  color: boxShadowColor
+                                                      .withOpacity(0.3),
                                                   blurRadius: 20,
                                                 )
                                               ],
@@ -1017,7 +1019,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                                   .pickImageAndUpoad(context);
                                               submitUserImage(profileImage);
                                             },
-                                            child:  Text(
+                                            child: Text(
                                               "Add logo",
                                               style: TextStyle(
                                                   fontSize: 14,
@@ -1034,11 +1036,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                           Container(
                                             height: 25,
                                             width: 25,
-                                            decoration:  ShapeDecoration(
+                                            decoration: ShapeDecoration(
                                               shadows: [
                                                 BoxShadow(
                                                   offset: Offset(0, 4),
-                                                  color:boxShadowColor.withOpacity(0.3),
+                                                  color: boxShadowColor
+                                                      .withOpacity(0.3),
                                                   blurRadius: 20,
                                                 )
                                               ],
@@ -1057,7 +1060,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                             16,
                                             isHorizontal: true,
                                           ),
-                                           Text(
+                                          Text(
                                             "Add cover photo",
                                             style: TextStyle(
                                                 fontSize: 14,
@@ -1073,11 +1076,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                           Container(
                                             height: 25,
                                             width: 25,
-                                            decoration:  ShapeDecoration(
+                                            decoration: ShapeDecoration(
                                               shadows: [
                                                 BoxShadow(
                                                   offset: Offset(0, 4),
-                                                  color: boxShadowColor.withOpacity(0.3),
+                                                  color: boxShadowColor
+                                                      .withOpacity(0.3),
                                                   blurRadius: 20,
                                                 )
                                               ],
@@ -1105,7 +1109,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                               submitUserImage("");
                                               setState(() {});
                                             },
-                                            child:  Text(
+                                            child: Text(
                                               "Remove logo",
                                               style: TextStyle(
                                                   fontSize: 14,
@@ -1122,15 +1126,16 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                           Container(
                                             height: 25,
                                             width: 25,
-                                            decoration:  ShapeDecoration(
+                                            decoration: ShapeDecoration(
                                               shadows: [
                                                 BoxShadow(
                                                   offset: Offset(0, 4),
-                                                  color: boxShadowColor.withOpacity(0.3),
+                                                  color: boxShadowColor
+                                                      .withOpacity(0.3),
                                                   blurRadius: 20,
                                                 )
                                               ],
-                                             color: Color(0xFFA5C8C799),
+                                              color: Color(0xFFA5C8C799),
                                               shape: SmoothRectangleBorder(
                                                 borderRadius:
                                                     SmoothBorderRadius.all(
@@ -1145,7 +1150,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                             16,
                                             isHorizontal: true,
                                           ),
-                                           Text(
+                                          Text(
                                             "Remove cover image",
                                             style: TextStyle(
                                                 fontSize: 14,
@@ -1179,17 +1184,83 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     ],
                   ),
                   const Spacer(),
-                  Center(
-                    child: Text(
-                      'Setting',
-                      style: TextStyle(
-                        color: boxShadowColor,
-                        fontSize: 30,
-                        fontFamily: 'Jost',
-                        fontWeight: FontWeight.w600,
-                        height: 0.03,
-                        letterSpacing: 3,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Text(
+                          'Setting',
+                          style: TextStyle(
+                            color: boxShadowColor,
+                            fontSize: 30,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                            height: 0.03,
+                            letterSpacing: 3,
+                          ),
+                        ),
                       ),
+                      const Space(26),
+                      Center(
+                        child: TouchableOpacity(
+                          onTap: () {
+                            logout();
+                            // widget.updateDataList(newItem);
+                          },
+                          child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 4.w, vertical: 1.h),
+                              // margin: EdgeInsets.only(bottom: 2.h),
+                              decoration: ShapeDecoration(
+                                shadows: [
+                                  BoxShadow(
+                                    offset: const Offset(0, 4),
+                                    color: Color.fromRGBO(232, 128, 55, 0.5),
+                                    blurRadius: 20,
+                                  ),
+                                ],
+                                color: const Color.fromRGBO(248, 46, 82, 1),
+                                shape: SmoothRectangleBorder(
+                                    borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 15,
+                                  cornerSmoothing: 1,
+                                )),
+                              ),
+                             
+                              child: const Text(
+                                'Log Out',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontFamily: 'PT Sans',
+                                  fontWeight: FontWeight.bold,
+                                  // height: 0,
+                                  letterSpacing: 0.14,
+                                ),
+                              )),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 5,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      deleteAccount(
+                          "https://app.cloudbelly.in/delete-my-profile");
+                    },
+                    child:  Text(
+                      "Delete Account ",
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: boxShadowColor,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w700),
                     ),
                   ),
                 ],
@@ -1202,7 +1273,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 child: TextWidgetStoreSetup(
                     label: userDetails?['user_type'] == UserType.Customer.name
                         ? 'Enter user name'
-                        : 'Enter store name'),
+                        : 'Enter brand name'),
               ),
               Space(1.h),
               Container(
@@ -1270,8 +1341,10 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                             color: const Color(0xFFFA6E00),
                           ),
                     hintText: Provider.of<Auth>(context, listen: false)
-                                    .userData?['user_type'] !=
-                                UserType.Customer.name?"Enter your brand name here":"Enter your name",
+                                .userData?['user_type'] !=
+                            UserType.Customer.name
+                        ? "Enter your brand name here"
+                        : "Enter your name",
                     contentPadding: const EdgeInsets.only(left: 14, top: 10),
                     hintStyle: TextStyle(
                         fontSize: 12,
@@ -1473,12 +1546,15 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               Space(
                 3.h,
               ),
-              
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextWidgetStoreSetup(label: Provider.of<Auth>(context, listen: false)
-                                  .userData?['user_type'] !=
-                              UserType.Customer.name?'Business address':'Add Location'),
+                child: TextWidgetStoreSetup(
+                    label: Provider.of<Auth>(context, listen: false)
+                                .userData?['user_type'] !=
+                            UserType.Customer.name
+                        ? 'Business address'
+                        : 'Add Location'),
               ),
               Space(1.h),
               Container(
@@ -1525,7 +1601,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               .userData?['user_type'] ==
                           UserType.Vendor.name
                       ? const TextStyle(
-                        fontSize: 14,
+                          fontSize: 14,
                           fontFamily: 'PT Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF0A4C61),
@@ -1592,7 +1668,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: TextWidgetStoreSetup(label: 'Choose your working hours'),
+                  child:
+                      TextWidgetStoreSetup(label: 'Choose your working hours'),
                 ),
                 Space(1.h),
                 Row(
@@ -1970,7 +2047,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               ],
               if (Provider.of<Auth>(context).userData?['user_type'] !=
                   UserType.Customer.name)
-              const Space(24),
+                const Space(24),
               if (Provider.of<Auth>(context).userData?['user_type'] !=
                   UserType.Customer.name)
                 Text(
@@ -2046,60 +2123,62 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Center(
-              child: TouchableOpacity(
-                onTap: () {
-                  logout();
-                  // widget.updateDataList(newItem);
-                },
-                child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.h),
-                    // margin: EdgeInsets.only(bottom: 2.h),
+      // bottomNavigationBar: Padding(
+      //   padding:
+      //       EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 18),
+      //   child:
+      //   Column(
+      //     mainAxisSize: MainAxisSize.min,
+      //     children: [
+      //       Center(
+      //         child: TouchableOpacity(
+      //           onTap: () {
+      //             logout();
+      //             // widget.updateDataList(newItem);
+      //           },
+      //           child: Container(
+      //               padding:
+      //                   EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.h),
+      //               // margin: EdgeInsets.only(bottom: 2.h),
 
-                    decoration: GlobalVariables().ContainerDecoration(
-                      offset: const Offset(0, 4),
-                      blurRadius: 15,
-                      boxColor: const Color.fromRGBO(248, 46, 82, 1),
-                      cornerRadius: 10,
-                      shadowColor: const Color.fromRGBO(232, 128, 55, 0.5),
-                    ),
-                    child: const Text(
-                      'Log Out',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontFamily: 'Product Sans',
-                        fontWeight: FontWeight.w700,
-                        // height: 0,
-                        letterSpacing: 0.14,
-                      ),
-                    )),
-              ),
-            ),
-            const Space(18),
-            InkWell(
-              onTap: () {
-                deleteAccount("https://app.cloudbelly.in/delete-my-profile");
-              },
-              child: const Text(
-                "Delete Account",
-                style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF0A4C61),
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.w700),
-              ),
-            ),
-          ],
-        ),
-      ),
+      //               decoration: GlobalVariables().ContainerDecoration(
+      //                 offset: const Offset(0, 4),
+      //                 blurRadius: 15,
+      //                 boxColor: const Color.fromRGBO(248, 46, 82, 1),
+      //                 cornerRadius: 10,
+      //                 shadowColor: const Color.fromRGBO(232, 128, 55, 0.5),
+      //               ),
+      //               child: const Text(
+      //                 'Log Out',
+      //                 style: TextStyle(
+      //                   color: Colors.white,
+      //                   fontSize: 14,
+      //                   fontFamily: 'Product Sans',
+      //                   fontWeight: FontWeight.w700,
+      //                   // height: 0,
+      //                   letterSpacing: 0.14,
+      //                 ),
+      //               )),
+      //         ),
+      //       ),
+      //       const Space(18),
+      //       InkWell(
+      //         onTap: () {
+      //           deleteAccount("https://app.cloudbelly.in/delete-my-profile");
+      //         },
+      //         child: const Text(
+      //           "Delete Account",
+      //           style: TextStyle(
+      //               fontSize: 12,
+      //               color: Color(0xFF0A4C61),
+      //               fontFamily: 'Product Sans',
+      //               fontWeight: FontWeight.w700),
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+
+      // ),
     );
   }
 
@@ -2137,12 +2216,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       addressController.text = userDetails!['address']?['location'] ?? '';
       _switchValue = userDetails!['store_availability'] ?? false;
 
-      // update 
-       Map<String, dynamic>? userData = UserPreferences.getUser();
-       userData?['store_availability'] = _switchValue;
-       userData?['kyc_status'] = kycVerified;
+      // update
+      Map<String, dynamic>? userData = UserPreferences.getUser();
+      userData?['store_availability'] = _switchValue;
+      userData?['kyc_status'] = kycVerified;
       print("kycccc ${userData?['kyc_status']}");
-       await UserPreferences.setUser(userData!);
+      await UserPreferences.setUser(userData!);
     }
   }
 }
