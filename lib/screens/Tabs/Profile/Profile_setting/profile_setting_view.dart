@@ -811,7 +811,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   //     throw 'Could not launch $url';
   //   }
   // }
-  Future<void> openDeleteAccountBottomSheet(BuildContext context) async {
+  Future<void> openDeleteAccountBottomSheet(
+      BuildContext context, String mobile_no) async {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -821,9 +822,19 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           builder: (BuildContext context, StateSetter setState) {
             Future<void> _sendOtp() async {
               // Simulate sending OTP
-
-              Navigator.pop(context);
-              openEnterOtpBottomSheet(context);
+              final res = await Provider.of<Auth>(context, listen: false)
+                  .sendOtp(mobile_no);
+              print("resOTp $res");
+              if (res == '200') {
+                // OTP sent successfully, open the next page
+                Navigator.pop(context); // Close the current dialog if any
+                openEnterOtpBottomSheet(context);
+              } else {
+                // Error occurred, print the error
+                print("Failed to send OTP. Error code: $res");
+                TOastNotification().showErrorToast(context,
+                    'Failed to send OTP. Please check the no. ${Provider.of<Auth>(context, listen: false).userData?['phone']}');
+              }
             }
 
             return Container(
@@ -958,12 +969,49 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           builder: (BuildContext context, StateSetter setState) {
             List<String> otp = List.filled(6, '');
 
-            Future<void> _resendOtp() async {
+            Future<void> resendOtp() async {
               // Add your resend OTP logic here
+              final res = await Provider.of<Auth>(context, listen: false)
+                  .sendOtp(Provider.of<Auth>(context, listen: false)
+                      .userData?['phone']);
+
+              if (res == '200') {
+                // OTP sent successfully, open the next page
+                Navigator.pop(context); // Close the current dialog if any
+                openEnterOtpBottomSheet(context);
+              } else {
+                // Error occurred, print the error
+                print("Failed to send OTP. Error code: $res");
+              }
             }
 
-            void _submitOtp() {
+            Future<void> _submitOtp() async {
+              final otpCode = otp.join();
               print('Entered OTP: ${otp.join()}');
+              final res = await Provider.of<Auth>(context, listen: false)
+                  .verifyOtp(
+                      Provider.of<Auth>(context, listen: false)
+                          .userData?['phone'],
+                      otpCode);
+
+              if (res == '200') {
+                // OTP verified successfully, proceed with account deletion
+                print(
+                    'OTP verified successfully. Proceeding with account deletion.');
+                TOastNotification().showSuccesToast(context,
+                    'OTP verified successfully. Account deletion in progress');
+                   Provider.of<Auth>(context, listen: false).deleteProfile(Provider.of<Auth>(context, listen: false)
+                          .userData?['phone']);
+                           
+
+                          
+                // Add your account deletion logic here
+              } else {
+                // Error occurred, print the error
+                print("Failed to verify OTP. Error code: $res");
+                TOastNotification()
+                    .showErrorToast(context, 'Failed to verify OTP.');
+              }
             }
 
             return SingleChildScrollView(
@@ -1040,10 +1088,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: List.generate(6, (index) {
                         return Padding(
-                          padding: const EdgeInsets.only(
-                            right: 10.0
-                           
-                          ),
+                          padding: const EdgeInsets.only(right: 10.0),
                           child: Container(
                             width: 45,
                             height: 45,
@@ -1065,8 +1110,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               ),
                             ),
                             child: Center(
-                              child: 
-                              TextField(
+                              child: TextField(
                                 cursorColor: Color(0xff0A4C61),
                                 textAlign: TextAlign.center,
                                 keyboardType: TextInputType.number,
@@ -1098,14 +1142,14 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     ),
                     SizedBox(height: 8),
                     Container(
-                      padding:EdgeInsets.only(right: 40) ,
+                      padding: EdgeInsets.only(right: 40),
                       child: Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             TextButton(
-                              onPressed: _resendOtp,
+                              onPressed: resendOtp,
                               child: Text(
                                 'Resend',
                                 style: TextStyle(
@@ -1115,34 +1159,31 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                 ),
                               ),
                             ),
-                             Text(
-                                'OTP in',
-                                style: TextStyle(
-                                  color: Color(0xFF0A4C61),
-                                  fontSize: 14,
-                                  fontFamily: 'Product Sans',
-                                ),
+                            Text(
+                              'OTP in',
+                              style: TextStyle(
+                                color: Color(0xFF0A4C61),
+                                fontSize: 14,
+                                fontFamily: 'Product Sans',
                               ),
-                             Text(
-                                ' 60 seconds',
-                                style: TextStyle(
-                                  color: Color(0xFF0A4C61),
-                                  fontSize: 14,
-                                  fontFamily: 'Product Sans',
-                                ),
+                            ),
+                            Text(
+                              ' 60 seconds',
+                              style: TextStyle(
+                                color: Color(0xFF0A4C61),
+                                fontSize: 14,
+                                fontFamily: 'Product Sans',
                               ),
-                      
+                            ),
                           ],
                         ),
                       ),
                     ),
                     SizedBox(height: 16),
                     Container(
-                       padding:EdgeInsets.only(right: 40) ,
+                      padding: EdgeInsets.only(right: 40),
                       child: Center(
-                        
                         child: GestureDetector(
-                          
                           onTap: _submitOtp,
                           child: Container(
                               padding: EdgeInsets.symmetric(
@@ -1629,7 +1670,10 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   InkWell(
                     onTap: () {
                       // openEnterOtpBottomSheet(context);
-                      openDeleteAccountBottomSheet(context);
+                      openDeleteAccountBottomSheet(
+                          context,
+                          Provider.of<Auth>(context, listen: false)
+                              .userData?['phone']);
                     },
                     child: Text(
                       "Delete Account ",
