@@ -634,9 +634,9 @@ class _MenuItemState extends State<MenuItem> {
                 color: Colors.white,
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.only(
-                    topLeft: SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                    topLeft: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
                     topRight:
-                        SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+                        SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
                   ),
                 ),
               ),
@@ -653,10 +653,10 @@ class _MenuItemState extends State<MenuItem> {
                         margin: EdgeInsets.only(top: 10),
                         padding:
                             EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                        width: 65,
+                        width: 30,
                         height: 6,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFA6E00),
+                          color: const Color(0xFFFA6E00).withOpacity(0.55),
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
@@ -665,7 +665,7 @@ class _MenuItemState extends State<MenuItem> {
                   Expanded(
                     flex: 1,
                     child: Container(
-                      margin: EdgeInsets.all(20),
+                      margin: const EdgeInsets.fromLTRB(20,13,20,20),
                       width: double.infinity,
                       decoration: ShapeDecoration(
                         shadows: [
@@ -679,18 +679,25 @@ class _MenuItemState extends State<MenuItem> {
                         color: const Color.fromRGBO(239, 255, 254, 1),
                         shape: SmoothRectangleBorder(
                           borderRadius: SmoothBorderRadius(
-                            cornerRadius: 24,
+                            cornerRadius: 30,
                             cornerSmoothing: 1,
                           ),
                         ),
                       ),
-                      child: CachedNetworkImage(
-                        imageUrl: imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => GlobalVariables()
-                            .imageloadingBuilderForImage(context, null),
-                        errorWidget: (context, url, error) => GlobalVariables()
-                            .imageErrorBuilderForImage(context, error, null),
+                      child: ClipSmoothRect(
+                        radius: SmoothBorderRadius(
+                          cornerRadius: 30,
+                          cornerSmoothing: 1,
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: imageUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => GlobalVariables()
+                              .imageloadingBuilderForImage(context, null),
+                          errorWidget: (context, url, error) =>
+                              GlobalVariables().imageErrorBuilderForImage(
+                                  context, error, null),
+                        ),
                       ),
                     ),
                   ),
