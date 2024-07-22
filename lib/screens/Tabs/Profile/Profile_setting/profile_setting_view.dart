@@ -804,12 +804,388 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
     Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
   }
 
-  Future<void> deleteAccount(String url) async {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
-      throw 'Could not launch $url';
-    }
+  // Future<void> deleteAccount(String url) async {
+  //   if (await canLaunchUrl(Uri.parse(url))) {
+  //     await launchUrl(Uri.parse(url));
+  //   } else {
+  //     throw 'Could not launch $url';
+  //   }
+  // }
+  Future<void> openDeleteAccountBottomSheet(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            Future<void> _sendOtp() async {
+              // Simulate sending OTP
+
+              Navigator.pop(context);
+              openEnterOtpBottomSheet(context);
+            }
+
+            return Container(
+              decoration: const ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x7FB1D9D8),
+                    blurRadius: 6,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                ],
+                color: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.only(
+                    topLeft: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                    topRight:
+                        SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                  ),
+                ),
+              ),
+              height: MediaQuery.of(context).size.height * 0.4,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(40, 10, 40, 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 10),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                        width: 30,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFA6E00).withOpacity(0.55),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: 100.w),
+                      child: Text(
+                        'Account Deletion Request',
+                        style: TextStyle(
+                          height: 1.1,
+                          color: Color(0xFF094B60),
+                          fontSize: 34,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'To proceed with deleting your Cloudbelly account, please verify your WhatsApp number. \nThis will permanently remove your profile and all associated data from Cloudbelly.',
+                      style: TextStyle(
+                        height: 1.2,
+                        color: Color(0xFF094B60),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
+                    SizedBox(height: 14),
+                    Center(
+                      child: Text(
+                        'Account deletion is irreversible.',
+                        style: TextStyle(
+                          color: Color(0xFFEA3323),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Center(
+                      child: GestureDetector(
+                        onTap: _sendOtp,
+                        child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 7.w, vertical: 1.h),
+                            // margin: EdgeInsets.only(bottom: 2.h),
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  offset: const Offset(5, 6),
+                                  color: Color(0xff0A4C61).withOpacity(0.45),
+                                  blurRadius: 30,
+                                ),
+                              ],
+                              color: Color(0xff0A4C61),
+                              shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                cornerRadius: 17,
+                                cornerSmoothing: 1,
+                              )),
+                            ),
+                            child: const Text(
+                              'Send OTP',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.bold,
+                                // height: 0,
+                                letterSpacing: 0.14,
+                              ),
+                            )),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> openEnterOtpBottomSheet(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            List<String> otp = List.filled(6, '');
+
+            Future<void> _resendOtp() async {
+              // Add your resend OTP logic here
+            }
+
+            void _submitOtp() {
+              print('Entered OTP: ${otp.join()}');
+            }
+
+            return SingleChildScrollView(
+              child: Container(
+                decoration: const ShapeDecoration(
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x7FB1D9D8),
+                      blurRadius: 6,
+                      offset: Offset(0, 4),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                      topLeft:
+                          SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                      topRight:
+                          SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                    ),
+                  ),
+                ),
+                padding: EdgeInsets.only(
+                  left: 40,
+                  right: 5,
+                  top: 10,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 5),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                        width: 30,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFA6E00).withOpacity(0.55),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      child: Text(
+                        'Delete your account',
+                        style: TextStyle(
+                          color: Color(0xFFEA3323),
+                          fontSize: 16,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      child: Text(
+                        'Enter OTP',
+                        style: TextStyle(
+                          color: Color(0xFF0A4C61),
+                          fontSize: 34,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: List.generate(6, (index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            right: 10.0
+                           
+                          ),
+                          child: Container(
+                            width: 45,
+                            height: 45,
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  color: Color(0xffDBF5F5),
+                                  blurRadius: 20,
+                                  offset: Offset(0, 12),
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                              color: const Color(0xffD3EEEE),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 13,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                            ),
+                            child: Center(
+                              child: 
+                              TextField(
+                                cursorColor: Color(0xff0A4C61),
+                                textAlign: TextAlign.center,
+                                keyboardType: TextInputType.number,
+                                maxLength: 1,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  counterText: '',
+                                ),
+                                onChanged: (value) {
+                                  if (value.length == 1) {
+                                    otp[index] = value;
+                                    if (index != 5) {
+                                      FocusScope.of(context).nextFocus();
+                                    } else {
+                                      FocusScope.of(context).unfocus();
+                                    }
+                                  } else if (value.length == 0 && index != 0) {
+                                    FocusScope.of(context).previousFocus();
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      padding:EdgeInsets.only(right: 40) ,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: _resendOtp,
+                              child: Text(
+                                'Resend',
+                                style: TextStyle(
+                                  color: Color(0xFFFB8020),
+                                  fontSize: 14,
+                                  fontFamily: 'Product Sans',
+                                ),
+                              ),
+                            ),
+                             Text(
+                                'OTP in',
+                                style: TextStyle(
+                                  color: Color(0xFF0A4C61),
+                                  fontSize: 14,
+                                  fontFamily: 'Product Sans',
+                                ),
+                              ),
+                             Text(
+                                ' 60 seconds',
+                                style: TextStyle(
+                                  color: Color(0xFF0A4C61),
+                                  fontSize: 14,
+                                  fontFamily: 'Product Sans',
+                                ),
+                              ),
+                      
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Container(
+                       padding:EdgeInsets.only(right: 40) ,
+                      child: Center(
+                        
+                        child: GestureDetector(
+                          
+                          onTap: _submitOtp,
+                          child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 7.w, vertical: 1.h),
+                              // margin: EdgeInsets.only(bottom: 2.h),
+                              decoration: ShapeDecoration(
+                                shadows: [
+                                  BoxShadow(
+                                    offset: const Offset(5, 6),
+                                    color: Color(0xffF82E52).withOpacity(0.45),
+                                    blurRadius: 30,
+                                    spreadRadius: 0,
+                                  ),
+                                ],
+                                color: Color(0xffF82E52),
+                                shape: SmoothRectangleBorder(
+                                    borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 17,
+                                  cornerSmoothing: 1,
+                                )),
+                              ),
+                              child: const Text(
+                                'Delete Now',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.bold,
+                                  // height: 0,
+                                  letterSpacing: 0.14,
+                                ),
+                              )),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -1227,7 +1603,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                   cornerSmoothing: 1,
                                 )),
                               ),
-                             
                               child: const Text(
                                 'Log Out',
                                 style: TextStyle(
@@ -1245,16 +1620,18 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   ),
                 ],
               ),
-              SizedBox(height: 5,),
+              SizedBox(
+                height: 5,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   InkWell(
                     onTap: () {
-                      deleteAccount(
-                          "https://app.cloudbelly.in/delete-my-profile");
+                      // openEnterOtpBottomSheet(context);
+                      openDeleteAccountBottomSheet(context);
                     },
-                    child:  Text(
+                    child: Text(
                       "Delete Account ",
                       style: TextStyle(
                           fontSize: 12,
