@@ -351,6 +351,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
   }
 
 Future<void> openEnterOtpBottomSheet(BuildContext context, String mobileNo) async {
+  List<String> otp = List.filled(6, '');
   await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -358,7 +359,7 @@ Future<void> openEnterOtpBottomSheet(BuildContext context, String mobileNo) asyn
     builder: (BuildContext context) {
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
-          List<String> otp = List.filled(6, '');
+         
 
           Future<void> resendOtp() async {
             final res = await Provider.of<Auth>(context, listen: false).sendOtp(mobileNo);
@@ -372,6 +373,7 @@ Future<void> openEnterOtpBottomSheet(BuildContext context, String mobileNo) asyn
           }
 
           Future<void> _submitOtp() async {
+            print("otp ius  $otp");
             final otpCode = otp.join();
             print('Entered OTP: $otpCode');
             final res = await Provider.of<Auth>(context, listen: false).verifyOtp(mobileNo, otpCode);
@@ -481,10 +483,8 @@ Future<void> openEnterOtpBottomSheet(BuildContext context, String mobileNo) asyn
                                 counterText: '',
                               ),
                               onChanged: (value) {
-                                setState(() {
                                   otp[index] = value;
-                                  print('OTP List after input $index: $otp');
-                                });
+                               
                                 if (value.length == 1) {
                                   if (index != 5) {
                                     FocusScope.of(context).nextFocus();
@@ -494,7 +494,10 @@ Future<void> openEnterOtpBottomSheet(BuildContext context, String mobileNo) asyn
                                 } else if (value.length == 0 && index != 0) {
                                   otp[index] = '';
                                   FocusScope.of(context).previousFocus();
+
+
                                 }
+                                print("otp ent $otp");
                               },
                             ),
                           ),
