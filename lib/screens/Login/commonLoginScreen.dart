@@ -50,7 +50,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.45,
+                // height: MediaQuery.of(context).size.height * 0.4,
                 decoration: const ShapeDecoration(
                   shadows: [
                     BoxShadow(
@@ -135,6 +135,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
+                         
                             constraints: BoxConstraints(maxWidth: 60.w),
                             child: Lottie.asset(
                               'assets/Animation - welcome.json',
