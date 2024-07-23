@@ -45,65 +45,34 @@ class _SearchViewState extends State<SearchView> {
   void initState() {
     super.initState();
     _initializeData();
+    currentAddress=Provider.of<Auth>(context, listen: false).userData?['current_location']['area'];
     _searchController.addListener(_onSearchChanged);
   }
 
   Future<void> _initializeData() async {
+     setState(() {
+      isLoading = true;
+    });
     if (!_locationFetched) {
-      await _checkLocationPermission();
+      // await _checkLocationPermission();
     }
     _fetchData();
+     setState(() {
+      isLoading = false;
+    });
   }
 
-  Future<void> _checkLocationPermission() async {
-    PermissionStatus permission = await Permission.locationWhenInUse.status;
-    if (permission != PermissionStatus.granted) {
-      permission = await Permission.locationWhenInUse.request();
-    }
-    if (permission == PermissionStatus.granted) {
-      await _getCurrentLocation();
-    }
-  }
 
-  Future<void> _getCurrentLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      _currentPosition = position;
 
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          _currentPosition?.latitude ?? 22.88689073443092,
-          _currentPosition?.longitude ?? 79.5086424934095);
-      if (placemarks.isNotEmpty) {
-        Placemark placemark = placemarks.first;
-
-        address =
-            '${placemark.street}, ${placemark.subLocality},${placemark.subAdministrativeArea}, ${placemark.locality}, ${placemark.administrativeArea},${placemark.country}, ${placemark.postalCode}';
-        area = '${placemark.administrativeArea}';
-
-        setState(() {
-          currentAddress = area!;
-        });
-      } else {
-        address = 'Address not found';
-      }
-
-      await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
-          _currentPosition?.latitude, _currentPosition?.longitude);
-
-      setState(() {
-        _locationFetched = true; 
-      });
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
 
   Future<void> _fetchData() async {
-    if (isLoading || !hasMoreData) return;
+    // print("fetchingggg .... ${Provider.of<Auth>(context, listen: false).userData?['current_location']}");
+    if (!hasMoreData) return;
+    currentAddress= Provider.of<Auth>(context, listen: false).userData?['current_location']['area'];
 
     setState(() {
       isLoading = true;
+      currentAddress= currentAddress;
     });
 
     String function = isDishesSelected ? 'products' : 'vendors';
@@ -113,8 +82,8 @@ class _SearchViewState extends State<SearchView> {
       body: jsonEncode(<String, dynamic>{
         'page': page,
         'limit': limit,
-        'latitude': _currentPosition?.latitude,
-        'longitude': _currentPosition?.longitude,
+        'latitude':  Provider.of<Auth>(context, listen: false).userData?['current_location']['latitude'],
+        'longitude': Provider.of<Auth>(context, listen: false).userData?['current_location']['longitude'],
         'query': _searchController.text,
       }),
     );
@@ -191,6 +160,7 @@ class _SearchViewState extends State<SearchView> {
     _pageController.dispose();
     super.dispose();
   }
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -235,6 +205,7 @@ class _SearchViewState extends State<SearchView> {
                         .updateCustomerLocation(
                       latitude,
                       longitude,
+                      currentAddress
                     );
 
                     setState(() {

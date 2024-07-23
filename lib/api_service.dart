@@ -361,7 +361,7 @@ class Auth with ChangeNotifier {
 
   Future<String> signUp(email, pass, phone, type) async {
     const String url = 'https://app.cloudbelly.in/signup';
-final prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     final Map<String, dynamic> requestBody = {
       "email": email,
       "password": pass,
@@ -1026,9 +1026,20 @@ final prefs = await SharedPreferences.getInstance();
     }
   }
 
- Future<String> updateCustomerLocation(double? latitude, double? longitude) async {
+  var requestBodySearch;
+
+  Future<String> updateCustomerLocation(
+      double? latitude, double? longitude, String area) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
+    requestBodySearch = {"latitude": latitude, "longitude": longitude};
+
+    userData = UserPreferences.getUser();
+
+    userData?['current_location']= {"latitude": latitude, "longitude": longitude,"area":area};
+
+    UserPreferences.setUser(userData!);
+    
     final Map<String, dynamic> requestBody = {
       'user_id': userData?['user_id'] ?? "",
       "current_location": {"latitude": latitude, "longitude": longitude}
@@ -1040,18 +1051,17 @@ final prefs = await SharedPreferences.getInstance();
         headers: headers,
         body: jsonEncode(requestBody),
       );
-      notifyListeners();
-
+      // notifyListeners();
       return jsonDecode((response.body))['message'];
     } catch (error) {
-      notifyListeners();
+      // notifyListeners();
       // Handle exceptions
       return '-1';
     }
   }
 
-  Future<String> storeSetup3(
-      bank_name, account_number, ifsc_code, upi_id,preferred_payment_method) async {
+  Future<String> storeSetup3(bank_name, account_number, ifsc_code, upi_id,
+      preferred_payment_method) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
     final Map<String, dynamic> requestBody = {
@@ -1060,7 +1070,7 @@ final prefs = await SharedPreferences.getInstance();
       "account_number": account_number,
       "ifsc_code": ifsc_code,
       "upi_id": upi_id,
-      "preferred_payment_method":preferred_payment_method
+      "preferred_payment_method": preferred_payment_method
     };
 
     try {
@@ -1548,7 +1558,8 @@ final prefs = await SharedPreferences.getInstance();
       return '-1';
     }
   }
-Future<dynamic> updateProductStockStatus(
+
+  Future<dynamic> updateProductStockStatus(
       String product_id, bool status, BuildContext context) async {
     final String url = 'https://app.cloudbelly.in/product/update';
 
@@ -1631,15 +1642,11 @@ Future<dynamic> updateProductStockStatus(
   }
 
   //send otp
-   Future<String> sendOtp(String mobile_no) async {
+  Future<String> sendOtp(String mobile_no) async {
     final String url = 'https://app.cloudbelly.in/otp/send_otp';
 
     // bool _isOK = false;
-    Map<String, dynamic> requestBody = {
-      "mobile_no": mobile_no
-    };
-
-    
+    Map<String, dynamic> requestBody = {"mobile_no": mobile_no};
 
     try {
       final response = await http.post(
@@ -1657,36 +1664,33 @@ Future<dynamic> updateProductStockStatus(
     }
   }
 
-Future<Map<String, dynamic>> verifyOtp(String mobile_no, String otp) async {
-  final String url = 'https://app.cloudbelly.in/otp/verify_otp';
+  Future<Map<String, dynamic>> verifyOtp(String mobile_no, String otp) async {
+    final String url = 'https://app.cloudbelly.in/otp/verify_otp';
 
-  Map<String, dynamic> requestBody = {
-    "mobile_no": mobile_no,
-    "otp": otp,
-  };
+    Map<String, dynamic> requestBody = {
+      "mobile_no": mobile_no,
+      "otp": otp,
+    };
 
-  try {
-    final response = await http.post(
-      Uri.parse(url),
-      headers: headers,
-      body: jsonEncode(requestBody),
-    );
-    print("otpSentResp:: ${response.body}");
-    return jsonDecode(response.body);
-  } catch (error) {
-    // Handle exceptions
-    return {'code': 500, 'message': 'An error occurred'};
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      print("otpSentResp:: ${response.body}");
+      return jsonDecode(response.body);
+    } catch (error) {
+      // Handle exceptions
+      return {'code': 500, 'message': 'An error occurred'};
+    }
   }
-}
-Future<String> deleteProfile(String mobile_no) async {
+
+  Future<String> deleteProfile(String mobile_no) async {
     final String url = 'https://app.cloudbelly.in/delete-profile';
 
     // bool _isOK = false;
-    Map<String, dynamic> requestBody = {
-      "mobile_no": mobile_no
-    };
-
-    
+    Map<String, dynamic> requestBody = {"mobile_no": mobile_no};
 
     try {
       final response = await http.post(
@@ -1703,7 +1707,6 @@ Future<String> deleteProfile(String mobile_no) async {
       return '-1';
     }
   }
-
 
   Future<String> likePost(String id, String userId) async {
     final String url = 'https://app.cloudbelly.in/update-posts';
@@ -1899,17 +1902,15 @@ Future<String> deleteProfile(String mobile_no) async {
       return null;
     }
   }
+
 //for user info by Key
-  Future<dynamic> getUserDataByKey(String userId,List<String> projectKey) async {
+  Future<dynamic> getUserDataByKey(
+      String userId, List<String> projectKey) async {
     final String url = '${baseUrl}get-user-details-by-key';
 
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {};
-    requestBody = {
-      "user_id": userId,
-      "keys":projectKey
-    };
-
+    requestBody = {"user_id": userId, "keys": projectKey};
 
     try {
       final response = await http.post(
@@ -2014,7 +2015,8 @@ Future<String> deleteProfile(String mobile_no) async {
 
       List<UserModel> userList =
           jsonResponse.map((json) => UserModel.fromJson(json)).toList();
-      print("ucidi: ${userList[0].followers?.length}  ${userList[0].followings?.length}");
+      print(
+          "ucidi: ${userList[0].followers?.length}  ${userList[0].followings?.length}");
       notifyListeners();
       return userList;
     } catch (error) {
@@ -2188,10 +2190,7 @@ Future<String> deleteProfile(String mobile_no) async {
       final DataMap = jsonDecode(response.body);
       return DataMap['message'];
     } catch (error) {
-      
-
       // Handle exceptions
-      
     }
   }
 }

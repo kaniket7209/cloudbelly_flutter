@@ -125,16 +125,17 @@ class _ProfileState extends State<Profile> {
       _isLoading = true;
     });
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey('menuData')) {
-      setState(() {
-        final extractedUserData =
-            json.decode(prefs.getString('menuData')!) as Map<String, dynamic>;
-        // print("extractedUserData ${extractedUserData}");
-        menuList = [];
-        menuList.addAll(extractedUserData['menu'] as List<dynamic>);
-        _isLoading = false;
-      });
-    } else {
+    // if (prefs.containsKey('menuData')) {
+    //   setState(() {
+    //     final extractedUserData =
+    //         json.decode(prefs.getString('menuData')!) as Map<String, dynamic>;
+    //     // print("extractedUserData ${extractedUserData}");
+    //     menuList = [];
+    //     menuList.addAll(extractedUserData['menu'] as List<dynamic>);
+    //     _isLoading = false;
+    //   });
+    // } else {
+
       await Provider.of<Auth>(context, listen: false)
           .getMenu(
               Provider.of<Auth>(context, listen: false).userData?['user_id'])
@@ -152,7 +153,8 @@ class _ProfileState extends State<Profile> {
         );
         prefs.setString('menuData', menuData);
       });
-    }
+
+    // }
     for (var item in menuList) {
       if (item.containsKey('category')) {
         String category = item['category'];

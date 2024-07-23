@@ -6,6 +6,8 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/profile_share_post.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/models/model.dart';
@@ -176,6 +178,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _checkLocationPermission(context);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -235,3 +238,44 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
+  Future<void> _checkLocationPermission(context) async {
+    PermissionStatus permission = await Permission.locationWhenInUse.status;
+    if (permission != PermissionStatus.granted) {
+      permission = await Permission.locationWhenInUse.request();
+    }
+    if (permission == PermissionStatus.granted) {
+      await _getCurrentLocation(context);
+    }
+  }
+Future<void> _getCurrentLocation(context) async {
+  var _currentPosition;
+  var address;
+  var area;
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      _currentPosition = position;
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          _currentPosition?.latitude ?? 22.88689073443092,
+          _currentPosition?.longitude ?? 79.5086424934095);
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks.first;
+
+        address =
+            '${placemark.street}, ${placemark.subLocality},${placemark.subAdministrativeArea}, ${placemark.locality}, ${placemark.administrativeArea},${placemark.country}, ${placemark.postalCode}';
+        area = '${placemark.administrativeArea}';
+
+        
+      } else {
+        address = 'Address not found';
+      }
+
+      
+      await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
+          _currentPosition?.latitude, _currentPosition?.longitude, area);
+
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
