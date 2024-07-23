@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloudbelly_app/NotificationScree.dart';
+import 'package:cloudbelly_app/screens/Login/commonLoginScreen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_share_post.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -208,7 +209,8 @@ class MyApp extends StatelessWidget {
             ),
             initialRoute: WelcomeScreen.routeName,
             routes: {
-              LoginScreen.routeName: (context) => LoginScreen(),
+              CommonLoginScreen.routeName: (context) => const CommonLoginScreen(),
+              // LoginScreen.routeName: (context) => LoginScreen(),
               '/map': (context) => MapScreen(),
               '/notifications': (context) => NotificationScreen(),
               WelcomeScreen.routeName: (context) => WelcomeScreen(),
