@@ -70,7 +70,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0,30,30,0),
+                  padding: const EdgeInsets.fromLTRB(0,23,30,0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -139,8 +139,8 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                             constraints: BoxConstraints(maxWidth: 60.w),
                             child: Lottie.asset(
                               'assets/Animation - welcome.json',
-                              width: 250,
-                              height: 250,
+                              width: 230,
+                              height: 230,
                             ),
                           ),
                           Spacer(),
@@ -222,9 +222,9 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                 color: Colors.white,
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.only(
-                    topLeft: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
                     topRight:
-                        SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                        SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
                   ),
                 ),
               ),
