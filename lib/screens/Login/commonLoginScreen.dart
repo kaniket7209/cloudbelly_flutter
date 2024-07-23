@@ -350,7 +350,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
     );
   }
 
-  Future<void> openEnterOtpBottomSheet(BuildContext context, String mobileNo) async {
+Future<void> openEnterOtpBottomSheet(BuildContext context, String mobileNo) async {
   await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -386,209 +386,209 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
             }
           }
 
-          return Container(
-            decoration: const ShapeDecoration(
-              shadows: [
-                BoxShadow(
-                  color: Color(0x7FB1D9D8),
-                  blurRadius: 6,
-                  offset: Offset(0, 4),
-                  spreadRadius: 0,
-                ),
-              ],
-              color: Colors.white,
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius.only(
-                  topLeft:
-                      SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                  topRight:
-                      SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+          return SingleChildScrollView(
+            child: Container(
+              decoration: const ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x7FB1D9D8),
+                    blurRadius: 6,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                ],
+                color: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.only(
+                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                    topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                  ),
                 ),
               ),
-            ),
-            padding: EdgeInsets.only(
-              left: 40,
-              right: 5,
-              top: 12,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.only(top: 5),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                    width: 30,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFA6E00).withOpacity(0.55),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 30),
-                Container(
-                  child: Text(
-                    'Enter OTP',
-                    style: TextStyle(
-                      color: Color(0xFF0A4C61),
-                      fontSize: 34,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Product Sans Black',
-                    ),
-                  ),
-                ),
-                SizedBox(height: 25),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: List.generate(6, (index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: Container(
-                        width: 45,
-                        height: 45,
-                        decoration: ShapeDecoration(
-                          shadows: [
-                            BoxShadow(
-                              color: Color(0xffDBF5F5),
-                              blurRadius: 20,
-                              offset: Offset(0, 12),
-                              spreadRadius: 0,
-                            ),
-                          ],
-                          color: const Color(0xffD3EEEE),
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                              cornerRadius: 13,
-                              cornerSmoothing: 1,
-                            ),
-                          ),
-                        ),
-                        child: Center(
-                          child: TextField(
-                            cursorColor: Color(0xff0A4C61),
-                            textAlign: TextAlign.center,
-                            keyboardType: TextInputType.number,
-                            maxLength: 1,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              counterText: '',
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                otp[index] = value;
-                              });
-                              if (value.length == 1) {
-                                if (index != 5) {
-                                  FocusScope.of(context).nextFocus();
-                                } else {
-                                  FocusScope.of(context).unfocus();
-                                }
-                              } else if (value.length == 0 && index != 0) {
-                                FocusScope.of(context).previousFocus();
-                              }
-                            },
-                          ),
-                        ),
+              padding: EdgeInsets.only(
+                left: 40,
+                right: 5,
+                top: 12,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 5),
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                      width: 30,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFA6E00).withOpacity(0.55),
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                    );
-                  }),
-                ),
-                SizedBox(height: 16),
-                Container(
-                  padding: EdgeInsets.only(right: 40),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TextButton(
-                          onPressed: resendOtp,
-                          child: Text(
-                            'Resend',
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Container(
+                    child: Text(
+                      'Enter OTP',
+                      style: TextStyle(
+                        color: Color(0xFF0A4C61),
+                        fontSize: 34,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Product Sans Black',
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 25),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: List.generate(6, (index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10.0),
+                        child: Container(
+                          width: 45,
+                          height: 45,
+                          decoration: ShapeDecoration(
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0xffDBF5F5),
+                                blurRadius: 20,
+                                offset: Offset(0, 12),
+                                spreadRadius: 0,
+                              ),
+                            ],
+                            color: const Color(0xffD3EEEE),
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 13,
+                                cornerSmoothing: 1,
+                              ),
+                            ),
+                          ),
+                          child: Center(
+                            child: TextField(
+                              cursorColor: Color(0xff0A4C61),
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.number,
+                              maxLength: 1,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                counterText: '',
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  otp[index] = value;
+                                  print('OTP List after input $index: $otp');
+                                });
+                                if (value.length == 1) {
+                                  if (index != 5) {
+                                    FocusScope.of(context).nextFocus();
+                                  } else {
+                                    FocusScope.of(context).unfocus();
+                                  }
+                                } else if (value.length == 0 && index != 0) {
+                                  otp[index] = '';
+                                  FocusScope.of(context).previousFocus();
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  SizedBox(height: 16),
+                  Container(
+                    padding: EdgeInsets.only(right: 40),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: resendOtp,
+                            child: Text(
+                              'Resend',
+                              style: TextStyle(
+                                color: Color(0xFFFB8020),
+                                fontSize: 14,
+                                fontFamily: 'Product Sans',
+                              ),
+                            ),
+                          ),
+                          Text(
+                            'OTP in',
                             style: TextStyle(
-                              color: Color(0xFFFB8020),
+                              color: Color(0xFF0A4C61),
                               fontSize: 14,
                               fontFamily: 'Product Sans',
                             ),
                           ),
-                        ),
-                        Text(
-                          'OTP in',
-                          style: TextStyle(
-                            color: Color(0xFF0A4C61),
-                            fontSize: 14,
-                            fontFamily: 'Product Sans',
+                          Text(
+                            ' 60 seconds',
+                            style: TextStyle(
+                              color: Color(0xFF0A4C61),
+                              fontSize: 14,
+                              fontFamily: 'Product Sans',
+                            ),
                           ),
-                        ),
-                        Text(
-                          ' 60 seconds',
-                          style: TextStyle(
-                            color: Color(0xFF0A4C61),
-                            fontSize: 14,
-                            fontFamily: 'Product Sans',
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 35),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                     
-                      padding: EdgeInsets.only(right: 40),
-                      child: Center(
-                        child: GestureDetector(
-                          onTap: _submitOtp,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 7.w, vertical: 1.h),
-                            decoration: ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                  offset: const Offset(5, 6),
-                                  color: Color(0xffFA6E00).withOpacity(0.45),
-                                  blurRadius: 30,
-                                  spreadRadius: 0,
-                                ),
-                              ],
-                              color: Color(0xffFA6E00),
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 17,
-                                  cornerSmoothing: 1,
+                  SizedBox(height: 35),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(right: 40),
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: _submitOtp,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 7.w, vertical: 1.h),
+                              decoration: ShapeDecoration(
+                                shadows: [
+                                  BoxShadow(
+                                    offset: const Offset(5, 6),
+                                    color: Color(0xffFA6E00).withOpacity(0.45),
+                                    blurRadius: 30,
+                                    spreadRadius: 0,
+                                  ),
+                                ],
+                                color: Color(0xffFA6E00),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 17,
+                                    cornerSmoothing: 1,
+                                  ),
                                 ),
                               ),
-                            ),
-                            child: const Text(
-                              'Submit',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.14,
+                              child: const Text(
+                                'Submit',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.14,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-             SizedBox(height: 25),
-              ],
+                    ],
+                  ),
+                  SizedBox(height: 25),
+                ],
+              ),
             ),
           );
         },
@@ -596,5 +596,4 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
     },
   );
 }
-
 }
