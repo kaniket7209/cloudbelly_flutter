@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,18 +20,28 @@ class CommonLoginScreen extends StatefulWidget {
 }
 
 class _CommonLoginScreenState extends State<CommonLoginScreen> {
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Fullscreen background image
+          // Fullscreen background image with blur effect
           Positioned.fill(
-            child: Image.asset(
-              'assets/images/feedSection.png', // Adjust image asset path
-              fit: BoxFit.cover,
-              // opacity: const AlwaysStoppedAnimation(0.1), // i want it to be blurred 
-             
+            child: Stack(
+              children: [
+                Image.asset(
+                  'assets/images/feedSection.png', // Adjust image asset path
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    color: Color(0xff0A4C61).withOpacity(0.45),
+                  ),
+                ),
+              ],
             ),
           ),
           // Centered popup
@@ -38,27 +50,27 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height *0.4,
+                height: MediaQuery.of(context).size.height * 0.45,
                 decoration: const ShapeDecoration(
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x7FB1D9D8),
-                    blurRadius: 6,
-                    offset: Offset(0, 4),
-                    spreadRadius: 0,
-                  ),
-                ],
-                color: Colors.white,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius.only(
-                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                    topRight:
-                        SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x7FB1D9D8),
+                      blurRadius: 6,
+                      offset: Offset(0, 4),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                      topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                      topRight:
+                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                    ),
                   ),
                 ),
-              ),
                 child: Padding(
-                  padding: const EdgeInsets.all(30.0),
+                  padding: const EdgeInsets.fromLTRB(0,30,30,0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -67,6 +79,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Container(
+                            padding: EdgeInsets.only(left: 30),
                             constraints: BoxConstraints(maxWidth: 60.w),
                             child: Text(
                               'Welcome \nto Cloudbelly',
@@ -86,6 +99,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                                 height: 25,
                               ),
                               Container(
+                                padding: EdgeInsets.only(left: 30),
                                 constraints: BoxConstraints(maxWidth: 30.w),
                                 child: Image.asset(
                                   'assets/images/logo_small.png', // Adjust image asset path
@@ -100,8 +114,10 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                       SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
+                       
                         children: [
                           Container(
+                            padding: EdgeInsets.only(left: 30),
                             child: Text(
                               'You can cook, eat or share your favourite food.',
                               style: TextStyle(
@@ -112,61 +128,63 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                           ),
                         ],
                       ),
-                      //lottie
+                     
                       Row(
-                        mainAxisSize :MainAxisSize.min,
+                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
-                            // color: Colors.red,
                             constraints: BoxConstraints(maxWidth: 60.w),
-                            child: Positioned(
-                              child: Lottie.asset('assets/Animation - welcome.json',
-                               width: 250,height: 250   ),
+                            child: Lottie.asset(
+                              'assets/Animation - welcome.json',
+                              width: 250,
+                              height: 250,
                             ),
                           ),
-                          
-                          GestureDetector(
-                            onTap: () {
-                              openEnterWhatsAppNumberBottomSheet(context);
-                            },
-                            child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8.w, vertical: 1.h),
-                                // margin: EdgeInsets.only(bottom: 2.h),
-                                decoration: ShapeDecoration(
-                                  shadows: [
-                                    BoxShadow(
-                                      offset: const Offset(5, 6),
-                                      color: Color(0xffFA6E00).withOpacity(0.45),
-                                      blurRadius: 30,
+                          Spacer(),
+                          Column(
+                            children: [
+                              SizedBox(height: 80,),
+                              GestureDetector(
+                                onTap: () {
+                                  openEnterWhatsAppNumberBottomSheet(context);
+                                },
+                                child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w, vertical: 1.h),
+                                    // margin: EdgeInsets.only(bottom: 2.h),
+                                    decoration: ShapeDecoration(
+                                      shadows: [
+                                        BoxShadow(
+                                          offset: const Offset(5, 6),
+                                          color: Color(0xffFA6E00).withOpacity(0.45),
+                                          blurRadius: 30,
+                                        ),
+                                      ],
+                                      color: Color(0xffFA6E00),
+                                      shape: SmoothRectangleBorder(
+                                          borderRadius: SmoothBorderRadius(
+                                        cornerRadius: 13,
+                                        cornerSmoothing: 1,
+                                      )),
                                     ),
-                                  ],
-                                  color: Color(0xffFA6E00),
-                                  shape: SmoothRectangleBorder(
-                                      borderRadius: SmoothBorderRadius(
-                                    cornerRadius: 13,
-                                    cornerSmoothing: 1,
-                                  )),
-                                ),
-                                child: const Text(
-                                  'Login',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.bold,
-                                    // height: 0,
-                                    letterSpacing: 0.14,
-                                  ),
-                                )),
-                                               
-                           
+                                    child: const Text(
+                                      'Login',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.bold,
+                                        // height: 0,
+                                        letterSpacing: 0.14,
+                                      ),
+                                    )),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                   
                     ],
                   ),
                 ),
@@ -177,6 +195,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
       ),
     );
   }
+
 
   Future<void> openEnterWhatsAppNumberBottomSheet(BuildContext context) async {
     await showModalBottomSheet(
