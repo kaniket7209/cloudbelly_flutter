@@ -151,7 +151,8 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  openEnterWhatsAppNumberBottomSheet(context);
+                                  openEnterOtpBottomSheet(context,'6206630515');
+                                  // openEnterWhatsAppNumberBottomSheet(context);
                                 },
                                 child: Container(
                                     padding: EdgeInsets.symmetric(
@@ -210,15 +211,16 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
           builder: (BuildContext context, StateSetter setState) {
             final TextEditingController whatsAppController =
                 TextEditingController();
+
             Future<void> sendOtp() async {
               // Simulate sending OTP
               final res = await Provider.of<Auth>(context, listen: false)
                   .sendOtp(whatsAppController.text);
-              print("resOTp $res");
+              print("resOTP $res");
               if (res == '200') {
                 // OTP sent successfully, open the next page
                 Navigator.pop(context); // Close the current dialog if any
-                openEnterOtpBottomSheet(context);
+                openEnterOtpBottomSheet(context, whatsAppController.text);
               } else {
                 // Error occurred, print the error
                 print("Failed to send OTP. Error code: $res");
@@ -227,171 +229,11 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
               }
             }
 
-            return Container(
-              decoration: const ShapeDecoration(
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x7FB1D9D8),
-                    blurRadius: 6,
-                    offset: Offset(0, 4),
-                    spreadRadius: 0,
-                  ),
-                ],
-                color: Colors.white,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius.only(
-                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                    topRight:
-                        SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                  ),
-                ),
-              ),
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        margin: EdgeInsets.only(top: 10),
-                        padding:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                        width: 30,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFA6E00).withOpacity(0.55),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Enter your WhatsApp number',
-                      style: TextStyle(
-                        color: Color(0xFF0A4C61),
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Product Sans Black',
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    TextField(
-                      controller: whatsAppController,
-                      decoration: InputDecoration(
-                        hintText: '9876789678',
-                        filled: true,
-                        fillColor: Color(0xFFEFEFEF),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      keyboardType: TextInputType.phone,
-                    ),
-                    SizedBox(height: 16),
-                    Center(
-                      child: GestureDetector(
-                        onTap: sendOtp,
-                        child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8.w, vertical: 1.h),
-                            // margin: EdgeInsets.only(bottom: 2.h),
-                            decoration: ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                  offset: const Offset(5, 6),
-                                  color: Color(0xffFA6E00).withOpacity(0.45),
-                                  blurRadius: 30,
-                                ),
-                              ],
-                              color: Color(0xffFA6E00),
-                              shape: SmoothRectangleBorder(
-                                  borderRadius: SmoothBorderRadius(
-                                cornerRadius: 13,
-                                cornerSmoothing: 1,
-                              )),
-                            ),
-                            child: const Text(
-                              'Send OTP',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.bold,
-                                // height: 0,
-                                letterSpacing: 0.14,
-                              ),
-                            )),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-Future<void> openEnterOtpBottomSheet(BuildContext context) async {
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            List<String> otp = List.filled(6, '');
-
-            Future<void> resendOtp() async {
-              // Add your resend OTP logic here
-              final res = await Provider.of<Auth>(context, listen: false)
-                  .sendOtp(Provider.of<Auth>(context, listen: false)
-                      .userData?['phone']);
-
-              if (res == '200') {
-                // OTP sent successfully, open the next page
-                Navigator.pop(context); // Close the current dialog if any
-                openEnterOtpBottomSheet(context);
-              } else {
-                // Error occurred, print the error
-                print("Failed to send OTP. Error code: $res");
-              }
-            }
-
-            Future<void> _submitOtp() async {
-              final otpCode = otp.join();
-              print('Entered OTP: ${otp.join()}');
-              final res = await Provider.of<Auth>(context, listen: false)
-                  .verifyOtp(
-                      Provider.of<Auth>(context, listen: false)
-                          .userData?['phone'],
-                      otpCode);
-
-              if (res == '200') {
-                // OTP verified successfully, proceed with account deletion
-                print(
-                    'OTP verified successfully. Proceeding with account deletion.');
-                TOastNotification().showSuccesToast(context,
-                    'OTP verified ');
+            return Padding(
+             padding: EdgeInsets.only(
                   
-                         
-                           
-
-                          
-                // Add your account deletion logic here
-              } else {
-                // Error occurred, print the error
-                print("Failed to verify OTP. Error code: $res");
-                TOastNotification()
-                    .showErrorToast(context, 'Failed to verify OTP.');
-              }
-            }
-
-            return SingleChildScrollView(
+                  bottom: MediaQuery.of(context).viewInsets.bottom/3,
+                ),
               child: Container(
                 decoration: const ShapeDecoration(
                   shadows: [
@@ -406,79 +248,77 @@ Future<void> openEnterOtpBottomSheet(BuildContext context) async {
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.only(
                       topLeft:
-                          SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
                       topRight:
-                          SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
                     ),
                   ),
                 ),
-                padding: EdgeInsets.only(
-                  left: 40,
-                  right: 5,
-                  top: 10,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        margin: EdgeInsets.only(top: 5),
-                        padding:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                        width: 30,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFA6E00).withOpacity(0.55),
-                          borderRadius: BorderRadius.circular(6),
+                height: MediaQuery.of(context).viewInsets.bottom > 0
+                    ? MediaQuery.of(context).size.height * 0.6
+                    : MediaQuery.of(context).size.height * 0.4,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          margin: EdgeInsets.only(top: 10),
+                          padding:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                          width: 30,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFA6E00).withOpacity(0.55),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Container(
-                      child: Text(
-                        'Delete your account',
-                        style: TextStyle(
-                          color: Color(0xFFEA3323),
-                          fontSize: 16,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Text(
-                        'Enter OTP',
+                      SizedBox(height: 20),
+                      Text(
+                        'Enter your \nWhatsApp number',
                         style: TextStyle(
                           color: Color(0xFF0A4C61),
-                          fontSize: 34,
+                          fontSize: 32,
+                          height: 1.1,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Product Sans',
+                          fontFamily: 'Product Sans Black',
                         ),
                       ),
-                    ),
-                    SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: List.generate(6, (index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 10.0),
+                      SizedBox(height: 26),
+                      TextField(
+                        cursorColor: Color(0xFF0A4C61),
+                        controller: whatsAppController,
+                        decoration: InputDecoration(
+                          hintText: '9876789678',
+                          filled: true,
+                          
+                          fillColor: Color(0xFFD3EEEE),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        keyboardType: TextInputType.phone,
+                      ),
+                      SizedBox(height: 16),
+                      Center(
+                        child: GestureDetector(
+                          onTap: sendOtp,
                           child: Container(
-                            width: 45,
-                            height: 45,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8.w, vertical: 1.h),
                             decoration: ShapeDecoration(
                               shadows: [
                                 BoxShadow(
-                                  color: Color(0xffDBF5F5),
-                                  blurRadius: 20,
-                                  offset: Offset(0, 12),
-                                  spreadRadius: 0,
+                                  offset: const Offset(5, 6),
+                                  color: Color(0xffFA6E00).withOpacity(0.45),
+                                  blurRadius: 30,
                                 ),
                               ],
-                              color: const Color(0xffD3EEEE),
+                              color: Color(0xffFA6E00),
                               shape: SmoothRectangleBorder(
                                 borderRadius: SmoothBorderRadius(
                                   cornerRadius: 13,
@@ -486,117 +326,21 @@ Future<void> openEnterOtpBottomSheet(BuildContext context) async {
                                 ),
                               ),
                             ),
-                            child: Center(
-                              child: TextField(
-                                cursorColor: Color(0xff0A4C61),
-                                textAlign: TextAlign.center,
-                                keyboardType: TextInputType.number,
-                                maxLength: 1,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  counterText: '',
-                                ),
-                                onChanged: (value) {
-                                  if (value.length == 1) {
-                                    otp[index] = value;
-                                    if (index != 5) {
-                                      FocusScope.of(context).nextFocus();
-                                    } else {
-                                      FocusScope.of(context).unfocus();
-                                    }
-                                  } else if (value.length == 0 && index != 0) {
-                                    FocusScope.of(context).previousFocus();
-                                  }
-                                },
+                            child: const Text(
+                              'Send OTP',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.14,
                               ),
                             ),
                           ),
-                        );
-                      }),
-                    ),
-                    SizedBox(height: 8),
-                    Container(
-                      padding: EdgeInsets.only(right: 40),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            TextButton(
-                              onPressed: resendOtp,
-                              child: Text(
-                                'Resend',
-                                style: TextStyle(
-                                  color: Color(0xFFFB8020),
-                                  fontSize: 14,
-                                  fontFamily: 'Product Sans',
-                                ),
-                              ),
-                            ),
-                            Text(
-                              'OTP in',
-                              style: TextStyle(
-                                color: Color(0xFF0A4C61),
-                                fontSize: 14,
-                                fontFamily: 'Product Sans',
-                              ),
-                            ),
-                            Text(
-                              ' 60 seconds',
-                              style: TextStyle(
-                                color: Color(0xFF0A4C61),
-                                fontSize: 14,
-                                fontFamily: 'Product Sans',
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                    ),
-                    SizedBox(height: 16),
-                    Container(
-                      padding: EdgeInsets.only(right: 40),
-                      child: Center(
-                        child: GestureDetector(
-                          onTap: _submitOtp,
-                          child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 7.w, vertical: 1.h),
-                              // margin: EdgeInsets.only(bottom: 2.h),
-                              decoration: ShapeDecoration(
-                                shadows: [
-                                  BoxShadow(
-                                    offset: const Offset(5, 6),
-                                    color: Color(0xffF82E52).withOpacity(0.45),
-                                    blurRadius: 30,
-                                    spreadRadius: 0,
-                                  ),
-                                ],
-                                color: Color(0xffF82E52),
-                                shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 17,
-                                  cornerSmoothing: 1,
-                                )),
-                              ),
-                              child: const Text(
-                                'Delete Now',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.bold,
-                                  // height: 0,
-                                  letterSpacing: 0.14,
-                                ),
-                              )),
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -605,5 +349,252 @@ Future<void> openEnterOtpBottomSheet(BuildContext context) async {
       },
     );
   }
+
+  Future<void> openEnterOtpBottomSheet(BuildContext context, String mobileNo) async {
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          List<String> otp = List.filled(6, '');
+
+          Future<void> resendOtp() async {
+            final res = await Provider.of<Auth>(context, listen: false).sendOtp(mobileNo);
+            if (res == '200') {
+              // OTP sent successfully
+              Navigator.pop(context);
+              openEnterOtpBottomSheet(context, mobileNo);
+            } else {
+              print("Failed to send OTP. Error code: $res");
+            }
+          }
+
+          Future<void> _submitOtp() async {
+            final otpCode = otp.join();
+            print('Entered OTP: $otpCode');
+            final res = await Provider.of<Auth>(context, listen: false).verifyOtp(mobileNo, otpCode);
+
+            if (res['code'] == 200) {
+              print('OTP verified successfully. Proceeding with login.');
+              TOastNotification().showSuccesToast(context, 'OTP verified');
+              // Proceed with login
+            } else {
+              print("Failed to verify OTP. Error code: ${res['msg']}");
+              TOastNotification().showErrorToast(context, '${res['msg']}');
+            }
+          }
+
+          return Container(
+            decoration: const ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                  color: Color(0x7FB1D9D8),
+                  blurRadius: 6,
+                  offset: Offset(0, 4),
+                  spreadRadius: 0,
+                ),
+              ],
+              color: Colors.white,
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.only(
+                  topLeft:
+                      SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                  topRight:
+                      SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                ),
+              ),
+            ),
+            padding: EdgeInsets.only(
+              left: 40,
+              right: 5,
+              top: 12,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 5),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    width: 30,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFA6E00).withOpacity(0.55),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                Container(
+                  child: Text(
+                    'Enter OTP',
+                    style: TextStyle(
+                      color: Color(0xFF0A4C61),
+                      fontSize: 34,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans Black',
+                    ),
+                  ),
+                ),
+                SizedBox(height: 25),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: List.generate(6, (index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: Container(
+                        width: 45,
+                        height: 45,
+                        decoration: ShapeDecoration(
+                          shadows: [
+                            BoxShadow(
+                              color: Color(0xffDBF5F5),
+                              blurRadius: 20,
+                              offset: Offset(0, 12),
+                              spreadRadius: 0,
+                            ),
+                          ],
+                          color: const Color(0xffD3EEEE),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 13,
+                              cornerSmoothing: 1,
+                            ),
+                          ),
+                        ),
+                        child: Center(
+                          child: TextField(
+                            cursorColor: Color(0xff0A4C61),
+                            textAlign: TextAlign.center,
+                            keyboardType: TextInputType.number,
+                            maxLength: 1,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              counterText: '',
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                otp[index] = value;
+                              });
+                              if (value.length == 1) {
+                                if (index != 5) {
+                                  FocusScope.of(context).nextFocus();
+                                } else {
+                                  FocusScope.of(context).unfocus();
+                                }
+                              } else if (value.length == 0 && index != 0) {
+                                FocusScope.of(context).previousFocus();
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+                SizedBox(height: 16),
+                Container(
+                  padding: EdgeInsets.only(right: 40),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: resendOtp,
+                          child: Text(
+                            'Resend',
+                            style: TextStyle(
+                              color: Color(0xFFFB8020),
+                              fontSize: 14,
+                              fontFamily: 'Product Sans',
+                            ),
+                          ),
+                        ),
+                        Text(
+                          'OTP in',
+                          style: TextStyle(
+                            color: Color(0xFF0A4C61),
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                        Text(
+                          ' 60 seconds',
+                          style: TextStyle(
+                            color: Color(0xFF0A4C61),
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 35),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                     
+                      padding: EdgeInsets.only(right: 40),
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: _submitOtp,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 7.w, vertical: 1.h),
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  offset: const Offset(5, 6),
+                                  color: Color(0xffFA6E00).withOpacity(0.45),
+                                  blurRadius: 30,
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                              color: Color(0xffFA6E00),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 17,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              'Submit',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+             SizedBox(height: 25),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
 
 }

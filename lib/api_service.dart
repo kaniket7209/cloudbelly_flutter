@@ -1657,32 +1657,27 @@ Future<dynamic> updateProductStockStatus(
     }
   }
 
-Future<String> verifyOtp(String mobile_no, String otp) async {
-    final String url = 'https://app.cloudbelly.in/otp/verify_otp';
+Future<Map<String, dynamic>> verifyOtp(String mobile_no, String otp) async {
+  final String url = 'https://app.cloudbelly.in/otp/verify_otp';
 
-    // bool _isOK = false;
-    Map<String, dynamic> requestBody = {
-      "mobile_no": mobile_no,
-      "otp": otp,
-    };
+  Map<String, dynamic> requestBody = {
+    "mobile_no": mobile_no,
+    "otp": otp,
+  };
 
-    
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: headers,
-        body: jsonEncode(requestBody),
-      );
-      print("otpSentResp:: ${response.body}");
-      print(response.statusCode);
-
-      return response.statusCode.toString();
-    } catch (error) {
-      // Handle exceptions
-      return '-1';
-    }
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: jsonEncode(requestBody),
+    );
+    print("otpSentResp:: ${response.body}");
+    return jsonDecode(response.body);
+  } catch (error) {
+    // Handle exceptions
+    return {'code': 500, 'message': 'An error occurred'};
   }
+}
 Future<String> deleteProfile(String mobile_no) async {
     final String url = 'https://app.cloudbelly.in/delete-profile';
 
