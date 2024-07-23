@@ -381,10 +381,12 @@ Future<void> openEnterOtpBottomSheet(BuildContext context, String mobileNo) asyn
             if (res['code'] == 200) {
               print('OTP verified successfully. Proceeding with login.');
               TOastNotification().showSuccesToast(context, 'OTP verified');
+              Navigator.pop(context);
               // Proceed with login
+              
             } else {
-              print("Failed to verify OTP. Error code: ${res['msg']}");
-              TOastNotification().showErrorToast(context, '${res['msg']}');
+              print("Failed to verify OTP. Error code: ${res}");
+              TOastNotification().showErrorToast(context, '${res['error']}');
             }
           }
 

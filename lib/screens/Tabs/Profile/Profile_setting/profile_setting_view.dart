@@ -1221,6 +1221,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 20,)
                   ],
                 ),
               ),

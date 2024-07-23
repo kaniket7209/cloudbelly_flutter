@@ -931,7 +931,7 @@ class _ProfileState extends State<Profile> {
                                                 child: CommonButtonProfile(
                                                   isActive:
                                                       _activeButtonIndex == 2,
-                                                  txt: 'Menu',
+                                                  txt: 'Menu ',
                                                   width: 52,
                                                 ),
                                               ),
@@ -1048,7 +1048,7 @@ class _ProfileState extends State<Profile> {
                                                       isActive:
                                                           _activeButtonIndex ==
                                                               2,
-                                                      txt: 'Menu',
+                                                      txt: 'Menu ',
                                                       width: 40,
                                                     ),
                                                   ),

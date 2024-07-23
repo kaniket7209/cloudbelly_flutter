@@ -212,8 +212,8 @@ class MyApp extends StatelessWidget {
             ),
             initialRoute: WelcomeScreen.routeName,
             routes: {
-              CommonLoginScreen.routeName: (context) => const CommonLoginScreen(),
-              // LoginScreen.routeName: (context) => LoginScreen(),
+              // CommonLoginScreen.routeName: (context) => const CommonLoginScreen(),
+              LoginScreen.routeName: (context) => LoginScreen(),
               '/map': (context) => MapScreen(),
               '/notifications': (context) => NotificationScreen(),
               WelcomeScreen.routeName: (context) => WelcomeScreen(),

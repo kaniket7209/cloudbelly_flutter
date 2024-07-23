@@ -825,11 +825,11 @@ Color sharedProfileColour(userType){
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 1.h,
                                                       horizontal: 3.w),
-                                                  width: 55,
+                                                  width: 30,
                                                   height: 6,
                                                   decoration: ShapeDecoration(
-                                                    color:
-                                                        const Color(0xFFFA6E00),
+                                                    color: const Color(0xFFFA6E00)
+                                        .withOpacity(0.5),
                                                     shape:
                                                         RoundedRectangleBorder(
                                                             borderRadius:

@@ -526,6 +526,84 @@ class Auth with ChangeNotifier {
     }
   }
 
+Future<String> commonLogin(mobile_no) async {
+    print("fcmToken:: $fcmToken");
+    final prefs = await SharedPreferences.getInstance();
+    print('nknbnkjbn');
+    final String url = 'https://app.cloudbelly.in/login';
+
+    final Map<String, dynamic> requestBody = {
+      "phone": mobile_no,
+      "fcm_token": prefs.getString('fcmToken'),
+    };
+    // Login successful
+    print("resquestbody:: $requestBody");
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      final DataMap = jsonDecode(response.body);
+      log("dta:: $DataMap");
+      Map<String, dynamic> userProfileData = {
+        'user_id': DataMap['user_id'],
+        'user_name': DataMap['user_name'],
+        'email': DataMap['email'],
+        'store_name': DataMap['store_name'] ?? '',
+        'profile_photo': DataMap['profile_photo'] ?? '',
+        'store_availability': DataMap['store_availability'] ?? false,
+        'pan_number': DataMap['pan_number'] ?? '',
+        'aadhar_number': DataMap['aadhar_number'] ?? '',
+        if (DataMap['address'] != null)
+          'address': {
+            "location": DataMap['address']['location'],
+            "latitude": DataMap['address']['latitude'],
+            "longitude": DataMap['address']['longitude'],
+            "hno": DataMap['address']['hno'],
+            "pincode": DataMap['address']['pincode'],
+            "landmark": DataMap['address']['landmark'],
+            "type": DataMap['address']['type'],
+          },
+        if (DataMap['location'] != null)
+          'location': {
+            'details': DataMap['location']['details'] ?? '',
+            'latitude': DataMap['location']['latitude'] ?? '',
+            'longitude': DataMap['location']['longitude'] ?? '',
+          },
+        if (DataMap['working_hours'] != null)
+          'working_hours': {
+            'start_time': DataMap['working_hours']['start_time'] ?? '',
+            'end_time': DataMap['working_hours']['end_time'] ?? '',
+          },
+        'delivery_addresses': DataMap['delivery_addresses'] ?? [],
+        'bank_name': DataMap['bank_name'] ?? '',
+        'pincode': DataMap['pincode'] ?? '',
+        'rating': DataMap['rating'] ?? '-',
+        'followers': DataMap['followers'] ?? [],
+        'followings': DataMap['followings'] ?? [],
+        'cover_image': DataMap['cover_image'] ?? '',
+        'account_number': DataMap['account_number'] ?? '',
+        'ifsc_code': DataMap['ifsc_code'] ?? '',
+        'phone': DataMap['phone'] ?? '',
+        'upi_id': DataMap['upi_id'] ?? '',
+        'user_type': DataMap['user_type'] ?? 'Vendor',
+      };
+      await UserPreferences.setUser(userProfileData);
+      userData = UserPreferences.getUser();
+      print('user data:$userData');
+      notifyListeners();
+    
+      return DataMap['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return "-1";
+    }
+  }
+
+
   Future<String> googleLogin(email, userType) async {
     print("fcmToken:: $fcmToken");
     final prefs = await SharedPreferences.getInstance();
@@ -1665,7 +1743,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> verifyOtp(String mobile_no, String otp) async {
-    final String url = 'https://app.cloudbelly.in/otp/verify_otp';
+    final String url = ' ';
 
     Map<String, dynamic> requestBody = {
       "mobile_no": mobile_no,

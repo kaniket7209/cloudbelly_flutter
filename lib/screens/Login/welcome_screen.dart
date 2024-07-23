@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/prefrence_helper.dart';
-import 'package:cloudbelly_app/screens/Login/commonLoginScreen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart'; // Import Lottie
 import 'package:provider/provider.dart';
@@ -30,7 +30,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Future.delayed(const Duration(microseconds: 1000), () {
       UserPreferences().isLogin == true
           ? Navigator.of(context).pushReplacementNamed(Tabs.routeName)
-          : Navigator.of(context).pushReplacementNamed(CommonLoginScreen.routeName);
+          : Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
       //_getUserData();
     });
   }
@@ -38,7 +38,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Future<void> moveToNextPage() async {
     UserPreferences().isLogin == true
         ? Navigator.of(context).pushReplacementNamed(Tabs.routeName)
-        : Navigator.of(context).pushReplacementNamed(CommonLoginScreen.routeName);
+        : Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
   }
 
   Future<void> _getUserData() async {
@@ -63,10 +63,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       } else {
         msg = msg == '-1' ? "Error!" : msg;
         TOastNotification().showErrorToast(context, msg);
-        Navigator.of(context).pushReplacementNamed(CommonLoginScreen.routeName);
+        Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
       }
     } else {
-      Navigator.of(context).pushReplacementNamed(CommonLoginScreen.routeName);
+      Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
     }
   }
 
