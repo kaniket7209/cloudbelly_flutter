@@ -1104,14 +1104,14 @@ Future<String> commonLogin(mobile_no) async {
     }
   }
 
-  var requestBodySearch;
 
   Future<String> updateCustomerLocation(
       double? latitude, double? longitude, String area) async {
+  var requestBodySearch;
     final String url = 'https://app.cloudbelly.in/update-user';
 
-    requestBodySearch = {"latitude": latitude, "longitude": longitude};
-
+    requestBodySearch = {"latitude": latitude, "longitude": longitude,"area":area};
+    print("locLogapiservice.dart $requestBodySearch");
     userData = UserPreferences.getUser();
 
     userData?['current_location']= {"latitude": latitude, "longitude": longitude,"area":area};

@@ -274,6 +274,7 @@ Future<void> _getCurrentLocation(context) async {
       
       await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
           _currentPosition?.latitude, _currentPosition?.longitude, area);
+          print("locLogmain.dart $_currentPosition  $area");
 
     } catch (e) {
       print('Error: $e');

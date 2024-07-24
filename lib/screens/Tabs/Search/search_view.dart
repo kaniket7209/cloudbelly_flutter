@@ -66,7 +66,7 @@ class _SearchViewState extends State<SearchView> {
 
 
   Future<void> _fetchData() async {
-    // print("fetchingggg .... ${Provider.of<Auth>(context, listen: false).userData?['current_location']}");
+    print("locLogFetchData() .... ${Provider.of<Auth>(context, listen: false).userData?['current_location']}");
     if (!hasMoreData) return;
     currentAddress= Provider.of<Auth>(context, listen: false).userData?['current_location']['area'];
 
@@ -645,18 +645,28 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
   }
 
   void _getCurrentLocation(BuildContext context) async {
+    var _currentPosition;
+    var area;
+   
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
+         _currentPosition = position;
     List<Placemark> placemarks =
         await placemarkFromCoordinates(position.latitude, position.longitude);
     if (placemarks.isNotEmpty) {
       Placemark placemark = placemarks.first;
+      area = '${placemark.administrativeArea}';
       close(context, {
-        'description': 'Current Location',
+        'description': '$area',
         'location': '${position.latitude},${position.longitude}',
       });
     } else {
       close(context, {'description': 'Location not found', 'location': ''});
     }
+
+    await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
+          _currentPosition?.latitude, _currentPosition?.longitude, area);
+          print("locLogsearchView.dart $_currentPosition  $area");
+
   }
 }
