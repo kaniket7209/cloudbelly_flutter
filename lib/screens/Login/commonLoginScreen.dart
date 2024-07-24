@@ -419,13 +419,15 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                   await prefs.remove('feedData');
                   await prefs.remove('menuData');
                   Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-                } else if (logRes['code'] == 201) {
-                  
-                  TOastNotification()
-                      .showSuccesToast(context, 'Registration Successful');
-                  openThankYouScreen(context);
-                } else if (logRes['code'] == 400) {
-                  
+                }
+                // else if (logRes['code'] == 201) {
+
+                //   TOastNotification()
+                //       .showSuccesToast(context, 'Registration Successful');
+                //   openThankYouScreen(context);
+                // }
+                else if (logRes['code'] == 400) {
+                  print("openEnterUserTypeBottomSheet");
                   openEnterUserTypeBottomSheet(context, mobileNo);
                 } else {
                   TOastNotification().showErrorToast(
@@ -934,42 +936,47 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
     );
 
     if (selectedUserType != null) {
-      // Save the selected user type to preferences and update the server
+      // Save the selected user type and update the server
       await saveUserType(context, selectedUserType, mobile_no);
     }
   }
 
- Future<void> saveUserType(BuildContext context, String userType, String mobile_no) async {
-  print("selected usertype $userType");
+  Future<void> saveUserType(
+      BuildContext context, String userType, String mobile_no) async {
+    print("selected usertype $userType");
 
-  // Capture the Auth provider reference
-  final authProvider = Provider.of<Auth>(context, listen: false);
-
-  // Call commonLogin again with the updated user type
-  final logRes = await authProvider.commonLogin(context, mobile_no, userType);
-  print("logresponse $logRes");
-  if (logRes['code'] == 200) {
-    TOastNotification().showSuccesToast(context, 'Login Successful');
-    Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-  } else if (logRes['code'] == 201) {
-    TOastNotification().showSuccesToast(context, 'Registration Successful');
-    await openThankYouScreen(context);
-  } else if (logRes['code'] == 400) {
-    TOastNotification().showErrorToast(context, 'Otp not verified');
-  } else {
-    TOastNotification().showErrorToast(context, 'Unexpected error. Please try again');
+    // Call commonLogin again with the updated user type
+    final logRes = await Provider.of<Auth>(context, listen: false)
+        .commonLogin(context, mobile_no, userType);
+    print("logresponse $logRes");
+    if (logRes['code'] == 200) {
+      TOastNotification().showSuccesToast(context, 'Login Successful');
+      Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+    } else if (logRes['code'] == 201) {
+      Navigator.of(context).pop();
+      // TOastNotification().showSuccesToast(context, 'Registration Successful');
+      //  Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+      await openThankYouScreen(context);
+      await Future.delayed(Duration(seconds: 2));
+      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+    } else if (logRes['code'] == 400) {
+      TOastNotification().showErrorToast(context, 'Otp not verified');
+    } else {
+      TOastNotification()
+          .showErrorToast(context, 'Unexpected error. Please try again');
+    }
   }
-}
-  
+
   Future<void> openThankYouScreen(BuildContext context) async {
-    // Show the Thank You screen
-    showDialog(
+    await showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Container(
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return Container(
             decoration: const ShapeDecoration(
               shadows: [
                 BoxShadow(
@@ -1001,18 +1008,9 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                 ),
               ),
             ),
-          ),
-        );
+          );
+        });
       },
     );
-
-    // Delay for 2 seconds
-    await Future.delayed(Duration(seconds: 2));
-
-    // Close the Thank You screen
-    Navigator.of(context).pop();
-
-    // Navigate to the Tabs route
-    Navigator.of(context).pushReplacementNamed(Tabs.routeName);
   }
 }
