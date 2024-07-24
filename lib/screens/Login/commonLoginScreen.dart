@@ -154,7 +154,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  // openEnterUserTypeBottomSheet(context);
+                                  // openEnterUserTypeBottomSheet(context,'6206630515');
                                   // openEnterOtpBottomSheet(context,'6206630515');
                                   openEnterWhatsAppNumberBottomSheet(context);
                                 },
@@ -421,9 +421,10 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                 } else if (logRes['code'] == 201) {
                   TOastNotification()
                       .showSuccesToast(context, 'Registration Successful');
-                  openEnterUserTypeBottomSheet(context);
+                  // openEnterUserTypeBottomSheet(context);
                 } else if (logRes['code'] == 400) {
-                  openEnterUserTypeBottomSheet(context);
+                  
+                  openEnterUserTypeBottomSheet(context,mobileNo);
                 } else {
                   TOastNotification().showErrorToast(
                       context, 'Unexpected error. Please try again');
@@ -455,11 +456,12 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                     ),
                   ),
                 ),
+              
                 padding: EdgeInsets.only(
                   left: 40,
                   right: 5,
                   top: 12,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 30,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -635,16 +637,16 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
     );
   }
 
-Future<void> openEnterUserTypeBottomSheet(BuildContext context) async {
-  String? selectedUserType;
-
-  await showModalBottomSheet<String>(
+Future<void> openEnterUserTypeBottomSheet(BuildContext context,String mobile_no) async {
+  final selectedUserType = await showModalBottomSheet<String>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (BuildContext context) {
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
+          String? selectedUserType;
+
           return SingleChildScrollView(
             child: Container(
               decoration: const ShapeDecoration(
@@ -917,24 +919,33 @@ Future<void> openEnterUserTypeBottomSheet(BuildContext context) async {
   );
 
   if (selectedUserType != null) {
+     
     // Save the selected user type to preferences and update the server
-    await saveUserType(context, selectedUserType!);
+    await saveUserType(context, selectedUserType,mobile_no);
   }
 }
-Future<void> saveUserType(BuildContext context, String userType) async {
-  final prefs = await SharedPreferences.getInstance();
-  Map<String, dynamic> userData = jsonDecode(prefs.getString('userData')!);
-  userData['user_type'] = userType;
+
+Future<void> saveUserType(BuildContext context, String userType,String mobile_no) async {
   print("selected usertype $userType");
-  await prefs.setString('userData', jsonEncode(userData));
+
   
   // Call commonLogin again with the updated user type
-  final logRes = await Provider.of<Auth>(context, listen: false).commonLogin(context, userData['phone'], userType);
-  
+  final logRes = await Provider.of<Auth>(context, listen: false).commonLogin(context,mobile_no, userType);
+  print("logresponse $logRes");
   if (logRes['code'] == 200) {
     TOastNotification().showSuccesToast(context, 'Login Successful');
     Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-  } else {
+  } 
+  else if (logRes['code'] == 201) {
+    TOastNotification().showSuccesToast(context, 'Registration Successful');
+    Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+  } 
+  else if(logRes['code'] == 400){
+
+    TOastNotification().showErrorToast(context, 'Otp not verified');
+  } 
+  
+  else {
     TOastNotification().showErrorToast(context, 'Unexpected error. Please try again');
   }
 }
