@@ -1,7 +1,6 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/models/dish.dart';
 import 'package:cloudbelly_app/models/restaurant.dart';
-import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/dish_card.dart';
 import 'package:cloudbelly_app/widgets/restaurant_card.dart';
@@ -32,7 +31,6 @@ class _SearchViewState extends State<SearchView> {
   Position? _currentPosition;
   String? area;
   String? address;
-  var userData = UserPreferences.getUser();
   bool isLoading = false;
   bool hasMoreData = true;
   String currentAddress = 'Fetching location...';
@@ -47,7 +45,7 @@ class _SearchViewState extends State<SearchView> {
   void initState() {
     super.initState();
     _initializeData();
-    currentAddress=userData?['current_location']['area'];
+    currentAddress=Provider.of<Auth>(context, listen: false).userData?['current_location']['area'];
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -64,14 +62,55 @@ class _SearchViewState extends State<SearchView> {
     });
   }
 
+Future<void> _getCurrentLocation(context) async {
+  setState(() {
+      isLoading = true;
+    });
+  var _currentPosition;
+  var address;
+  var area;
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      _currentPosition = position;
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          _currentPosition?.latitude ?? 22.88689073443092,
+          _currentPosition?.longitude ?? 79.5086424934095);
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks.first;
+
+        address =
+            '${placemark.street}, ${placemark.subLocality},${placemark.subAdministrativeArea}, ${placemark.locality}, ${placemark.administrativeArea},${placemark.country}, ${placemark.postalCode}';
+        area = '${placemark.administrativeArea}';
+
+        
+      } else {
+        address = 'Address not found';
+      }
+
+      
+      await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
+          _currentPosition?.latitude, _currentPosition?.longitude, area);
+          print("locLogmain.dart $_currentPosition  $area");
+
+    } catch (e) {
+      print('Error: $e');
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
 
 
 
   Future<void> _fetchData() async {
-    userData = UserPreferences.getUser();
-    print("locLogFetchData() ....  ${userData?['current_location']}    $userData");
+    if(Provider.of<Auth>(context, listen: false).userData?['current_location'] == null){
+   await   _getCurrentLocation(context);
+    }
+    print("locLogFetchData() .... ${Provider.of<Auth>(context, listen: false).userData?['current_location']}");
     if (!hasMoreData) return;
-    currentAddress=userData?['current_location']['area'];
+    currentAddress= Provider.of<Auth>(context, listen: false).userData?['current_location']['area'];
 
     setState(() {
       isLoading = true;
@@ -85,8 +124,8 @@ class _SearchViewState extends State<SearchView> {
       body: jsonEncode(<String, dynamic>{
         'page': page,
         'limit': limit,
-        'latitude':  userData?['current_location']['latitude'],
-        'longitude': userData?['current_location']['longitude'],
+        'latitude':  Provider.of<Auth>(context, listen: false).userData?['current_location']['latitude'],
+        'longitude': Provider.of<Auth>(context, listen: false).userData?['current_location']['longitude'],
         'query': _searchController.text,
       }),
     );

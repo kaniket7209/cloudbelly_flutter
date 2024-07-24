@@ -11,9 +11,12 @@ import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/model.dart';
@@ -359,9 +362,11 @@ class Auth with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> signUp(email, pass, phone, type) async {
+  Future<String> signUp(context,email, pass, phone, type) async {
     const String url = 'https://app.cloudbelly.in/signup';
     final prefs = await SharedPreferences.getInstance();
+
+        _getCurrentLocation(context);
     final Map<String, dynamic> requestBody = {
       "email": email,
       "password": pass,
@@ -437,11 +442,46 @@ class Auth with ChangeNotifier {
       return '-1';
     }
   }
+Future<void> _getCurrentLocation(context) async {
+  var _currentPosition;
+  var address;
+  var area;
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      _currentPosition = position;
 
-  Future<String> login(email, pass) async {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          _currentPosition?.latitude ?? 22.88689073443092,
+          _currentPosition?.longitude ?? 79.5086424934095);
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks.first;
+
+        address =
+            '${placemark.street}, ${placemark.subLocality},${placemark.subAdministrativeArea}, ${placemark.locality}, ${placemark.administrativeArea},${placemark.country}, ${placemark.postalCode}';
+        area = '${placemark.administrativeArea}';
+
+        
+      } else {
+        address = 'Address not found';
+      }
+
+      
+      await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
+          _currentPosition?.latitude, _currentPosition?.longitude, area);
+          print("locLogmain.dart $_currentPosition  $area");
+
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<String> login(context,email, pass) async {
     print("fcmToken:: $fcmToken");
     final prefs = await SharedPreferences.getInstance();
+    
     print('nknbnkjbn');
+    _getCurrentLocation(context);
     final String url = 'https://app.cloudbelly.in/login';
 
     final Map<String, dynamic> requestBody = {
@@ -508,6 +548,9 @@ class Auth with ChangeNotifier {
         'upi_id': DataMap['upi_id'] ?? '',
         'user_type': DataMap['user_type'] ?? 'Vendor',
       };
+      
+      
+      
       await UserPreferences.setUser(userProfileData);
       userData = UserPreferences.getUser();
       print('user data:$userData');
@@ -1112,7 +1155,7 @@ Future<String> commonLogin(mobile_no) async {
 
     userData?['current_location']= {"latitude": latitude, "longitude": longitude,"area":area};
 
-    UserPreferences.setUser(userData!);
+   await UserPreferences.setUser(userData!);
     
     final Map<String, dynamic> requestBody = {
       'user_id': userData?['user_id'] ?? "",

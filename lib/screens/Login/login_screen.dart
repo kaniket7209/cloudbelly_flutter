@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // Navigator.of(context).pushReplacementNamed(Tabs.routeName);
     AppWideLoadingBanner().loadingBanner(context);
     String msg =
-        await Provider.of<Auth>(context, listen: false).login(email, pass);
+        await Provider.of<Auth>(context, listen: false).login(context,email, pass);
     Navigator.of(context).pop();
     print("msg:: $msg");
     if (msg == 'Login successful') {
@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // For example, print the values:
       AppWideLoadingBanner().loadingBanner(context);
       String msg = await Provider.of<Auth>(context, listen: false)
-          .signUp(user_email, user_pass, user_mobile_number, selectedOption);
+          .signUp(context,user_email, user_pass, user_mobile_number, selectedOption);
       // print('vmdkmv:: $msg');
       if (msg == 'Registration Succesful') {
         UserPreferences().isLogin = true;

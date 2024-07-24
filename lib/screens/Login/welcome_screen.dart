@@ -53,7 +53,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
       AppWideLoadingBanner().loadingBanner(context);
       String msg = await Provider.of<Auth>(context, listen: false)
-          .login(extractedUserData['email'], extractedUserData['password']);
+          .login(context,extractedUserData['email'], extractedUserData['password']);
       Navigator.of(context).pop();
       if (msg == 'Login successful') {
         await prefs.remove('feedData');
