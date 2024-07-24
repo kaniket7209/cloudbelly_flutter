@@ -6,13 +6,12 @@ import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/prefrence_helper.dart';
-import 'package:cloudbelly_app/screens/Login/login_screen.dart';
+import 'package:cloudbelly_app/screens/Login/commonLoginScreen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/google_map_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/Profile_setting/kyc_view.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/Profile_setting/payment_details_view.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
-import 'package:cloudbelly_app/widgets/appwide_textfield.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
@@ -801,7 +800,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
     await Provider.of<Auth>(context, listen: false).logout();
     Navigator.of(context).pop();
-    Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+    Navigator.of(context).pushReplacementNamed(CommonLoginScreen.routeName);
   }
 
   // Future<void> deleteAccount(String url) async {

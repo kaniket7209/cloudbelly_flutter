@@ -1,554 +1,109 @@
-import 'dart:ui';
-import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/widgets/toast_notification.dart';
-import 'package:figma_squircle/figma_squircle.dart';
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+import 'package:cloudbelly_app/constants/assets.dart';
+import 'package:cloudbelly_app/prefrence_helper.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart'; // Import Lottie
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/screens/Login/login_screen.dart';
+import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
+import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
+import 'package:cloudbelly_app/widgets/space.dart';
+import 'package:cloudbelly_app/widgets/toast_notification.dart';
 
-class CommonLoginScreen extends StatefulWidget {
-  static const routeName = '/common-login-screen';
-
-  const CommonLoginScreen({Key? key}) : super(key: key);
+class WelcomeScreen extends StatefulWidget {
+  static const routeName = '/welcome-screen';
 
   @override
-  _CommonLoginScreenState createState() => _CommonLoginScreenState();
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _CommonLoginScreenState extends State<CommonLoginScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  bool _isAvailable = false;
+
+  @override
+  void initState()  {
+    super.initState();
+    Future.delayed(const Duration(microseconds: 1000), () {
+      UserPreferences().isLogin == true
+          ? Navigator.of(context).pushReplacementNamed(Tabs.routeName)
+          : Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+      //_getUserData();
+    });
+  }
+
+  Future<void> moveToNextPage() async {
+    UserPreferences().isLogin == true
+        ? Navigator.of(context).pushReplacementNamed(Tabs.routeName)
+        : Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+  }
+
+  Future<void> _getUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final temp = await Provider.of<Auth>(context, listen: false).tryAutoLogin();
+    setState(() {
+      _isAvailable = temp;
+    });
+
+    if (_isAvailable) {
+      final extractedUserData =
+          json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
+      AppWideLoadingBanner().loadingBanner(context);
+      String msg = await Provider.of<Auth>(context, listen: false)
+          .login(context,extractedUserData['email'], extractedUserData['password']);
+      Navigator.of(context).pop();
+      if (msg == 'Login successful') {
+        await prefs.remove('feedData');
+        await prefs.remove('menuData');
+        TOastNotification().showSuccesToast(context, msg);
+        Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+      } else {
+        msg = msg == '-1' ? "Error!" : msg;
+        TOastNotification().showErrorToast(context, msg);
+        Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+      }
+    } else {
+      Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Fullscreen background image with blur effect
-          Positioned.fill(
-            child: Stack(
-              children: [
-                Image.asset(
-                  'assets/images/feedSection.png', // Adjust image asset path
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
-                BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    color: Color(0xff0A4C61).withOpacity(0.45),
-                  ),
-                ),
-              ],
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(child: Image.asset(Assets.appIcon)),
+            /*Space(10.h),
+            TweenAnimationBuilder(
+              tween: Tween<double>(begin: 0, end: 1),
+              duration: Duration(seconds: 3),
+              builder: (context, double value, child) {
+                return Opacity(opacity: value, child: child);
+              },
+              child: Image.asset('assets/images/cloudbelly_logo.png',
+                  width: 200, height: 200),
             ),
-          ),
-          // Centered popup
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                // height: MediaQuery.of(context).size.height * 0.4,
-                decoration: const ShapeDecoration(
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x7FB1D9D8),
-                      blurRadius: 6,
-                      offset: Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                    ),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 23, 30, 0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(left: 30),
-                            constraints: BoxConstraints(maxWidth: 60.w),
-                            child: Text(
-                              'Welcome \nto Cloudbelly',
-                              style: TextStyle(
-                                  fontSize: 34,
-                                  height: 1.1,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF0A4C61),
-                                  fontFamily: 'Product Sans Black'),
-                            ),
-                          ),
-                          Spacer(),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              SizedBox(
-                                height: 25,
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(left: 30),
-                                constraints: BoxConstraints(maxWidth: 30.w),
-                                child: Image.asset(
-                                  'assets/images/logo_small.png', // Adjust image asset path
-                                  fit: BoxFit.cover,
-                                  width: 20.w,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(left: 30),
-                            child: Text(
-                              'You can cook, eat or share your favourite food.',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFF0A4C61),
-                                  fontFamily: 'Product Sans Medium'),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            constraints: BoxConstraints(maxWidth: 60.w),
-                            child: Lottie.asset(
-                              'assets/Animation - welcome.json',
-                              width: 230,
-                              height: 230,
-                            ),
-                          ),
-                          Spacer(),
-                          Column(
-                            children: [
-                              SizedBox(
-                                height: 80,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  openEnterOtpBottomSheet(context,'6206630515');
-                                  // openEnterWhatsAppNumberBottomSheet(context);
-                                },
-                                child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8.w, vertical: 1.h),
-                                    // margin: EdgeInsets.only(bottom: 2.h),
-                                    decoration: ShapeDecoration(
-                                      shadows: [
-                                        BoxShadow(
-                                          offset: const Offset(5, 6),
-                                          color: Color(0xffFA6E00)
-                                              .withOpacity(0.45),
-                                          blurRadius: 30,
-                                        ),
-                                      ],
-                                      color: Color(0xffFA6E00),
-                                      shape: SmoothRectangleBorder(
-                                          borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 13,
-                                        cornerSmoothing: 1,
-                                      )),
-                                    ),
-                                    child: const Text(
-                                      'Login',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontFamily: 'Product Sans',
-                                        fontWeight: FontWeight.bold,
-                                        // height: 0,
-                                        letterSpacing: 0.14,
-                                      ),
-                                    )),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+
+            Lottie.asset('assets/Animation - 1710085539831.json',
+                width: 500, height: 500), // Lottie animation
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Text("Loading.....".toUpperCase(),
+                  style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600)),
+            ),*/
+          ],
+        ),
       ),
     );
   }
-
-  Future<void> openEnterWhatsAppNumberBottomSheet(BuildContext context) async {
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            final TextEditingController whatsAppController =
-                TextEditingController();
-
-            Future<void> sendOtp() async {
-              // Simulate sending OTP
-              final res = await Provider.of<Auth>(context, listen: false)
-                  .sendOtp(whatsAppController.text);
-              print("resOTP $res");
-              if (res == '200') {
-                // OTP sent successfully, open the next page
-                Navigator.pop(context); // Close the current dialog if any
-                openEnterOtpBottomSheet(context, whatsAppController.text);
-              } else {
-                // Error occurred, print the error
-                print("Failed to send OTP. Error code: $res");
-                TOastNotification().showErrorToast(context,
-                    'Failed to send OTP. Please check the no. ${whatsAppController.text}');
-              }
-            }
-
-            return Padding(
-             padding: EdgeInsets.only(
-                  
-                  bottom: MediaQuery.of(context).viewInsets.bottom/3,
-                ),
-              child: Container(
-                decoration: const ShapeDecoration(
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x7FB1D9D8),
-                      blurRadius: 6,
-                      offset: Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                    ),
-                  ),
-                ),
-                height: MediaQuery.of(context).viewInsets.bottom > 0
-                    ? MediaQuery.of(context).size.height * 0.6
-                    : MediaQuery.of(context).size.height * 0.4,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Container(
-                          margin: EdgeInsets.only(top: 10),
-                          padding:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                          width: 30,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFA6E00).withOpacity(0.55),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        'Enter your \nWhatsApp number',
-                        style: TextStyle(
-                          color: Color(0xFF0A4C61),
-                          fontSize: 32,
-                          height: 1.1,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Product Sans Black',
-                        ),
-                      ),
-                      SizedBox(height: 26),
-                      TextField(
-                        cursorColor: Color(0xFF0A4C61),
-                        controller: whatsAppController,
-                        decoration: InputDecoration(
-                          hintText: '9876789678',
-                          filled: true,
-                          
-                          fillColor: Color(0xFFD3EEEE),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        keyboardType: TextInputType.phone,
-                      ),
-                      SizedBox(height: 16),
-                      Center(
-                        child: GestureDetector(
-                          onTap: sendOtp,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8.w, vertical: 1.h),
-                            decoration: ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                  offset: const Offset(5, 6),
-                                  color: Color(0xffFA6E00).withOpacity(0.45),
-                                  blurRadius: 30,
-                                ),
-                              ],
-                              color: Color(0xffFA6E00),
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 13,
-                                  cornerSmoothing: 1,
-                                ),
-                              ),
-                            ),
-                            child: const Text(
-                              'Send OTP',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.14,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-Future<void> openEnterOtpBottomSheet(BuildContext context, String mobileNo) async {
-  await showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          String otpCode = '';
-
-          Future<void> resendOtp() async {
-            final res = await Provider.of<Auth>(context, listen: false).sendOtp(mobileNo);
-            if (res == '200') {
-              // OTP sent successfully
-              Navigator.pop(context);
-              openEnterOtpBottomSheet(context, mobileNo);
-            } else {
-              print("Failed to send OTP. Error code: $res");
-            }
-          }
-
-          Future<void> _submitOtp(String otp) async {
-                AppWideLoadingBanner().loadingBanner(context);
-            print('Entered OTP: $otp');
-            final res = await Provider.of<Auth>(context, listen: false).verifyOtp(mobileNo, otp);
-            if (res['code'] == 200) {
-              print('OTP verified successfully. Proceeding with login.');
-              TOastNotification().showSuccesToast(context, 'OTP verified');
-               Navigator.pop(context);
-              // Proceed with login
-            } else {
-              print("Failed to verify OTP. Error code: ${res['msg']}");
-              TOastNotification().showErrorToast(context, '${res['msg']}');
-            }
-          }
-
-          return SingleChildScrollView(
-            child: Container(
-              decoration: const ShapeDecoration(
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x7FB1D9D8),
-                    blurRadius: 6,
-                    offset: Offset(0, 4),
-                    spreadRadius: 0,
-                  ),
-                ],
-                color: Colors.white,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius.only(
-                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                    topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                  ),
-                ),
-              ),
-              padding: EdgeInsets.only(
-                left: 40,
-                right: 5,
-                top: 12,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      margin: EdgeInsets.only(top: 5),
-                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                      width: 30,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFA6E00).withOpacity(0.55),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  Container(
-                    child: Text(
-                      'Enter OTP',
-                      style: TextStyle(
-                        color: Color(0xFF0A4C61),
-                        fontSize: 34,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Product Sans Black',
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 25),
-                  OtpTextField(
-                    numberOfFields: 6,
-                    borderColor: Color(0xFF0A4C61),
-                    showFieldAsBox: true,
-                    onSubmit: (String otp) {
-                      otpCode = otp;
-                      _submitOtp(otp);
-                    }, // end onSubmit
-                    onCodeChanged: (String code) {
-                      otpCode = code;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  Container(
-                    padding: EdgeInsets.only(right: 40),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          TextButton(
-                            onPressed: resendOtp,
-                            child: Text(
-                              'Resend',
-                              style: TextStyle(
-                                color: Color(0xFFFB8020),
-                                fontSize: 14,
-                                fontFamily: 'Product Sans',
-                              ),
-                            ),
-                          ),
-                          Text(
-                            'OTP in',
-                            style: TextStyle(
-                              color: Color(0xFF0A4C61),
-                              fontSize: 14,
-                              fontFamily: 'Product Sans',
-                            ),
-                          ),
-                          Text(
-                            ' 60 seconds',
-                            style: TextStyle(
-                              color: Color(0xFF0A4C61),
-                              fontSize: 14,
-                              fontFamily: 'Product Sans',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 35),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(right: 40),
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              _submitOtp(otpCode);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              decoration: ShapeDecoration(
-                                shadows: [
-                                  BoxShadow(
-                                    offset: const Offset(5, 6),
-                                    color: Color(0xffFA6E00).withOpacity(0.45),
-                                    blurRadius: 30,
-                                    spreadRadius: 0,
-                                  ),
-                                ],
-                                color: Color(0xffFA6E00),
-                                shape: SmoothRectangleBorder(
-                                  borderRadius: SmoothBorderRadius(
-                                    cornerRadius: 17,
-                                    cornerSmoothing: 1,
-                                  ),
-                                ),
-                              ),
-                              child: const Text(
-                                'Submit',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.14,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 25),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
-
-
 }
