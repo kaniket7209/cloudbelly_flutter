@@ -157,6 +157,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                                   // openEnterUserTypeBottomSheet(context,'6206630515');
                                   // openEnterOtpBottomSheet(context,'6206630515');
                                   openEnterWhatsAppNumberBottomSheet(context);
+                                  // openThankYouScreen(context);
                                 },
                                 child: Container(
                                     padding: EdgeInsets.symmetric(
@@ -412,19 +413,20 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                 print("logRes $logRes");
 
                 if (logRes['code'] == 200) {
+                  Navigator.pop(context);
                   TOastNotification()
                       .showSuccesToast(context, 'Login Successful');
-                  Navigator.pop(context);
                   await prefs.remove('feedData');
                   await prefs.remove('menuData');
                   Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                 } else if (logRes['code'] == 201) {
+                  
                   TOastNotification()
                       .showSuccesToast(context, 'Registration Successful');
-                  // openEnterUserTypeBottomSheet(context);
+                  openThankYouScreen(context);
                 } else if (logRes['code'] == 400) {
                   
-                  openEnterUserTypeBottomSheet(context,mobileNo);
+                  openEnterUserTypeBottomSheet(context, mobileNo);
                 } else {
                   TOastNotification().showErrorToast(
                       context, 'Unexpected error. Please try again');
@@ -456,7 +458,6 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                     ),
                   ),
                 ),
-              
                 padding: EdgeInsets.only(
                   left: 40,
                   right: 5,
@@ -637,317 +638,381 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
     );
   }
 
-Future<void> openEnterUserTypeBottomSheet(BuildContext context,String mobile_no) async {
-  final selectedUserType = await showModalBottomSheet<String>(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          String? selectedUserType;
+  Future<void> openEnterUserTypeBottomSheet(
+      BuildContext context, String mobile_no) async {
+    final selectedUserType = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            String? selectedUserType;
 
-          return SingleChildScrollView(
-            child: Container(
-              decoration: const ShapeDecoration(
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x7FB1D9D8),
-                    blurRadius: 6,
-                    offset: Offset(0, 4),
-                    spreadRadius: 0,
-                  ),
-                ],
-                color: Colors.white,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius.only(
-                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                    topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+            return SingleChildScrollView(
+              child: Container(
+                decoration: const ShapeDecoration(
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x7FB1D9D8),
+                      blurRadius: 6,
+                      offset: Offset(0, 4),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                      topLeft:
+                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                      topRight:
+                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                    ),
                   ),
                 ),
-              ),
-              height: MediaQuery.of(context).size.height * 0.4,
-              padding: EdgeInsets.only(
-                left: 40,
-                right: 40,
-                top: 15,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-              ),
-              
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    child: Text(
-                      'Choose \nyour profile',
-                      style: TextStyle(
-                        fontSize: 34,
-                        height: 1.1,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xff0A4C61),
-                        fontFamily: 'Product Sans Black',
+                height: MediaQuery.of(context).size.height * 0.4,
+                padding: EdgeInsets.only(
+                  left: 40,
+                  right: 40,
+                  top: 15,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      child: Text(
+                        'Choose \nyour profile',
+                        style: TextStyle(
+                          fontSize: 34,
+                          height: 1.1,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff0A4C61),
+                          fontFamily: 'Product Sans Black',
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 30),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 0),
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedUserType = 'Vendor';
-                            });
-                            Future.delayed(const Duration(milliseconds: 300), () {
-                              Navigator.pop(context, 'Vendor');
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                            decoration: ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                  offset: const Offset(0, 4),
-                                  color: Color(0xFFA5C8C7).withOpacity(0.4),
-                                  blurRadius: 20,
-                                ),
-                              ],
-                              color: Color(0xFFFFFFFF),
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 15,
-                                  cornerSmoothing: 1,
+                    SizedBox(height: 30),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 0),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedUserType = 'Vendor';
+                              });
+                              Future.delayed(const Duration(milliseconds: 300),
+                                  () {
+                                Navigator.pop(context, 'Vendor');
+                              });
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              decoration: ShapeDecoration(
+                                shadows: [
+                                  BoxShadow(
+                                    offset: const Offset(0, 4),
+                                    color: Color(0xFFA5C8C7).withOpacity(0.4),
+                                    blurRadius: 20,
+                                  ),
+                                ],
+                                color: Color(0xFFFFFFFF),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 15,
+                                    cornerSmoothing: 1,
+                                  ),
                                 ),
                               ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: ShapeDecoration(
-                                    shadows: const [
-                                      BoxShadow(
-                                        offset: Offset(0, 4),
-                                        color: Color.fromRGBO(165, 200, 199, 0.6),
-                                        blurRadius: 20,
-                                      ),
-                                    ],
-                                    color: selectedUserType == 'Vendor'
-                                        ? const Color(0xFFFA6E00)
-                                        : const Color(0xFFA5C8C799),
-                                    shape: const SmoothRectangleBorder(
-                                      borderRadius: SmoothBorderRadius.all(
-                                        SmoothRadius(cornerRadius: 10, cornerSmoothing: 1),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: ShapeDecoration(
+                                      shadows: const [
+                                        BoxShadow(
+                                          offset: Offset(0, 4),
+                                          color: Color.fromRGBO(
+                                              165, 200, 199, 0.6),
+                                          blurRadius: 20,
+                                        ),
+                                      ],
+                                      color: selectedUserType == 'Vendor'
+                                          ? const Color(0xFFFA6E00)
+                                          : const Color(0xFFA5C8C799),
+                                      shape: const SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius.all(
+                                          SmoothRadius(
+                                              cornerRadius: 10,
+                                              cornerSmoothing: 1),
+                                        ),
                                       ),
                                     ),
+                                    child: const Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 15,
+                                    ),
                                   ),
-                                  child: const Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: 15,
+                                  SizedBox(width: 10),
+                                  const Text(
+                                    'Restaurant/bakery/cafe',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: 'Product Sans',
+                                        color: Color(0xff0A4C61),
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                ),
-                                SizedBox(width: 10),
-                                const Text(
-                                  'Restaurant/bakery/cafe',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: 'Product Sans',
-                                    color: Color(0xff0A4C61),
-                                    fontWeight: FontWeight.bold
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedUserType = 'Customer';
-                            });
-                            Future.delayed(const Duration(milliseconds: 300), () {
-                              Navigator.pop(context, 'Customer');
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                            decoration: ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                  offset: const Offset(0, 4),
-                                  color: Color(0xFFA5C8C7).withOpacity(0.4),
-                                  blurRadius: 20,
-                                ),
-                              ],
-                              color: Color(0xFFFFFFFF),
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 15,
-                                  cornerSmoothing: 1,
-                                ),
+                                ],
                               ),
                             ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: ShapeDecoration(
-                                    shadows: const [
-                                      BoxShadow(
-                                        offset: Offset(0, 4),
-                                        color: Color.fromRGBO(165, 200, 199, 0.6),
-                                        blurRadius: 20,
-                                      ),
-                                    ],
-                                    color: selectedUserType == 'Customer'
-                                        ? const Color(0xFFFA6E00)
-                                        : const Color(0xFFA5C8C799),
-                                    shape: const SmoothRectangleBorder(
-                                      borderRadius: SmoothBorderRadius.all(
-                                        SmoothRadius(cornerRadius: 10, cornerSmoothing: 1),
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: 15,
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                const Text(
-                                  'Foody',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: 'Product Sans',
-                                    color: Color(0xff0A4C61),
-                                    fontWeight: FontWeight.bold
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
-                        ),
-                        SizedBox(height: 20),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedUserType = 'Supplier';
-                            });
-                            Future.delayed(const Duration(milliseconds: 300), () {
-                              Navigator.pop(context, 'Supplier');
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                            decoration: ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                  offset: const Offset(0, 4),
-                                  color: Color(0xFFA5C8C7).withOpacity(0.4),
-                                  blurRadius: 20,
-                                ),
-                              ],
-                              color: Color(0xFFFFFFFF),
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 15,
-                                  cornerSmoothing: 1,
+                          SizedBox(height: 20),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedUserType = 'Customer';
+                              });
+                              Future.delayed(const Duration(milliseconds: 300),
+                                  () {
+                                Navigator.pop(context, 'Customer');
+                              });
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              decoration: ShapeDecoration(
+                                shadows: [
+                                  BoxShadow(
+                                    offset: const Offset(0, 4),
+                                    color: Color(0xFFA5C8C7).withOpacity(0.4),
+                                    blurRadius: 20,
+                                  ),
+                                ],
+                                color: Color(0xFFFFFFFF),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 15,
+                                    cornerSmoothing: 1,
+                                  ),
                                 ),
                               ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: ShapeDecoration(
-                                    shadows: const [
-                                      BoxShadow(
-                                        offset: Offset(0, 4),
-                                        color: Color.fromRGBO(165, 200, 199, 0.6),
-                                        blurRadius: 20,
-                                      ),
-                                    ],
-                                    color: selectedUserType == 'Supplier'
-                                        ? const Color(0xFFFA6E00)
-                                        : const Color(0xFFA5C8C799),
-                                    shape: const SmoothRectangleBorder(
-                                      borderRadius: SmoothBorderRadius.all(
-                                        SmoothRadius(cornerRadius: 10, cornerSmoothing: 1),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: ShapeDecoration(
+                                      shadows: const [
+                                        BoxShadow(
+                                          offset: Offset(0, 4),
+                                          color: Color.fromRGBO(
+                                              165, 200, 199, 0.6),
+                                          blurRadius: 20,
+                                        ),
+                                      ],
+                                      color: selectedUserType == 'Customer'
+                                          ? const Color(0xFFFA6E00)
+                                          : const Color(0xFFA5C8C799),
+                                      shape: const SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius.all(
+                                          SmoothRadius(
+                                              cornerRadius: 10,
+                                              cornerSmoothing: 1),
+                                        ),
                                       ),
                                     ),
+                                    child: const Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 15,
+                                    ),
                                   ),
-                                  child: const Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: 15,
+                                  SizedBox(width: 10),
+                                  const Text(
+                                    'Foody',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: 'Product Sans',
+                                        color: Color(0xff0A4C61),
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                ),
-                                SizedBox(width: 10),
-                                const Text(
-                                  'Supplier',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: 'Product Sans',
-                                    color: Color(0xff0A4C61),
-                                    fontWeight: FontWeight.bold
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 20),
-                      ],
+                          SizedBox(height: 20),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedUserType = 'Supplier';
+                              });
+                              Future.delayed(const Duration(milliseconds: 300),
+                                  () {
+                                Navigator.pop(context, 'Supplier');
+                              });
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              decoration: ShapeDecoration(
+                                shadows: [
+                                  BoxShadow(
+                                    offset: const Offset(0, 4),
+                                    color: Color(0xFFA5C8C7).withOpacity(0.4),
+                                    blurRadius: 20,
+                                  ),
+                                ],
+                                color: Color(0xFFFFFFFF),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 15,
+                                    cornerSmoothing: 1,
+                                  ),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: ShapeDecoration(
+                                      shadows: const [
+                                        BoxShadow(
+                                          offset: Offset(0, 4),
+                                          color: Color.fromRGBO(
+                                              165, 200, 199, 0.6),
+                                          blurRadius: 20,
+                                        ),
+                                      ],
+                                      color: selectedUserType == 'Supplier'
+                                          ? const Color(0xFFFA6E00)
+                                          : const Color(0xFFA5C8C799),
+                                      shape: const SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius.all(
+                                          SmoothRadius(
+                                              cornerRadius: 10,
+                                              cornerSmoothing: 1),
+                                        ),
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 15,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  const Text(
+                                    'Supplier',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: 'Product Sans',
+                                        color: Color(0xff0A4C61),
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                        ],
+                      ),
                     ),
-                  ),
-               
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      );
-    },
-  );
+            );
+          },
+        );
+      },
+    );
 
-  if (selectedUserType != null) {
-     
-    // Save the selected user type to preferences and update the server
-    await saveUserType(context, selectedUserType,mobile_no);
+    if (selectedUserType != null) {
+      // Save the selected user type to preferences and update the server
+      await saveUserType(context, selectedUserType, mobile_no);
+    }
   }
-}
 
-Future<void> saveUserType(BuildContext context, String userType,String mobile_no) async {
+ Future<void> saveUserType(BuildContext context, String userType, String mobile_no) async {
   print("selected usertype $userType");
 
-  
+  // Capture the Auth provider reference
+  final authProvider = Provider.of<Auth>(context, listen: false);
+
   // Call commonLogin again with the updated user type
-  final logRes = await Provider.of<Auth>(context, listen: false).commonLogin(context,mobile_no, userType);
+  final logRes = await authProvider.commonLogin(context, mobile_no, userType);
   print("logresponse $logRes");
   if (logRes['code'] == 200) {
     TOastNotification().showSuccesToast(context, 'Login Successful');
     Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-  } 
-  else if (logRes['code'] == 201) {
+  } else if (logRes['code'] == 201) {
     TOastNotification().showSuccesToast(context, 'Registration Successful');
-    Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-  } 
-  else if(logRes['code'] == 400){
-
+    await openThankYouScreen(context);
+  } else if (logRes['code'] == 400) {
     TOastNotification().showErrorToast(context, 'Otp not verified');
-  } 
-  
-  else {
+  } else {
     TOastNotification().showErrorToast(context, 'Unexpected error. Please try again');
   }
 }
+  
+  Future<void> openThankYouScreen(BuildContext context) async {
+    // Show the Thank You screen
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            decoration: const ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                  color: Color(0x7FB1D9D8),
+                  blurRadius: 6,
+                  offset: Offset(0, 4),
+                  spreadRadius: 0,
+                ),
+              ],
+              color: Colors.white,
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.only(
+                  topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                  topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                ),
+              ),
+            ),
+            height: MediaQuery.of(context).size.height * 0.4,
+            padding: EdgeInsets.only(
+              left: 10,
+              right: 10,
+              top: 1,
+            ),
+            child: Center(
+              child: Container(
+                constraints: BoxConstraints(maxWidth: 100.w),
+                child: Lottie.asset(
+                  'assets/Animation - thanks.json',
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
 
+    // Delay for 2 seconds
+    await Future.delayed(Duration(seconds: 2));
+
+    // Close the Thank You screen
+    Navigator.of(context).pop();
+
+    // Navigate to the Tabs route
+    Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+  }
 }
