@@ -961,6 +961,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   }
 
   Future<void> openEnterOtpBottomSheet(BuildContext context) async {
+    List<String> otp = List.filled(6, '');
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -968,7 +969,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            List<String> otp = List.filled(6, '');
+            
 
             Future<void> resendOtp() async {
               // Add your resend OTP logic here
@@ -994,8 +995,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                       Provider.of<Auth>(context, listen: false)
                           .userData?['phone'],
                       otpCode);
-
-              if (res == '200') {
+              print("verifyres $res");
+              if (res['code'] == 200) {
                 // OTP verified successfully, proceed with account deletion
                 print(
                     'OTP verified successfully. Proceeding with account deletion.');

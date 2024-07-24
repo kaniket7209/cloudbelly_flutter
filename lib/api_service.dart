@@ -1782,7 +1782,7 @@ Future<String> commonLogin(mobile_no) async {
   }
 
   Future<Map<String, dynamic>> verifyOtp(String mobile_no, String otp) async {
-    final String url = ' ';
+    const String url = 'https://app.cloudbelly.in/otp/verify_otp';
 
     Map<String, dynamic> requestBody = {
       "mobile_no": mobile_no,
@@ -1798,13 +1798,14 @@ Future<String> commonLogin(mobile_no) async {
       print("otpSentResp:: ${response.body}");
       return jsonDecode(response.body);
     } catch (error) {
+      print("$error error");
       // Handle exceptions
       return {'code': 500, 'message': 'An error occurred'};
     }
   }
 
   Future<String> deleteProfile(String mobile_no) async {
-    final String url = 'https://app.cloudbelly.in/delete-profile';
+    const String url = 'https://app.cloudbelly.in/delete-profile';
 
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {"mobile_no": mobile_no};
