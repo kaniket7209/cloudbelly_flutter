@@ -1,6 +1,7 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/models/dish.dart';
 import 'package:cloudbelly_app/models/restaurant.dart';
+import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/dish_card.dart';
 import 'package:cloudbelly_app/widgets/restaurant_card.dart';
@@ -31,6 +32,7 @@ class _SearchViewState extends State<SearchView> {
   Position? _currentPosition;
   String? area;
   String? address;
+  var userData = UserPreferences.getUser();
   bool isLoading = false;
   bool hasMoreData = true;
   String currentAddress = 'Fetching location...';
@@ -45,7 +47,7 @@ class _SearchViewState extends State<SearchView> {
   void initState() {
     super.initState();
     _initializeData();
-    currentAddress=Provider.of<Auth>(context, listen: false).userData?['current_location']['area'];
+    currentAddress=userData?['current_location']['area'];
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -66,9 +68,10 @@ class _SearchViewState extends State<SearchView> {
 
 
   Future<void> _fetchData() async {
-    print("locLogFetchData() .... ${Provider.of<Auth>(context, listen: false).userData?['current_location']}");
+    userData = UserPreferences.getUser();
+    print("locLogFetchData() ....  ${userData?['current_location']}    $userData");
     if (!hasMoreData) return;
-    currentAddress= Provider.of<Auth>(context, listen: false).userData?['current_location']['area'];
+    currentAddress=userData?['current_location']['area'];
 
     setState(() {
       isLoading = true;
@@ -82,8 +85,8 @@ class _SearchViewState extends State<SearchView> {
       body: jsonEncode(<String, dynamic>{
         'page': page,
         'limit': limit,
-        'latitude':  Provider.of<Auth>(context, listen: false).userData?['current_location']['latitude'],
-        'longitude': Provider.of<Auth>(context, listen: false).userData?['current_location']['longitude'],
+        'latitude':  userData?['current_location']['latitude'],
+        'longitude': userData?['current_location']['longitude'],
         'query': _searchController.text,
       }),
     );

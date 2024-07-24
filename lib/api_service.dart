@@ -393,6 +393,12 @@ class Auth with ChangeNotifier {
             'latitude': DataMap['location']['latitude'] ?? '',
             'longitude': DataMap['location']['longitude'] ?? '',
           },
+          if (DataMap['current_location'] != null)
+          'current_location': {
+            'area': DataMap['current_location']['area'] ?? '',
+            'latitude': DataMap['current_location']['latitude'] ?? '',
+            'longitude': DataMap['current_location']['longitude'] ?? '',
+          },
         if (DataMap['address'] != null)
           'address': {
             "location": DataMap['address']['location'],
@@ -478,6 +484,12 @@ class Auth with ChangeNotifier {
             'latitude': DataMap['location']['latitude'] ?? '',
             'longitude': DataMap['location']['longitude'] ?? '',
           },
+           if (DataMap['current_location'] != null)
+          'current_location': {
+            'area': DataMap['current_location']['area'] ?? '',
+            'latitude': DataMap['current_location']['latitude'] ?? '',
+            'longitude': DataMap['current_location']['longitude'] ?? '',
+          },
         if (DataMap['working_hours'] != null)
           'working_hours': {
             'start_time': DataMap['working_hours']['start_time'] ?? '',
@@ -500,23 +512,7 @@ class Auth with ChangeNotifier {
       userData = UserPreferences.getUser();
       print('user data:$userData');
       notifyListeners();
-      /* user_id = DataMap['user_id'];
-      user_email = DataMap['email'];
-      store_name = DataMap['store_name'] ?? '';
-      logo_url = DataMap['profile_photo'] ?? '';
-      pan_number = DataMap['pan_number'] ?? '';
-      bank_name = DataMap['bank_name'] ?? '';
-      pincode = DataMap['pincode'] ?? '';
-      rating = DataMap['rating'] ?? '-';
-      followers = DataMap['followers'] ?? [];
-      followings = DataMap['followings'] ?? [];
-      cover_image = DataMap['cover_image'] ?? '';
-      store_name = store_name == '' ? user_email.split('@')[0] : store_name;
-      userType = DataMap['user_type'] ?? 'Vendor';*/
-      /*final userData = json.encode(
-        {'email': email, 'password': pass},
-      );
-      prefs.setString('userData', userData);*/
+     
       return DataMap['message'];
     } catch (error) {
       notifyListeners();
@@ -1120,7 +1116,7 @@ Future<String> commonLogin(mobile_no) async {
     
     final Map<String, dynamic> requestBody = {
       'user_id': userData?['user_id'] ?? "",
-      "current_location": {"latitude": latitude, "longitude": longitude}
+      "current_location": {"latitude": latitude, "longitude": longitude,"area":area}
     };
 
     try {
@@ -1129,10 +1125,10 @@ Future<String> commonLogin(mobile_no) async {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-      // notifyListeners();
+      notifyListeners();
       return jsonDecode((response.body))['message'];
     } catch (error) {
-      // notifyListeners();
+      notifyListeners();
       // Handle exceptions
       return '-1';
     }
