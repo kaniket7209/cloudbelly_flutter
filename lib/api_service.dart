@@ -565,94 +565,106 @@ Future<void> _getCurrentLocation(context) async {
     }
   }
 
-Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo) async {
-  print("fcmToken::commLogin $fcmToken");
+Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, String userType) async {
   final prefs = await SharedPreferences.getInstance();
-  _getCurrentLocation(context);
+  _getCurrentLocation(context); // Make sure _getCurrentLocation is defined
   final String url = 'https://app.cloudbelly.in/common-login';
 
   final Map<String, dynamic> requestBody = {
     "phone": mobileNo,
     "fcm_token": prefs.getString('fcmToken'),
+    "user_type": userType,
   };
-  // Login successful
-  print("resquestbody:: $requestBody");
+
+  print("requestBody:: $requestBody");
+
   try {
     final response = await http.post(
       Uri.parse(url),
-      headers: headers,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: jsonEncode(requestBody),
     );
-    if (jsonDecode(response.body)['code'] == 200){
-      print("Login Successful");
+
+    print("Response status: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      final DataMap = responseBody['data'];
+      print("data:: $DataMap");
+
+      Map<String, dynamic> userProfileData = {
+        'user_id': DataMap['user_id'],
+        'user_name': DataMap['user_name'],
+        'email': DataMap['email'],
+        'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0] ?? "Unknown",
+        'profile_photo': DataMap['profile_photo'] ?? '',
+        'store_availability': DataMap['store_availability'] ?? false,
+        'pan_number': DataMap['pan_number'] ?? '',
+        'aadhar_number': DataMap['aadhar_number'] ?? '',
+        if (DataMap['address'] != null)
+          'address': {
+            "location": DataMap['address']['location'],
+            "latitude": DataMap['address']['latitude'],
+            "longitude": DataMap['address']['longitude'],
+            "hno": DataMap['address']['hno'],
+            "pincode": DataMap['address']['pincode'],
+            "landmark": DataMap['address']['landmark'],
+            "type": DataMap['address']['type'],
+          },
+        if (DataMap['location'] != null)
+          'location': {
+            'details': DataMap['location']['details'] ?? '',
+            'latitude': DataMap['location']['latitude'] ?? '',
+            'longitude': DataMap['location']['longitude'] ?? '',
+          },
+        if (DataMap['current_location'] != null)
+          'current_location': {
+            'area': DataMap['current_location']['area'] ?? '',
+            'latitude': DataMap['current_location']['latitude'] ?? '',
+            'longitude': DataMap['current_location']['longitude'] ?? '',
+          },
+        if (DataMap['working_hours'] != null)
+          'working_hours': {
+            'start_time': DataMap['working_hours']['start_time'] ?? '',
+            'end_time': DataMap['working_hours']['end_time'] ?? '',
+          },
+        'delivery_addresses': DataMap['delivery_addresses'] ?? [],
+        'bank_name': DataMap['bank_name'] ?? '',
+        'pincode': DataMap['pincode'] ?? '',
+        'rating': DataMap['rating'] ?? '-',
+        'followers': DataMap['followers'] ?? [],
+        'followings': DataMap['followings'] ?? [],
+        'cover_image': DataMap['cover_image'] ?? '',
+        'account_number': DataMap['account_number'] ?? '',
+        'ifsc_code': DataMap['ifsc_code'] ?? '',
+        'phone': DataMap['phone'] ?? '',
+        'upi_id': DataMap['upi_id'] ?? '',
+        'user_type': DataMap['user_type'] ?? 'Vendor',
+      };
+
+      await prefs.setString('userData', jsonEncode(userProfileData));
+      await UserPreferences.setUser(userProfileData);
+      userData = UserPreferences.getUser();
+      print('user data:$userData');
+
+      notifyListeners();
+      return responseBody;
+    } else {
+      print("Login/Registration failed with status code: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      notifyListeners();
+      return {"code": response.statusCode};
     }
-    else if (jsonDecode(response.body)['code'] == 201){
-      print("Registration Successful");
-    }
-    final DataMap = jsonDecode(response.body)['data'];
-    log("data:: $DataMap");
-    Map<String, dynamic> userProfileData = {
-      'user_id': DataMap['user_id'],
-      'user_name': DataMap['user_name'],
-      'email': DataMap['email'],
-      'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0] ?? "Unknown",
-      'profile_photo': DataMap['profile_photo'] ?? '',
-      'store_availability': DataMap['store_availability'] ?? false,
-      'pan_number': DataMap['pan_number'] ?? '',
-      'aadhar_number': DataMap['aadhar_number'] ?? '',
-      if (DataMap['address'] != null)
-        'address': {
-          "location": DataMap['address']['location'],
-          "latitude": DataMap['address']['latitude'],
-          "longitude": DataMap['address']['longitude'],
-          "hno": DataMap['address']['hno'],
-          "pincode": DataMap['address']['pincode'],
-          "landmark": DataMap['address']['landmark'],
-          "type": DataMap['address']['type'],
-        },
-      if (DataMap['location'] != null)
-        'location': {
-          'details': DataMap['location']['details'] ?? '',
-          'latitude': DataMap['location']['latitude'] ?? '',
-          'longitude': DataMap['location']['longitude'] ?? '',
-        },
-      if (DataMap['current_location'] != null)
-        'current_location': {
-          'area': DataMap['current_location']['area'] ?? '',
-          'latitude': DataMap['current_location']['latitude'] ?? '',
-          'longitude': DataMap['current_location']['longitude'] ?? '',
-        },
-      if (DataMap['working_hours'] != null)
-        'working_hours': {
-          'start_time': DataMap['working_hours']['start_time'] ?? '',
-          'end_time': DataMap['working_hours']['end_time'] ?? '',
-        },
-      'delivery_addresses': DataMap['delivery_addresses'] ?? [],
-      'bank_name': DataMap['bank_name'] ?? '',
-      'pincode': DataMap['pincode'] ?? '',
-      'rating': DataMap['rating'] ?? '-',
-      'followers': DataMap['followers'] ?? [],
-      'followings': DataMap['followings'] ?? [],
-      'cover_image': DataMap['cover_image'] ?? '',
-      'account_number': DataMap['account_number'] ?? '',
-      'ifsc_code': DataMap['ifsc_code'] ?? '',
-      'phone': DataMap['phone'] ?? '',
-      'upi_id': DataMap['upi_id'] ?? '',
-      'user_type': DataMap['user_type'] ?? 'Vendor',
-    };
-    
-    await UserPreferences.setUser(userProfileData);
-    userData = UserPreferences.getUser();
-    print('user data:$userData');
+  } catch (error, stackTrace) {
+    print("Error during login/registration: $error");
+    print("Stack trace: $stackTrace");
     notifyListeners();
-    return jsonDecode(response.body);
-  } catch (error) {
-    notifyListeners();
-    // Handle exceptions
-    return {"code":500};
+    return {"code": 500, "error": error.toString()};
   }
 }
-
   Future<String> googleLogin(email, userType) async {
     print("fcmToken:: $fcmToken");
     final prefs = await SharedPreferences.getInstance();
@@ -720,19 +732,7 @@ Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo) 
       await UserPreferences.setUser(userProfileData);
       userData = UserPreferences.getUser();
       print("userData:: ${userData}");
-      /*user_id = DataMap['user_id'];
-      user_email = DataMap['email'];
-      store_name = DataMap['store_name'] ?? '';
-      logo_url = DataMap['profile_photo'] ?? '';
-      pan_number = DataMap['pan_number'] ?? '';
-      bank_name = DataMap['bank_name'] ?? '';
-      pincode = DataMap['pincode'] ?? '';
-      rating = DataMap['rating'] ?? '-';
-      followers = DataMap['followers'] ?? [];
-      followings = DataMap['followings'] ?? [];
-      cover_image = DataMap['cover_image'] ?? '';
-      store_name = store_name == '' ? user_email.split('@')[0] : store_name;
-      userType = DataMap['user_type'] ?? 'Vendor';*/
+     
       notifyListeners();
       return DataMap['message'];
     } catch (error) {

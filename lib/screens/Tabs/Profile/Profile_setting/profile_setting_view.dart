@@ -2318,6 +2318,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           size: 15,
                         ),
                       ),
+                   
                       const Space(
                         16,
                         isHorizontal: true,

@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +13,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart'; // Import Lottie
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CommonLoginScreen extends StatefulWidget {
   static const routeName = '/common-login-screen';
@@ -151,8 +154,9 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
+                                  openEnterUserTypeBottomSheet(context);
                                   // openEnterOtpBottomSheet(context,'6206630515');
-                                  openEnterWhatsAppNumberBottomSheet(context);
+                                  // openEnterWhatsAppNumberBottomSheet(context);
                                 },
                                 child: Container(
                                     padding: EdgeInsets.symmetric(
@@ -272,19 +276,6 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Center(
-                      //   child: Container(
-                      //     margin: EdgeInsets.only(top: 10),
-                      //     padding:
-                      //         EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                      //     width: 30,
-                      //     height: 6,
-                      //     decoration: BoxDecoration(
-                      //       color: const Color(0xFFFA6E00).withOpacity(0.55),
-                      //       borderRadius: BorderRadius.circular(6),
-                      //     ),
-                      //   ),
-                      // ),
                       SizedBox(height: 20),
                       Text(
                         'Enter your \nWhatsApp number',
@@ -405,6 +396,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
             }
 
             Future<void> _submitOtp() async {
+              final prefs = await SharedPreferences.getInstance();
               print("otp is $otp");
               final otpCode = otp.join();
               print('Entered OTP: $otpCode');
@@ -413,26 +405,32 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
 
               if (res['code'] == 200) {
                 print('OTP verified successfully. Proceeding with login.');
-                TOastNotification().showSuccesToast(context, 'OTP verified');
-                
+
                 // Proceed with login
                 final logRes = await Provider.of<Auth>(context, listen: false)
-                    .commonLogin(context, mobileNo);
+                    .commonLogin(context, mobileNo, '');
                 print("logRes $logRes");
+
                 if (logRes['code'] == 200) {
                   TOastNotification()
                       .showSuccesToast(context, 'Login Successful');
+                  Navigator.pop(context);
+                  await prefs.remove('feedData');
+                  await prefs.remove('menuData');
+                  Navigator.of(context).pushReplacementNamed(Tabs.routeName);
                 } else if (logRes['code'] == 201) {
                   TOastNotification()
                       .showSuccesToast(context, 'Registration Successful');
+                  openEnterUserTypeBottomSheet(context);
+                } else if (logRes['code'] == 400) {
+                  openEnterUserTypeBottomSheet(context);
                 } else {
                   TOastNotification().showErrorToast(
                       context, 'Unexpected error. Please try again');
                 }
-                Navigator.pop(context);
               } else {
-                print("Failed to verify OTP. Error code: $res");
-                TOastNotification().showErrorToast(context, '${res['error']}');
+                print("Failed to verify OTP. : $res");
+                TOastNotification().showErrorToast(context, 'Wrong OTP');
               }
             }
 
@@ -468,19 +466,6 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Container(
-                        margin: EdgeInsets.only(top: 5),
-                        padding:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                        width: 30,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFA6E00).withOpacity(0.55),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                    ),
                     SizedBox(height: 30),
                     Container(
                       child: Text(
@@ -649,4 +634,303 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
       },
     );
   }
+
+ Future<void> openEnterUserTypeBottomSheet(BuildContext context) async {
+  final selectedUserType = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          String? selectedUserType;
+
+          return SingleChildScrollView(
+            child: Container(
+              decoration: const ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x7FB1D9D8),
+                    blurRadius: 6,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                ],
+                color: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.only(
+                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                    topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                  ),
+                ),
+              ),
+              height: MediaQuery.of(context).size.height * 0.4,
+              padding: EdgeInsets.only(
+                left: 40,
+                right: 40,
+                top: 15,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+              ),
+              
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    child: Text(
+                      'Choose \nyour profile',
+                      style: TextStyle(
+                        fontSize: 34,
+                        height: 1.1,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff0A4C61),
+                        fontFamily: 'Product Sans Black',
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 0),
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedUserType = 'Vendor';
+                            });
+                            Navigator.pop(context, 'Vendor');
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  offset: const Offset(0, 4),
+                                  color: Color(0xFFA5C8C7).withOpacity(0.4),
+                                  blurRadius: 20,
+                                ),
+                              ],
+                              color: Color(0xFFFFFFFF),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 15,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 30,
+                                  width: 30,
+                                  decoration: ShapeDecoration(
+                                    shadows: const [
+                                      BoxShadow(
+                                        offset: Offset(0, 4),
+                                        color: Color.fromRGBO(165, 200, 199, 0.6),
+                                        blurRadius: 20,
+                                      ),
+                                    ],
+                                    color: selectedUserType == 'Vendor'
+                                        ? const Color(0xFFFA6E00)
+                                        : const Color(0xFFA5C8C799),
+                                    shape: const SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius.all(
+                                        SmoothRadius(cornerRadius: 10, cornerSmoothing: 1),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                const Text(
+                                  'Restaurant/bakery/cafe',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'Product Sans',
+                                    color: Color(0xff0A4C61),
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedUserType = 'Customer';
+                            });
+                            Navigator.pop(context, 'Customer');
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  offset: const Offset(0, 4),
+                                  color: Color(0xFFA5C8C7).withOpacity(0.4),
+                                  blurRadius: 20,
+                                ),
+                              ],
+                              color: Color(0xFFFFFFFF),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 15,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 30,
+                                  width: 30,
+                                  decoration: ShapeDecoration(
+                                    shadows: const [
+                                      BoxShadow(
+                                        offset: Offset(0, 4),
+                                        color: Color.fromRGBO(165, 200, 199, 0.6),
+                                        blurRadius: 20,
+                                      ),
+                                    ],
+                                    color: selectedUserType == 'Customer'
+                                        ? const Color(0xFFFA6E00)
+                                        : const Color(0xFFA5C8C799),
+                                    shape: const SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius.all(
+                                        SmoothRadius(cornerRadius: 10, cornerSmoothing: 1),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                const Text(
+                                  'Foody',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'Product Sans',
+                                    color: Color(0xff0A4C61),
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedUserType = 'Supplier';
+                            });
+                            Navigator.pop(context, 'Supplier');
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  offset: const Offset(0, 4),
+                                  color: Color(0xFFA5C8C7).withOpacity(0.4),
+                                  blurRadius: 20,
+                                ),
+                              ],
+                              color: Color(0xFFFFFFFF),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 15,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 30,
+                                  width: 30,
+                                  decoration: ShapeDecoration(
+                                    shadows: const [
+                                      BoxShadow(
+                                        offset: Offset(0, 4),
+                                        color: Color.fromRGBO(165, 200, 199, 0.6),
+                                        blurRadius: 20,
+                                      ),
+                                    ],
+                                    color: selectedUserType == 'Supplier'
+                                        ? const Color(0xFFFA6E00)
+                                        : const Color(0xFFA5C8C799),
+                                    shape: const SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius.all(
+                                        SmoothRadius(cornerRadius: 10, cornerSmoothing: 1),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                const Text(
+                                  'Supplier',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'Product Sans',
+                                    color: Color(0xff0A4C61),
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+               
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+
+  if (selectedUserType != null) {
+    // Save the selected user type to preferences and update the server
+    await saveUserType(context, selectedUserType);
+  }
+}
+
+Future<void> saveUserType(BuildContext context, String userType) async {
+  final prefs = await SharedPreferences.getInstance();
+  Map<String, dynamic> userData = jsonDecode(prefs.getString('userData')!);
+  userData['user_type'] = userType;
+  await prefs.setString('userData', jsonEncode(userData));
+  
+  // Call commonLogin again with the updated user type
+  final logRes = await Provider.of<Auth>(context, listen: false).commonLogin(context, userData['phone'], userType);
+  
+  if (logRes['code'] == 200) {
+    TOastNotification().showSuccesToast(context, 'Login Successful');
+    Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+  } else {
+    TOastNotification().showErrorToast(context, 'Unexpected error. Please try again');
+  }
+}
+
 }
