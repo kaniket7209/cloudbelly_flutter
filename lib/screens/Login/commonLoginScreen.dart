@@ -154,9 +154,9 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  openEnterUserTypeBottomSheet(context);
+                                  // openEnterUserTypeBottomSheet(context);
                                   // openEnterOtpBottomSheet(context,'6206630515');
-                                  // openEnterWhatsAppNumberBottomSheet(context);
+                                  openEnterWhatsAppNumberBottomSheet(context);
                                 },
                                 child: Container(
                                     padding: EdgeInsets.symmetric(
@@ -635,16 +635,16 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
     );
   }
 
- Future<void> openEnterUserTypeBottomSheet(BuildContext context) async {
-  final selectedUserType = await showModalBottomSheet<String>(
+Future<void> openEnterUserTypeBottomSheet(BuildContext context) async {
+  String? selectedUserType;
+
+  await showModalBottomSheet<String>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (BuildContext context) {
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
-          String? selectedUserType;
-
           return SingleChildScrollView(
             child: Container(
               decoration: const ShapeDecoration(
@@ -698,7 +698,9 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                             setState(() {
                               selectedUserType = 'Vendor';
                             });
-                            Navigator.pop(context, 'Vendor');
+                            Future.delayed(const Duration(milliseconds: 300), () {
+                              Navigator.pop(context, 'Vendor');
+                            });
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -766,7 +768,9 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                             setState(() {
                               selectedUserType = 'Customer';
                             });
-                            Navigator.pop(context, 'Customer');
+                            Future.delayed(const Duration(milliseconds: 300), () {
+                              Navigator.pop(context, 'Customer');
+                            });
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -834,7 +838,9 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                             setState(() {
                               selectedUserType = 'Supplier';
                             });
-                            Navigator.pop(context, 'Supplier');
+                            Future.delayed(const Duration(milliseconds: 300), () {
+                              Navigator.pop(context, 'Supplier');
+                            });
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -912,14 +918,14 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
 
   if (selectedUserType != null) {
     // Save the selected user type to preferences and update the server
-    await saveUserType(context, selectedUserType);
+    await saveUserType(context, selectedUserType!);
   }
 }
-
 Future<void> saveUserType(BuildContext context, String userType) async {
   final prefs = await SharedPreferences.getInstance();
   Map<String, dynamic> userData = jsonDecode(prefs.getString('userData')!);
   userData['user_type'] = userType;
+  print("selected usertype $userType");
   await prefs.setString('userData', jsonEncode(userData));
   
   // Call commonLogin again with the updated user type
