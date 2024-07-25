@@ -1630,7 +1630,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           },
                           child: Container(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 4.w, vertical: 1.h),
+                                  horizontal: 5.w, vertical: 1.h),
                               // margin: EdgeInsets.only(bottom: 2.h),
                               decoration: ShapeDecoration(
                                 shadows: [
@@ -1651,11 +1651,11 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                 'Log Out',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontFamily: 'PT Sans',
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w800,
                                   // height: 0,
-                                  letterSpacing: 0.14,
+                                  letterSpacing: 0.26,
                                 ),
                               )),
                         ),
@@ -1710,11 +1710,11 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                       color: Provider.of<Auth>(context, listen: false)
                                   .userData?['user_type'] ==
                               UserType.Vendor.name
-                          ? const Color.fromRGBO(165, 200, 199, 0.4)
+                          ? const Color.fromRGBO(165, 200, 199, 0.3)
                           : Provider.of<Auth>(context, listen: false)
                                       .userData?['user_type'] ==
                                   UserType.Supplier.name
-                              ? const Color.fromRGBO(77, 191, 74, 0.3)
+                              ? const Color.fromRGBO(77, 191, 74, 0.2)
                               : const Color.fromRGBO(188, 115, 188, 0.2),
                       blurRadius: 20,
                     )
@@ -1896,12 +1896,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                       color: Provider.of<Auth>(context, listen: false)
                                   .userData?['user_type'] ==
                               UserType.Vendor.name
-                          ? const Color.fromRGBO(165, 200, 199, 0.6)
+                          ? const Color.fromRGBO(165, 200, 199, 0.3)
                           : Provider.of<Auth>(context, listen: false)
                                       .userData?['user_type'] ==
                                   UserType.Supplier.name
                               ? const Color.fromRGBO(77, 191, 74, 0.3)
-                              : const Color.fromRGBO(188, 115, 188, 0.2),
+                              : const Color.fromRGBO(188, 115, 188, 0.3),
                       blurRadius: 20,
                     ),
                   ],
@@ -1990,12 +1990,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                       color: Provider.of<Auth>(context, listen: false)
                                   .userData?['user_type'] ==
                               UserType.Vendor.name
-                          ? const Color.fromRGBO(165, 200, 199, 0.6)
+                          ? const Color.fromRGBO(165, 200, 199, 0.3)
                           : Provider.of<Auth>(context, listen: false)
                                       .userData?['user_type'] ==
                                   UserType.Supplier.name
                               ? const Color.fromRGBO(77, 191, 74, 0.3)
-                              : const Color.fromRGBO(188, 115, 188, 0.2),
+                              : const Color.fromRGBO(188, 115, 188, 0.3),
                       blurRadius: 20,
                     )
                   ],
@@ -2121,13 +2121,13 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                 color: Provider.of<Auth>(context, listen: false)
                                             .userData?['user_type'] ==
                                         UserType.Vendor.name
-                                    ? const Color.fromRGBO(165, 200, 199, 0.6)
+                                    ? const Color.fromRGBO(165, 200, 199, 0.3)
                                     : Provider.of<Auth>(context, listen: false)
                                                 .userData?['user_type'] ==
                                             UserType.Supplier.name
                                         ? const Color.fromRGBO(77, 191, 74, 0.3)
                                         : const Color.fromRGBO(
-                                            130, 47, 130, 0.2),
+                                            130, 47, 130, 0.3),
                                 blurRadius: 20,
                               )
                             ],
@@ -2199,13 +2199,13 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                 color: Provider.of<Auth>(context, listen: false)
                                             .userData?['user_type'] ==
                                         UserType.Vendor.name
-                                    ? const Color.fromRGBO(165, 200, 199, 0.6)
+                                    ? const Color.fromRGBO(165, 200, 199, 0.3)
                                     : Provider.of<Auth>(context, listen: false)
                                                 .userData?['user_type'] ==
                                             UserType.Supplier.name
                                         ? const Color.fromRGBO(77, 191, 74, 0.3)
                                         : const Color.fromRGBO(
-                                            130, 47, 130, 0.7),
+                                            130, 47, 130, 0.3),
                                 blurRadius: 20,
                               )
                             ],
