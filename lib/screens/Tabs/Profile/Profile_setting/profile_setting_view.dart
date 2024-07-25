@@ -2023,13 +2023,13 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               .userData?['user_type'] ==
                           UserType.Vendor.name
                       ? const TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           fontFamily: 'PT Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF0A4C61),
                         )
                       : const TextStyle(
-                          fontSize: 14,
+                          fontSize: 17,
                           fontFamily: 'PT Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF2E0536)),
@@ -2143,14 +2143,14 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                   ? "${fromTime?.hour}:${fromTime?.minute}"
                                   : fromTiming ?? "From",
                               style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   color:
                                       Provider.of<Auth>(context, listen: false)
                                                   .userData?['user_type'] ==
                                               UserType.Vendor.name
                                           ? const Color(0xFF0A4C61)
                                           : const Color(0xFF2E0536),
-                                  fontFamily: 'Product Sans',
+                                  fontFamily: 'PT Sans',
                                   fontWeight: FontWeight.w400),
                             ),
                           ),
@@ -2220,14 +2220,14 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                   ? "${tillTime?.hour}:${tillTime?.minute}"
                                   : tillTiming ?? "Till",
                               style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   color:
                                       Provider.of<Auth>(context, listen: false)
                                                   .userData?['user_type'] ==
                                               UserType.Vendor.name
                                           ? const Color(0xFF0A4C61)
                                           : const Color(0xFF2E0536),
-                                  fontFamily: 'Product Sans',
+                                  fontFamily: 'PT Sans',
                                   fontWeight: FontWeight.w400),
                             ),
                           ),
@@ -2632,7 +2632,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   Future<void> showPastOrdersBottomSheet(BuildContext context) async {
     //get order details
-    var orderDetails = Provider.of<Auth>(context, listen: false).customerOrderDetails;
+    var orderDetails = Provider.of<Auth>(context, listen: false).orderDetails;
     print("orderDetailssetting $orderDetails");
     await showModalBottomSheet(
       context: context,
