@@ -2545,7 +2545,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           ),
         ),
       ),
-      bottomNavigationBar: GestureDetector(
+      
+      bottomNavigationBar:(Provider.of<Auth>(context, listen: false).userData!['user_type'] != 'Customer') ?
+       GestureDetector(
         onVerticalDragUpdate: (details) {
           if (details.primaryDelta! < -20) {
             showPastOrdersBottomSheet(context);
@@ -2624,7 +2626,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
             ],
           ),
         ),
-      ),
+      ):null,
     );
   }
 
