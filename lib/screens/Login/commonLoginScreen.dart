@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/main.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -90,9 +91,9 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                             child: Text(
                               'Welcome \nto Cloudbelly',
                               style: TextStyle(
-                                  fontSize: 34,
+                                  fontSize: 32,
                                   height: 1.1,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w800,
                                   color: Color(0xFF0A4C61),
                                   fontFamily: 'Product Sans Black'),
                             ),
@@ -128,6 +129,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                               style: TextStyle(
                                   fontSize: 14,
                                   color: Color(0xFF0A4C61),
+                                  fontWeight: FontWeight.w600,
                                   fontFamily: 'Product Sans Medium'),
                             ),
                           ),
@@ -244,52 +246,67 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom / 2.2,
-              ),
-              child: Container(
-                decoration: const ShapeDecoration(
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x7FB1D9D8),
-                      blurRadius: 6,
-                      offset: Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                    ),
+            return Container(
+              decoration: const ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x7FB1D9D8),
+                    blurRadius: 6,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                ],
+                color: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.only(
+                    topLeft:
+                        SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                    topRight:
+                        SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
                   ),
                 ),
-                height: MediaQuery.of(context).viewInsets.bottom > 0
-                    ? MediaQuery.of(context).size.height * 0.6
-                    : MediaQuery.of(context).size.height * 0.4,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(30.0, 16, 30, 16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 20),
-                      Text(
-                        'Enter your \nWhatsApp number',
-                        style: TextStyle(
-                          color: Color(0xFF0A4C61),
-                          fontSize: 32,
-                          height: 1.1,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Product Sans Black',
-                        ),
+              ),
+              height: MediaQuery.of(context).viewInsets.bottom > 0
+                  ? MediaQuery.of(context).size.height * 0.6
+                  : MediaQuery.of(context).size.height * 0.4,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30.0, 16, 30, 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20),
+                    Text(
+                      'Enter your \nWhatsApp number',
+                      style: TextStyle(
+                        color: Color(0xFF0A4C61),
+                        fontSize: 32,
+                        height: 1.1,
+                        letterSpacing: 1.2,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: 'Product Sans Black',
                       ),
-                      SizedBox(height: 30),
-                      TextField(
+                    ),
+                    SizedBox(height: 30),
+                    Container(
+                      decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  color: Color(0xffDBF5F5),
+                                  blurRadius: 20,
+                                  offset: Offset(0, 12),
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                              color: const Color(0xffD3EEEE),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 13,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                            ),
+                      child: TextField(
                         cursorColor: Color(0xFF0A4C61),
                         controller: whatsAppController,
                         focusNode: focusNode,
@@ -321,50 +338,50 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                                 'Product Sans Black' // Apply letter spacing to entered text
                             ),
                       ),
-                      SizedBox(height: 50),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            child: GestureDetector(
-                              onTap: sendOtp,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8.w, vertical: 1.2.h),
-                                decoration: ShapeDecoration(
-                                  shadows: [
-                                    BoxShadow(
-                                      offset: const Offset(5, 6),
-                                      color:
-                                          Color(0xffFA6E00).withOpacity(0.45),
-                                      blurRadius: 30,
-                                    ),
-                                  ],
-                                  color: Color(0xffFA6E00),
-                                  shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius(
-                                      cornerRadius: 15,
-                                      cornerSmoothing: 1,
-                                    ),
+                    ),
+                    SizedBox(height: 50),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          child: GestureDetector(
+                            onTap: sendOtp,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w, vertical: 1.2.h),
+                              decoration: ShapeDecoration(
+                                shadows: [
+                                  BoxShadow(
+                                    offset: const Offset(5, 6),
+                                    color:
+                                        Color(0xffFA6E00).withOpacity(0.45),
+                                    blurRadius: 30,
+                                  ),
+                                ],
+                                color: Color(0xffFA6E00),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 15,
+                                    cornerSmoothing: 1,
                                   ),
                                 ),
-                                child: const Text(
-                                  'Send OTP',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.14,
-                                  ),
+                              ),
+                              child: const Text(
+                                'Send OTP',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.14,
                                 ),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             );
@@ -464,7 +481,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                   left: 40,
                   right: 5,
                   top: 12,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 30,
+                  bottom: MediaQuery.of(context).viewInsets.bottom/2,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -477,8 +494,9 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                         'Enter OTP',
                         style: TextStyle(
                           color: Color(0xFF0A4C61),
-                          fontSize: 34,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 32,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.w800,
                           fontFamily: 'Product Sans Black',
                         ),
                       ),
@@ -687,9 +705,9 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                       child: Text(
                         'Choose \nyour profile',
                         style: TextStyle(
-                          fontSize: 34,
-                          height: 1.1,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 32,
+                          height: 1.2,
+                          fontWeight: FontWeight.w800,
                           color: Color(0xff0A4C61),
                           fontFamily: 'Product Sans Black',
                         ),
@@ -941,41 +959,36 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
     }
   }
 
-  Future<void> saveUserType(
-      BuildContext context, String userType, String mobile_no) async {
-    print("selected usertype $userType");
+ Future<void> saveUserType(BuildContext context, String userType, String mobile_no) async {
+  print("selected usertype $userType");
 
-    // Call commonLogin again with the updated user type
-    final logRes = await Provider.of<Auth>(context, listen: false)
-        .commonLogin(context, mobile_no, userType);
-    print("logresponse $logRes");
-    if (logRes['code'] == 200) {
-      TOastNotification().showSuccesToast(context, 'Login Successful');
-      Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-    } else if (logRes['code'] == 201) {
-      Navigator.of(context).pop();
-      // TOastNotification().showSuccesToast(context, 'Registration Successful');
-      //  Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-      await openThankYouScreen(context);
-      await Future.delayed(Duration(seconds: 2));
-      Navigator.of(context).pop();
-      Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-    } else if (logRes['code'] == 400) {
-      TOastNotification().showErrorToast(context, 'Otp not verified');
-    } else {
-      TOastNotification()
-          .showErrorToast(context, 'Unexpected error. Please try again');
-    }
+  // Save the Provider instance before using it in async functions
+  final authProvider = Provider.of<Auth>(context, listen: false);
+
+  // Call commonLogin again with the updated user type
+  final logRes = await authProvider.commonLogin(context, mobile_no, userType);
+  print("logresponse $logRes");
+  if (logRes['code'] == 200) {
+    TOastNotification().showSuccesToast(context, 'Login Successful');
+    navigatorKey.currentState?.pushReplacementNamed(Tabs.routeName);
+  } else if (logRes['code'] == 201) {
+    navigatorKey.currentState?.pop();
+    TOastNotification().showSuccesToast(context, 'Registration Successful');
+    await openThankYouScreen(context);
+  } else if (logRes['code'] == 400) {
+    TOastNotification().showErrorToast(context, 'Otp not verified');
+  } else {
+    TOastNotification().showErrorToast(context, 'Unexpected error. Please try again');
   }
-
-  Future<void> openThankYouScreen(BuildContext context) async {
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
+}
+Future<void> openThankYouScreen(BuildContext context) async {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
           return Container(
             decoration: const ShapeDecoration(
               shadows: [
@@ -1009,8 +1022,15 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
               ),
             ),
           );
-        });
-      },
-    );
-  }
+        },
+      );
+    },
+  );
+
+  // Delay for 2 seconds using Future.delayed
+  Future.delayed(Duration(seconds: 5), () {
+    navigatorKey.currentState?.pop();
+    navigatorKey.currentState?.pushReplacementNamed(Tabs.routeName);
+  });
+}
 }
