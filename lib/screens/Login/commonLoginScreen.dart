@@ -657,308 +657,303 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
       },
     );
   }
+Future<void> openEnterUserTypeBottomSheet(
+    BuildContext context, String mobile_no) async {
+  String? selectedUserType;
 
-  Future<void> openEnterUserTypeBottomSheet(
-      BuildContext context, String mobile_no) async {
-    final selectedUserType = await showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            String? selectedUserType;
-
-            return SingleChildScrollView(
-              child: Container(
-                decoration: const ShapeDecoration(
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x7FB1D9D8),
-                      blurRadius: 6,
-                      offset: Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                    ),
+  final selectedType = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return SingleChildScrollView(
+            child: Container(
+              decoration: const ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x7FB1D9D8),
+                    blurRadius: 6,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                ],
+                color: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.only(
+                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                    topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
                   ),
                 ),
-                height: MediaQuery.of(context).size.height * 0.4,
-                padding: EdgeInsets.only(
-                  left: 40,
-                  right: 40,
-                  top: 15,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      child: Text(
-                        'Choose \nyour profile',
-                        style: TextStyle(
-                          fontSize: 32,
-                          height: 1.2,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xff0A4C61),
-                          fontFamily: 'Product Sans Black',
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 0),
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedUserType = 'Vendor';
-                              });
-                              Future.delayed(const Duration(milliseconds: 300),
-                                  () {
-                                Navigator.pop(context, 'Vendor');
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
-                              decoration: ShapeDecoration(
-                                shadows: [
-                                  BoxShadow(
-                                    offset: const Offset(0, 4),
-                                    color: Color(0xFFA5C8C7).withOpacity(0.4),
-                                    blurRadius: 20,
-                                  ),
-                                ],
-                                color: Color(0xFFFFFFFF),
-                                shape: SmoothRectangleBorder(
-                                  borderRadius: SmoothBorderRadius(
-                                    cornerRadius: 15,
-                                    cornerSmoothing: 1,
-                                  ),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 30,
-                                    width: 30,
-                                    decoration: ShapeDecoration(
-                                      shadows: const [
-                                        BoxShadow(
-                                          offset: Offset(0, 4),
-                                          color: Color.fromRGBO(
-                                              165, 200, 199, 0.6),
-                                          blurRadius: 20,
-                                        ),
-                                      ],
-                                      color: selectedUserType == 'Vendor'
-                                          ? const Color(0xFFFA6E00)
-                                          : const Color(0xFFA5C8C799),
-                                      shape: const SmoothRectangleBorder(
-                                        borderRadius: SmoothBorderRadius.all(
-                                          SmoothRadius(
-                                              cornerRadius: 10,
-                                              cornerSmoothing: 1),
-                                        ),
-                                      ),
-                                    ),
-                                    child: const Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                      size: 15,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  const Text(
-                                    'Restaurant/bakery/cafe',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'Product Sans',
-                                        color: Color(0xff0A4C61),
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedUserType = 'Customer';
-                              });
-                              Future.delayed(const Duration(milliseconds: 300),
-                                  () {
-                                Navigator.pop(context, 'Customer');
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
-                              decoration: ShapeDecoration(
-                                shadows: [
-                                  BoxShadow(
-                                    offset: const Offset(0, 4),
-                                    color: Color(0xFFA5C8C7).withOpacity(0.4),
-                                    blurRadius: 20,
-                                  ),
-                                ],
-                                color: Color(0xFFFFFFFF),
-                                shape: SmoothRectangleBorder(
-                                  borderRadius: SmoothBorderRadius(
-                                    cornerRadius: 15,
-                                    cornerSmoothing: 1,
-                                  ),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 30,
-                                    width: 30,
-                                    decoration: ShapeDecoration(
-                                      shadows: const [
-                                        BoxShadow(
-                                          offset: Offset(0, 4),
-                                          color: Color.fromRGBO(
-                                              165, 200, 199, 0.6),
-                                          blurRadius: 20,
-                                        ),
-                                      ],
-                                      color: selectedUserType == 'Customer'
-                                          ? const Color(0xFFFA6E00)
-                                          : const Color(0xFFA5C8C799),
-                                      shape: const SmoothRectangleBorder(
-                                        borderRadius: SmoothBorderRadius.all(
-                                          SmoothRadius(
-                                              cornerRadius: 10,
-                                              cornerSmoothing: 1),
-                                        ),
-                                      ),
-                                    ),
-                                    child: const Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                      size: 15,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  const Text(
-                                    'Foody',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'Product Sans',
-                                        color: Color(0xff0A4C61),
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedUserType = 'Supplier';
-                              });
-                              Future.delayed(const Duration(milliseconds: 300),
-                                  () {
-                                Navigator.pop(context, 'Supplier');
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
-                              decoration: ShapeDecoration(
-                                shadows: [
-                                  BoxShadow(
-                                    offset: const Offset(0, 4),
-                                    color: Color(0xFFA5C8C7).withOpacity(0.4),
-                                    blurRadius: 20,
-                                  ),
-                                ],
-                                color: Color(0xFFFFFFFF),
-                                shape: SmoothRectangleBorder(
-                                  borderRadius: SmoothBorderRadius(
-                                    cornerRadius: 15,
-                                    cornerSmoothing: 1,
-                                  ),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 30,
-                                    width: 30,
-                                    decoration: ShapeDecoration(
-                                      shadows: const [
-                                        BoxShadow(
-                                          offset: Offset(0, 4),
-                                          color: Color.fromRGBO(
-                                              165, 200, 199, 0.6),
-                                          blurRadius: 20,
-                                        ),
-                                      ],
-                                      color: selectedUserType == 'Supplier'
-                                          ? const Color(0xFFFA6E00)
-                                          : const Color(0xFFA5C8C799),
-                                      shape: const SmoothRectangleBorder(
-                                        borderRadius: SmoothBorderRadius.all(
-                                          SmoothRadius(
-                                              cornerRadius: 10,
-                                              cornerSmoothing: 1),
-                                        ),
-                                      ),
-                                    ),
-                                    child: const Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                      size: 15,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  const Text(
-                                    'Supplier',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'Product Sans',
-                                        color: Color(0xff0A4C61),
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
               ),
-            );
-          },
-        );
-      },
-    );
+              height: MediaQuery.of(context).size.height * 0.4,
+              padding: EdgeInsets.only(
+                left: 40,
+                right: 40,
+                top: 15,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    child: Text(
+                      'Choose \nyour profile',
+                      style: TextStyle(
+                        fontSize: 32,
+                        height: 1.2,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xff0A4C61),
+                        fontFamily: 'Product Sans Black',
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 0),
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedUserType = 'Vendor';
+                            });
+                            Future.delayed(const Duration(milliseconds: 300),
+                                () {
+                              Navigator.pop(context, 'Vendor');
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  offset: const Offset(0, 4),
+                                  color: Color(0xFFA5C8C7).withOpacity(0.4),
+                                  blurRadius: 20,
+                                ),
+                              ],
+                              color: Color(0xFFFFFFFF),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 15,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 30,
+                                  width: 30,
+                                  decoration: ShapeDecoration(
+                                    shadows: const [
+                                      BoxShadow(
+                                        offset: Offset(0, 4),
+                                        color: Color.fromRGBO(
+                                            165, 200, 199, 0.6),
+                                        blurRadius: 20,
+                                      ),
+                                    ],
+                                    color: selectedUserType == 'Vendor'
+                                        ? const Color(0xFFFA6E00)
+                                        : const Color(0xFFA5C8C799),
+                                    shape: const SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius.all(
+                                        SmoothRadius(
+                                            cornerRadius: 10,
+                                            cornerSmoothing: 1),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                const Text(
+                                  'Restaurant/bakery/cafe',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: 'Product Sans',
+                                      color: Color(0xff0A4C61),
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedUserType = 'Customer';
+                            });
+                            Future.delayed(const Duration(milliseconds: 300),
+                                () {
+                              Navigator.pop(context, 'Customer');
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  offset: const Offset(0, 4),
+                                  color: Color(0xFFA5C8C7).withOpacity(0.4),
+                                  blurRadius: 20,
+                                ),
+                              ],
+                              color: Color(0xFFFFFFFF),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 15,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 30,
+                                  width: 30,
+                                  decoration: ShapeDecoration(
+                                    shadows: const [
+                                      BoxShadow(
+                                        offset: Offset(0, 4),
+                                        color: Color.fromRGBO(
+                                            165, 200, 199, 0.6),
+                                        blurRadius: 20,
+                                      ),
+                                    ],
+                                    color: selectedUserType == 'Customer'
+                                        ? const Color(0xFFFA6E00)
+                                        : const Color(0xFFA5C8C799),
+                                    shape: const SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius.all(
+                                        SmoothRadius(
+                                            cornerRadius: 10,
+                                            cornerSmoothing: 1),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                const Text(
+                                  'Foody',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: 'Product Sans',
+                                      color: Color(0xff0A4C61),
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedUserType = 'Supplier';
+                            });
+                            Future.delayed(const Duration(milliseconds: 300),
+                                () {
+                              Navigator.pop(context, 'Supplier');
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  offset: const Offset(0, 4),
+                                  color: Color(0xFFA5C8C7).withOpacity(0.4),
+                                  blurRadius: 20,
+                                ),
+                              ],
+                              color: Color(0xFFFFFFFF),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 15,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 30,
+                                  width: 30,
+                                  decoration: ShapeDecoration(
+                                    shadows: const [
+                                      BoxShadow(
+                                        offset: Offset(0, 4),
+                                        color: Color.fromRGBO(
+                                            165, 200, 199, 0.6),
+                                        blurRadius: 20,
+                                      ),
+                                    ],
+                                    color: selectedUserType == 'Supplier'
+                                        ? const Color(0xFFFA6E00)
+                                        : const Color(0xFFA5C8C799),
+                                    shape: const SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius.all(
+                                        SmoothRadius(
+                                            cornerRadius: 10,
+                                            cornerSmoothing: 1),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                const Text(
+                                  'Supplier',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: 'Product Sans',
+                                      color: Color(0xff0A4C61),
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    });
 
-    if (selectedUserType != null) {
+    if (selectedType != null) {
       // Save the selected user type and update the server
-      await saveUserType(context, selectedUserType, mobile_no);
+      await saveUserType(context, selectedType, mobile_no);
     }
   }
-
 Future<void> saveUserType(BuildContext context, String userType, String mobile_no) async {
   print("selected usertype $userType");
 
