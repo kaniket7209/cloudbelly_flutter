@@ -946,7 +946,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                 letterSpacing: 0.14,
                               ),
                             )),
-                     
                       ),
                     ),
                   ],
@@ -968,8 +967,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            
-
             Future<void> resendOtp() async {
               // Add your resend OTP logic here
               final res = await Provider.of<Auth>(context, listen: false)
@@ -999,14 +996,13 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 // OTP verified successfully, proceed with account deletion
                 print(
                     'OTP verified successfully. Proceeding with account deletion.');
-                TOastNotification().showSuccesToast(context,
-                    'Account Deleted Successfully');
-                  await  Provider.of<Auth>(context, listen: false).deleteProfile(Provider.of<Auth>(context, listen: false)
-                          .userData?['phone']);
-                         await logout();
-                           
+                TOastNotification()
+                    .showSuccesToast(context, 'Account Deleted Successfully');
+                await Provider.of<Auth>(context, listen: false).deleteProfile(
+                    Provider.of<Auth>(context, listen: false)
+                        .userData?['phone']);
+                await logout();
 
-                          
                 // Add your account deletion logic here
               } else {
                 // Error occurred, print the error
@@ -1221,7 +1217,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20,)
+                    SizedBox(
+                      height: 20,
+                    )
                   ],
                 ),
               ),
@@ -2318,7 +2316,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           size: 15,
                         ),
                       ),
-                   
                       const Space(
                         16,
                         isHorizontal: true,
@@ -2548,62 +2545,145 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           ),
         ),
       ),
-      // bottomNavigationBar: Padding(
-      //   padding:
-      //       EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 18),
-      //   child:
-      //   Column(
-      //     mainAxisSize: MainAxisSize.min,
-      //     children: [
-      //       Center(
-      //         child: TouchableOpacity(
-      //           onTap: () {
-      //             logout();
-      //             // widget.updateDataList(newItem);
-      //           },
-      //           child: Container(
-      //               padding:
-      //                   EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.h),
-      //               // margin: EdgeInsets.only(bottom: 2.h),
+      bottomNavigationBar: GestureDetector(
+        onVerticalDragUpdate: (details) {
+          if (details.primaryDelta! < -20) {
+            showPastOrdersBottomSheet(context);
+          }
+        },
+        child: Container(
+          decoration:  ShapeDecoration(
+            shadows: [
+              BoxShadow(
+                color: const Color(0xff11627C).withOpacity(0.35),
+                blurRadius: 20,
+                offset: const Offset(0, -10),
+                spreadRadius: 0,
+              ),
+            ],
+            color: Color(0xFF0A4C61),
+            shape: const SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.only(
+                topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+              ),
+            ),
+          ),
+          height: 10.h,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+                width: 30,
+                height: 6,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFFFFFFFF).withOpacity(0.5),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6)),
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Center(
+                child: Text(
+                  'Past orders',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontFamily: 'Product Sans Black',
+                    fontWeight: FontWeight.bold,
+                  ),
 
-      //               decoration: GlobalVariables().ContainerDecoration(
-      //                 offset: const Offset(0, 4),
-      //                 blurRadius: 15,
-      //                 boxColor: const Color.fromRGBO(248, 46, 82, 1),
-      //                 cornerRadius: 10,
-      //                 shadowColor: const Color.fromRGBO(232, 128, 55, 0.5),
-      //               ),
-      //               child: const Text(
-      //                 'Log Out',
-      //                 style: TextStyle(
-      //                   color: Colors.white,
-      //                   fontSize: 14,
-      //                   fontFamily: 'Product Sans',
-      //                   fontWeight: FontWeight.w700,
-      //                   // height: 0,
-      //                   letterSpacing: 0.14,
-      //                 ),
-      //               )),
-      //         ),
-      //       ),
-      //       const Space(18),
-      //       InkWell(
-      //         onTap: () {
-      //           deleteAccount("https://app.cloudbelly.in/delete-my-profile");
-      //         },
-      //         child: const Text(
-      //           "Delete Account",
-      //           style: TextStyle(
-      //               fontSize: 12,
-      //               color: Color(0xFF0A4C61),
-      //               fontFamily: 'Product Sans',
-      //               fontWeight: FontWeight.w700),
-      //         ),
-      //       ),
-      //     ],
-      //   ),
+                ),
+              ),
+              Align(
+              alignment: Alignment.center,
+              child: Container(
+                margin: const EdgeInsets.only(top: 4.0, right: 0),
+                decoration: BoxDecoration(
+                  color: Color(0xffFA6E00),
+                  borderRadius: BorderRadius.circular(2.0),
+                ),
+                height: 4.0,
+                child: IntrinsicWidth(
+                  child: Text(
+                    'Past orders',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans Black',
+                      color: Colors.transparent,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-      // ),
+  Future<void> showPastOrdersBottomSheet(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: const ShapeDecoration(
+            shadows: [
+              BoxShadow(
+                color: Color(0x7FB1D9D8),
+                blurRadius: 6,
+                offset: Offset(0, 4),
+                spreadRadius: 0,
+              ),
+            ],
+            color: Color(0xFF0A4C61),
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.only(
+                topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+              ),
+            ),
+          ),
+          padding: EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  width: 60,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Past orders',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Divider(color: Colors.grey),
+                for (int i = 0; i < 3; i++) ...[
+                  OrderItem(),
+                  Divider(color: Colors.grey),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -2648,6 +2728,75 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       print("kycccc ${userData?['kyc_status']}");
       await UserPreferences.setUser(userData!);
     }
+  }
+}
+
+class OrderItem extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Pizza Hut',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  'Siliguri',
+                  style: TextStyle(
+                    color: Colors.white54,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(
+                  'Delivered',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                ),
+              ],
+            ),
+          ],
+        ),
+        SizedBox(height: 8),
+        Text(
+          'Classic Onion Capsicum 🍕, Classic Corn 🌽',
+          style: TextStyle(
+            color: Colors.white70,
+          ),
+        ),
+        SizedBox(height: 8),
+        Center(
+          child: ElevatedButton(
+            onPressed: () {
+              // Handle show details
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.greenAccent, // Text color
+            ),
+            child: Text('Show details'),
+          ),
+        ),
+      ],
+    );
   }
 }
 

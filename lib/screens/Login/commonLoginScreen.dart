@@ -246,7 +246,8 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return Container(
+            return
+             Container(
               decoration: const ShapeDecoration(
                 shadows: [
                   BoxShadow(
