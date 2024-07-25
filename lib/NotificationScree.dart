@@ -191,7 +191,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
       bool isAccepted,
       String user_type) {
     final List<Map<String, dynamic>> displayedNotifications =
-        showAll ? notifications : notifications.take(10).toList();
+        notifications;
+    // final List<Map<String, dynamic>> displayedNotifications =
+    //     showAll ? notifications : notifications.take(10).toList();
 
     Color boxShadowColor;
 
@@ -329,7 +331,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
       bool isAccepted,
       String user_type) {
     final List<Map<String, dynamic>> displayedNotifications =
-        showAll ? notifications : notifications.take(10).toList();
+      notifications;
+    // final List<Map<String, dynamic>> displayedNotifications =
+    //     showAll ? notifications : notifications.take(10).toList();
 
     Color boxShadowColor;
 
