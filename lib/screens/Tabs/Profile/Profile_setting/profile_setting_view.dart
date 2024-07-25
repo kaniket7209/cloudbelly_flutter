@@ -2631,7 +2631,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   }
 
   Future<void> showPastOrdersBottomSheet(BuildContext context) async {
-  //get order details
+  // Get order details
   String user_type = Provider.of<Auth>(context, listen: false).userData!['user_type'];
   var orderDetails = [];
   if (user_type != 'Customer') {
@@ -2639,103 +2639,108 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   } else {
     orderDetails = Provider.of<Auth>(context, listen: false).customerOrderDetails;
   }
-   
+
   print(" $user_type orderDetailssetting $orderDetails");
   await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-     useSafeArea: true,
+    useSafeArea: true,
     backgroundColor: Colors.transparent,
     builder: (BuildContext context) {
-      return Container(
-        decoration: const ShapeDecoration(
-          shadows: [
-            BoxShadow(
-              color: Color(0x7FB1D9D8),
-              blurRadius: 6,
-              offset: Offset(0, 4),
-              spreadRadius: 0,
-            ),
-          ],
-          color: Color(0xFF0A4C61),
-          shape: SmoothRectangleBorder(
-            borderRadius: SmoothBorderRadius.only(
-              topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-              topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-            ),
-          ),
-        ),
-        padding: EdgeInsets.all(16),
-        height:MediaQuery.of(context).size.height -50,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
-                width: 30,
-                height: 6,
-                decoration: ShapeDecoration(
-                  color: const Color(0xFFFFFFFF).withOpacity(0.5),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6)),
+      return DraggableScrollableSheet(
+        initialChildSize: 0.9, // Initial size of the sheet
+        minChildSize: 0.5, // Minimum size the sheet can be dragged down to
+        maxChildSize: 1.0, // Maximum size the sheet can be expanded to
+        expand: false, // Allow the sheet to expand
+        builder: (BuildContext context, ScrollController scrollController) {
+          return Container(
+            decoration: const ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                  color: Color(0x7FB1D9D8),
+                  blurRadius: 6,
+                  offset: Offset(0, 4),
+                  spreadRadius: 0,
+                ),
+              ],
+              color: Color(0xFF0A4C61),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.only(
+                  topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                  topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
                 ),
               ),
-              SizedBox(
-                height: 15,
-              ),
-              Center(
-                child: Text(
-                  'Past orders',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontFamily: 'Product Sans Black',
-                    fontWeight: FontWeight.bold,
+            ),
+            padding: EdgeInsets.all(16),
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 10,
                   ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Container(
-                  margin: const EdgeInsets.only(top: 4.0, right: 0),
-                  decoration: BoxDecoration(
-                    color: Color(0xffFA6E00),
-                    borderRadius: BorderRadius.circular(2.0),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+                    width: 30,
+                    height: 6,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFFFFFFFF).withOpacity(0.5),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6)),
+                    ),
                   ),
-                  height: 4.0,
-                  child: IntrinsicWidth(
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Center(
                     child: Text(
                       'Past orders',
-                      style: const TextStyle(
+                      style: TextStyle(
+                        color: Colors.white,
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
                         fontFamily: 'Product Sans Black',
-                        color: Colors.transparent,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 4.0, right: 0),
+                      decoration: BoxDecoration(
+                        color: Color(0xffFA6E00),
+                        borderRadius: BorderRadius.circular(2.0),
+                      ),
+                      height: 4.0,
+                      child: IntrinsicWidth(
+                        child: Text(
+                          'Past orders',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Product Sans Black',
+                            color: Colors.transparent,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  for (int i = 0; i < 10; i++) ...[
+                    OrderItem(
+                      fullData: {}
+                    ),
+                    Divider(color: Colors.grey),
+                  ],
+                ],
               ),
-               for (int i = 0; i < 10; i++) ...[
-              // for (var order in orderDetails) ...[
-                OrderItem(
-                
-                  fullData:{}
-                ),
-                Divider(color: Colors.grey),
-              ],
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       );
     },
   );
- 
- 
-  }
+}
+  
   void fetchUserDataFromAPI() async {
     // Replace with actual user id list if needed
     print(
