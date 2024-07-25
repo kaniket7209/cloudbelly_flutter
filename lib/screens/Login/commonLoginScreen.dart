@@ -959,7 +959,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
     }
   }
 
- Future<void> saveUserType(BuildContext context, String userType, String mobile_no) async {
+Future<void> saveUserType(BuildContext context, String userType, String mobile_no) async {
   print("selected usertype $userType");
 
   // Save the Provider instance before using it in async functions
@@ -1007,7 +1007,7 @@ Future<void> openThankYouScreen(BuildContext context) async {
                 ),
               ),
             ),
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: MediaQuery.of(context).size.height /2,
             padding: EdgeInsets.only(
               left: 10,
               right: 10,
@@ -1028,7 +1028,7 @@ Future<void> openThankYouScreen(BuildContext context) async {
   );
 
   // Delay for 2 seconds using Future.delayed
-  Future.delayed(Duration(seconds: 5), () {
+  Future.delayed(Duration(seconds: 2), () {
     navigatorKey.currentState?.pop();
     navigatorKey.currentState?.pushReplacementNamed(Tabs.routeName);
   });
