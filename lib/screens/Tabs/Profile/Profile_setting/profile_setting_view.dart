@@ -2677,9 +2677,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 controller: scrollController,
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 10,
-                    ),
                     Container(
                       padding:
                           EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
@@ -2727,9 +2724,64 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: 25,
+                    ),
                     for (var order in orderDetails) ...[
                       OrderItem(orderData: order),
-                      Divider(color: Colors.grey),
+                      Divider(color: Colors.white.withOpacity(0.3)),
+                       SizedBox(
+                      height: 5,
+                    ),
+                       Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                         children: [
+                           Text(
+                                     formatItems(order['items']),
+                                     style: const TextStyle(
+                                         color: Colors.white,
+                                         fontFamily: "Product Sans",
+                                         fontWeight: FontWeight.w500,
+                                         fontSize: 14),
+                                   ),
+                         ],
+                       ),
+                     SizedBox(
+                      height: 25,
+                    ),
+                      Center(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                          width: 150,
+                          decoration: ShapeDecoration(
+                            shadows: [
+                              BoxShadow(
+                                offset: const Offset(5, 6),
+                                color: Color(0xff093745).withOpacity(1),
+                                blurRadius: 30,
+                              ),
+                            ],
+                            color: Color(0xff519896),
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 15.5,
+                                cornerSmoothing: 1,
+                              ),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text('Show details',style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18
+                            ),),
+                          ),
+                        ),
+                      ),
+                     SizedBox(
+                      height: 30,
+                    ),
                     ],
                   ],
                 ),
@@ -2797,7 +2849,9 @@ class OrderItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 10),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
@@ -2812,6 +2866,9 @@ class OrderItem extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
+                SizedBox(
+                  height: 2,
+                ),
                 Text(
                   '${orderData['cutomer_location']['location']}',
                   style: TextStyle(
@@ -2819,6 +2876,9 @@ class OrderItem extends StatelessWidget {
                     fontSize: 12,
                     fontFamily: 'Product Sans',
                   ),
+                ),
+                SizedBox(
+                  height: 2,
                 ),
                 Text(
                   'Rs ${orderData['amount']}',
@@ -2835,15 +2895,18 @@ class OrderItem extends StatelessWidget {
                 Text(
                   'Delivered',
                   style: TextStyle(
-                   fontSize: 16,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Product Sans Medium',
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(width: 5,),
+                SizedBox(
+                  width: 5,
+                ),
                 Container(
-                  width: 18,height: 18,
+                  width: 18,
+                  height: 18,
                   decoration: ShapeDecoration(
                     shadows: [
                       BoxShadow(
@@ -2855,13 +2918,14 @@ class OrderItem extends StatelessWidget {
                     color: Color(0xff17BF39),
                     shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(
-                        cornerRadius: 7,
+                        cornerRadius: 6,
                         cornerSmoothing: 1,
                       ),
                     ),
                   ),
                   child: Icon(
-                    Icons.check,size: 16,
+                    Icons.check,
+                    size: 16,
                     color: Colors.white,
                   ),
                 ),
@@ -2869,29 +2933,24 @@ class OrderItem extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 8),
-        Text(
-          'Classic Onion Capsicum 🍕, Classic Corn 🌽',
-          style: TextStyle(
-            color: Colors.white70,
-          ),
-        ),
-        SizedBox(height: 8),
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              // Handle show details
-            },
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.greenAccent, // Text color
-            ),
-            child: Text('Show details'),
-          ),
-        ),
+        SizedBox(height: 20),
+      
       ],
     );
   }
+}
+
+String formatItems(List<dynamic> items) {
+  List<String> formattedItems = [];
+  for (int i = 0; i < items.length; i += 2) {
+    String line = items
+        .skip(i)
+        .take(2)
+        .map((item) => '${item['name']} x ${item['quantity']}')
+        .join(',   ');
+    formattedItems.add(line);
+  }
+  return formattedItems.join('\n');
 }
 
 Future<void> _launchURL(String url) async {
