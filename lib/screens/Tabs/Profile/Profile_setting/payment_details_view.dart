@@ -383,20 +383,7 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                 Space(
                   3.h,
                 ),
-                Center(
-                  child: const Text(
-                    'OR  ',
-                    style: TextStyle(
-                      color: Color(0xFF0A4C61),
-                      fontSize: 26,
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.bold,
-                      height: 0.03,
-                      letterSpacing: 0.78,
-                    ),
-                  ),
-                ),
-                Space(2.h),
+              
                 // TextWidgetStoreSetup(label: 'Select your bank'),
                 // Space(1.h),
                 // Container(

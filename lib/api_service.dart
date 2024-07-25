@@ -287,68 +287,7 @@ class Auth with ChangeNotifier {
   }
 
 
-  Future<void> getOrderHistory(user_id) async {
-    try {
-      final response = await http.post(
-        Uri.parse("https://app.cloudbelly.in/get-notification"),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({"user_id": user_id}),
-      );
-      final orders = await http.post(
-        Uri.parse("https://app.cloudbelly.in/order/get"),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({"order_from_user_id": userData?['user_id'] ?? ""}),
-      );
-      orderDetails = List<Map<String, dynamic>>.from(jsonDecode(orders.body));
-      final customerOrders = await http.post(
-        Uri.parse("https://app.cloudbelly.in/order/get"),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({"user_id": userData?['user_id'] ?? ""}),
-      );
-      customerOrderDetails =
-          List<Map<String, dynamic>>.from(jsonDecode(customerOrders.body));
-      print("customerOrderDetails ${customerOrderDetails.length}");
-      final payments = await http.post(
-        Uri.parse("https://app.cloudbelly.in/payments/get"),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          "payment_to_user_id": userData?['user_id'] ?? "",
-          "\$or": [
-            {
-              "payment_status": {"\$exists": false}
-            },
-            {
-              "payment_status": {"\$ne": "verified"}
-            }
-          ]
-        }),
-      );
-
-      paymentDetails =
-          List<Map<String, dynamic>>.from(jsonDecode(payments.body));
-      if (response.statusCode == 200) {
-        var notif = List<Map<String, dynamic>>.from(jsonDecode(response.body));
-        notificationDetails = notif
-            .where((element) => element['msg']['type'] == 'social')
-            .toList();
-        notifyListeners();
-      } else {
-        throw Exception('Failed to load notifications');
-      }
-    } catch (error) {
-      throw error;
-    }
-    notifyListeners();
-  }
-
+ 
   removeItem(item) {
     int idx = itemAdd.indexWhere((element) => element.id == item.id);
     itemAdd[idx].quantity = (itemAdd[idx].quantity ?? 0) - 1;

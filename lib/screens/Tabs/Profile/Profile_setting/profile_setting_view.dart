@@ -2631,37 +2631,46 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   }
 
   Future<void> showPastOrdersBottomSheet(BuildContext context) async {
-    //get order details
-    var orderDetails = Provider.of<Auth>(context, listen: false).orderDetails;
-    print("orderDetailssetting $orderDetails");
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return Container(
-          decoration: const ShapeDecoration(
-            shadows: [
-              BoxShadow(
-                color: Color(0x7FB1D9D8),
-                blurRadius: 6,
-                offset: Offset(0, 4),
-                spreadRadius: 0,
-              ),
-            ],
-            color: Color(0xFF0A4C61),
-            shape: SmoothRectangleBorder(
-              borderRadius: SmoothBorderRadius.only(
-                topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-              ),
+  //get order details
+  String user_type = Provider.of<Auth>(context, listen: false).userData!['user_type'];
+  var orderDetails = [];
+  if (user_type != 'Customer') {
+    orderDetails = Provider.of<Auth>(context, listen: false).orderDetails;
+  } else {
+    orderDetails = Provider.of<Auth>(context, listen: false).customerOrderDetails;
+  }
+   
+  print(" $user_type orderDetailssetting $orderDetails");
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+     useSafeArea: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return Container(
+        decoration: const ShapeDecoration(
+          shadows: [
+            BoxShadow(
+              color: Color(0x7FB1D9D8),
+              blurRadius: 6,
+              offset: Offset(0, 4),
+              spreadRadius: 0,
+            ),
+          ],
+          color: Color(0xFF0A4C61),
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius.only(
+              topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+              topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
             ),
           ),
-          padding: EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-               SizedBox(
+        ),
+        padding: EdgeInsets.all(16),
+        height:MediaQuery.of(context).size.height -50,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
                 height: 10,
               ),
               Container(
@@ -2686,44 +2695,47 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     fontFamily: 'Product Sans Black',
                     fontWeight: FontWeight.bold,
                   ),
-
                 ),
               ),
               Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: const EdgeInsets.only(top: 4.0, right: 0),
-                decoration: BoxDecoration(
-                  color: Color(0xffFA6E00),
-                  borderRadius: BorderRadius.circular(2.0),
-                ),
-                height: 4.0,
-                child: IntrinsicWidth(
-                  child: Text(
-                    'Past orders',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Product Sans Black',
-                      color: Colors.transparent,
+                alignment: Alignment.center,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 4.0, right: 0),
+                  decoration: BoxDecoration(
+                    color: Color(0xffFA6E00),
+                    borderRadius: BorderRadius.circular(2.0),
+                  ),
+                  height: 4.0,
+                  child: IntrinsicWidth(
+                    child: Text(
+                      'Past orders',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Product Sans Black',
+                        color: Colors.transparent,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-           
-                for (int i = 0; i < 3; i++) ...[
-                  OrderItem(),
-                  Divider(color: Colors.grey),
-                ],
+               for (int i = 0; i < 10; i++) ...[
+              // for (var order in orderDetails) ...[
+                OrderItem(
+                
+                  fullData:{}
+                ),
+                Divider(color: Colors.grey),
               ],
-            ),
+            ],
           ),
-        );
-      },
-    );
+        ),
+      );
+    },
+  );
+ 
+ 
   }
-
   void fetchUserDataFromAPI() async {
     // Replace with actual user id list if needed
     print(
@@ -2769,9 +2781,18 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 }
 
 class OrderItem extends StatelessWidget {
+
+  final Map<String, dynamic>  fullData;
+
+  OrderItem({
+  
+    required this.fullData,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return 
+   Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -2826,8 +2847,7 @@ class OrderItem extends StatelessWidget {
               // Handle show details
             },
             style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.greenAccent, // Text color
+              foregroundColor: Colors.white, backgroundColor: Colors.greenAccent, // Text color
             ),
             child: Text('Show details'),
           ),
