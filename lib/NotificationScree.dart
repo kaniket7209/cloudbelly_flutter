@@ -233,90 +233,93 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
             ],
           ))
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                        color: Colors.transparent,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  if (notifications.length > 10)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (title == 'Socials') {
-                            showAllSocialNotifications =
-                                !showAllSocialNotifications;
-                          } else if (title == 'Accepted Orders') {
-                            showAllAcceptedOrderNotifications =
-                                !showAllAcceptedOrderNotifications;
-                          } else if (title == 'Incoming Orders') {
-                            showAllIncomingOrderNotifications =
-                                !showAllIncomingOrderNotifications;
-                          }
-                        });
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            showAll ? 'See less' : 'See all',
-                            style: const TextStyle(
-                                color: Colors.transparent,
-                                // color: boxShadowColor,
-                                fontWeight: FontWeight.bold,
-                                
-                                fontFamily: 'Product Sans'),
+        : SingleChildScrollView(
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                          color: Colors.transparent,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    // if (notifications.length > 0)
+                    //   GestureDetector(
+                    //     onTap: () {
+                    //       setState(() {
+                    //         if (title == 'Socials') {
+                    //           showAllSocialNotifications =
+                    //               !showAllSocialNotifications;
+                    //         } else if (title == 'Accepted Orders') {
+                    //           showAllAcceptedOrderNotifications =
+                    //               !showAllAcceptedOrderNotifications;
+                    //         } else if (title == 'Incoming Orders') {
+                    //           showAllIncomingOrderNotifications =
+                    //               !showAllIncomingOrderNotifications;
+                    //         }
+                    //       });
+                    //     },
+                    //     child: Row(
+                    //       mainAxisSize: MainAxisSize.min,
+                    //       children: [
+                    //         Text(
+                    //           showAll ? 'See less' : 'See all',
+                    //           style:  TextStyle(
+                    //               // color: Colors.transparent,
+                    //               color: boxShadowColor,
+                    //               fontWeight: FontWeight.bold,
+                                  
+                    //               fontFamily: 'Product Sans'),
+                    //         ),
+                    //         SizedBox(width: 5),
+                    //         Image.asset(
+                    //           'assets/icons/next_arrow.png',
+                    //           width: 10,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   )
+                 
+                  ],
+                ),
+                Column(
+                  children: List.generate(displayedNotifications.length, (index) {
+                    final notification = displayedNotifications[index];
+                    return Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 16.0),
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 15.0,
+                              cornerSmoothing: 1,
+                            ),
                           ),
-                          SizedBox(width: 5),
-                          Image.asset(
-                            'assets/icons/next_arrow.png',
-                            width: 10,
-                          ),
-                        ],
-                      ),
-                    )
-                ],
-              ),
-              Column(
-                children: List.generate(displayedNotifications.length, (index) {
-                  final notification = displayedNotifications[index];
-                  return Container(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 16.0),
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: ShapeDecoration(
-                        color: Colors.white,
-                        shape: SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius(
-                            cornerRadius: 15.0,
-                            cornerSmoothing: 1,
-                          ),
+                          shadows: [
+                            BoxShadow(
+                              color: boxShadowColor.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 10,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
                         ),
-                        shadows: [
-                          BoxShadow(
-                            color: boxShadowColor.withOpacity(0.2),
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(2),
-                        child: _buildActionButtons(
-                            notification, isAccepted, boxShadowColor, index),
-                      ));
-                }),
-              )
-            ],
-          );
+                        child: Padding(
+                          padding: EdgeInsets.all(2),
+                          child: _buildActionButtons(
+                              notification, isAccepted, boxShadowColor, index),
+                        ));
+                  }),
+                )
+              ],
+            ),
+        );
   }
 
   Widget buildOrderTracking(
@@ -368,54 +371,56 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
             ],
           ))
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                        color: Colors.transparent,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Column(
-                children: List.generate(displayedNotifications.length, (index) {
-                  final notification = displayedNotifications[index];
-                  return Container(
-                      // margin: const EdgeInsets.symmetric(
-                      //     vertical: 8.0, horizontal: 16.0),
-                      padding: const EdgeInsets.all(16.0),
-                      // decoration: ShapeDecoration(
-                      //   color: Colors.white,
-                      //   shape: SmoothRectangleBorder(
-                      //     borderRadius: SmoothBorderRadius(
-                      //       cornerRadius: 15.0,
-                      //       cornerSmoothing: 1,
-                      //     ),
-                      //   ),
-                      //   shadows: [
-                      //     BoxShadow(
-                      //       color: boxShadowColor.withOpacity(0.2),
-                      //       spreadRadius: 2,
-                      //       blurRadius: 10,
-                      //       offset: Offset(0, 3),
-                      //     ),
-                      //   ],
-                      // ),
-                      child: Padding(
-                        padding: EdgeInsets.all(2),
-                        child: _buildActionButtonsCustomer(
-                            notification, isAccepted, boxShadowColor, index),
-                      ));
-                }),
-              )
-            ],
-          );
+        : SingleChildScrollView(
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                          color: Colors.transparent,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: List.generate(displayedNotifications.length, (index) {
+                    final notification = displayedNotifications[index];
+                    return Container(
+                        // margin: const EdgeInsets.symmetric(
+                        //     vertical: 8.0, horizontal: 16.0),
+                        padding: const EdgeInsets.all(16.0),
+                        // decoration: ShapeDecoration(
+                        //   color: Colors.white,
+                        //   shape: SmoothRectangleBorder(
+                        //     borderRadius: SmoothBorderRadius(
+                        //       cornerRadius: 15.0,
+                        //       cornerSmoothing: 1,
+                        //     ),
+                        //   ),
+                        //   shadows: [
+                        //     BoxShadow(
+                        //       color: boxShadowColor.withOpacity(0.2),
+                        //       spreadRadius: 2,
+                        //       blurRadius: 10,
+                        //       offset: Offset(0, 3),
+                        //     ),
+                        //   ],
+                        // ),
+                        child: Padding(
+                          padding: EdgeInsets.all(2),
+                          child: _buildActionButtonsCustomer(
+                              notification, isAccepted, boxShadowColor, index),
+                        ));
+                  }),
+                )
+              ],
+            ),
+        );
   }
 
   bool showFullItems = false;
@@ -1404,156 +1409,160 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
             ],
           ))
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                          color: Colors.transparent,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    if (notifications.length > 10)
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (title == 'Socials') {
-                              showAllSocialNotifications =
-                                  !showAllSocialNotifications;
-                            }
-                          });
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              showAll ? 'See less' : 'See all',
-                              style: TextStyle(
-                                  // color: Color(0xff0A4C61),
-                                   color: Colors.transparent,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Product Sans'),
-                            ),
-                            SizedBox(width: 5),
-                            Image.asset(
-                              'assets/icons/next_arrow.png',
-                              width: 10,
-                            ),
-                          ],
-                        ),
-                      )
-                  ],
+        : SingleChildScrollView(
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                            color: Colors.transparent,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      // if (notifications.length > 0)
+                      //   GestureDetector(
+                      //     onTap: () {
+                      //       setState(() {
+                      //         if (title == 'Socials') {
+                      //           showAllSocialNotifications =
+                      //               !showAllSocialNotifications;
+                      //         }
+                      //       });
+                      //     },
+                      //     child: Row(
+                      //       mainAxisSize: MainAxisSize.min,
+                      //       children: [
+                      //         Text(
+                      //           showAll ? 'See less' : 'See all',
+                      //           style: TextStyle(
+                      //               color: Color(0xff0A4C61),
+                      //               //  color: Colors.transparent,
+                      //               fontWeight: FontWeight.bold,
+                      //               fontFamily: 'Product Sans'),
+                      //         ),
+                      //         SizedBox(width: 5),
+                      //         Image.asset(
+                      //           'assets/icons/next_arrow.png',
+                      //           width: 10,
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   )
+                   
+                   
+                    ],
+                  ),
                 ),
-              ),
-              Column(
-                children: List.generate(displayedNotifications.length, (index) {
-                  final notification = displayedNotifications[index];
-                  return Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 1.0, horizontal: 16.0),
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 35,
-                          height: 35,
-                          decoration: ShapeDecoration(
-                            shape: const SmoothRectangleBorder(),
-                            shadows: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              print("redirect ${notification['msg']['from']}");
-                              String userId = notification['msg']['from'];
-                              navigatorKey.currentState?.push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProfileView(userIdList: [userId]),
+                Column(
+                  children: List.generate(displayedNotifications.length, (index) {
+                    final notification = displayedNotifications[index];
+                    return Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 1.0, horizontal: 16.0),
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 35,
+                            height: 35,
+                            decoration: ShapeDecoration(
+                              shape: const SmoothRectangleBorder(),
+                              shadows: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 3),
                                 ),
-                              );
-                            },
-                            child: ClipSmoothRect(
-                              radius: SmoothBorderRadius(
-                                cornerRadius: 9,
-                                cornerSmoothing: 1,
+                              ],
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                print("redirect ${notification['msg']['from']}");
+                                String userId = notification['msg']['from'];
+                                navigatorKey.currentState?.push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ProfileView(userIdList: [userId]),
+                                  ),
+                                );
+                              },
+                              child: ClipSmoothRect(
+                                radius: SmoothBorderRadius(
+                                  cornerRadius: 9,
+                                  cornerSmoothing: 1,
+                                ),
+                                child: notification['msg']
+                                                ['from_profile_photo'] !=
+                                            null &&
+                                        notification['msg']['from_profile_photo']
+                                            .isNotEmpty
+                                    ? Image.network(
+                                        notification['msg']['from_profile_photo'],
+                                        fit: BoxFit.cover,
+                                        width: 35,
+                                        height: 35,
+                                        loadingBuilder: GlobalVariables()
+                                            .loadingBuilderForImage,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return _buildInitialsAvatar(
+                                              notification['notification']
+                                                  ['body'],
+                                              notification['msg']['type'],
+                                              boxShadowColor);
+                                        },
+                                      )
+                                    : _buildInitialsAvatar(
+                                        notification['notification']['body'],
+                                        notification['msg']['type'],
+                                        boxShadowColor),
                               ),
-                              child: notification['msg']
-                                              ['from_profile_photo'] !=
-                                          null &&
-                                      notification['msg']['from_profile_photo']
-                                          .isNotEmpty
-                                  ? Image.network(
-                                      notification['msg']['from_profile_photo'],
-                                      fit: BoxFit.cover,
-                                      width: 35,
-                                      height: 35,
-                                      loadingBuilder: GlobalVariables()
-                                          .loadingBuilderForImage,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return _buildInitialsAvatar(
-                                            notification['notification']
-                                                ['body'],
-                                            notification['msg']['type'],
-                                            boxShadowColor);
-                                      },
-                                    )
-                                  : _buildInitialsAvatar(
-                                      notification['notification']['body'],
-                                      notification['msg']['type'],
-                                      boxShadowColor),
                             ),
                           ),
-                        ),
-
-                        //social profile logo
-                        SizedBox(width: 16.0),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                notification['notification']['body'],
-                                style: TextStyle(
-                                    color: boxShadowColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14.0,
-                                    fontFamily: 'Product Sans'),
-                              ),
-                              Text(
-                                timeAgo(notification['timestamp']),
-                                style: TextStyle(
-                                    fontSize: 10.0, color: Color(0xfffFA6E00)),
-                              ),
-                            ],
+          
+                          //social profile logo
+                          SizedBox(width: 16.0),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  notification['notification']['body'],
+                                  style: TextStyle(
+                                      color: boxShadowColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14.0,
+                                      fontFamily: 'Product Sans'),
+                                ),
+                                Text(
+                                  timeAgo(notification['timestamp']),
+                                  style: TextStyle(
+                                      fontSize: 10.0, color: Color(0xfffFA6E00)),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              )
-            ],
-          );
+                        ],
+                      ),
+                    );
+                  }),
+                )
+              ],
+            ),
+        );
   }
 
   @override

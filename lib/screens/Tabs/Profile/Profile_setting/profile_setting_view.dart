@@ -2622,6 +2622,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                 ),
               ),
             ),
+           
             ],
           ),
         ),
@@ -2630,6 +2631,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   }
 
   Future<void> showPastOrdersBottomSheet(BuildContext context) async {
+    //get order details
+    var orderDetails = Provider.of<Auth>(context, listen: false).customerOrderDetails;
+    print("orderDetailssetting $orderDetails");
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -2657,24 +2661,57 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Container(
-                  width: 60,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+               SizedBox(
+                height: 10,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+                width: 30,
+                height: 6,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFFFFFFFF).withOpacity(0.5),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6)),
                 ),
-                SizedBox(height: 16),
-                Text(
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Center(
+                child: Text(
                   'Past orders',
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
                     color: Colors.white,
+                    fontSize: 18,
+                    fontFamily: 'Product Sans Black',
+                    fontWeight: FontWeight.bold,
+                  ),
+
+                ),
+              ),
+              Align(
+              alignment: Alignment.center,
+              child: Container(
+                margin: const EdgeInsets.only(top: 4.0, right: 0),
+                decoration: BoxDecoration(
+                  color: Color(0xffFA6E00),
+                  borderRadius: BorderRadius.circular(2.0),
+                ),
+                height: 4.0,
+                child: IntrinsicWidth(
+                  child: Text(
+                    'Past orders',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans Black',
+                      color: Colors.transparent,
+                    ),
                   ),
                 ),
-                Divider(color: Colors.grey),
+              ),
+            ),
+           
                 for (int i = 0; i < 3; i++) ...[
                   OrderItem(),
                   Divider(color: Colors.grey),
