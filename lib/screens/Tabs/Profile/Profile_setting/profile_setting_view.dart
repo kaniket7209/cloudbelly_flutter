@@ -2546,7 +2546,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
         ),
       ),
       
-      bottomNavigationBar:(Provider.of<Auth>(context, listen: false).userData!['user_type'] != 'Customer') ?
+      bottomNavigationBar:(Provider.of<Auth>(context, listen: false).userData!['user_type'] != 'Customer') && Provider.of<Auth>(context, listen: false).orderDetails.isNotEmpty?
        GestureDetector(
         onVerticalDragUpdate: (details) {
           if (details.primaryDelta! < -20) {
