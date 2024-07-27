@@ -69,38 +69,23 @@ class _PostItemState extends State<PostItem> {
     _isFollowing = checkFollow();
   }
 
-  @override
-  void didChangeDependencies() {
-    if (_didUpdate) {
-      _isFollowing = checkFollow();
-      checkFollow();
-      discription = widget.data['caption'] ?? '';
-
-      caption1 = getFittedText(discription, context)[0];
-
-      caption2 = getFittedText(discription, context)[1];
-      _getLikeData();
-      //getProductDetails();
-
-      _didUpdate = false;
-    }
-
-    super.didChangeDependencies();
+ @override
+void didUpdateWidget(PostItem oldWidget) {
+  super.didUpdateWidget(oldWidget);
+  if (widget.data != oldWidget.data) {
+    print("Updating post data: ${widget.data}");
+    setState(() {}); // Force rebuild when data changes
   }
-
-  List<String> getFittedText(String text, BuildContext context) {
-    text = widget.data['caption'] ?? '';
-    if (text.length < 50) {
-      return [text, ''];
-    } else {
-      String text1 = text.substring(0, 50);
-
-      text1 = text1 + ' - ';
-      String text2 = text.length > 50 ? text.substring(50) : '';
-      return [text1, text2];
-    }
+}
+  List<String> getFittedText(String text) {
+  if (text.length <= 50) {
+    return [text, ''];
+  } else {
+    String text1 = text.substring(0, 50) + ' - ';
+    String text2 = text.substring(50);
+    return [text1, text2];
   }
-
+}
   void getProductDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
     print("Full data");
@@ -1095,69 +1080,63 @@ class _PostItemState extends State<PostItem> {
                             )
                           ],
                         ),
-                        if (caption1 != '')
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Space(1.h),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    widget.isProfilePost
-                                        ? Provider.of<Auth>(context,
-                                                listen: false)
-                                            .userData!['store_name']
-                                        : widget.data['store_name'],
-                                    style: const TextStyle(
-                                      color: Color(0xFFFA6E00),
-                                      fontSize: 12,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.36,
-                                    ),
-                                  ),
-                                  const Space(isHorizontal: true, 9),
-                                  Expanded(
-                                    child: SizedBox(
-                                      child: Text(
-                                        caption1,
-                                        overflow: TextOverflow.clip,
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                          color: _isVendor
-                                              ? const Color(0xFF0A4C61)
-                                              : const Color(0xFF2E0536),
-                                          fontSize: 12,
-                                          fontFamily: 'Product Sans Medium',
-                                          fontWeight: FontWeight.w500,
-                                          letterSpacing: 0.12,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              if (caption2.length > 0)
-                                SizedBox(
-                                  // height: 1.4.h,
-                                  child: Text(
-                                    caption2,
-                                    maxLines: null,
-                                    // overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: _isVendor
-                                          ? const Color(0xFF0A4C61)
-                                          : const Color(0xFF2E0536),
-                                      fontSize: 12,
-                                      fontFamily: 'Product Sans Medium',
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 0.12,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
+                        if (widget.data['caption'] != null && widget.data['caption'].isNotEmpty)
+  Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Space(1.h),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            widget.isProfilePost
+                ? Provider.of<Auth>(context, listen: false).userData!['store_name']
+                : widget.data['store_name'],
+            style: const TextStyle(
+              color: Color(0xFFFA6E00),
+              fontSize: 12,
+              fontFamily: 'Product Sans',
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.36,
+            ),
+          ),
+          const Space(isHorizontal: true, 9),
+          Expanded(
+            child: SizedBox(
+              child: Text(
+                widget.data['caption'],
+                overflow: TextOverflow.clip,
+                maxLines: 1,
+                style: TextStyle(
+                  color: _isVendor
+                      ? const Color(0xFF0A4C61)
+                      : const Color(0xFF2E0536),
+                  fontSize: 12,
+                  fontFamily: 'Product Sans Medium',
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.12,
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+      if (widget.data['caption'].length > 50)
+        SizedBox(
+          child: Text(
+            widget.data['caption'].substring(50),
+            maxLines: null,
+            style: TextStyle(
+              color: _isVendor ? const Color(0xFF0A4C61) : const Color(0xFF2E0536),
+              fontSize: 12,
+              fontFamily: 'Product Sans Medium',
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.12,
+            ),
+          ),
+        ),
+    ],
+  ),
                         TouchableOpacity(
                           onTap: () async {
                             AppWideLoadingBanner().loadingBanner(context);
