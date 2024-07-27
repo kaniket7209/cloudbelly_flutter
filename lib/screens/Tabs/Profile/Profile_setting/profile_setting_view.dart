@@ -16,6 +16,10 @@ import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -2853,111 +2857,360 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
     }
   }
 
-  Future<void> showOrderDetailsBottomSheet(
-      BuildContext context, var order) async {
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.9,
-          minChildSize: 0.5,
-          maxChildSize: 1.0,
-          expand: false,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return Container(
-              decoration: const ShapeDecoration(
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x7FB1D9D8),
-                    blurRadius: 6,
-                    offset: Offset(0, 4),
-                    spreadRadius: 0,
-                  ),
-                ],
-                color: Color(0xFF0A4C61),
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius.only(
-                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                    topRight:
-                        SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                  ),
+Future<void> showOrderDetailsBottomSheet(BuildContext context, var order) async {
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+
+ DateFormat dateFormat = DateFormat('EEE, dd MMM yyyy HH:mm:ss \'GMT\'', 'en_US');
+DateTime orderDate = dateFormat.parseUTC(order['created_date']).toLocal();
+String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
+      return DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 1.0,
+        expand: false,
+        builder: (BuildContext context, ScrollController scrollController) {
+          return Container(
+            decoration: const ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                  color: Color(0x7FB1D9D8),
+                  blurRadius: 6,
+                  offset: Offset(0, 4),
+                  spreadRadius: 0,
+                ),
+              ],
+              color: Color(0xFF0A4C61),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.only(
+                  topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                  topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
                 ),
               ),
-              padding: EdgeInsets.all(16),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  children: [
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
-                      width: 30,
-                      height: 6,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFFFFFFFF).withOpacity(0.5),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6)),
+            ),
+            padding: EdgeInsets.all(16),
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    width: 60,
+                    height: 6,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFFFFFFFF).withOpacity(0.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  Center(
+                    child: Text(
+                      'Order Details',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontFamily: 'Product Sans Black',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  Text(
+                    'ORDER #${order['order_no']}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontFamily: 'Product Sans Black',
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    'Delivered, ${order['items'].length} items, Rs ${order['amount']}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontFamily: 'Product Sans',
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  Text(
+                    order['store_name'],
+                    style: TextStyle(
+                      color: Color(0xFFFFA726),
+                      fontSize: 16,
+                      fontFamily: 'Product Sans Black',
+                    ),
+                  ),
+                  Text(
+                    '${order['location']['location']}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontFamily: 'Product Sans',
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    'Work',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontFamily: 'Product Sans Black',
+                    ),
+                  ),
+                  Text(
+                    '${order['cutomer_location']['location']}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontFamily: 'Product Sans',
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                     'Order delivered on $formattedDate ',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 12,
+                      fontFamily: 'Product Sans',
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'BILL DETAILS',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontFamily: 'Product Sans Black',
+                    ),
+                  ),
+                  Divider(color: Colors.white.withOpacity(0.3)),
+                  for (var item in order['items']) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${item['name']}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                        Text(
+                          'Rs ${item['price_each']}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'Personal, Pan',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 12,
+                        fontFamily: 'Product Sans',
                       ),
                     ),
                     SizedBox(height: 15),
-                    Center(
-                      child: Text(
-                        'Order Details',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: 'Product Sans Black',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 25),
-                    Text(
-                      'Order #${order['order_no']}',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: 'Product Sans',
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Delivered: ${order['status']}',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontFamily: 'Product Sans',
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Total: Rs ${order['amount']}',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontFamily: 'Product Sans',
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    for (var item in order['items']) ...[
+                  ],
+                  Divider(color: Colors.white.withOpacity(0.3)),
+                  SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                       Text(
-                        '${item['name']} X  ${item['quantity']} - Rs ${item['price_each']}',
+                        'Item Total',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
                           fontFamily: 'Product Sans',
                         ),
                       ),
-                      SizedBox(height: 5),
+                      Text(
+                        'Rs ${order['amount']}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
                     ],
-                    SizedBox(height: 25),
-                    Center(
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Order Packing Charges',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                      Text(
+                        'Rs 29',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Platform fee',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                      Text(
+                        'Rs 2',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Delivery Partner fee',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                      Text(
+                        'Rs 0',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Discount Applied',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                      Text(
+                        'Rs 119',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Taxes',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                      Text(
+                        'Rs 16.80',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Cash/Online',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                      Text(
+                        'Cash',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Total Bill',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans Black',
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Rs ${order['total_price']}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans Black',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 25),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                       child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         width: 150,
                         decoration: ShapeDecoration(
                           shadows: [
@@ -2988,15 +3241,17 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          },
-        );
-      },
-    );
-  }
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
 }
 
 class OrderItem extends StatelessWidget {
