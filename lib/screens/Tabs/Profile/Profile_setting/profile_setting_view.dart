@@ -2867,6 +2867,9 @@ Future<void> showOrderDetailsBottomSheet(BuildContext context, var order) async 
 
  DateFormat dateFormat = DateFormat('EEE, dd MMM yyyy HH:mm:ss \'GMT\'', 'en_US');
 DateTime orderDate = dateFormat.parseUTC(order['created_date']).toLocal();
+double itemTotal = order['items']
+    .map<double>((item) => num.parse(item['price_each'].toString()).toDouble() * num.parse(item['quantity'].toString()).toDouble())
+    .reduce((double value, double element) => value + element);
 String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
       return DraggableScrollableSheet(
         initialChildSize: 0.9,
@@ -2898,81 +2901,100 @@ String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    width: 60,
-                    height: 6,
-                    decoration: ShapeDecoration(
-                      color: const Color(0xFFFFFFFF).withOpacity(0.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      width: 30,
+                      height: 6,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xffFA6E00).withOpacity(0.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(height: 15),
-                  Center(
-                    child: Text(
-                      'Order Details',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: 'Product Sans Black',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  
                   SizedBox(height: 15),
                   Text(
                     'ORDER #${order['order_no']}',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
-                      fontFamily: 'Product Sans Black',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 22,
+                      letterSpacing: 1.2,
+                      fontFamily: 'Product Sans Medium',
                     ),
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 2),
                   Text(
-                    'Delivered, ${order['items'].length} items, Rs ${order['amount']}',
+                    'Rs ${order['amount']}',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontFamily: 'Product Sans',
+                      color: Color(0xff8BDFDD),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      letterSpacing: 1.2,
+                      fontFamily: 'Product Sans Medium',
                     ),
                   ),
                   SizedBox(height: 15),
-                  Text(
-                    order['store_name'],
-                    style: TextStyle(
-                      color: Color(0xFFFFA726),
-                      fontSize: 16,
-                      fontFamily: 'Product Sans Black',
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        children: [
+                          Icon(Icons.location_on_outlined, color: Colors.white, size: 30),
+                          Container(
+                            height: 30,
+                            width: 2,
+                            color: Colors.white,
+                          ),
+                          Icon(Icons.work, color: Colors.white, size: 30),
+                        ],
+                      ),
+                      SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            order['store_name'],
+                            style: TextStyle(
+                              color: Color(0xFFFFA726),
+                              fontSize: 16,
+                              fontFamily: 'Product Sans Black',
+                            ),
+                          ),
+                          Text(
+                            '${order['location']['location']}',
+                            style: TextStyle(
+                              color: Color(0xff8BDFDD),
+                              fontSize: 14,
+                              fontFamily: 'Product Sans',
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'Work',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'Product Sans Black',
+                            ),
+                          ),
+                          Text(
+                            '${order['cutomer_location']['location']}',
+                            style: TextStyle(
+                              color: Color(0xff8BDFDD),
+                              fontSize: 14,
+                              fontFamily: 'Product Sans',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  Text(
-                    '${order['location']['location']}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontFamily: 'Product Sans',
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    'Work',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontFamily: 'Product Sans Black',
-                    ),
-                  ),
-                  Text(
-                    '${order['cutomer_location']['location']}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontFamily: 'Product Sans',
-                    ),
-                  ),
+                 
                   SizedBox(height: 10),
                   Text(
                      'Order delivered on $formattedDate ',
@@ -2987,7 +3009,8 @@ String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
                     'BILL DETAILS',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
                       fontFamily: 'Product Sans Black',
                     ),
                   ),
@@ -3015,31 +3038,34 @@ String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
                       ],
                     ),
                     SizedBox(height: 5),
-                    Text(
-                      'Personal, Pan',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 12,
-                        fontFamily: 'Product Sans',
-                      ),
-                    ),
-                    SizedBox(height: 15),
+                    // Text(
+                    //   'Personal, Pan',
+                    //   style: TextStyle(
+                    //     color: Colors.white.withOpacity(0.7),
+                    //     fontSize: 12,
+                    //     fontFamily: 'Product Sans',
+                    //   ),
+                    // ),
+                    // SizedBox(height: 15),
                   ],
-                  Divider(color: Colors.white.withOpacity(0.3)),
                   SizedBox(height: 15),
+                  Divider(color: Colors.white.withOpacity(0.3)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         'Item Total',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 14,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
                           fontFamily: 'Product Sans',
                         ),
                       ),
+                  
                       Text(
-                        'Rs ${order['amount']}',
+                        'Rs ${itemTotal}',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -3061,7 +3087,7 @@ String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
                         ),
                       ),
                       Text(
-                        'Rs 29',
+                        'Rs 15',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -3083,7 +3109,7 @@ String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
                         ),
                       ),
                       Text(
-                        'Rs 2',
+                        'Rs 0',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -3105,7 +3131,7 @@ String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
                         ),
                       ),
                       Text(
-                        'Rs 0',
+                        'Rs 30',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -3115,28 +3141,8 @@ String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
                     ],
                   ),
                   SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Discount Applied',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                      Text(
-                        'Rs 119',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5),
+               
+                 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -3149,7 +3155,7 @@ String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
                         ),
                       ),
                       Text(
-                        'Rs 16.80',
+                        'Rs ${(itemTotal * 0.05).toStringAsFixed(2)}',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -3171,7 +3177,8 @@ String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
                         ),
                       ),
                       Text(
-                        'Cash',
+                        order['payment_method'] == 'online'?'Online':'Cash',
+                        // '${order['payment_method']}',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -3188,22 +3195,24 @@ String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
                         'Total Bill',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 14,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                           fontFamily: 'Product Sans Black',
                         ),
                       ),
-                      SizedBox(width: 10),
+                      SizedBox(width: 20),
                       Text(
                         'Rs ${order['total_price']}',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 14,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                           fontFamily: 'Product Sans Black',
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 25),
+                  SizedBox(height: 50),
                   Center(
                     child: GestureDetector(
                       onTap: () {
