@@ -2545,88 +2545,94 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           ),
         ),
       ),
-      
-      bottomNavigationBar:(Provider.of<Auth>(context, listen: false).userData!['user_type'] != 'Customer') && Provider.of<Auth>(context, listen: false).orderDetails.isNotEmpty?
-       GestureDetector(
-        onVerticalDragUpdate: (details) {
-          if (details.primaryDelta! < -20) {
-            showPastOrdersBottomSheet(context);
-          }
-        },
-        child: Container(
-          decoration: ShapeDecoration(
-            shadows: [
-              BoxShadow(
-                color: const Color(0xff11627C).withOpacity(0.35),
-                blurRadius: 20,
-                offset: const Offset(0, -10),
-                spreadRadius: 0,
-              ),
-            ],
-            color: Color(0xFF0A4C61),
-            shape: const SmoothRectangleBorder(
-              borderRadius: SmoothBorderRadius.only(
-                topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-              ),
-            ),
-          ),
-          height: 10.h,
-          child: Column(
-            children: [
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
-                width: 30,
-                height: 6,
+      bottomNavigationBar: (Provider.of<Auth>(context, listen: false)
+                      .userData!['user_type'] !=
+                  'Customer') &&
+              Provider.of<Auth>(context, listen: false).orderDetails.isNotEmpty
+          ? GestureDetector(
+              onVerticalDragUpdate: (details) {
+                if (details.primaryDelta! < -20) {
+                  showPastOrdersBottomSheet(context);
+                }
+              },
+              child: Container(
                 decoration: ShapeDecoration(
-                  color: const Color(0xFFFFFFFF).withOpacity(0.5),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6)),
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Center(
-                child: Text(
-                  'Past orders',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontFamily: 'Product Sans Black',
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Container(
-                  margin: const EdgeInsets.only(top: 4.0, right: 0),
-                  decoration: BoxDecoration(
-                    color: Color(0xffFA6E00),
-                    borderRadius: BorderRadius.circular(2.0),
-                  ),
-                  height: 4.0,
-                  child: IntrinsicWidth(
-                    child: Text(
-                      'Past orders',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Product Sans Black',
-                        color: Colors.transparent,
-                      ),
+                  shadows: [
+                    BoxShadow(
+                      color: const Color(0xff11627C).withOpacity(0.35),
+                      blurRadius: 20,
+                      offset: const Offset(0, -10),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                  color: Color(0xFF0A4C61),
+                  shape: const SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                      topLeft:
+                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                      topRight:
+                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
                     ),
                   ),
                 ),
+                height: 10.h,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+                      width: 30,
+                      height: 6,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFFFFFFFF).withOpacity(0.5),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6)),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Center(
+                      child: Text(
+                        'Past orders',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: 'Product Sans Black',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 4.0, right: 0),
+                        decoration: BoxDecoration(
+                          color: Color(0xffFA6E00),
+                          borderRadius: BorderRadius.circular(2.0),
+                        ),
+                        height: 4.0,
+                        child: IntrinsicWidth(
+                          child: Text(
+                            'Past orders',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Product Sans Black',
+                              color: Colors.transparent,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ):null,
+            )
+          : null,
     );
   }
 
@@ -2732,28 +2738,29 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     for (var order in orderDetails) ...[
                       OrderItem(orderData: order),
                       Divider(color: Colors.white.withOpacity(0.3)),
-                       SizedBox(
-                      height: 5,
-                    ),
-                       Row(
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.start,
-                         children: [
-                           Text(
-                                     formatItems(order['items']),
-                                     style: const TextStyle(
-                                         color: Colors.white,
-                                         fontFamily: "Product Sans",
-                                         fontWeight: FontWeight.w500,
-                                         fontSize: 14),
-                                   ),
-                         ],
-                       ),
-                     SizedBox(
-                      height: 25,
-                    ),
+                        children: [
+                          Text(
+                            formatItems(order['items']),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontFamily: "Product Sans",
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 25,
+                      ),
                       Center(
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
                           width: 150,
                           decoration: ShapeDecoration(
                             shadows: [
@@ -2771,19 +2778,27 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               ),
                             ),
                           ),
-                          child: Center(
-                            child: Text('Show details',style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18
-                            ),),
+                          child: GestureDetector(
+                            onTap: () {
+                              showOrderDetailsBottomSheet(context, order);
+                            },
+                            child: Center(
+                              child: Text(
+                                'Show details',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Product Sans',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                     SizedBox(
-                      height: 30,
-                    ),
+                      SizedBox(
+                        height: 30,
+                      ),
                     ],
                   ],
                 ),
@@ -2836,6 +2851,151 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       print("kycccc ${userData?['kyc_status']}");
       await UserPreferences.setUser(userData!);
     }
+  }
+
+  Future<void> showOrderDetailsBottomSheet(
+      BuildContext context, var order) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          minChildSize: 0.5,
+          maxChildSize: 1.0,
+          expand: false,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return Container(
+              decoration: const ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x7FB1D9D8),
+                    blurRadius: 6,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                ],
+                color: Color(0xFF0A4C61),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.only(
+                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                    topRight:
+                        SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                  ),
+                ),
+              ),
+              padding: EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Column(
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+                      width: 30,
+                      height: 6,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFFFFFFFF).withOpacity(0.5),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6)),
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Center(
+                      child: Text(
+                        'Order Details',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: 'Product Sans Black',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 25),
+                    Text(
+                      'Order #${order['order_no']}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Delivered: ${order['status']}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Total: Rs ${order['amount']}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    for (var item in order['items']) ...[
+                      Text(
+                        '${item['name']} X  ${item['quantity']} - Rs ${item['price_each']}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                    ],
+                    SizedBox(height: 25),
+                    Center(
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        width: 150,
+                        decoration: ShapeDecoration(
+                          shadows: [
+                            BoxShadow(
+                              offset: const Offset(5, 6),
+                              color: Color(0xff093745).withOpacity(1),
+                              blurRadius: 30,
+                            ),
+                          ],
+                          color: Color(0xff519896),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 15.5,
+                              cornerSmoothing: 1,
+                            ),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Close',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }
 
@@ -2936,7 +3096,6 @@ class OrderItem extends StatelessWidget {
           ],
         ),
         SizedBox(height: 20),
-      
       ],
     );
   }
