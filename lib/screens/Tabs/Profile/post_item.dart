@@ -71,6 +71,12 @@ class _PostItemState extends State<PostItem> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _getLikeData();
+  }
+
+  @override
   void didUpdateWidget(PostItem oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.data != oldWidget.data) {
@@ -79,7 +85,6 @@ class _PostItemState extends State<PostItem> {
       setState(() {}); // Force rebuild when data changes
     }
   }
-
   List<String> getFittedText(String text) {
     if (text.length <= 50) {
       return [text, ''];
@@ -150,7 +155,7 @@ class _PostItemState extends State<PostItem> {
     });
 
     print('Final like data: $_likeData');
-    print("$_isLiked  likedbyh");
+    print("$_isLiked likedbyh");
   }
 
   String formatTimeDifference(String timestampString) {
