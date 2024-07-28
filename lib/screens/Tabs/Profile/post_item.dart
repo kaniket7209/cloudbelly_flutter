@@ -67,25 +67,29 @@ class _PostItemState extends State<PostItem> {
   void initState() {
     super.initState();
     _isFollowing = checkFollow();
+    _getLikeData();
   }
 
- @override
-void didUpdateWidget(PostItem oldWidget) {
-  super.didUpdateWidget(oldWidget);
-  if (widget.data != oldWidget.data) {
-    print("Updating post data: ${widget.data}");
-    setState(() {}); // Force rebuild when data changes
+  @override
+  void didUpdateWidget(PostItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.data != oldWidget.data) {
+      print("Updating post data: ${widget.data}");
+      _getLikeData();
+      setState(() {}); // Force rebuild when data changes
+    }
   }
-}
+
   List<String> getFittedText(String text) {
-  if (text.length <= 50) {
-    return [text, ''];
-  } else {
-    String text1 = text.substring(0, 50) + ' - ';
-    String text2 = text.substring(50);
-    return [text1, text2];
+    if (text.length <= 50) {
+      return [text, ''];
+    } else {
+      String text1 = text.substring(0, 50) + ' - ';
+      String text2 = text.substring(50);
+      return [text1, text2];
+    }
   }
-}
+
   void getProductDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
     print("Full data");
@@ -111,8 +115,21 @@ void didUpdateWidget(PostItem oldWidget) {
 
   // List<dynamic> likePorfileUrlList = [];
   void _getLikeData() async {
+    setState(() {
+      _likeData.clear();
+    });
+
     List<dynamic> likeIds = widget.data['likes'] ?? [];
-    List<dynamic> temp = await Provider.of<Auth>(context).getUserInfo(likeIds);
+    if (likeIds.isEmpty) {
+      print('No likes found for this post');
+      return;
+    }
+
+    print('Like IDs: $likeIds');
+    List<dynamic> temp =
+        await Provider.of<Auth>(context, listen: false).getUserInfo(likeIds);
+    print('Retrieved user info: $temp');
+
     temp.forEach((element) {
       if (element is Map) {
         _likeData.add({
@@ -121,16 +138,19 @@ void didUpdateWidget(PostItem oldWidget) {
           'profile_photo': element['profile_photo'] ??
               'https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg'
         });
-        itemsToShow = min(_likeData.length, 2);
       } else {
-        print("Unexpected data type: $element");
+        print('Unexpected data type: $element');
       }
-      setState(() {});
     });
-    // print(_likeData);
 
-    _isLiked = (widget.data['likes'] ?? []).contains(
-        Provider.of<Auth>(context, listen: false).userData?['user_id']);
+    setState(() {
+      itemsToShow = min(_likeData.length, 2);
+      _isLiked = (widget.data['likes'] ?? []).contains(
+          Provider.of<Auth>(context, listen: false).userData?['user_id']);
+    });
+
+    print('Final like data: $_likeData');
+    print("$_isLiked  likedbyh");
   }
 
   String formatTimeDifference(String timestampString) {
@@ -556,9 +576,19 @@ void didUpdateWidget(PostItem oldWidget) {
                               shape: const SmoothRectangleBorder(),
                             ),
                             child: GestureDetector(
-                              onDoubleTap: () {
-                              
-                                 setState(() {
+                              onDoubleTap: () async {
+                            var  code=   widget.isProfilePost
+                                    ? await Provider.of<Auth>(context,
+                                            listen: false)
+                                        .likePost(widget.data['id'],
+                                            widget.userId ?? "")
+                                    : await Provider.of<Auth>(context,
+                                            listen: false)
+                                        .likePost(widget.data['id'],
+                                            widget.data['user_id']);
+
+                                             if (code == '200') {
+                          setState(() {
                             _isLiked = !_isLiked;
                             if (_isLiked) {
                               setState(() {
@@ -586,12 +616,49 @@ void didUpdateWidget(PostItem oldWidget) {
                             }
                             if (_isLiked == true) _showLikeIcon = true;
                           });
-                        
+
                           Future.delayed(const Duration(seconds: 2), () {
                             setState(() {
                               _showLikeIcon = false;
                             });
                           });
+                        } 
+                                // setState(() {
+                                //   _isLiked = !_isLiked;
+                                //   if (_isLiked) {
+                                //     setState(() {
+                                //       _likeData.add({
+                                //         'id': Provider.of<Auth>(context,
+                                //                 listen: false)
+                                //             .userData?['user_id'],
+                                //         'profile_photo': Provider.of<Auth>(
+                                //                 context,
+                                //                 listen: false)
+                                //             .logo_url,
+                                //         'name': Provider.of<Auth>(context,
+                                //                 listen: false)
+                                //             .userData?['store_name'],
+                                //       });
+                                //     });
+                                //   } else {
+                                //     setState(() {
+                                //       _likeData.removeWhere(
+                                //         (element) =>
+                                //             element['id'] ==
+                                //             Provider.of<Auth>(context,
+                                //                     listen: false)
+                                //                 .userData?['user_id'],
+                                //       );
+                                //     });
+                                //   }
+                                //   if (_isLiked == true) _showLikeIcon = true;
+                                // });
+
+                                // Future.delayed(const Duration(seconds: 2), () {
+                                //   setState(() {
+                                //     _showLikeIcon = false;
+                                //   });
+                                // });
                               },
                               child: ClipSmoothRect(
                                 radius: SmoothBorderRadius(
@@ -828,7 +895,7 @@ void didUpdateWidget(PostItem oldWidget) {
                             }
                             if (_isLiked == true) _showLikeIcon = true;
                           });
-                        
+
                           Future.delayed(const Duration(seconds: 2), () {
                             setState(() {
                               _showLikeIcon = false;
@@ -868,6 +935,7 @@ void didUpdateWidget(PostItem oldWidget) {
                         // Change color when liked
                       ),
                     ),
+
                     //comment button
                     IconButton(
                         visualDensity: const VisualDensity(
@@ -1080,63 +1148,68 @@ void didUpdateWidget(PostItem oldWidget) {
                             )
                           ],
                         ),
-                        if (widget.data['caption'] != null && widget.data['caption'].isNotEmpty)
-  Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Space(1.h),
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            widget.isProfilePost
-                ? Provider.of<Auth>(context, listen: false).userData!['store_name']
-                : widget.data['store_name'],
-            style: const TextStyle(
-              color: Color(0xFFFA6E00),
-              fontSize: 12,
-              fontFamily: 'Product Sans',
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.36,
-            ),
-          ),
-          const Space(isHorizontal: true, 9),
-          Expanded(
-            child: SizedBox(
-              child: Text(
-                widget.data['caption'],
-                overflow: TextOverflow.clip,
-                maxLines: 1,
-                style: TextStyle(
-                  color: _isVendor
-                      ? const Color(0xFF0A4C61)
-                      : const Color(0xFF2E0536),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans Medium',
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.12,
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-      if (widget.data['caption'].length > 50)
-        SizedBox(
-          child: Text(
-            widget.data['caption'].substring(50),
-            maxLines: null,
-            style: TextStyle(
-              color: _isVendor ? const Color(0xFF0A4C61) : const Color(0xFF2E0536),
-              fontSize: 12,
-              fontFamily: 'Product Sans Medium',
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.12,
-            ),
-          ),
-        ),
-    ],
-  ),
+                        if (widget.data['caption'] != null &&
+                            widget.data['caption'].isNotEmpty)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Space(1.h),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    widget.isProfilePost
+                                        ? Provider.of<Auth>(context,
+                                                listen: false)
+                                            .userData!['store_name']
+                                        : widget.data['store_name'],
+                                    style: const TextStyle(
+                                      color: Color(0xFFFA6E00),
+                                      fontSize: 12,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.36,
+                                    ),
+                                  ),
+                                  const Space(isHorizontal: true, 9),
+                                  Expanded(
+                                    child: SizedBox(
+                                      child: Text(
+                                        widget.data['caption'],
+                                        overflow: TextOverflow.clip,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          color: _isVendor
+                                              ? const Color(0xFF0A4C61)
+                                              : const Color(0xFF2E0536),
+                                          fontSize: 12,
+                                          fontFamily: 'Product Sans Medium',
+                                          fontWeight: FontWeight.w500,
+                                          letterSpacing: 0.12,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              if (widget.data['caption'].length > 50)
+                                SizedBox(
+                                  child: Text(
+                                    widget.data['caption'].substring(50),
+                                    maxLines: null,
+                                    style: TextStyle(
+                                      color: _isVendor
+                                          ? const Color(0xFF0A4C61)
+                                          : const Color(0xFF2E0536),
+                                      fontSize: 12,
+                                      fontFamily: 'Product Sans Medium',
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.12,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         TouchableOpacity(
                           onTap: () async {
                             AppWideLoadingBanner().loadingBanner(context);

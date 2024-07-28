@@ -1840,7 +1840,7 @@ Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, 
 
   Future<String> likePost(String id, String userId) async {
     final String url = 'https://app.cloudbelly.in/update-posts';
-
+ print("likeResp");
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
       "user_id": userId,
@@ -1858,8 +1858,9 @@ Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, 
       );
       print("likeResponse:: ${response.body}");
       print(response.statusCode);
-
+ notifyListeners();
       return response.statusCode.toString();
+ 
     } catch (error) {
       // Handle exceptions
       return '-1';
