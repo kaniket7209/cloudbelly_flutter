@@ -8,6 +8,7 @@ import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -95,6 +96,69 @@ class BellyMartView extends StatefulWidget {
 }
 
 class _BellyMartViewState extends State<BellyMartView> {
+ List<dynamic> lowStockItems = [];
+  List<dynamic> allStocks = [];
+  List<dynamic> nearExpiryItems = [];
+  List<dynamic> stocksYouMayNeed = [];
+
+   @override
+  void initState() {
+
+    nearExpiryItems = [];
+   _getStocksYouMayNeed();
+
+    super.initState();
+  }
+
+   Future<void> _getStocksYouMayNeed() async {
+   
+
+    final data =
+        await Provider.of<Auth>(context, listen: false).getInventoryData();
+
+    stocksYouMayNeed = data['inventory_data'];
+    
+    List<dynamic> temp = [];
+    stocksYouMayNeed.forEach((element) {
+      if (element['shelf_life'] == null ||
+          element['volumeLeft'] == null ||
+          element['purchaseDate'] == null ||
+          element['volumePurchased'] == null) {
+      
+      }
+
+      if (element['shelf_life'] != null &&
+          element['volumeLeft'] != null &&
+          element['purchaseDate'] != null &&
+          element['volumePurchased'] != null) {
+        element['runway'] = calculateDaysUntilRunOut(
+            element['purchaseDate'], int.parse(element['shelf_life']));
+        temp.add(element);
+      }
+    });
+
+    stocksYouMayNeed = temp;
+
+    stocksYouMayNeed.sort((a, b) {
+      int runwayComparison = a['runway'].compareTo(b['runway']);
+      if (runwayComparison != 0) {
+        return runwayComparison;
+      } else {
+        return a['volumeLeft'].compareTo(b['volumeLeft']);
+      }
+    });
+
+   
+    allStocks.sort((a, b) {
+      int runwayComparison = a['runway'].compareTo(b['runway']);
+      if (runwayComparison != 0) {
+        return runwayComparison;
+      } else {
+        return a['volumeLeft'].compareTo(b['volumeLeft']);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -310,7 +374,7 @@ class _BellyMartViewState extends State<BellyMartView> {
           const Space(35),
           AppWideButton(
             onTap: () {
-              StocksYouMayNeedBottomSheet().StocksYouMayNeedSheet(context);
+              StocksYouMayNeedBottomSheet().StockYouMayNeedSheet(context,stocksYouMayNeed);
             },
             num: 2,
             txt: 'Ready to buy at the lowest price?',
@@ -320,5 +384,16 @@ class _BellyMartViewState extends State<BellyMartView> {
         ],
       ),
     );
+  }
+  
+  int calculateDaysUntilRunOut(String purchaseDateStr, int shelfLife) {
+    DateTime currentDate = DateTime.now();
+
+    final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+    DateTime purchaseDate = dateFormat.parse(purchaseDateStr);
+
+    DateTime expirationDate = purchaseDate.add(Duration(days: shelfLife));
+    int daysUntilRunOut = expirationDate.difference(currentDate).inDays;
+    return daysUntilRunOut + 1;
   }
 }
