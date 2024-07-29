@@ -13,8 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class StocksYouMayNeedBottomSheet {
-  
-   Future<dynamic> StockYouMayNeedSheet(
+  Future<dynamic> StockYouMayNeedSheet(
       BuildContext context, List<dynamic> stocksYouMayNeed) {
     return showModalBottomSheet(
       context: context,
@@ -57,6 +56,25 @@ class StocksYouMayNeedBottomSheet {
                     padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).viewInsets.bottom),
                     child: Container(
+                      decoration: const ShapeDecoration(
+                        shadows: [
+                          BoxShadow(
+                            color: Color(0x7FB1D9D8),
+                            blurRadius: 6,
+                            offset: Offset(0, 4),
+                            spreadRadius: 0,
+                          ),
+                        ],
+                        color: Colors.white,
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius.only(
+                            topLeft: SmoothRadius(
+                                cornerRadius: 40, cornerSmoothing: 1),
+                            topRight: SmoothRadius(
+                                cornerRadius: 40, cornerSmoothing: 1),
+                          ),
+                        ),
+                      ),
                       padding: EdgeInsets.all(16.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -65,44 +83,83 @@ class StocksYouMayNeedBottomSheet {
                           Text(
                             'Name of the product',
                             style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold),
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff0A4C61)),
                           ),
                           TextField(
                             controller: productController,
                             decoration: InputDecoration(
-                              hintText:
-                                  'Enter the name of the product you need',
-                            ),
+                                hintText:
+                                    'Enter the name of the product you need',
+                                hintStyle: TextStyle(
+                                    color: Color(0xff0A4C61).withOpacity(0.5))),
                           ),
-                          SizedBox(height: 16.0),
+                          SizedBox(height: 20.0),
                           Text(
                             'Volume needed',
                             style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold),
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff0A4C61)),
                           ),
                           TextField(
                             controller: volumeController,
                             decoration: InputDecoration(
-                              hintText: 'Mention the volume here',
-                            ),
+                                hintText: 'Mention the volume here',
+                                hintStyle: TextStyle(
+                                    color: Color(0xff0A4C61).withOpacity(0.5))),
                           ),
-                          SizedBox(height: 16.0),
+                          SizedBox(height: 20.0),
                           Text(
                             'Unit Type',
                             style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold),
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff0A4C61)),
                           ),
                           TextField(
                             controller: unitTypeController,
                             decoration: InputDecoration(
-                              hintText: 'Mention the unit type here',
+                                hintText: 'Mention the unit type here',
+                                hintStyle: TextStyle(
+                                    color: Color(0xff0A4C61).withOpacity(0.5))),
+                          ),
+                          SizedBox(height: 40.0),
+                          GestureDetector(
+                            onTap: addItem,
+                            child: Center(
+                              child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w, vertical: 1.h),
+                                  // margin: EdgeInsets.only(bottom: 2.h),
+                                  decoration: ShapeDecoration(
+                                    shadows: [
+                                      BoxShadow(
+                                        offset: const Offset(1, 4),
+                                        color:
+                                            Color(0xff0A4C61).withOpacity(0.45),
+                                        blurRadius: 30,
+                                      ),
+                                    ],
+                                    color: Color(0xff0A4C61),
+                                    shape: SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius(
+                                      cornerRadius: 13,
+                                      cornerSmoothing: 1,
+                                    )),
+                                  ),
+                                  child: Text(
+                                    'Add Item',
+                                    style: TextStyle(
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        fontSize: 16),
+                                  )),
                             ),
                           ),
-                          SizedBox(height: 16.0),
-                          ElevatedButton(
-                            onPressed: addItem,
-                            child: Text('Add item'),
-                          ),
+                          SizedBox(height: 25.0),
                         ],
                       ),
                     ),
@@ -338,7 +395,6 @@ class StocksYouMayNeedBottomSheet {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           GestureDetector(
-                           
                             onTap: showAddItemModal,
                             child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -368,7 +424,6 @@ class StocksYouMayNeedBottomSheet {
                                       color: Colors.white,
                                       fontSize: 16),
                                 )),
-                        
                           ),
                           GestureDetector(
                             onTap: () async {
@@ -376,7 +431,7 @@ class StocksYouMayNeedBottomSheet {
                                   stocksYouMayNeed.map((item) {
                                 return {
                                   "item_name": item['itemName'],
-                                  "qty": item['volumeLeft'],
+                                  "qty": int.parse(item['volumeLeft']),
                                   "unit_type": item['unitType']
                                 };
                               }).toList();
@@ -394,8 +449,7 @@ class StocksYouMayNeedBottomSheet {
                                     context, resData['message']);
                               }
                             },
-                            child: 
-                            Container(
+                            child: Container(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 10.w, vertical: 1.h),
                                 // margin: EdgeInsets.only(bottom: 2.h),
@@ -423,8 +477,6 @@ class StocksYouMayNeedBottomSheet {
                                       color: Colors.white,
                                       fontSize: 16),
                                 )),
-                        
-                        
                           ),
                         ],
                       ),
@@ -438,8 +490,6 @@ class StocksYouMayNeedBottomSheet {
       },
     );
   }
-
-
 }
 
 class ItemsView extends StatefulWidget {
@@ -485,7 +535,6 @@ class _ItemsViewState extends State<ItemsView> {
             itemBuilder: (context, index) {
               return Column(
                 children: [
-                  
                   Container(
                     margin: const EdgeInsets.symmetric(
                       vertical: 15,
@@ -495,7 +544,7 @@ class _ItemsViewState extends State<ItemsView> {
                           height: 40,
                           radius: 12,
                           url: /*stocksYouMayNeed[index]['image_url'] ??*/
-                          'https://drive.google.com/file/d/12-9XoJVr5w0DzuHXkeWdJOq_ZO_JHWMt/view?usp=drive_link'),
+                              'https://drive.google.com/file/d/12-9XoJVr5w0DzuHXkeWdJOq_ZO_JHWMt/view?usp=drive_link'),
                       const Space(
                         14,
                         isHorizontal: true,
@@ -544,9 +593,8 @@ class _ItemsViewState extends State<ItemsView> {
                               offset: const Offset(0, 8),
                               blurRadius: 20,
                               shadowColor:
-                              const Color.fromRGBO(152, 202, 201, 0.8),
-                              boxColor:
-                              const Color.fromRGBO(84, 166, 193, 1),
+                                  const Color.fromRGBO(152, 202, 201, 0.8),
+                              boxColor: const Color.fromRGBO(84, 166, 193, 1),
                               cornerRadius: 10),
                           child: const Center(
                             child: Text(
@@ -590,7 +638,6 @@ class _ItemsViewState extends State<ItemsView> {
                 },*/
             itemCount: 1,
           ),
-
         ],
       ),
     );

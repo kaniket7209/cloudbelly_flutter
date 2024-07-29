@@ -20,6 +20,7 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -757,6 +758,25 @@ class _InventoryState extends State<Inventory> {
                     padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).viewInsets.bottom),
                     child: Container(
+                      decoration: const ShapeDecoration(
+                        shadows: [
+                          BoxShadow(
+                            color: Color(0x7FB1D9D8),
+                            blurRadius: 6,
+                            offset: Offset(0, 4),
+                            spreadRadius: 0,
+                          ),
+                        ],
+                        color: Colors.white,
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius.only(
+                            topLeft: SmoothRadius(
+                                cornerRadius: 40, cornerSmoothing: 1),
+                            topRight: SmoothRadius(
+                                cornerRadius: 40, cornerSmoothing: 1),
+                          ),
+                        ),
+                      ),
                       padding: EdgeInsets.all(16.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -765,44 +785,83 @@ class _InventoryState extends State<Inventory> {
                           Text(
                             'Name of the product',
                             style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold),
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff0A4C61)),
                           ),
                           TextField(
                             controller: productController,
                             decoration: InputDecoration(
-                              hintText:
-                                  'Enter the name of the product you need',
-                            ),
+                                hintText:
+                                    'Enter the name of the product you need',
+                                hintStyle: TextStyle(
+                                    color: Color(0xff0A4C61).withOpacity(0.5))),
                           ),
-                          SizedBox(height: 16.0),
+                          SizedBox(height: 20.0),
                           Text(
                             'Volume needed',
                             style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold),
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff0A4C61)),
                           ),
                           TextField(
                             controller: volumeController,
                             decoration: InputDecoration(
-                              hintText: 'Mention the volume here',
-                            ),
+                                hintText: 'Mention the volume here',
+                                hintStyle: TextStyle(
+                                    color: Color(0xff0A4C61).withOpacity(0.5))),
                           ),
-                          SizedBox(height: 16.0),
+                          SizedBox(height: 20.0),
                           Text(
                             'Unit Type',
                             style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold),
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff0A4C61)),
                           ),
                           TextField(
                             controller: unitTypeController,
                             decoration: InputDecoration(
-                              hintText: 'Mention the unit type here',
+                                hintText: 'Mention the unit type here',
+                                hintStyle: TextStyle(
+                                    color: Color(0xff0A4C61).withOpacity(0.5))),
+                          ),
+                          SizedBox(height: 40.0),
+                          GestureDetector(
+                            onTap: addItem,
+                            child: Center(
+                              child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w, vertical: 1.h),
+                                  // margin: EdgeInsets.only(bottom: 2.h),
+                                  decoration: ShapeDecoration(
+                                    shadows: [
+                                      BoxShadow(
+                                        offset: const Offset(1, 4),
+                                        color:
+                                            Color(0xff0A4C61).withOpacity(0.45),
+                                        blurRadius: 30,
+                                      ),
+                                    ],
+                                    color: Color(0xff0A4C61),
+                                    shape: SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius(
+                                      cornerRadius: 13,
+                                      cornerSmoothing: 1,
+                                    )),
+                                  ),
+                                  child: Text(
+                                    'Add Item',
+                                    style: TextStyle(
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        fontSize: 16),
+                                  )),
                             ),
                           ),
-                          SizedBox(height: 16.0),
-                          ElevatedButton(
-                            onPressed: addItem,
-                            child: Text('Add item'),
-                          ),
+                          SizedBox(height: 25.0),
                         ],
                       ),
                     ),
@@ -1038,7 +1097,6 @@ class _InventoryState extends State<Inventory> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           GestureDetector(
-                           
                             onTap: showAddItemModal,
                             child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -1068,7 +1126,6 @@ class _InventoryState extends State<Inventory> {
                                       color: Colors.white,
                                       fontSize: 16),
                                 )),
-                        
                           ),
                           GestureDetector(
                             onTap: () async {
@@ -1076,7 +1133,7 @@ class _InventoryState extends State<Inventory> {
                                   stocksYouMayNeed.map((item) {
                                 return {
                                   "item_name": item['itemName'],
-                                  "qty": item['volumeLeft'],
+                                  "qty": int.parse(item['volumeLeft']),
                                   "unit_type": item['unitType']
                                 };
                               }).toList();
@@ -1094,8 +1151,7 @@ class _InventoryState extends State<Inventory> {
                                     context, resData['message']);
                               }
                             },
-                            child: 
-                            Container(
+                            child: Container(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 10.w, vertical: 1.h),
                                 // margin: EdgeInsets.only(bottom: 2.h),
@@ -1123,8 +1179,6 @@ class _InventoryState extends State<Inventory> {
                                       color: Colors.white,
                                       fontSize: 16),
                                 )),
-                        
-                        
                           ),
                         ],
                       ),
@@ -1138,8 +1192,6 @@ class _InventoryState extends State<Inventory> {
       },
     );
   }
-
-
 }
 
 class ImageWidgetInventory extends StatelessWidget {
