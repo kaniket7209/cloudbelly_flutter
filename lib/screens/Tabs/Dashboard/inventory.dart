@@ -855,9 +855,11 @@ Future<dynamic> StockYouMayNeedSheet(BuildContext context, List<dynamic> stocksY
                           item['isEditing'] = item['isEditing'] ?? false;
 
                           if (!volumeEditControllers.containsKey(index)) {
-                            volumeEditControllers[index] = TextEditingController(text: item['volumeLeft']);
+                            print("indexvolumeEditControllers  $index");
+                            volumeEditControllers[index] = TextEditingController(text: item['volumeLeft'],);
                           }
                           if (!unitTypeEditControllers.containsKey(index)) {
+                            print("indexunitTypeEditControllers $index");
                             unitTypeEditControllers[index] = TextEditingController(text: item['unitType']);
                           }
 
@@ -900,12 +902,16 @@ Future<dynamic> StockYouMayNeedSheet(BuildContext context, List<dynamic> stocksY
                                               SizedBox(
                                                 width: 80,
                                                 child: TextField(
+                                                  cursorColor: Color(0xff0A4C61),
                                                   textAlign: TextAlign.center,
                                                   controller: volumeEditControllers[index],
                                                   onChanged: (value) {
                                                     item['volumeLeft'] = value;
                                                   },
                                                   decoration: InputDecoration(
+                                                    fillColor:Color(0xff0A4C61) ,
+                                                    
+                                                    hoverColor: Color(0xff0A4C61),
                                                     border: OutlineInputBorder(
                                                       borderRadius: BorderRadius.circular(8.0),
                                                     ),
@@ -915,13 +921,18 @@ Future<dynamic> StockYouMayNeedSheet(BuildContext context, List<dynamic> stocksY
                                               SizedBox(
                                                 width: 80,
                                                 child: TextField(
+                                                  cursorColor: Color(0xff0A4C61),
                                                   textAlign: TextAlign.center,
                                                   controller: unitTypeEditControllers[index],
                                                   onChanged: (value) {
                                                     item['unitType'] = value;
                                                   },
                                                   decoration: InputDecoration(
+                                                     fillColor:Color(0xff0A4C61) ,
+                                                    
+                                                    hoverColor: Color(0xff0A4C61),
                                                     border: OutlineInputBorder(
+
                                                       borderRadius: BorderRadius.circular(8.0),
                                                     ),
                                                   ),
@@ -1027,7 +1038,6 @@ Future<dynamic> StockYouMayNeedSheet(BuildContext context, List<dynamic> stocksY
     },
   );
 }
-
 }
 
 class ImageWidgetInventory extends StatelessWidget {
