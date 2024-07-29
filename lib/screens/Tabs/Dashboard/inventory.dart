@@ -714,7 +714,7 @@ class _InventoryState extends State<Inventory> {
     );
   }
 
- Future<dynamic> StockYouMayNeedSheet(BuildContext context, List<dynamic> stocksYouMayNeed) {
+Future<dynamic> StockYouMayNeedSheet(BuildContext context, List<dynamic> stocksYouMayNeed) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -725,6 +725,9 @@ class _InventoryState extends State<Inventory> {
           TextEditingController productController = TextEditingController();
           TextEditingController volumeController = TextEditingController();
           TextEditingController unitTypeController = TextEditingController();
+          Map<int, TextEditingController> volumeEditControllers = {};
+          Map<int, TextEditingController> unitTypeEditControllers = {};
+
           print("stocksYouMayNeed  $stocksYouMayNeed");
 
           void addItem() {
@@ -850,8 +853,14 @@ class _InventoryState extends State<Inventory> {
                         itemBuilder: (context, index) {
                           final item = stocksYouMayNeed[index];
                           item['isEditing'] = item['isEditing'] ?? false;
-                          TextEditingController volumeEditController = TextEditingController(text: item['volumeLeft']);
-                          TextEditingController unitTypeEditController = TextEditingController(text: item['unitType']);
+
+                          if (!volumeEditControllers.containsKey(index)) {
+                            volumeEditControllers[index] = TextEditingController(text: item['volumeLeft']);
+                          }
+                          if (!unitTypeEditControllers.containsKey(index)) {
+                            unitTypeEditControllers[index] = TextEditingController(text: item['unitType']);
+                          }
+
                           return Container(
                             margin: EdgeInsets.symmetric(vertical: 8.0),
                             decoration: ShapeDecoration(
@@ -885,19 +894,16 @@ class _InventoryState extends State<Inventory> {
                                 children: [
                                   item['isEditing']
                                       ? Container(
-                                        
-                                        height: 4.h,
-                                        child: Row(
+                                          height: 4.h,
+                                          child: Row(
                                             children: [
                                               SizedBox(
                                                 width: 80,
                                                 child: TextField(
                                                   textAlign: TextAlign.center,
-                                                  controller: volumeEditController,
+                                                  controller: volumeEditControllers[index],
                                                   onChanged: (value) {
-                                                    setState(() {
-                                                      item['volumeLeft'] = value;
-                                                    });
+                                                    item['volumeLeft'] = value;
                                                   },
                                                   decoration: InputDecoration(
                                                     border: OutlineInputBorder(
@@ -910,11 +916,9 @@ class _InventoryState extends State<Inventory> {
                                                 width: 80,
                                                 child: TextField(
                                                   textAlign: TextAlign.center,
-                                                  controller: unitTypeEditController,
+                                                  controller: unitTypeEditControllers[index],
                                                   onChanged: (value) {
-                                                    setState(() {
-                                                      item['unitType'] = value;
-                                                    });
+                                                    item['unitType'] = value;
                                                   },
                                                   decoration: InputDecoration(
                                                     border: OutlineInputBorder(
@@ -933,7 +937,7 @@ class _InventoryState extends State<Inventory> {
                                               ),
                                             ],
                                           ),
-                                      )
+                                        )
                                       : GestureDetector(
                                           onTap: () {
                                             setState(() {
@@ -942,8 +946,8 @@ class _InventoryState extends State<Inventory> {
                                           },
                                           child: Container(
                                             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                                             width: 20.w,
-                                        height: 4.h,
+                                            width: 20.w,
+                                            height: 4.h,
                                             decoration: ShapeDecoration(
                                               shadows: [
                                                 BoxShadow(
@@ -974,6 +978,8 @@ class _InventoryState extends State<Inventory> {
                                     onPressed: () {
                                       setState(() {
                                         stocksYouMayNeed.removeAt(index);
+                                        volumeEditControllers.remove(index);
+                                        unitTypeEditControllers.remove(index);
                                       });
                                     },
                                   ),
@@ -1021,7 +1027,6 @@ class _InventoryState extends State<Inventory> {
     },
   );
 }
-
 
 }
 
