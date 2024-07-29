@@ -714,139 +714,147 @@ class _InventoryState extends State<Inventory> {
     );
   }
 
-  Future<dynamic> StockYouMayNeedSheet(
-      BuildContext context, List<dynamic> stocksYouMayNeed) {
-    return showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            TextEditingController productController = TextEditingController();
-            TextEditingController volumeController = TextEditingController();
-            print("stocksYouMayNeed  $stocksYouMayNeed");
+ Future<dynamic> StockYouMayNeedSheet(BuildContext context, List<dynamic> stocksYouMayNeed) {
+  return showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          TextEditingController productController = TextEditingController();
+          TextEditingController volumeController = TextEditingController();
+          TextEditingController unitTypeController = TextEditingController();
+          print("stocksYouMayNeed  $stocksYouMayNeed");
 
-            void addItem() {
-              String name = productController.text;
-              String volume = volumeController.text;
-              print('Product: $name, Volume: $volume');
-              setState(() {
-                stocksYouMayNeed.add({
-                  'itemName': name,
-                  'volume': volume,
-                  'volumeLeft': volume,
-                  'isEditing': false,
-                });
+          void addItem() {
+            String name = productController.text;
+            String volume = volumeController.text;
+            String unitType = unitTypeController.text;
+            print('Product: $name, Volume: $volume, Unit: $unitType');
+            setState(() {
+              stocksYouMayNeed.add({
+                'itemName': name,
+                'volume': volume,
+                'volumeLeft': volume,
+                'unitType': unitType,
+                'isEditing': false,
               });
-              Navigator.pop(context);
-            }
+            });
+            Navigator.pop(context);
+          }
 
-            void showAddItemModal() {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom),
-                    child: Container(
-                      padding: EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Name of the product',
-                            style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold),
+          void showAddItemModal() {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (BuildContext context) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: Container(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Name of the product',
+                          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                        ),
+                        TextField(
+                          controller: productController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter the name of the product you need',
                           ),
-                          TextField(
-                            controller: productController,
-                            decoration: InputDecoration(
-                              hintText:
-                                  'Enter the name of the product you need',
-                            ),
+                        ),
+                        SizedBox(height: 16.0),
+                        Text(
+                          'Volume needed',
+                          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                        ),
+                        TextField(
+                          controller: volumeController,
+                          decoration: InputDecoration(
+                            hintText: 'Mention the volume here',
                           ),
-                          SizedBox(height: 16.0),
-                          Text(
-                            'Volume needed',
-                            style: TextStyle(
-                                fontSize: 16.0, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 16.0),
+                        Text(
+                          'Unit Type',
+                          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                        ),
+                        TextField(
+                          controller: unitTypeController,
+                          decoration: InputDecoration(
+                            hintText: 'Mention the unit type here',
                           ),
-                          TextField(
-                            controller: volumeController,
-                            decoration: InputDecoration(
-                              hintText: 'Mention the volume here',
-                            ),
-                          ),
-                          SizedBox(height: 16.0),
-                          ElevatedButton(
-                            onPressed: addItem,
-                            child: Text('Add item'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              );
-            }
-
-            return DraggableScrollableSheet(
-              initialChildSize: 0.9,
-              expand: false,
-              builder: (context, scrollController) {
-                return Container(
-                  decoration: const ShapeDecoration(
-                    shadows: [
-                      BoxShadow(
-                        color: Color(0x7FB1D9D8),
-                        blurRadius: 6,
-                        offset: Offset(0, 4),
-                        spreadRadius: 0,
-                      ),
-                    ],
-                    color: Colors.white,
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius.only(
-                        topLeft:
-                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
-                        topRight:
-                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
-                      ),
+                        ),
+                        SizedBox(height: 16.0),
+                        ElevatedButton(
+                          onPressed: addItem,
+                          child: Text('Add item'),
+                        ),
+                      ],
                     ),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 10,),
-                      Container(
-                        padding: EdgeInsets.only(left: 5),
-                        alignment:Alignment.topLeft,
-                        child: Text(
-                          
-                          "Stocks you may need",
-                          style: TextStyle(
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xff0A4C61),
-                              fontSize: 26),
+                );
+              },
+            );
+          }
+
+          return DraggableScrollableSheet(
+            initialChildSize: 0.9,
+            expand: false,
+            builder: (context, scrollController) {
+              return Container(
+                decoration: const ShapeDecoration(
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x7FB1D9D8),
+                      blurRadius: 6,
+                      offset: Offset(0, 4),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                      topLeft: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                      topRight: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                    ),
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Column(
+                  children: [
+                    SizedBox(height: 10),
+                    Container(
+                      padding: EdgeInsets.only(left: 5),
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "Stocks you may need",
+                        style: TextStyle(
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xff0A4C61),
+                          fontSize: 26,
                         ),
                       ),
-                      SizedBox(height: 20,),
-                      Expanded(
-                        flex: 1,
-                        child: ListView.builder(
-                          controller: scrollController,
-                          itemCount: stocksYouMayNeed.length,
-                          itemBuilder: (context, index) {
-                            final item = stocksYouMayNeed[index];
-                            item['isEditing'] = false;
-                            return Container(
-                              
-                              
-                              decoration: ShapeDecoration(
+                    ),
+                    SizedBox(height: 20),
+                    Expanded(
+                      flex: 1,
+                      child: ListView.builder(
+                        controller: scrollController,
+                        itemCount: stocksYouMayNeed.length,
+                        itemBuilder: (context, index) {
+                          final item = stocksYouMayNeed[index];
+                          item['isEditing'] = item['isEditing'] ?? false;
+                          TextEditingController volumeEditController = TextEditingController(text: item['volumeLeft']);
+                          TextEditingController unitTypeEditController = TextEditingController(text: item['unitType']);
+                          return Container(
+                            margin: EdgeInsets.symmetric(vertical: 8.0),
+                            decoration: ShapeDecoration(
                               shadows: [
                                 BoxShadow(
                                   color: Color(0xffDBF5F5),
@@ -863,120 +871,158 @@ class _InventoryState extends State<Inventory> {
                                 ),
                               ),
                             ),
-                              child: ListTile(
-                                
-                                
-                                title: Text(
-                                  item['itemName'],
-                                  style: const TextStyle(
-                                    color:  Color(0xff0A4C61),
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Ubuntu'
-                                    ),
-                                  
-                                  ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          item['isEditing'] = true;
-                                        });
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 1),
-                                        width: 20.w,
-                                        height: 4.h,
-                                        decoration: ShapeDecoration(
-                                          shadows: [
-                                            BoxShadow(
-                                              color: Color(0xff5BA9C3)
-                                                  .withOpacity(0.5),
-                                              blurRadius: 20,
-                                              offset: Offset(0, 4),
-                                              spreadRadius: 0,
-                                            ),
-                                          ],
-                                          color: const Color(0xff5BA9C3),
-                                          shape: SmoothRectangleBorder(
-                                            borderRadius: SmoothBorderRadius(
-                                              cornerRadius: 13,
-                                              cornerSmoothing: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "${item['volumeLeft']}  ${item['unitType']}",
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon:
-                                          Icon(Icons.delete, color: Colors.red),
-                                      onPressed: () {
-                                        setState(() {
-                                          stocksYouMayNeed.removeAt(index);
-                                        });
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon:
-                                          Icon(Icons.edit, color: Colors.green),
-                                      onPressed: () {
-                                       
-                                      },
-                                    ),
-                                  ],
+                            child: ListTile(
+                              title: Text(
+                                item['itemName'],
+                                style: const TextStyle(
+                                  color: Color(0xff0A4C61),
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Ubuntu',
                                 ),
                               ),
-                            );
-                          },
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  item['isEditing']
+                                      ? Container(
+                                        
+                                        height: 4.h,
+                                        child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 80,
+                                                child: TextField(
+                                                  textAlign: TextAlign.center,
+                                                  controller: volumeEditController,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      item['volumeLeft'] = value;
+                                                    });
+                                                  },
+                                                  decoration: InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 80,
+                                                child: TextField(
+                                                  textAlign: TextAlign.center,
+                                                  controller: unitTypeEditController,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      item['unitType'] = value;
+                                                    });
+                                                  },
+                                                  decoration: InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(Icons.check, color: Colors.green),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    item['isEditing'] = false;
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                      )
+                                      : GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              item['isEditing'] = true;
+                                            });
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                                             width: 20.w,
+                                        height: 4.h,
+                                            decoration: ShapeDecoration(
+                                              shadows: [
+                                                BoxShadow(
+                                                  color: Color(0xff5BA9C3).withOpacity(0.5),
+                                                  blurRadius: 20,
+                                                  offset: Offset(0, 4),
+                                                  spreadRadius: 0,
+                                                ),
+                                              ],
+                                              color: const Color(0xff5BA9C3),
+                                              shape: SmoothRectangleBorder(
+                                                borderRadius: SmoothBorderRadius(
+                                                  cornerRadius: 13,
+                                                  cornerSmoothing: 1,
+                                                ),
+                                              ),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                "${item['volumeLeft']} ${item['unitType'] ?? ''}",
+                                                style: TextStyle(color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () {
+                                      setState(() {
+                                        stocksYouMayNeed.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          onPressed: showAddItemModal,
+                          child: Text('Add item'),
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
-                            onPressed: showAddItemModal,
-                            child: Text('Add item'),
                           ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                            onPressed: () {
-                              print(
-                                  'Stocks to be submitted: $stocksYouMayNeed');
-                            },
-                            child: Text('Submit'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          },
-        );
-      },
-    );
-  }
+                          onPressed: () {
+                            print('Stocks to be submitted: $stocksYouMayNeed');
+                          },
+                          child: Text('Submit'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+    },
+  );
+}
+
+
 }
 
 class ImageWidgetInventory extends StatelessWidget {
