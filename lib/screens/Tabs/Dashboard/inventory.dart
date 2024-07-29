@@ -18,7 +18,9 @@ import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -380,7 +382,7 @@ class _InventoryState extends State<Inventory> {
             const Spacer(),
             TouchableOpacity(
                 onTap: () {
-                  return StockYouMayNeedSheet(context);
+                  return StockYouMayNeedSheet(context, stocksYouMayNeed);
                 },
                 child: const SeeAllWidget()),
           ],
@@ -712,278 +714,263 @@ class _InventoryState extends State<Inventory> {
     );
   }
 
-  Future<dynamic> StockYouMayNeedSheet(BuildContext context) {
+  Future<dynamic> StockYouMayNeedSheet(
+      BuildContext context, List<dynamic> stocksYouMayNeed) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             TextEditingController productController = TextEditingController();
             TextEditingController volumeController = TextEditingController();
-            TextEditingController quantityController = TextEditingController();
-            List<Map<String, dynamic>> stocksYouMayNeed = [
-              {
-                'itemName': 'Green cabbage',
-                'image_url': '',
-                'runway': 3,
-                'volumeLeft': 5,
-                'unitType': 'kg',
-                'isAdding': false,
-                'quantity': 0,
-              },
-              {
-                'itemName': 'cabbage',
-                'image_url': '',
-                'runway': 5,
-                'volumeLeft': 10,
-                'unitType': 'kg',
-                'isAdding': false,
-                'quantity': 0,
-              },
-            ];
+            print("stocksYouMayNeed  $stocksYouMayNeed");
 
-            void handleAddQuantity(int index) {
+            void addItem() {
+              String name = productController.text;
+              String volume = volumeController.text;
+              print('Product: $name, Volume: $volume');
               setState(() {
-                stocksYouMayNeed[index]['isAdding'] = true;
-                quantityController.text =
-                    stocksYouMayNeed[index]['quantity'].toString();
+                stocksYouMayNeed.add({
+                  'itemName': name,
+                  'volume': volume,
+                  'volumeLeft': volume,
+                  'isEditing': false,
+                });
               });
+              Navigator.pop(context);
             }
 
-            void handleSaveQuantity(int index) {
-              setState(() {
-                stocksYouMayNeed[index]['quantity'] =
-                    int.tryParse(quantityController.text) ?? 0;
-                stocksYouMayNeed[index]['isAdding'] = false;
-              });
+            void showAddItemModal() {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (BuildContext context) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom),
+                    child: Container(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Name of the product',
+                            style: TextStyle(
+                                fontSize: 16.0, fontWeight: FontWeight.bold),
+                          ),
+                          TextField(
+                            controller: productController,
+                            decoration: InputDecoration(
+                              hintText:
+                                  'Enter the name of the product you need',
+                            ),
+                          ),
+                          SizedBox(height: 16.0),
+                          Text(
+                            'Volume needed',
+                            style: TextStyle(
+                                fontSize: 16.0, fontWeight: FontWeight.bold),
+                          ),
+                          TextField(
+                            controller: volumeController,
+                            decoration: InputDecoration(
+                              hintText: 'Mention the volume here',
+                            ),
+                          ),
+                          SizedBox(height: 16.0),
+                          ElevatedButton(
+                            onPressed: addItem,
+                            child: Text('Add item'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
             }
 
-            void handleCancelQuantity(int index) {
-              setState(() {
-                stocksYouMayNeed[index]['isAdding'] = false;
-              });
-            }
-
-            return SingleChildScrollView(
-              child: Container(
-                decoration: const ShapeDecoration(
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 35, cornerSmoothing: 1),
+            return DraggableScrollableSheet(
+              initialChildSize: 0.9,
+              expand: false,
+              builder: (context, scrollController) {
+                return Container(
+                  decoration: const ShapeDecoration(
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0x7FB1D9D8),
+                        blurRadius: 6,
+                        offset: Offset(0, 4),
+                        spreadRadius: 0,
+                      ),
+                    ],
+                    color: Colors.white,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.only(
+                        topLeft:
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                        topRight:
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                      ),
                     ),
                   ),
-                ),
-                height: MediaQuery.of(context).size.height * 0.6,
-                width: double.infinity,
-                padding: EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 20,
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        width: 65,
-                        height: 6,
-                        decoration: ShapeDecoration(
-                          color: const Color(0xFFFA6E00),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
+                  padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10,),
+                      Container(
+                        padding: EdgeInsets.only(left: 5),
+                        alignment:Alignment.topLeft,
+                        child: Text(
+                          
+                          "Stocks you may need",
+                          style: TextStyle(
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xff0A4C61),
+                              fontSize: 26),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Stocks you may need',
-                      style: TextStyle(
-                        color: Color(0xFF094B60),
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Column(
-                      children: [
-                        for (int index = 0;
-                            index < stocksYouMayNeed.length;
-                            index++)
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: Row(children: [
-                              const SizedBox(width: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    stocksYouMayNeed[index]['itemName'],
-                                    style: const TextStyle(
-                                      color: Color(0xFF094B60),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    stocksYouMayNeed[index]['runway'] < 0
-                                        ? '${stocksYouMayNeed[index]['volumeLeft']} ${stocksYouMayNeed[index]['unitType']} left and expired 8 days before'
-                                        : '${stocksYouMayNeed[index]['volumeLeft']} ${stocksYouMayNeed[index]['unitType']} for next ${stocksYouMayNeed[index]['runway']} days',
-                                    style: const TextStyle(
-                                      color: Color(0xFFFA6E00),
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              if (stocksYouMayNeed[index]['isAdding'] ==
-                                  true) ...[
-                                Container(
-                                  width: 50,
-                                  height: 30,
-                                  child: TextFormField(
-                                    controller: quantityController,
-                                    keyboardType: TextInputType.number,
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 5, horizontal: 10),
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.check,
-                                      color: Colors.green),
-                                  onPressed: () {
-                                    handleSaveQuantity(index);
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.cancel,
-                                      color: Colors.red),
-                                  onPressed: () {
-                                    handleCancelQuantity(index);
-                                  },
-                                ),
-                              ] else ...[
-                                GestureDetector(
-                                  onTap: () {
-                                    handleAddQuantity(index);
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          const Color.fromRGBO(84, 166, 193, 1),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      '${stocksYouMayNeed[index]['quantity']} kg',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.edit,
-                                      color: Color(0xFFFA6E00)),
-                                  onPressed: () {
-                                    handleAddQuantity(index);
-                                  },
+                      SizedBox(height: 20,),
+                      Expanded(
+                        flex: 1,
+                        child: ListView.builder(
+                          controller: scrollController,
+                          itemCount: stocksYouMayNeed.length,
+                          itemBuilder: (context, index) {
+                            final item = stocksYouMayNeed[index];
+                            item['isEditing'] = false;
+                            return Container(
+                              
+                              
+                              decoration: ShapeDecoration(
+                              shadows: [
+                                BoxShadow(
+                                  color: Color(0xffDBF5F5),
+                                  blurRadius: 20,
+                                  offset: Offset(0, 12),
+                                  spreadRadius: 0,
                                 ),
                               ],
-                              IconButton(
-                                icon: const Icon(Icons.cancel,
-                                    color: Colors.orange),
-                                onPressed: () {
-                                  setState(() {
-                                    stocksYouMayNeed.removeAt(index);
-                                  });
-                                },
+                              color: const Color(0xffD3EEEE),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 13,
+                                  cornerSmoothing: 1,
+                                ),
                               ),
-                            ]),
-                          ),
-                      ],
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                  bottom:
-                                      MediaQuery.of(context).viewInsets.bottom),
-                              child: Container(
-                                padding: EdgeInsets.all(16.0),
-                                child: Column(
+                            ),
+                              child: ListTile(
+                                
+                                
+                                title: Text(
+                                  item['itemName'],
+                                  style: const TextStyle(
+                                    color:  Color(0xff0A4C61),
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Ubuntu'
+                                    ),
+                                  
+                                  ),
+                                trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    TextField(
-                                      controller: productController,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Name of the product',
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          item['isEditing'] = true;
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 1),
+                                        width: 20.w,
+                                        height: 4.h,
+                                        decoration: ShapeDecoration(
+                                          shadows: [
+                                            BoxShadow(
+                                              color: Color(0xff5BA9C3)
+                                                  .withOpacity(0.5),
+                                              blurRadius: 20,
+                                              offset: Offset(0, 4),
+                                              spreadRadius: 0,
+                                            ),
+                                          ],
+                                          color: const Color(0xff5BA9C3),
+                                          shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                              cornerRadius: 13,
+                                              cornerSmoothing: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "${item['volumeLeft']}  ${item['unitType']}",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                    TextField(
-                                      controller: volumeController,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Volume needed',
-                                      ),
-                                      keyboardType: TextInputType.number,
-                                    ),
-                                    ElevatedButton(
+                                    IconButton(
+                                      icon:
+                                          Icon(Icons.delete, color: Colors.red),
                                       onPressed: () {
                                         setState(() {
-                                          stocksYouMayNeed.add({
-                                            'itemName': productController.text,
-                                            'image_url': '',
-                                            'runway': 0,
-                                            'volumeLeft': 0,
-                                            'unitType': 'kg',
-                                            'isAdding': false,
-                                            'quantity': 0,
-                                          });
+                                          stocksYouMayNeed.removeAt(index);
                                         });
-                                        Navigator.of(context).pop();
                                       },
-                                      child: const Text('Add item'),
+                                    ),
+                                    IconButton(
+                                      icon:
+                                          Icon(Icons.edit, color: Colors.green),
+                                      onPressed: () {
+                                       
+                                      },
                                     ),
                                   ],
                                 ),
                               ),
                             );
                           },
-                        );
-                      },
-                      child: const Text('Add Item'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Handle submit logic here
-                      },
-                      child: const Text('Submit'),
-                    ),
-                  ],
-                ),
-              ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            onPressed: showAddItemModal,
+                            child: Text('Add item'),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            onPressed: () {
+                              print(
+                                  'Stocks to be submitted: $stocksYouMayNeed');
+                            },
+                            child: Text('Submit'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
             );
           },
         );
@@ -1311,7 +1298,7 @@ class StocksMayBeNeedWidget extends StatelessWidget {
         children: [
           Container(
             height: 60,
-            width:60,
+            width: 60,
             decoration: ShapeDecoration(
               shadows: const [
                 BoxShadow(
@@ -1360,23 +1347,23 @@ class StocksMayBeNeedWidget extends StatelessWidget {
                   )
                 : url == '' && icon != ''
                     ? ClipSmoothRect(
-  radius: SmoothBorderRadius(
-    cornerRadius: 15,
-    cornerSmoothing: 1,
-  ),
-  child: Container(
-    child: Center(
-      child: Container(
-        width: 30,  // Half of the container width
-        height: 30, // Half of the container height
-        child: Image.asset(
-          icon,
-          fit: BoxFit.cover,
-        ),
-      ),
-    ),
-  ),
-)
+                        radius: SmoothBorderRadius(
+                          cornerRadius: 15,
+                          cornerSmoothing: 1,
+                        ),
+                        child: Container(
+                          child: Center(
+                            child: Container(
+                              width: 30, // Half of the container width
+                              height: 30, // Half of the container height
+                              child: Image.asset(
+                                icon,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
                     : null,
           ),
           Space(1.h),
@@ -1442,8 +1429,7 @@ class Make_Update_ListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return 
-    TouchableOpacity(
+    return TouchableOpacity(
       onTap: onTap,
       child: Container(
           height: 5.h,
@@ -1477,8 +1463,6 @@ class Make_Update_ListWidget extends StatelessWidget {
               ),
             ),
           )),
-
     );
-  
   }
 }
