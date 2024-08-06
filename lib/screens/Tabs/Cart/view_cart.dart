@@ -1367,29 +1367,35 @@ class _PriceWidgetState extends State<PriceWidget> {
   double? deliveryDistance;
   double? deliveryFee;
   String? errorMessage;
+  late ViewCartProvider _viewCartProvider;
 
   @override
   void initState() {
     super.initState();
-    fetchDeliveryFee();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchDeliveryFee();
+    });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    context.read<ViewCartProvider>().addListener(fetchDeliveryFee);
+    _viewCartProvider = Provider.of<ViewCartProvider>(context);
+    _viewCartProvider.addListener(fetchDeliveryFee);
   }
 
   @override
   void dispose() {
-    context.read<ViewCartProvider>().removeListener(fetchDeliveryFee);
+    _viewCartProvider.removeListener(fetchDeliveryFee);
     super.dispose();
   }
 
   Future<void> fetchDeliveryFee() async {
-    final addressModel = context.read<ViewCartProvider>().addressModel;
+    final addressModel = _viewCartProvider.addressModel;
 
-    if (addressModel == null || addressModel.latitude == null || addressModel.longitude == null) {
+    if (addressModel == null ||
+        addressModel.latitude == null ||
+        addressModel.longitude == null) {
       print("No address selected");
       setState(() {
         errorMessage = "No address selected";
@@ -1502,6 +1508,51 @@ class _PriceWidgetState extends State<PriceWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
+                "Distance ",
+                style: TextStyle(
+                  color: Color(0xFF2E0536),
+                  fontSize: 12,
+                  fontFamily: 'Product Sans Medium',
+                  fontWeight: FontWeight.w400,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Color(0xFF2E0536),
+                ),
+              ),
+              deliveryDistance == null
+                  ? errorMessage != null
+                      ? Text(
+                          errorMessage!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )
+                      : const SizedBox(
+                          width: 15,
+                          height: 15,
+                          child: CircularProgressIndicator(
+                            color: Color(0xff0A4C61),
+                            strokeWidth: 2,
+                          ),
+                        )
+                  : Text(
+                      "${deliveryDistance?.toStringAsFixed(1)} kms ",
+                      style: const TextStyle(
+                        color: Color(0xFF383838),
+                        fontSize: 14,
+                        fontFamily: 'Jost',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
                 "Delivery Fee ",
                 style: TextStyle(
                   color: Color(0xFF2E0536),
@@ -1513,16 +1564,26 @@ class _PriceWidgetState extends State<PriceWidget> {
                 ),
               ),
               deliveryFee == null
-                  ? const SizedBox(
-                      width: 15,
-                      height: 15,
-                      child: CircularProgressIndicator(
-                        color: Color(0xff0A4C61),
-                        strokeWidth: 2,
-                      ),
-                    )
+                  ? errorMessage != null
+                      ? Text(
+                          errorMessage!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )
+                      : const SizedBox(
+                          width: 15,
+                          height: 15,
+                          child: CircularProgressIndicator(
+                            color: Color(0xff0A4C61),
+                            strokeWidth: 2,
+                          ),
+                        )
                   : Text(
-                      "${deliveryDistance?.toStringAsFixed(1)} kms - Rs $deliveryFee",
+                      "Rs $deliveryFee",
                       style: const TextStyle(
                         color: Color(0xFF383838),
                         fontSize: 14,
@@ -1632,8 +1693,6 @@ class _PriceWidgetState extends State<PriceWidget> {
     );
   }
 }
-
-
 
 class policyWidgetCart extends StatelessWidget {
   const policyWidgetCart({
