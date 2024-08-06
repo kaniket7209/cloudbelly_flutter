@@ -1236,14 +1236,39 @@ class _ViewCartState extends State<ViewCart> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Rs ${totalAmount + totalAmount * 0.05 + 30 + 15}',
-                          style: const TextStyle(
-                            color: Color(0xFFF7F7F7),
-                            fontSize: 16,
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w600,
-                          ),
+                        // Text(
+                        //   'Rs ${totalAmount + totalAmount * 0.05 + 30 + 15}',
+
+                        //   style: const TextStyle(
+                        //     color: Color(0xFFF7F7F7),
+                        //     fontSize: 16,
+                        //     fontFamily: 'Jost',
+                        //     fontWeight: FontWeight.w600,
+                        //   ),
+                        // ),
+                        Consumer<CartProvider>(
+                          builder: (context, cartProvider, child) {
+                            double defaultTotalAmount =
+                                100.0; // Replace with the appropriate default amount if needed
+                            double totalAmount = cartProvider.totalAmount > 0
+                                ? cartProvider.totalAmount
+                                : defaultTotalAmount +
+                                    defaultTotalAmount * 0.05 +
+                                    30 +
+                                    15;
+
+                            return Text(
+                              cartProvider.totalAmount > 0
+                                  ? 'Rs ${totalAmount.toStringAsFixed(2)}'
+                                  : 'Please select location',
+                              style: const TextStyle(
+                                color: Color(0xFFF7F7F7),
+                                fontSize: 16,
+                                fontFamily: 'Jost',
+                                fontWeight: FontWeight.w600,
+                              ),
+                            );
+                          },
                         ),
                         const Text(
                           'View Detailed Bill',
@@ -1443,9 +1468,18 @@ class _PriceWidgetState extends State<PriceWidget> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         print("Data delivery: $data");
+
         setState(() {
           deliveryDistance = (data['distance'] as num).toDouble();
           deliveryFee = (data['price'] as num).toDouble();
+          // Calculate the new total amount
+          double totalAmount = widget.totalAmount +
+              widget.totalAmount * 0.05 +
+              (deliveryFee ?? 30) +
+              15;
+          // Update the CartProvider with the new total amount
+          Provider.of<CartProvider>(context, listen: false)
+              .updateTotalAmount(totalAmount);
         });
       } else {
         print("Failed to load delivery fee: ${response.body}");

@@ -50,8 +50,7 @@ void main() async {
   requestNotificationPermission();
   await FirebaseMessaging.instance.setAutoInitEnabled(true);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  
-  
+
   FlutterLocalNotificationsPlugin().initialize(
     const InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
@@ -66,7 +65,9 @@ void main() async {
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     showNotification(message);
     // Add the new notification to the provider
-    Provider.of<NotificationProvider>(navigatorKey.currentContext!, listen: false).addNotification({
+    Provider.of<NotificationProvider>(navigatorKey.currentContext!,
+            listen: false)
+        .addNotification({
       'title': message.notification?.title,
       'body': message.notification?.body,
       'data': message.data,
@@ -192,6 +193,7 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
             create: (ctx) => ViewCartProvider(),
           ),
+          ChangeNotifierProvider(create: (ctx) => CartProvider()),
           ChangeNotifierProvider(
             create: (ctx) => TransitionEffect(),
           ),
@@ -212,7 +214,8 @@ class MyApp extends StatelessWidget {
             ),
             initialRoute: WelcomeScreen.routeName,
             routes: {
-              CommonLoginScreen.routeName: (context) => const CommonLoginScreen(),
+              CommonLoginScreen.routeName: (context) =>
+                  const CommonLoginScreen(),
               // LoginScreen.routeName: (context) => LoginScreen(),
               '/map': (context) => MapScreen(),
               '/notifications': (context) => NotificationScreen(),
@@ -238,45 +241,43 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
-  Future<void> _checkLocationPermission(context) async {
-    PermissionStatus permission = await Permission.locationWhenInUse.status;
-    if (permission != PermissionStatus.granted) {
-      permission = await Permission.locationWhenInUse.request();
-    }
-    if (permission == PermissionStatus.granted) {
-      await _getCurrentLocation(context);
-    }
+
+Future<void> _checkLocationPermission(context) async {
+  PermissionStatus permission = await Permission.locationWhenInUse.status;
+  if (permission != PermissionStatus.granted) {
+    permission = await Permission.locationWhenInUse.request();
   }
+  if (permission == PermissionStatus.granted) {
+    await _getCurrentLocation(context);
+  }
+}
+
 Future<void> _getCurrentLocation(context) async {
   var _currentPosition;
   var address;
   var area;
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      _currentPosition = position;
+  try {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    _currentPosition = position;
 
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          _currentPosition?.latitude ?? 22.88689073443092,
-          _currentPosition?.longitude ?? 79.5086424934095);
-      if (placemarks.isNotEmpty) {
-        Placemark placemark = placemarks.first;
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+        _currentPosition?.latitude ?? 22.88689073443092,
+        _currentPosition?.longitude ?? 79.5086424934095);
+    if (placemarks.isNotEmpty) {
+      Placemark placemark = placemarks.first;
 
-        address =
-            '${placemark.street}, ${placemark.subLocality},${placemark.subAdministrativeArea}, ${placemark.locality}, ${placemark.administrativeArea},${placemark.country}, ${placemark.postalCode}';
-        area = '${placemark.administrativeArea}';
-
-        
-      } else {
-        address = 'Address not found';
-      }
-
-      
-      await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
-          _currentPosition?.latitude, _currentPosition?.longitude, area);
-          print("locLogmain.dart $_currentPosition  $area");
-
-    } catch (e) {
-      print('Error: $e');
+      address =
+          '${placemark.street}, ${placemark.subLocality},${placemark.subAdministrativeArea}, ${placemark.locality}, ${placemark.administrativeArea},${placemark.country}, ${placemark.postalCode}';
+      area = '${placemark.administrativeArea}';
+    } else {
+      address = 'Address not found';
     }
+
+    await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
+        _currentPosition?.latitude, _currentPosition?.longitude, area);
+    print("locLogmain.dart $_currentPosition  $area");
+  } catch (e) {
+    print('Error: $e');
   }
+}

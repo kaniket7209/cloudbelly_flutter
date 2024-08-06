@@ -29,3 +29,14 @@ class ViewCartProvider with ChangeNotifier {
     notifyListeners();
   }
 }
+
+class CartProvider with ChangeNotifier {
+  double _totalAmount = 0.0;
+
+  double get totalAmount => _totalAmount;
+
+  void updateTotalAmount(double amount) {
+    _totalAmount = amount;
+    notifyListeners();
+  }
+}
