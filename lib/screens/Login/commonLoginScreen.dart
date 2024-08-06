@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
@@ -392,272 +393,309 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
     );
   }
 
-  Future<void> openEnterOtpBottomSheet(
-      BuildContext context, String mobileNo) async {
-    List<String> otp = List.filled(6, '');
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            Future<void> resendOtp() async {
-              final res = await Provider.of<Auth>(context, listen: false)
-                  .sendOtp(mobileNo);
-              if (res == '200') {
-                // OTP sent successfully
-                Navigator.pop(context);
-                openEnterOtpBottomSheet(context, mobileNo);
-              } else {
-                print("Failed to send OTP. Error code: $res");
-              }
-            }
+ 
 
-            Future<void> _submitOtp() async {
-              final prefs = await SharedPreferences.getInstance();
-              print("otp is $otp");
-              final otpCode = otp.join();
-              print('Entered OTP: $otpCode');
-              final res = await Provider.of<Auth>(context, listen: false)
-                  .verifyOtp(mobileNo, otpCode);
 
-              if (res['code'] == 200) {
-                print('OTP verified successfully. Proceeding with login.');
+}
 
-                // Proceed with login
-                final logRes = await Provider.of<Auth>(context, listen: false)
-                    .commonLogin(context, mobileNo, '');
-                print("logRes $logRes");
+Future<void> openEnterOtpBottomSheet(
+    BuildContext context, String mobileNo) async {
+  List<String> otp = List.filled(6, '');
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return _EnterOtpBottomSheet(
+        mobileNo: mobileNo,
+        otp: otp,
+      );
+    },
+  );
+}
 
-                if (logRes['code'] == 200) {
-                  Navigator.pop(context);
-                  TOastNotification()
-                      .showSuccesToast(context, 'Login Successful');
-                  await prefs.remove('feedData');
-                  await prefs.remove('menuData');
-                  Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-                }
-                // else if (logRes['code'] == 201) {
+class _EnterOtpBottomSheet extends StatefulWidget {
+  final String mobileNo;
+  final List<String> otp;
 
-                //   TOastNotification()
-                //       .showSuccesToast(context, 'Registration Successful');
-                //   openThankYouScreen(context);
-                // }
-                else if (logRes['code'] == 400) {
-                  print("openEnterUserTypeBottomSheet");
-                  openEnterUserTypeBottomSheet(context, mobileNo);
-                } else {
-                  TOastNotification().showErrorToast(
-                      context, 'Unexpected error. Please try again');
-                }
-              } else {
-                print("Failed to verify OTP. : $res");
-                TOastNotification().showErrorToast(context, 'Wrong OTP');
-              }
-            }
+  _EnterOtpBottomSheet({required this.mobileNo, required this.otp});
 
-            return SingleChildScrollView(
-              child: Container(
-                decoration: const ShapeDecoration(
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x7FB1D9D8),
-                      blurRadius: 6,
-                      offset: Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                    ),
-                  ),
+  @override
+  __EnterOtpBottomSheetState createState() => __EnterOtpBottomSheetState();
+}
+
+class __EnterOtpBottomSheetState extends State<_EnterOtpBottomSheet> {
+  int _counter = 60; // Initialize the counter to 60 seconds
+  Timer? _timer; // Declare the Timer
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void startTimer() {
+    print("Starting timer...");
+    _timer?.cancel(); // Cancel any existing timer
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_counter > 0) {
+        setState(() {
+          _counter--;
+          print("Counter: $_counter");
+        });
+      } else {
+        _timer?.cancel();
+        print("Timer complete");
+      }
+    });
+    print("_timer initialized: $_timer");
+  }
+
+  Future<void> resendOtp() async {
+    final res = await Provider.of<Auth>(context, listen: false)
+        .sendOtp(widget.mobileNo);
+    if (res == '200') {
+      // OTP sent successfully
+      Navigator.pop(context);
+      await openEnterOtpBottomSheet(context, widget.mobileNo);
+    } else {
+      print("Failed to send OTP. Error code: $res");
+    }
+  }
+
+  Future<void> _submitOtp() async {
+    final prefs = await SharedPreferences.getInstance();
+    print("otp is ${widget.otp}");
+    final otpCode = widget.otp.join();
+    print('Entered OTP: $otpCode');
+    final res = await Provider.of<Auth>(context, listen: false)
+        .verifyOtp(widget.mobileNo, otpCode);
+
+    if (res['code'] == 200) {
+      print('OTP verified successfully. Proceeding with login.');
+
+      // Proceed with login
+      final logRes = await Provider.of<Auth>(context, listen: false)
+          .commonLogin(context, widget.mobileNo, '');
+      print("logRes $logRes");
+
+      if (logRes['code'] == 200) {
+        Navigator.pop(context);
+        TOastNotification()
+            .showSuccesToast(context, 'Login Successful');
+        await prefs.remove('feedData');
+        await prefs.remove('menuData');
+        Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+      } else if (logRes['code'] == 400) {
+        print("openEnterUserTypeBottomSheet");
+        await openEnterUserTypeBottomSheet(context, widget.mobileNo);
+      } else {
+        TOastNotification().showErrorToast(
+            context, 'Unexpected error. Please try again');
+      }
+    } else {
+      print("Failed to verify OTP. : $res");
+      TOastNotification().showErrorToast(context, 'Wrong OTP');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        decoration: const ShapeDecoration(
+          shadows: [
+            BoxShadow(
+              color: Color(0x7FB1D9D8),
+              blurRadius: 6,
+              offset: Offset(0, 4),
+              spreadRadius: 0,
+            ),
+          ],
+          color: Colors.white,
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius.only(
+              topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+              topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+            ),
+          ),
+        ),
+        padding: EdgeInsets.only(
+          left: 40,
+          right: 5,
+          top: 12,
+          bottom: MediaQuery.of(context).viewInsets.bottom / 1.5,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 30),
+            Container(
+              child: Text(
+                'Enter OTP',
+                style: TextStyle(
+                  color: Color(0xFF0A4C61),
+                  fontSize: 32,
+                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.w800,
+                  fontFamily: 'Product Sans Black',
                 ),
-                padding: EdgeInsets.only(
-                  left: 40,
-                  right: 5,
-                  top: 12,
-                  bottom: MediaQuery.of(context).viewInsets.bottom/2,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 30),
-                    Container(
-                      child: Text(
-                        'Enter OTP',
-                        style: TextStyle(
-                          color: Color(0xFF0A4C61),
-                          fontSize: 32,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.w800,
-                          fontFamily: 'Product Sans Black',
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 25),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: List.generate(6, (index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 10.0),
-                          child: Container(
-                            width: 45,
-                            height: 45,
-                            decoration: ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                  color: Color(0xffDBF5F5),
-                                  blurRadius: 20,
-                                  offset: Offset(0, 12),
-                                  spreadRadius: 0,
-                                ),
-                              ],
-                              color: const Color(0xffD3EEEE),
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 13,
-                                  cornerSmoothing: 1,
-                                ),
-                              ),
-                            ),
-                            child: Center(
-                              child: TextField(
-                                cursorColor: Color(0xff0A4C61),
-                                textAlign: TextAlign.center,
-                                keyboardType: TextInputType.number,
-                                maxLength: 1,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                ],
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  counterText: '',
-                                ),
-                                onChanged: (value) {
-                                  otp[index] = value;
-
-                                  if (value.length == 1) {
-                                    if (index != 5) {
-                                      FocusScope.of(context).nextFocus();
-                                    } else {
-                                      FocusScope.of(context).unfocus();
-                                    }
-                                  } else if (value.length == 0 && index != 0) {
-                                    otp[index] = '';
-                                    FocusScope.of(context).previousFocus();
-                                  }
-                                  print("otp ent $otp");
-                                },
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                    SizedBox(height: 16),
-                    Container(
-                      padding: EdgeInsets.only(right: 40),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            TextButton(
-                              onPressed: resendOtp,
-                              child: Text(
-                                'Resend',
-                                style: TextStyle(
-                                  color: Color(0xFFFB8020),
-                                  fontSize: 14,
-                                  fontFamily: 'Product Sans',
-                                ),
-                              ),
-                            ),
-                            Text(
-                              'OTP in',
-                              style: TextStyle(
-                                color: Color(0xFF0A4C61),
-                                fontSize: 14,
-                                fontFamily: 'Product Sans',
-                              ),
-                            ),
-                            Text(
-                              ' 60 seconds',
-                              style: TextStyle(
-                                color: Color(0xFF0A4C61),
-                                fontSize: 14,
-                                fontFamily: 'Product Sans',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 35),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(right: 40),
-                          child: Center(
-                            child: GestureDetector(
-                              onTap: _submitOtp,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 7.w, vertical: 1.h),
-                                decoration: ShapeDecoration(
-                                  shadows: [
-                                    BoxShadow(
-                                      offset: const Offset(5, 6),
-                                      color:
-                                          Color(0xffFA6E00).withOpacity(0.45),
-                                      blurRadius: 30,
-                                      spreadRadius: 0,
-                                    ),
-                                  ],
-                                  color: Color(0xffFA6E00),
-                                  shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius(
-                                      cornerRadius: 17,
-                                      cornerSmoothing: 1,
-                                    ),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Submit',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.14,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+              ),
+            ),
+            SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: List.generate(6, (index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: Container(
+                    width: 45,
+                    height: 45,
+                    decoration: ShapeDecoration(
+                      shadows: [
+                        BoxShadow(
+                          color: Color(0xffDBF5F5),
+                          blurRadius: 20,
+                          offset: Offset(0, 12),
+                          spreadRadius: 0,
                         ),
                       ],
+                      color: const Color(0xffD3EEEE),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 13,
+                          cornerSmoothing: 1,
+                        ),
+                      ),
                     ),
-                    SizedBox(height: 25),
+                    child: Center(
+                      child: TextField(
+                        cursorColor: Color(0xff0A4C61),
+                        textAlign: TextAlign.center,
+                        keyboardType: TextInputType.number,
+                        maxLength: 1,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          counterText: '',
+                        ),
+                        onChanged: (value) {
+                          widget.otp[index] = value;
+
+                          if (value.length == 1) {
+                            if (index != 5) {
+                              FocusScope.of(context).nextFocus();
+                            } else {
+                              FocusScope.of(context).unfocus();
+                            }
+                          } else if (value.length == 0 && index != 0) {
+                            widget.otp[index] = '';
+                            FocusScope.of(context).previousFocus();
+                          }
+                          print("otp ent ${widget.otp}");
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+            SizedBox(height: 16),
+            Container(
+              padding: EdgeInsets.only(right: 40),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (_counter > 0)
+                      Text(
+                        'Resend OTP in $_counter seconds',
+                        style: TextStyle(
+                          color: Color(0xFF0A4C61),
+                          fontSize: 14,
+                          fontFamily: 'Product Sans',
+                        ),
+                      )
+                    else
+                      TextButton(
+                        onPressed: resendOtp,
+                        child: Text(
+                          'Resend OTP',
+                          style: TextStyle(
+                            color: Color(0xFFFB8020),
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
-            );
-          },
-        );
-      },
+            ),
+            SizedBox(height: 35),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  padding: EdgeInsets.only(right: 40),
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: _submitOtp,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 7.w, vertical: 1.h),
+                        decoration: ShapeDecoration(
+                          shadows: [
+                            BoxShadow(
+                              offset: const Offset(5, 6),
+                              color: Color(0xffFA6E00).withOpacity(0.45),
+                              blurRadius: 30,
+                              spreadRadius: 0,
+                            ),
+                          ],
+                          color: Color(0xffFA6E00),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 17,
+                              cornerSmoothing: 1,
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
+          ],
+        ),
+      ),
     );
   }
+}
 Future<void> openEnterUserTypeBottomSheet(
     BuildContext context, String mobile_no) async {
   String? selectedUserType;
@@ -977,6 +1015,7 @@ Future<void> saveUserType(BuildContext context, String userType, String mobile_n
     TOastNotification().showErrorToast(context, 'Unexpected error. Please try again');
   }
 }
+
 Future<void> openThankYouScreen(BuildContext context) async {
   showModalBottomSheet(
     context: context,
@@ -1028,5 +1067,4 @@ Future<void> openThankYouScreen(BuildContext context) async {
     navigatorKey.currentState?.pop();
     navigatorKey.currentState?.pushReplacementNamed(Tabs.routeName);
   });
-}
 }
