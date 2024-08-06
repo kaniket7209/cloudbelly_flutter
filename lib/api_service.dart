@@ -2224,6 +2224,8 @@ Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, 
       return '-1';
     }
   }
+ 
+  
   Future<dynamic> cartInventory(List<dynamic> data) async {
     // id = '65e31e9f0bf98389f417cf71';
     final String url = 'https://app.cloudbelly.in/cart/add';

@@ -75,6 +75,7 @@ class PaymentOptions extends StatefulWidget {
   @override
   _PaymentOptionsState createState() => _PaymentOptionsState();
 }
+
 class _PaymentOptionsState extends State<PaymentOptions> {
   Uint8List? qrCode;
   XFile? paymentScreenshot;
@@ -364,219 +365,22 @@ class _PaymentOptionsState extends State<PaymentOptions> {
   }
 
   Widget buildContent(BuildContext context) {
-    if (isPaymentConfirmed || widget.paymentMode == 'cod'){
-        return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Add your Lottie animation asset here
-              Lottie.asset('assets/Animation - 1718049075869.json',
-                  width: 200, height: 150),
-              // const SizedBox(height: 20),
-              Space(2.h),
-              Container(
-                width: 55.w,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 15),
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                        cornerRadius: 12,
-                        cornerSmoothing: 1,
-                      ),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NotificationScreen(
-                            initialTabIndex: 0,
-                            redirect: true // Index of the " Order Tracking" tab
-                            ),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Track order',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              Space(2.h),
-              Container(
-                width: 55.w,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                        cornerRadius: 12,
-                        cornerSmoothing: 1,
-                      ),
-                    ),
-                  ),
-                  onPressed: () {
-                    // Add continue shopping functionality here
-                    Navigator.of(context).pop();
-                     Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    'Continue shopping',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-        
-    }
-    else {
-    return Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Name - ${widget.prepData['store_name']}',
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4), // Add space between lines
-                      Text(
-                        'Order No - ${widget.prepData['order_no']}',
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: GestureDetector(
-                      onTap: () async {
-                        final phoneNumber = widget.prepData['phone'];
-                        final url = 'tel:$phoneNumber';
-                        if (await canLaunch(url)) {
-                          await launch(url);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Could not launch phone call')),
-                          );
-                        }
-                      },
-                      child: CircleAvatar(
-                        backgroundColor: const Color(0xFFFA6E00),
-                        child: Image.asset('assets/images/Phone.png'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              if (qrCode != null)
-                Image.memory(
-                  qrCode!,
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.contain,
-                ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.sellerUpi,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.copy, color: Colors.white),
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: widget.sellerUpi));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('UPI ID copied to clipboard')),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                        cornerRadius: 12,
-                        cornerSmoothing: 1,
-                      ),
-                    ),
-                  ),
-                  onPressed: () => pickPaymentScreenshot(),
-                  child: const Text(
-                    'Upload payment screenshot',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              if (paymentScreenshot != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    'Screenshot selected: ${paymentScreenshot!.name}',
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ),
-            ],
-          );
-  }}
-
- List<Widget> buildActions(BuildContext context) {
-  return (!isPaymentConfirmed && widget.paymentMode != 'cod')
-      ? [
-          SizedBox(
-            width: double.infinity,
+    if (isPaymentConfirmed || widget.paymentMode == 'cod') {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Add your Lottie animation asset here
+          Lottie.asset('assets/Animation - 1718049075869.json',
+              width: 200, height: 150),
+          // const SizedBox(height: 20),
+          Space(2.h),
+          Container(
+            width: 55.w,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
-                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
                     cornerRadius: 12,
@@ -584,9 +388,164 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                   ),
                 ),
               ),
-              onPressed: () => uploadPaymentScreenshot(),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NotificationScreen(
+                        initialTabIndex: 0,
+                        redirect: true // Index of the " Order Tracking" tab
+                        ),
+                  ),
+                );
+              },
               child: const Text(
-                'Transferred, notify the seller',
+                'Track order',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          Space(2.h),
+          Container(
+            width: 55.w,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 1,
+                  ),
+                ),
+              ),
+              onPressed: () {
+                // Add continue shopping functionality here
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Continue shopping',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Name - ${widget.prepData['store_name']}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 4), // Add space between lines
+                  Text(
+                    'Order No - ${widget.prepData['order_no']}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: GestureDetector(
+                  onTap: () async {
+                    final phoneNumber = widget.prepData['phone'];
+                    final url = 'tel:$phoneNumber';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Could not launch phone call')),
+                      );
+                    }
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: const Color(0xFFFA6E00),
+                    child: Image.asset('assets/images/Phone.png'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          if (qrCode != null)
+            Image.memory(
+              qrCode!,
+              width: 200,
+              height: 200,
+              fit: BoxFit.contain,
+            ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                widget.sellerUpi,
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.copy, color: Colors.white),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: widget.sellerUpi));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('UPI ID copied to clipboard')),
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(250, 110, 0, 1),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 1,
+                  ),
+                ),
+              ),
+              onPressed: () => pickPaymentScreenshot(),
+              child: const Text(
+                'Upload payment screenshot',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.white,
@@ -595,28 +554,68 @@ class _PaymentOptionsState extends State<PaymentOptions> {
               ),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Container(
+          if (paymentScreenshot != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                'Screenshot selected: ${paymentScreenshot!.name}',
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            ),
+        ],
+      );
+    }
+  }
+
+  List<Widget> buildActions(BuildContext context) {
+    return (!isPaymentConfirmed && widget.paymentMode != 'cod')
+        ? [
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(84, 166, 193, 1),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 12,
+                      cornerSmoothing: 1,
+                    ),
+                  ),
+                ),
+                onPressed: () => uploadPaymentScreenshot(),
                 child: const Text(
-                  '**Third party payment is not allowed',
+                  'Transferred, notify the seller',
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 14,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ],
-          ),
-          Space(1.h)
-        ]
-      : [];
-}
-
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Container(
+                  child: const Text(
+                    '**Third party payment is not allowed',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Space(1.h)
+          ]
+        : [];
+  }
 }
 
 // show payment method section
@@ -758,7 +757,8 @@ void showPaymentMethodSelection(BuildContext context, String orderFromUserId,
     },
   );
 }
-Future<void> submitCustomerOrder (
+
+Future<void> submitCustomerOrder(
     // for cod
     BuildContext context,
     String orderId,
@@ -835,14 +835,16 @@ class _ViewCartState extends State<ViewCart> {
   Map<String, dynamic> response = {};
   String? orderId;
   List<Map<String, dynamic>> convertedList = [];
-  final Razorpay _razorpay = Razorpay();
-  bool _isBottomSheetOpen = false;
+  String customer_lat = "";
+  String customer_lon = "";
+  // final Razorpay _razorpay = Razorpay();
+  // bool _isBottomSheetOpen = false;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
     setState(() {
       calculateTotalAmount();
     });
@@ -928,7 +930,7 @@ class _ViewCartState extends State<ViewCart> {
       if (response['message'] == 'Order processed successfully') {
         var orderId = response['order_id'];
         var sellerUpi = response['data']['seller_upi'];
-       
+
         var prepData = response['data'];
         print("sellerUpi  $sellerUpi");
         Navigator.pop(context);
@@ -939,24 +941,6 @@ class _ViewCartState extends State<ViewCart> {
         TOastNotification().showErrorToast(context, response['error']);
       }
       setState(() {});
-    }
-  }
-
-  void openCheckout() async {
-    var options = {
-      'key': 'rzp_live_ILgsfZCZoFIKMb',
-      'amount': getprice(),
-      'name': 'Cloudbelly ',
-      'description': 'Fine T-Shirt',
-      'retry': {'enabled': true, 'max_count': 1},
-      'send_sms_hash': true,
-      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
-    };
-    try {
-      _razorpay.open(options);
-    } catch (e) {
-      print("Error opening Razorpay: $e");
-      TOastNotification().showErrorToast(context, "Error opening Razorpay: $e");
     }
   }
 
@@ -978,41 +962,6 @@ class _ViewCartState extends State<ViewCart> {
     print("getprice res $sum");
     return sum.toInt();
   }
-
-  // void openCheckout(orderId) async {
-  //   print("In side open");
-  //   var id = Provider.of<ViewCartProvider>(context, listen: false).SellterId;
-  //   final temp =
-  //       await Provider.of<Auth>(context, listen: false).getUserInfo([id]);
-  //   print("temp is");
-  //   print(temp);
-  //   if (temp.length == 0 || temp[0]['bank_name'] == null) {
-  //     return;
-  //   }
-  //   var options = {
-  //     'key': 'rzp_live_Aq1zY9rLf3Fw1H',
-  //     'amount': getprice(),
-  //     'name': temp[0]['bank_name'],
-  //     'description': 'Fine T-Shirt',
-  //     'retry': {'enabled': true, 'max_count': 1},
-  //     'send_sms_hash': true,
-  //     'order_id': orderId,
-  //     'prefill': {'email': temp[0]['email'], "contact": "7003988299"},
-  //   };
-  //   print("options");
-  //   print(options);
-
-  //   // dynamic response = await Provider.of<Auth>(context, listen: false)
-  //   //     .submitOrder(orderId, "Cash", id);
-  //   _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
-  //   _razorpay.open(options);
-  // }
-
-  // void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-  //   print("successResponse:: ${response.data.toString()}");
-
-  //   submitOrder();
-  // }
 
   void submitOrder() async {
     print("hdjnvd");
@@ -1050,6 +999,7 @@ class _ViewCartState extends State<ViewCart> {
   @override
   Widget build(BuildContext context) {
     var id = Provider.of<ViewCartProvider>(context, listen: false).SellterId;
+
     // final temp = Provider.of<Auth>(context, listen: false).getUserInfo([id]);
 
     // print('storetemp  ${temp[0]['store_name']}');
@@ -1248,6 +1198,7 @@ class _ViewCartState extends State<ViewCart> {
                 const Space(16),
                 PriceWidget(
                   totalAmount: totalAmount,
+                  sellerId: id,
                 ),
                 Space(4.h),
                 TextWidgetCart(
@@ -1326,7 +1277,6 @@ class _ViewCartState extends State<ViewCart> {
                         });
                         // print("convertedList  $convertedList");
                         createProductOrder();
-                         
                       },
                       child: Container(
                         height: 41,
@@ -1404,27 +1354,123 @@ class DeliveryInstructionWidgetCart extends StatelessWidget {
 }
 
 class PriceWidget extends StatefulWidget {
-  PriceWidget({super.key, required this.totalAmount});
+  final double totalAmount;
+  final String sellerId;
 
-  double totalAmount;
+  PriceWidget({super.key, required this.totalAmount, required this.sellerId});
 
   @override
   State<PriceWidget> createState() => _PriceWidgetState();
 }
 
 class _PriceWidgetState extends State<PriceWidget> {
+  double? deliveryDistance;
+  double? deliveryFee;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDeliveryFee();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    context.read<ViewCartProvider>().addListener(fetchDeliveryFee);
+  }
+
+  @override
+  void dispose() {
+    context.read<ViewCartProvider>().removeListener(fetchDeliveryFee);
+    super.dispose();
+  }
+
+  Future<void> fetchDeliveryFee() async {
+    final addressModel = context.read<ViewCartProvider>().addressModel;
+
+    if (addressModel == null || addressModel.latitude == null || addressModel.longitude == null) {
+      print("No address selected");
+      setState(() {
+        errorMessage = "No address selected";
+      });
+      return;
+    }
+
+    final String latitude = addressModel.latitude ?? '';
+    final String longitude = addressModel.longitude ?? '';
+
+    if (latitude.isEmpty || longitude.isEmpty) {
+      print("Invalid latitude or longitude values");
+      setState(() {
+        errorMessage = "Invalid latitude or longitude values";
+      });
+      return;
+    }
+
+    final double? customerLat = double.tryParse(latitude);
+    final double? customerLon = double.tryParse(longitude);
+
+    if (customerLat == null || customerLon == null) {
+      print("Invalid latitude or longitude values");
+      setState(() {
+        errorMessage = "Invalid latitude or longitude values";
+      });
+      return;
+    }
+
+    final String url = 'https://app.cloudbelly.in/get_distance';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'latitude': customerLat,
+          'longitude': customerLon,
+          'seller_user_id': widget.sellerId
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print("Data delivery: $data");
+        setState(() {
+          deliveryDistance = (data['distance'] as num).toDouble();
+          deliveryFee = (data['price'] as num).toDouble();
+        });
+      } else {
+        print("Failed to load delivery fee: ${response.body}");
+        setState(() {
+          errorMessage = "Failed to load delivery fee";
+        });
+      }
+    } catch (e) {
+      print("Error: $e");
+      setState(() {
+        errorMessage = "Error: $e";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      //height: 200,
       width: double.infinity,
       padding: const EdgeInsets.all(18),
-      decoration: GlobalVariables().ContainerDecoration(
-          offset: const Offset(0, 4),
-          blurRadius: 15,
-          shadowColor: const Color.fromRGBO(188, 115, 188, 0.2),
-          boxColor: Colors.white,
-          cornerRadius: 25),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            offset: const Offset(0, 4),
+            blurRadius: 15,
+            color: const Color.fromRGBO(188, 115, 188, 0.2),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1451,11 +1497,11 @@ class _PriceWidgetState extends State<PriceWidget> {
               ),
             ],
           ),
-          const Space(6),
-          const Row(
+          const SizedBox(height: 6),
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 "Delivery Fee ",
                 style: TextStyle(
                   color: Color(0xFF2E0536),
@@ -1466,21 +1512,31 @@ class _PriceWidgetState extends State<PriceWidget> {
                   decorationColor: Color(0xFF2E0536),
                 ),
               ),
-              Text(
-                "Rs 30",
-                style: TextStyle(
-                  color: Color(0xFF383838),
-                  fontSize: 14,
-                  fontFamily: 'Jost',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              deliveryFee == null
+                  ? const SizedBox(
+                      width: 15,
+                      height: 15,
+                      child: CircularProgressIndicator(
+                        color: Color(0xff0A4C61),
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Text(
+                      "${deliveryDistance?.toStringAsFixed(1)} kms - Rs $deliveryFee",
+                      style: const TextStyle(
+                        color: Color(0xFF383838),
+                        fontSize: 14,
+                        fontFamily: 'Jost',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
             ],
           ),
-          const Row(
+          const SizedBox(height: 6),
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 "Packing Charge ",
                 style: TextStyle(
                   color: Color(0xFF2E0536),
@@ -1491,7 +1547,7 @@ class _PriceWidgetState extends State<PriceWidget> {
                   decorationColor: Color(0xFF2E0536),
                 ),
               ),
-              Text(
+              const Text(
                 "Rs 15",
                 style: TextStyle(
                   color: Color(0xFF383838),
@@ -1502,7 +1558,7 @@ class _PriceWidgetState extends State<PriceWidget> {
               ),
             ],
           ),
-          const Space(10),
+          const SizedBox(height: 10),
           const Text(
             "Save Rs 10 on delivery fee by ordering above Rs 159",
             style: TextStyle(
@@ -1512,37 +1568,12 @@ class _PriceWidgetState extends State<PriceWidget> {
               fontWeight: FontWeight.w400,
             ),
           ),
-          const Space(5.5),
+          const SizedBox(height: 5.5),
           const Divider(
             color: Color(0xFFBB5104),
             thickness: 0.5,
           ),
-          const Space(14.5),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Text(
-          //       "Delivery Tip",
-          //       style: TextStyle(
-          //         color: Color(0xFF2E0536),
-          //         fontSize: 16,
-          //         fontFamily: 'Product Sans Medium',
-          //         fontWeight: FontWeight.w500,
-          //       ),
-          //     ),
-          //     Text(
-          //       "Add tip",
-          //       style: TextStyle(
-          //         color: Color(0xFFD382E3),
-          //         fontSize: 14,
-          //         fontFamily: 'Jost',
-          //         fontWeight: FontWeight.w600,
-          //       ),
-          //     ),
-          //   ],
-          // ),
-
-          // Space(6),
+          const SizedBox(height: 14.5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1568,7 +1599,7 @@ class _PriceWidgetState extends State<PriceWidget> {
               ),
             ],
           ),
-          const Space(20),
+          const SizedBox(height: 20),
           const Divider(
             color: Color(0xFFBB5104),
             thickness: 0.5,
@@ -1586,7 +1617,7 @@ class _PriceWidgetState extends State<PriceWidget> {
                 ),
               ),
               Text(
-                "Rs ${widget.totalAmount + widget.totalAmount * 0.05 + 30 + 15}",
+                "Rs ${(widget.totalAmount + widget.totalAmount * 0.05 + (deliveryFee ?? 30) + 15).toStringAsFixed(2)}",
                 style: const TextStyle(
                   color: Color(0xFFFA6E00),
                   fontSize: 16,
@@ -1601,6 +1632,8 @@ class _PriceWidgetState extends State<PriceWidget> {
     );
   }
 }
+
+
 
 class policyWidgetCart extends StatelessWidget {
   const policyWidgetCart({
