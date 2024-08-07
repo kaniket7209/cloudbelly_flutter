@@ -193,9 +193,37 @@ class Auth with ChangeNotifier {
   }
 
   // Auth._internal();
-  void getToken(String? token) {
+  void getToken(String? token) async {
     fcmToken = token;
+    await updateFcmToken(fcmToken);
     notifyListeners();
+  }
+Future<String> updateFcmToken(
+
+     fcm_token) async {
+    final String url = 'https://app.cloudbelly.in/update-user';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      'fcm_token':fcm_token
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+
+      print("updated fcm token  ${jsonEncode(response.body)}");
+      return jsonDecode((response.body))['message'];
+    } catch (error) {
+      notifyListeners();
+
+      // Handle exceptions
+      return '-1';
+    }
   }
 
   bannerTogger(ProductDetails item) {
