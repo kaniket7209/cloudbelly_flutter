@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class StocksYouMayNeedBottomSheet {
-  Future<dynamic> StockYouMayNeedSheet(
+   Future<dynamic> StockYouMayNeedSheet(
       BuildContext context, List<dynamic> stocksYouMayNeed) {
     return showModalBottomSheet(
       context: context,
@@ -271,53 +271,130 @@ class StocksYouMayNeedBottomSheet {
                                               children: [
                                                 SizedBox(
                                                   width: 80,
-                                                  child: TextField(
-                                                    cursorColor:
-                                                        Color(0xff0A4C61),
-                                                    textAlign: TextAlign.center,
-                                                    controller:
-                                                        volumeEditControllers[
-                                                            index],
-                                                    onChanged: (value) {
-                                                      item['volumeLeft'] =
-                                                          value;
-                                                    },
-                                                    decoration: InputDecoration(
-                                                      fillColor:
+                                                  child: Center(
+                                                    child: TextField(
+                                                      cursorColor:
                                                           Color(0xff0A4C61),
-                                                      hoverColor:
-                                                          Color(0xff0A4C61),
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                          color: Color(
+                                                              0xff0A4C61)),
+                                                      controller:
+                                                          volumeEditControllers[
+                                                              index],
+                                                      onChanged: (value) {
+                                                        item['volumeLeft'] =
+                                                            value;
+                                                      },
+                                                      decoration:
+                                                          InputDecoration(
+                                                            contentPadding: EdgeInsets.symmetric(vertical: 0), 
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Color(
+                                                                0xff0A4C61),
+                                                          ),
+                                                        ),
+                                                        enabledBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Color(
+                                                                0xff0A4C61),
+                                                          ),
+                                                        ),
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Color(
+                                                                0xff0A4C61),
+                                                          ),
+                                                        ),
+                                                        fillColor:
+                                                            Color(0xff0A4C61),
+                                                        hoverColor:
+                                                            Color(0xff0A4C61),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
                                                   width: 80,
-                                                  child: TextField(
-                                                    cursorColor:
-                                                        Color(0xff0A4C61),
-                                                    textAlign: TextAlign.center,
-                                                    controller:
-                                                        unitTypeEditControllers[
-                                                            index],
-                                                    onChanged: (value) {
-                                                      item['unitType'] = value;
-                                                    },
-                                                    decoration: InputDecoration(
-                                                      fillColor:
+                                                  child: Center(
+                                                    child: TextField(
+                                                      cursorColor:
                                                           Color(0xff0A4C61),
-                                                      hoverColor:
-                                                          Color(0xff0A4C61),
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                          color: Color(
+                                                              0xff0A4C61)),
+                                                      controller:
+                                                          unitTypeEditControllers[
+                                                              index],
+                                                      onChanged: (value) {
+                                                        item['unitType'] =
+                                                            value;
+                                                      },
+                                                      decoration:
+                                                          InputDecoration(
+                                                            contentPadding: EdgeInsets.symmetric(vertical: 0), 
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Color(
+                                                                0xff0A4C61),
+                                                          ),
+                                                        ),
+                                                        enabledBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Color(
+                                                                0xff0A4C61),
+                                                          ),
+                                                        ),
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Color(
+                                                                0xff0A4C61),
+                                                          ),
+                                                        ),
+                                                        fillColor:
+                                                            Color(0xff0A4C61),
+                                                        hoverColor:
+                                                            Color(0xff0A4C61),
                                                       ),
                                                     ),
                                                   ),
@@ -490,6 +567,7 @@ class StocksYouMayNeedBottomSheet {
       },
     );
   }
+
 }
 
 class ItemsView extends StatefulWidget {

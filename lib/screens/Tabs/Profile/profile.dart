@@ -1981,6 +1981,7 @@ class _MenuState extends State<Menu> {
   void fetchUserDetailsbyKey() async {
     final res = await getUserDetailsbyKey(widget.user, ['store_availability']);
     // print(" resss ${json.encode(res)}");
+    if( res['store_availability'] != null)
     setState(() {
       storeAvailability = res['store_availability'] ?? true;
     });
