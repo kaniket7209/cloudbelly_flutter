@@ -31,7 +31,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'screens/Tabs/Profile/profile_view.dart';
 
 @pragma('vm:entry-point')
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+   await Firebase.initializeApp();
   showNotification(message);
   print("Handling a background message: ${message.notification!.body}");
 }
@@ -41,16 +43,18 @@ void main() async {
   HttpOverrides.global = MyHttpOverrides();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: "AIzaSyB3UySbCaiXjC_bh2h9JAjTKvbeUVA1OmQ",
+     apiKey: "AIzaSyB3UySbCaiXjC_bh2h9JAjTKvbeUVA1OmQ",
       appId: "1:508708683425:android:fcfeda59f64fd186e9bae0",
       messagingSenderId: "508708683425",
       projectId: "cloudbelly-d97a9",
     ),
   );
 
-  requestNotificationPermission();
-  await FirebaseMessaging.instance.setAutoInitEnabled(true);
+  await requestNotificationPermission();
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  await initializeNotification();
 
   FlutterLocalNotificationsPlugin().initialize(
     const InitializationSettings(
@@ -63,6 +67,7 @@ void main() async {
       }
     },
   );
+
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     showNotification(message);
     // Add the new notification to the provider
@@ -79,8 +84,7 @@ void main() async {
       print('Message also contained a notification: ${message.notification}');
     }
   });
-  
-  await initializeNotification();
+
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await UserPreferences.init();
   final fcmToken = await FirebaseMessaging.instance.getToken();
@@ -89,13 +93,16 @@ void main() async {
   Auth().getToken(fcmToken);
   Auth().getUserData();
 
-  initUniLinks();
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => Auth()),
-    ChangeNotifierProvider(create: (_) => NotificationProvider()),
-  ], child: const MyApp()));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => Auth()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
-
 Future<void> requestNotificationPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
@@ -110,28 +117,28 @@ Future<void> requestNotificationPermission() async {
   print('User granted permission: ${settings.authorizationStatus}');
 }
 
-Future<void> showNotification(RemoteMessage message) async {
-  var androidChannel = const AndroidNotificationDetails(
-    'CHANNEL_ID',
-    'CHANNEL_NAME',
-    channelDescription: 'CHANNEL_DESCRIPTION',
-    importance: Importance.high,
-    priority: Priority.high,
-    color: Colors.blue, // Customize color
-    enableLights: true,
-    enableVibration: true,
-    playSound: true,
-    icon: '@mipmap/ic_launcher', // Customize icon if needed
-  );
-  var platformChannel = NotificationDetails(android: androidChannel);
-  FlutterLocalNotificationsPlugin().show(
-    message.hashCode,
-    message.notification?.title,
-    message.notification?.body,
-    platformChannel,
-    payload: message.data['type'], // Add payload data
-  );
-}
+// Future<void> showNotification(RemoteMessage message) async {
+//   var androidChannel = const AndroidNotificationDetails(
+//     'CHANNEL_ID',
+//     'CHANNEL_NAME',
+//     channelDescription: 'CHANNEL_DESCRIPTION',
+//     importance: Importance.high,
+//     priority: Priority.high,
+//     color: Colors.blue, // Customize color
+//     enableLights: true,
+//     enableVibration: true,
+//     playSound: true,
+//     icon: '@mipmap/ic_launcher', // Customize icon if needed
+//   );
+//   var platformChannel = NotificationDetails(android: androidChannel);
+//   FlutterLocalNotificationsPlugin().show(
+//     message.hashCode,
+//     message.notification?.title,
+//     message.notification?.body,
+//     platformChannel,
+//     payload: message.data['type'], // Add payload data
+//   );
+// }
 
 void handleNotificationClick(String payload) {
   if (payload == 'order') {
