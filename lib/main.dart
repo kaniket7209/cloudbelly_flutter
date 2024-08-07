@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloudbelly_app/NotificationScree.dart';
+import 'package:cloudbelly_app/notification_service.dart';
 import 'package:cloudbelly_app/screens/Login/commonLoginScreen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_share_post.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -78,6 +79,8 @@ void main() async {
       print('Message also contained a notification: ${message.notification}');
     }
   });
+  
+  await initializeNotification();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await UserPreferences.init();
   final fcmToken = await FirebaseMessaging.instance.getToken();
