@@ -193,7 +193,7 @@ class StocksYouMayNeedBottomSheet {
                     ),
                   ),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: Column(
                     children: [
                       SizedBox(height: 10),
@@ -263,6 +263,7 @@ class StocksYouMayNeedBottomSheet {
                                 ),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     item['isEditing']
                                         ? Container(
@@ -278,8 +279,11 @@ class StocksYouMayNeedBottomSheet {
                                                       textAlign:
                                                           TextAlign.center,
                                                       style: TextStyle(
-                                                          color: Color(
-                                                              0xff0A4C61)),
+                                                          color: Colors.white,
+                                                          fontFamily:
+                                                              'Product Sans',
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                       controller:
                                                           volumeEditControllers[
                                                               index],
@@ -289,7 +293,16 @@ class StocksYouMayNeedBottomSheet {
                                                       },
                                                       decoration:
                                                           InputDecoration(
-                                                            contentPadding: EdgeInsets.symmetric(vertical: 0), 
+                                                          
+                                                        filled:
+                                                            true, // Add this line
+                                                        fillColor: Color(
+                                                            0xff70BAD2), // Set your desired background color here
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        0),
                                                         border:
                                                             OutlineInputBorder(
                                                           borderRadius:
@@ -299,7 +312,7 @@ class StocksYouMayNeedBottomSheet {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
                                                         enabledBorder:
@@ -311,7 +324,7 @@ class StocksYouMayNeedBottomSheet {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
                                                         focusedBorder:
@@ -323,17 +336,15 @@ class StocksYouMayNeedBottomSheet {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
-                                                        fillColor:
-                                                            Color(0xff0A4C61),
-                                                        hoverColor:
-                                                            Color(0xff0A4C61),
                                                       ),
+                                                   
                                                     ),
                                                   ),
                                                 ),
+                                                SizedBox(width: 10,),
                                                 SizedBox(
                                                   width: 80,
                                                   child: Center(
@@ -343,8 +354,11 @@ class StocksYouMayNeedBottomSheet {
                                                       textAlign:
                                                           TextAlign.center,
                                                       style: TextStyle(
-                                                          color: Color(
-                                                              0xff0A4C61)),
+                                                          color: Colors.white,
+                                                          fontFamily:
+                                                              'Product Sans',
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                       controller:
                                                           unitTypeEditControllers[
                                                               index],
@@ -354,7 +368,15 @@ class StocksYouMayNeedBottomSheet {
                                                       },
                                                       decoration:
                                                           InputDecoration(
-                                                            contentPadding: EdgeInsets.symmetric(vertical: 0), 
+                                                        filled:
+                                                            true, // Add this line
+                                                        fillColor: Color(
+                                                            0xff70BAD2), // Set your desired background color here
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        0),
                                                         border:
                                                             OutlineInputBorder(
                                                           borderRadius:
@@ -364,7 +386,7 @@ class StocksYouMayNeedBottomSheet {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
                                                         enabledBorder:
@@ -376,7 +398,7 @@ class StocksYouMayNeedBottomSheet {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
                                                         focusedBorder:
@@ -388,17 +410,15 @@ class StocksYouMayNeedBottomSheet {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
-                                                        fillColor:
-                                                            Color(0xff0A4C61),
-                                                        hoverColor:
-                                                            Color(0xff0A4C61),
                                                       ),
+                                                   
                                                     ),
                                                   ),
                                                 ),
+                                               
                                                 IconButton(
                                                   icon: Icon(Icons.check,
                                                       color: Colors.green),
@@ -452,7 +472,7 @@ class StocksYouMayNeedBottomSheet {
                                           ),
                                     IconButton(
                                       icon:
-                                          Icon(Icons.delete, color: Colors.red),
+                                          Icon(Icons.delete_outlined, color: Colors.red),
                                       onPressed: () {
                                         setState(() {
                                           stocksYouMayNeed.removeAt(index);

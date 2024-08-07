@@ -895,7 +895,7 @@ class _InventoryState extends State<Inventory> {
                     ),
                   ),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: Column(
                     children: [
                       SizedBox(height: 10),
@@ -965,6 +965,7 @@ class _InventoryState extends State<Inventory> {
                                 ),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     item['isEditing']
                                         ? Container(
@@ -980,8 +981,11 @@ class _InventoryState extends State<Inventory> {
                                                       textAlign:
                                                           TextAlign.center,
                                                       style: TextStyle(
-                                                          color: Color(
-                                                              0xff0A4C61)),
+                                                          color: Colors.white,
+                                                          fontFamily:
+                                                              'Product Sans',
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                       controller:
                                                           volumeEditControllers[
                                                               index],
@@ -991,7 +995,16 @@ class _InventoryState extends State<Inventory> {
                                                       },
                                                       decoration:
                                                           InputDecoration(
-                                                            contentPadding: EdgeInsets.symmetric(vertical: 0), 
+                                                          
+                                                        filled:
+                                                            true, // Add this line
+                                                        fillColor: Color(
+                                                            0xff70BAD2), // Set your desired background color here
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        0),
                                                         border:
                                                             OutlineInputBorder(
                                                           borderRadius:
@@ -1001,7 +1014,7 @@ class _InventoryState extends State<Inventory> {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
                                                         enabledBorder:
@@ -1013,7 +1026,7 @@ class _InventoryState extends State<Inventory> {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
                                                         focusedBorder:
@@ -1025,17 +1038,15 @@ class _InventoryState extends State<Inventory> {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
-                                                        fillColor:
-                                                            Color(0xff0A4C61),
-                                                        hoverColor:
-                                                            Color(0xff0A4C61),
                                                       ),
+                                                   
                                                     ),
                                                   ),
                                                 ),
+                                                SizedBox(width: 10,),
                                                 SizedBox(
                                                   width: 80,
                                                   child: Center(
@@ -1045,8 +1056,11 @@ class _InventoryState extends State<Inventory> {
                                                       textAlign:
                                                           TextAlign.center,
                                                       style: TextStyle(
-                                                          color: Color(
-                                                              0xff0A4C61)),
+                                                          color: Colors.white,
+                                                          fontFamily:
+                                                              'Product Sans',
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                       controller:
                                                           unitTypeEditControllers[
                                                               index],
@@ -1056,7 +1070,15 @@ class _InventoryState extends State<Inventory> {
                                                       },
                                                       decoration:
                                                           InputDecoration(
-                                                            contentPadding: EdgeInsets.symmetric(vertical: 0), 
+                                                        filled:
+                                                            true, // Add this line
+                                                        fillColor: Color(
+                                                            0xff70BAD2), // Set your desired background color here
+                                                        contentPadding:
+                                                            EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        0),
                                                         border:
                                                             OutlineInputBorder(
                                                           borderRadius:
@@ -1066,7 +1088,7 @@ class _InventoryState extends State<Inventory> {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
                                                         enabledBorder:
@@ -1078,7 +1100,7 @@ class _InventoryState extends State<Inventory> {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
                                                         focusedBorder:
@@ -1090,17 +1112,15 @@ class _InventoryState extends State<Inventory> {
                                                           borderSide:
                                                               BorderSide(
                                                             color: Color(
-                                                                0xff0A4C61),
+                                                                0xff70BAD2),
                                                           ),
                                                         ),
-                                                        fillColor:
-                                                            Color(0xff0A4C61),
-                                                        hoverColor:
-                                                            Color(0xff0A4C61),
                                                       ),
+                                                   
                                                     ),
                                                   ),
                                                 ),
+                                               
                                                 IconButton(
                                                   icon: Icon(Icons.check,
                                                       color: Colors.green),
@@ -1154,7 +1174,7 @@ class _InventoryState extends State<Inventory> {
                                           ),
                                     IconButton(
                                       icon:
-                                          Icon(Icons.delete, color: Colors.red),
+                                          Icon(Icons.delete_outlined, color: Colors.red),
                                       onPressed: () {
                                         setState(() {
                                           stocksYouMayNeed.removeAt(index);
@@ -1269,6 +1289,7 @@ class _InventoryState extends State<Inventory> {
       },
     );
   }
+
 
 }
 
