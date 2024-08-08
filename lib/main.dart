@@ -79,7 +79,7 @@ void main() async {
       'data': message.data,
     });
     print('Got a message whilst in the foreground!');
-    print('Message data: ${message.notification?.body}');
+    print('Message data: ${message.notification?.body}  ${message.notification}   ');
     if (message.notification != null) {
       print('Message also contained a notification: ${message.notification}');
     }

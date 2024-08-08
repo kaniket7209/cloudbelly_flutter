@@ -9,10 +9,9 @@ Future<void> initializeNotification() async {
     'High Importance Notifications', // title
     description: 'This channel is used for important notifications.', // description
     importance: Importance.high,
-    sound: RawResourceAndroidNotificationSound('cat_sound'), // Custom sound
   );
 
-  print('Creating notification channel with custom sound...');
+  print('Creating notification channel...');
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
@@ -20,8 +19,11 @@ Future<void> initializeNotification() async {
 }
 
 Future<void> showNotification(RemoteMessage message) async {
-  const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-    'high_importance_channel', // id
+  // Choose the appropriate notification details based on the payload
+  final bool isOrderNotification = message.data['type'] == 'order';
+  print("isOrderNotification  $isOrderNotification");
+  const AndroidNotificationDetails androidPlatformChannelSpecificsCatSound =  AndroidNotificationDetails(
+    'high_importance_channel_order', // id
     'High Importance Notifications', // title
     channelDescription: 'This channel is used for important notifications.', // description
     importance: Importance.high,
@@ -30,9 +32,21 @@ Future<void> showNotification(RemoteMessage message) async {
     playSound: true,
   );
 
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+  const AndroidNotificationDetails androidPlatformChannelSpecificsDefaultSound = AndroidNotificationDetails(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    channelDescription: 'This channel is used for default notifications.', // description
+    importance: Importance.high,
+    priority: Priority.high,
+    playSound: true, // Default sound
+  );
 
-  print('Showing notification with custom sound...');
+  final NotificationDetails platformChannelSpecifics = NotificationDetails(
+    android: isOrderNotification ? androidPlatformChannelSpecificsCatSound : androidPlatformChannelSpecificsDefaultSound,
+  );
+
+  print('Showing notification with custom sound...  ${message.data['type']}');
+
   await flutterLocalNotificationsPlugin.show(
     message.hashCode,
     message.notification?.title,

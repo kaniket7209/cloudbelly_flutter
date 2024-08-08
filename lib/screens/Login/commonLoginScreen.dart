@@ -470,41 +470,44 @@ class __EnterOtpBottomSheetState extends State<_EnterOtpBottomSheet> {
   }
 
   Future<void> _submitOtp() async {
-    final prefs = await SharedPreferences.getInstance();
-    print("otp is ${widget.otp}");
-    final otpCode = widget.otp.join();
-    print('Entered OTP: $otpCode');
-    final res = await Provider.of<Auth>(context, listen: false)
-        .verifyOtp(widget.mobileNo, otpCode);
+  final prefs = await SharedPreferences.getInstance();
+  print("otp is ${widget.otp}");
+  final otpCode = widget.otp.join();
+  print('Entered OTP: $otpCode');
+  final res = await Provider.of<Auth>(context, listen: false)
+      .verifyOtp(widget.mobileNo, otpCode);
 
-    if (res['code'] == 200) {
-      print('OTP verified successfully. Proceeding with login.');
+  if (!mounted) return; // Check if the widget is still mounted
 
-      // Proceed with login
-      final logRes = await Provider.of<Auth>(context, listen: false)
-          .commonLogin(context, widget.mobileNo, '');
-      print("logRes $logRes");
+  if (res['code'] == 200) {
+    print('OTP verified successfully. Proceeding with login.');
 
-      if (logRes['code'] == 200) {
-        Navigator.pop(context);
-        TOastNotification()
-            .showSuccesToast(context, 'Login Successful');
-        await prefs.remove('feedData');
-        await prefs.remove('menuData');
-        Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-      } else if (logRes['code'] == 400) {
-        print("openEnterUserTypeBottomSheet");
-        await openEnterUserTypeBottomSheet(context, widget.mobileNo);
-      } else {
-        TOastNotification().showErrorToast(
-            context, 'Unexpected error. Please try again');
-      }
+    // Proceed with login
+    final logRes = await Provider.of<Auth>(context, listen: false)
+        .commonLogin(context, widget.mobileNo, '');
+    print("logRes $logRes");
+
+    if (!mounted) return; // Check if the widget is still mounted
+
+    if (logRes['code'] == 200) {
+      if (!mounted) return; // Check if the widget is still mounted
+      Navigator.pop(context);
+      TOastNotification().showSuccesToast(context, 'Login Successful');
+      await prefs.remove('feedData');
+      await prefs.remove('menuData');
+      if (!mounted) return; // Check if the widget is still mounted
+      Navigator.of(context).pushReplacementNamed(Tabs.routeName);
+    } else if (logRes['code'] == 400) {
+      print("openEnterUserTypeBottomSheet");
+      await openEnterUserTypeBottomSheet(context, widget.mobileNo);
     } else {
-      print("Failed to verify OTP. : $res");
-      TOastNotification().showErrorToast(context, 'Wrong OTP');
+      TOastNotification().showErrorToast(context, 'Unexpected error. Please try again');
     }
+  } else {
+    print("Failed to verify OTP. : $res");
+    TOastNotification().showErrorToast(context, 'Wrong OTP');
   }
-
+}
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
