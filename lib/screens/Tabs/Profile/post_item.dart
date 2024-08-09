@@ -80,7 +80,7 @@ class _PostItemState extends State<PostItem> {
   void didUpdateWidget(PostItem oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.data != oldWidget.data) {
-      print("Updating post data: ${widget.data}");
+
       _getLikeData();
       setState(() {}); // Force rebuild when data changes
     }
@@ -97,7 +97,7 @@ class _PostItemState extends State<PostItem> {
 
   void getProductDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
-    print("Full data");
+    // print("Full data");
     print(widget.data);
     List<dynamic> productIds = widget.data['menu_items'];
     productDetails = await Provider.of<Auth>(context, listen: false)
@@ -130,10 +130,9 @@ class _PostItemState extends State<PostItem> {
       return;
     }
 
-    print('Like IDs: $likeIds');
     List<dynamic> temp =
         await Provider.of<Auth>(context, listen: false).getUserInfo(likeIds);
-    print('Retrieved user info: $temp');
+
 
     temp.forEach((element) {
       if (element is Map) {
@@ -154,8 +153,8 @@ class _PostItemState extends State<PostItem> {
           Provider.of<Auth>(context, listen: false).userData?['user_id']);
     });
 
-    print('Final like data: $_likeData');
-    print("$_isLiked likedbyh");
+
+    // print("$_isLiked likedbyh");
   }
 
   String formatTimeDifference(String timestampString) {
@@ -205,7 +204,7 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
-    print("who is user:: ${widget.isProfilePost}  ${widget.userId}");
+    // print("who is user:: ${widget.isProfilePost}  ${widget.userId}");
     // bool shouldShowIcon = widget.isProfilePost ||
     //     (!widget.isProfilePost &&
     //         Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
@@ -244,7 +243,7 @@ class _PostItemState extends State<PostItem> {
                     ? InkWell(
                         onTap: () {
                           if (!widget.isProfilePost) {
-                            print("data:: ${widget.data}");
+                            // print("data:: ${widget.data}");
                             setState(() {
                               userId.add(widget.data['user_id']);
                             });
@@ -338,7 +337,7 @@ class _PostItemState extends State<PostItem> {
                           setState(() {
                             userId.add(widget.data['user_id']);
                           });
-                          print("userIdfrom post:: $userId");
+                          // print("userIdfrom post:: $userId");
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -458,8 +457,8 @@ class _PostItemState extends State<PostItem> {
                               context, response['body']['message']);
                         }
                       }
-                      print(Provider.of<Auth>(context, listen: false)
-                          .userData?['followings']);
+                      // print(Provider.of<Auth>(context, listen: false)
+                      //     .userData?['followings']);
                     },
                     child: Container(
                       width: 70,
@@ -860,7 +859,7 @@ class _PostItemState extends State<PostItem> {
                       visualDensity: const VisualDensity(
                           horizontal: VisualDensity.minimumDensity),
                       onPressed: () async {
-                        print("abcds:: ${widget.userId}");
+                        // print("abcds:: ${widget.userId}");
                         String code = '';
 
                         code = widget.isProfilePost
@@ -1531,8 +1530,7 @@ class _FollowButtonInSHeetState extends State<FollowButtonInSHeet> {
                 .showErrorToast(context, response['body']['message']);
           }
         }
-        print(
-            Provider.of<Auth>(context, listen: false).userData?['followings']);
+       
       },
       child: Container(
           decoration: GlobalVariables().ContainerDecoration(
@@ -1693,10 +1691,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
   Widget build(BuildContext context) {
     // List<dynamic> userData = widget.userData;
     dynamic newData = widget.data;
-    // print('${widget.userData.length}');
-    // print('${newData.length}');
-
-    // print(widget.data);
+  
     return Container(
       child: SingleChildScrollView(
         child: Column(children: [

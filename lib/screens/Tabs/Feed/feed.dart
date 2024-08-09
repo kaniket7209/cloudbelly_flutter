@@ -202,7 +202,7 @@ class _FeedState extends State<Feed> {
                               bool _isMultiple =
                                   item['multiple_files'] != null &&
                                       item['multiple_files'].length != 0;
-                              log("FeedPost:: $item");
+                             
                               return PostItem(
                                 isSharePost: "Yes",
                                 isProfilePost: false,

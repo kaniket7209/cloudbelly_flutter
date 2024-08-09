@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'dart:typed_data';
 import 'package:cloudbelly_app/NotificationScree.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
-import 'dart:ui';
 import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';

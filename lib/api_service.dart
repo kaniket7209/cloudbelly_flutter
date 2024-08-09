@@ -195,7 +195,7 @@ class Auth with ChangeNotifier {
   // Auth._internal();
   void getToken(String? token) async {
     fcmToken = token;
-    await updateFcmToken(fcmToken);
+    // await updateFcmToken(fcmToken);
     notifyListeners();
   }
 Future<String> updateFcmToken(
