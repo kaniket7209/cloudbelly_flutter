@@ -1,16 +1,16 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-var androidSetting = const AndroidInitializationSettings('launch_background');
+// var androidSetting = const AndroidInitializationSettings('launch_background');
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 Future<void> initializeNotification() async {
-  var initializationSettings = InitializationSettings(
-      android: androidSetting,
+  // var initializationSettings = InitializationSettings(
+  //     android: androidSetting,
       
-  );
-  await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
-  );
+  // );
+  // await flutterLocalNotificationsPlugin.initialize(
+  //   initializationSettings,
+  // );
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'high_importance_channel', // id
     'High Importance Notifications', // title
