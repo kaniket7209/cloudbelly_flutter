@@ -19,6 +19,7 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/profile.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class Tabs extends StatefulWidget {
@@ -106,16 +107,18 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-     String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-   Color colorProfile;
+    String? userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    Color colorProfile;
     if (userType == 'Vendor') {
-      colorProfile = const Color(0xff54A6C1) ;
+      colorProfile = const Color(0xff54A6C1);
     } else if (userType == 'Customer') {
-      colorProfile = const Color(0xff7B358D);//0xff7B358D
+      colorProfile = const Color(0xff7B358D); //0xff7B358D
     } else if (userType == 'Supplier') {
       colorProfile = Color.fromARGB(255, 26, 48, 10);
     } else {
-      colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+      colorProfile = const Color.fromRGBO(
+          77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
     return Scaffold(
       // resizeToAvoidBottomInset: false,
@@ -146,7 +149,6 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             ),
           ),
           child: Center(
-            // child: Icon(Icons.add, size: 30, color: Colors.white,),
             child: Image.asset(
               Assets.plus_png,
               width: 25,
@@ -154,30 +156,119 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             ),
           ),
         ),
-        onPressed: () async {
-          AppWideLoadingBanner().loadingBanner(context);
-          List<String> url = await Provider.of<Auth>(context, listen: false)
-              .pickMultipleImagesAndUpoad();
-          List<dynamic> menuList =
-              await Provider.of<Auth>(context, listen: false).getMenu(
-                  Provider.of<Auth>(context, listen: false)
-                      .userData?['user_id']);
-          Navigator.of(context).pop();
-          if (url.isEmpty) {
-            print("No image selected");
-          } else if (url.contains('file size very large')){
-            TOastNotification().showErrorToast(context, 'file size very large');}
-          else if (!url.contains('element')){
-            CreateFeed().showModalSheetForNewPost(context, url, menuList);}
-          else {
-            TOastNotification()
-                .showErrorToast(context, 'Error While Uploading Image');
-          }
+        onPressed: () {
+          showModalBottomSheet(
+            backgroundColor: Colors.transparent,
+            context: context,
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.only(
+                topLeft: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1),
+                topRight: SmoothRadius(cornerRadius: 30, cornerSmoothing: 1),
+              ),
+            ),
+            builder: (context) {
+              return Container(
+                decoration: const ShapeDecoration(
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x7FB1D9D8),
+                      blurRadius: 6,
+                      offset: Offset(0, 4),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                      topLeft:
+                          SmoothRadius(cornerRadius: 30, cornerSmoothing: 1),
+                      topRight:
+                          SmoothRadius(cornerRadius: 30, cornerSmoothing: 1),
+                    ),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        color: Colors.white,
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          'Shortcuts',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                            color: userType == 'Vendor'
+                                ? Color(0xff0A4C61)
+                                : colorProfile,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Column(
+                        children: [
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: [
+                          //     Expanded(
+                          //       child: _buildShortcutButton(
+                          //         context,
+                          //         'Add Menu',
+
+                          //         _createNewCoupon,
+                          //       ),
+                          //     ),
+                          //     SizedBox(width: 30),
+                          //     Expanded(
+                          //       child: _buildShortcutButton(
+                          //         context,
+                          //         'Edit menu',
+
+                          //         _editMenu,
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+
+                          SizedBox(height: 10),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                child: _buildShortcutButton(
+                                  context,
+                                  'Add post',
+                                  _addPost,
+                                ),
+                              ),
+                              if (userType == 'Vendor') ...[
+                                SizedBox(width: 30),
+                                Expanded(
+                                  child: _buildShortcutButton(
+                                    context,
+                                    'Create new coupon',
+                                    _createNewCoupon,
+                                  ),
+                                ),
+                              ]
+                            ],
+                          ),
+                          SizedBox(height: 30),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
         },
       ),
-      //     floatingActionButton: FloatingActionButton(
-      //     //params
-      //  ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar.builder(
         onTap: (index) {
@@ -199,16 +290,16 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               width: 100,
               height: 30,
               decoration: ShapeDecoration(
-                shadows:  [
+                shadows: [
                   BoxShadow(
                     offset: Offset(0, 8),
                     color: Provider.of<Auth>(context, listen: false)
-                            .userData?['user_type'] ==
-                        UserType.Vendor.name
-                    ?  Color.fromRGBO(84, 166, 193, 1).withOpacity(0.5)
-                    : userType == UserType.Supplier.name
-                        ?  Color(0xFF4DBF4A).withOpacity(0.5)
-                        :  Color(0xff7B358D).withOpacity(0.5),
+                                .userData?['user_type'] ==
+                            UserType.Vendor.name
+                        ? Color.fromRGBO(84, 166, 193, 1).withOpacity(0.5)
+                        : userType == UserType.Supplier.name
+                            ? Color(0xFF4DBF4A).withOpacity(0.5)
+                            : Color(0xff7B358D).withOpacity(0.5),
                     blurRadius: 20,
                   )
                 ],
@@ -283,5 +374,80 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  Widget _buildShortcutButton(
+      BuildContext context, String title, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        // height: 50,
+        decoration: ShapeDecoration(
+          shadows: [
+            BoxShadow(
+              offset: const Offset(2, 3),
+              color: Color(0xff0A4C61).withOpacity(0.2),
+              blurRadius: 20,
+            ),
+          ],
+          color: Color(0xff0A4C61),
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(
+              cornerRadius: 15,
+              cornerSmoothing: 1,
+            ),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontFamily: 'Product Sans',
+                letterSpacing: 1,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+// Sample method implementations for different actions
+  void _createNewCoupon() {
+    // Handle creating a new coupon
+  }
+
+  void _editMenu() {
+    // Handle editing the menu
+  }
+
+  void _takeOrder() {
+    // Handle taking an order
+  }
+
+  void _addPost() async {
+    Navigator.of(context).pop(); // Close the bottom sheet
+    AppWideLoadingBanner().loadingBanner(context);
+    List<String> url = await Provider.of<Auth>(context, listen: false)
+        .pickMultipleImagesAndUpoad();
+    List<dynamic> menuList = await Provider.of<Auth>(context, listen: false)
+        .getMenu(
+            Provider.of<Auth>(context, listen: false).userData?['user_id']);
+    Navigator.of(context).pop();
+    if (url.isEmpty) {
+      print("No image selected");
+    } else if (url.contains('file size very large')) {
+      TOastNotification().showErrorToast(context, 'file size very large');
+    } else if (!url.contains('element')) {
+      CreateFeed().showModalSheetForNewPost(context, url, menuList);
+    } else {
+      TOastNotification()
+          .showErrorToast(context, 'Error While Uploading Image');
+    }
   }
 }
