@@ -10,7 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02fb6a08-6e3a-426b-9d24-81a9fbe6379c" name="Changes" comment="- issues resolved">
-      <change beforePath="$PROJECT_DIR$/lib/models/user_detail.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/user_detail.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/Tabs/Cart/view_cart.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/Tabs/Cart/view_cart.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +89,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "cb__merge",
+    "git-widget-placeholder": "cb__aug",
     "io.flutter.reload.alreadyRun": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/USER/Documents/GitHub/cloudbelly_flutter/lib/models",

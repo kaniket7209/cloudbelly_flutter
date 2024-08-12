@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+// import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/model.dart';
@@ -942,10 +942,10 @@ class _ViewCartState extends State<ViewCart> {
     }
   }
 
-  void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-    print("successResponse:: ${response.data.toString()}");
-    submitOrder();
-  }
+  // void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
+  //   print("successResponse:: ${response.data.toString()}");
+  //   submitOrder();
+  // }
 
   getprice() {
     var sum = 30.0;
