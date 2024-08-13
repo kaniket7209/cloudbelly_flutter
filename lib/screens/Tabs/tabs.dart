@@ -219,7 +219,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                           //       child: _buildShortcutButton(
                           //         context,
                           //         'Add Menu',
-
+              
                           //         _createNewCoupon,
                           //       ),
                           //     ),
@@ -228,15 +228,15 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                           //       child: _buildShortcutButton(
                           //         context,
                           //         'Edit menu',
-
+              
                           //         _editMenu,
                           //       ),
                           //     ),
                           //   ],
                           // ),
-
+              
                           SizedBox(height: 10),
-
+              
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [

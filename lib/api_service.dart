@@ -256,6 +256,32 @@ class Auth with ChangeNotifier {
     }
   }
 
+
+  Future getCouponsByUserId() async {
+    final String url = 'https://app.cloudbelly.in/coupons/get';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? ""
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+
+      print("created coupons  ${jsonEncode(response.body)}");
+      return jsonDecode(response.body);
+    } catch (error) {
+
+
+      // Handle exceptions
+      return {"code":200,"msg":"Unexpected errors"};
+    }
+  }
+
   bannerTogger(ProductDetails item) {
     showBanner = !showBanner;
     print("item.toString() ${item.toString()}");

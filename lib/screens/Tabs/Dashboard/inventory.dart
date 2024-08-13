@@ -1743,7 +1743,8 @@ class Make_Update_ListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TouchableOpacity(
+    return 
+    TouchableOpacity(
       onTap: onTap,
       child: Container(
           height: 5.h,

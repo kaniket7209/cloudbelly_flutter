@@ -138,31 +138,34 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
               Center(
                 child: GestureDetector(
                   onTap: () async {
-                    final responseData = await Provider.of<Auth>(context, listen: false).createNewCoupons(selectedCouponType, discountValue, minCartValue, selectedApplicableFor, couponCode);
+                    final responseData =
+                        await Provider.of<Auth>(context, listen: false)
+                            .createNewCoupons(
+                                selectedCouponType,
+                                discountValue,
+                                minCartValue,
+                                selectedApplicableFor,
+                                couponCode);
                     // Define the API endpoint
                     try {
-                    
-                        if (responseData['code'] == 200) {
-                          // Success: Coupon created
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Coupon created successfully!'),
-                            backgroundColor: Colors.green,
-                          ));
-                          // Add a delay of 2 seconds before closing the modal
-  await Future.delayed(Duration(seconds: 2));
-  
-  Navigator.pop(context);
-                
-                         
-                        } else {
-                          // Handle error from API
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                                responseData['msg'] ?? 'Error creating coupon'),
-                            backgroundColor: Colors.red,
-                          ));
-                        }
-                     
+                      if (responseData['code'] == 200) {
+                        // Success: Coupon created
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Coupon created successfully!'),
+                          backgroundColor: Colors.green,
+                        ));
+                        // Add a delay of 2 seconds before closing the modal
+                        await Future.delayed(Duration(seconds: 2));
+
+                        Navigator.pop(context);
+                      } else {
+                        // Handle error from API
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              responseData['msg'] ?? 'Error creating coupon'),
+                          backgroundColor: Colors.red,
+                        ));
+                      }
                     } catch (e) {
                       // Handle network or other errors
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -171,7 +174,8 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
                       ));
                     }
                   },
-                  child: Container(
+                  child:
+                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                     decoration: ShapeDecoration(
                       color: Color(0xffFA6E00),
@@ -292,7 +296,8 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
   }
 
   Widget _buildCouponPreview() {
-    return Container(
+    return 
+    Container(
       padding: EdgeInsets.all(25),
       decoration: ShapeDecoration(
         shadows: [
@@ -475,6 +480,7 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
         ],
       ),
     );
+  
   }
 
   void _showDropdown(BuildContext context, String title, List<String> options,
