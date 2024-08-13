@@ -21,7 +21,7 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: Image.asset(
@@ -117,7 +117,7 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
                 },
               ),
               SizedBox(height: 30),
-              _buildSectionTitle('COUPON PREVIEW'),
+              Center(child: Container(child: Text('COUPON PREVIEW',style: TextStyle(color: Color(0xff519896),fontFamily: 'Product Sans',fontWeight: FontWeight.bold,letterSpacing: 4,fontSize: 15),),)),
               SizedBox(height: 10),
               _buildCouponPreview(),
               SizedBox(height: 30),
