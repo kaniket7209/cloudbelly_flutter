@@ -6,6 +6,7 @@ import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/cart.dart';
+import 'package:cloudbelly_app/screens/Tabs/coupon_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/order_page.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/screens/Tabs/Search/search_view.dart';
@@ -252,7 +253,8 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                                   child: _buildShortcutButton(
                                     context,
                                     'Create new coupon',
-                                    _createNewCoupon,
+                                    () => _createNewCoupon(
+                                        context), // Correct way to pass context
                                   ),
                                 ),
                               ]
@@ -418,9 +420,19 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   }
 
 // Sample method implementations for different actions
-  void _createNewCoupon() {
-    // Handle creating a new coupon
-  }
+ bool _isNavigating = false;
+
+void _createNewCoupon(BuildContext context) {
+  if (_isNavigating) return; // Prevents multiple navigations
+  
+  _isNavigating = true;
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => NewCouponScreen()),
+  ).then((_) {
+    _isNavigating = false; // Reset the flag after navigation completes
+  });
+}
 
   void _editMenu() {
     // Handle editing the menu
