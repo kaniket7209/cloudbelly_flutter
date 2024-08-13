@@ -2,10 +2,12 @@
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/screens/Tabs/Dashboard/coupon_action.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/inventory_bottom_sheet.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/rating_widget.dart';
+import 'package:cloudbelly_app/screens/Tabs/coupon_screen.dart';
 import 'package:cloudbelly_app/widgets/appwide_bottom_sheet.dart';
 import 'package:cloudbelly_app/widgets/appwide_button.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
@@ -27,52 +29,114 @@ class Performance extends StatefulWidget {
 }
 
 class _PerformanceState extends State<Performance> {
+  List<Map<String, dynamic>> coupons = []; // State to hold the list of coupons
+
+  Future<void> _fetchAndShowCoupons() async {
+    // Fetch the coupons
+    final fetchedCoupons = await _fetchCoupons(context);
+
+    // Update the state with the fetched coupons
+    setState(() {
+      coupons = fetchedCoupons;
+    });
+
+    // Show the coupons in a modal bottom sheet
+    _showCouponsModal(context, coupons, (updatedCoupons) {
+      setState(() {
+        coupons = updatedCoupons; // Update the list after deletion
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         children: [
-          GestureDetector(
-            onTap: () async {
-              // Fetch the coupons
-              final coupons = await _fetchCoupons(context);
-
-              // Show the coupons in a modal bottom sheet
-              _showCouponsModal(context, coupons);
-            },
-            child: Container(
-              height: 5.h,
-              width: 30.w,
-              decoration: ShapeDecoration(
-                shadows: const [
-                  BoxShadow(
-                    offset: Offset(5, 6),
-                    color: Color.fromRGBO(72, 138, 136, 0.5),
-                    blurRadius: 20,
-                  )
-                ],
-                color: Color(0xff0A4C61),
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 10,
-                    cornerSmoothing: 1,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  // Fetch the updated list of coupons after any modification
+                  await _fetchAndShowCoupons();
+                },
+                child: Container(
+                  height: 5.h,
+                  width: 30.w,
+                  decoration: ShapeDecoration(
+                    shadows: const [
+                      BoxShadow(
+                        offset: Offset(5, 6),
+                        color: Color.fromRGBO(72, 138, 136, 0.5),
+                        blurRadius: 20,
+                      )
+                    ],
+                    color: Color(0xff0A4C61),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 10,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'All Coupons',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w700,
+                        height: 0,
+                        letterSpacing: 0.14,
+                      ),
+                    ),
                   ),
                 ),
               ),
-              child: Center(
-                child: Text(
-                  'All Coupons',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontFamily: 'Product Sans',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                    letterSpacing: 0.14,
+              GestureDetector(
+                onTap: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NewCouponScreen()),
+                  );
+                },
+                child: Container(
+                  height: 5.h,
+                  width: 30.w,
+                  decoration: ShapeDecoration(
+                    shadows: const [
+                      BoxShadow(
+                        offset: Offset(5, 6),
+                        color: Color.fromRGBO(72, 138, 136, 0.5),
+                        blurRadius: 20,
+                      )
+                    ],
+                    color: Color(0xff0A4C61),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 10,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'New Coupon',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w700,
+                        height: 0,
+                        letterSpacing: 0.14,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
           Space(3.h),
           const Text(
@@ -176,6 +240,9 @@ class _PerformanceState extends State<Performance> {
 
     if (response['code'] == 200) {
       return List<Map<String, dynamic>>.from(response['coupons']);
+    } else if (response['code'] == 400 &&
+        response['msg'] == 'No coupons found') {
+      return [];
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load coupons.')),
@@ -185,60 +252,85 @@ class _PerformanceState extends State<Performance> {
   }
 
   void _showCouponsModal(
-      BuildContext context, List<Map<String, dynamic>> coupons) {
+      BuildContext context,
+      List<Map<String, dynamic>> coupons,
+      Function(List<Map<String, dynamic>>) onCouponsChanged) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled:
           true, // Enable full-screen modal for better pull-down gesture
-
       builder: (context) {
         return GestureDetector(
           behavior: HitTestBehavior
               .opaque, // Ensures gestures like pulling down are recognized
-          child: Container(
-            decoration: const ShapeDecoration(
-              shadows: [
-                BoxShadow(
-                  color: Color(0x7FB1D9D8),
-                  blurRadius: 6,
-                  offset: Offset(0, 4),
-                  spreadRadius: 0,
-                ),
-              ],
-              color: Colors.white,
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius.only(
-                  topLeft: SmoothRadius(cornerRadius: 45, cornerSmoothing: 1),
-                  topRight: SmoothRadius(cornerRadius: 45, cornerSmoothing: 1),
-                ),
-              ),
-            ),
-            padding: const EdgeInsets.all(
-                20.0), // Padding around entire modal content
-            child: SingleChildScrollView(
-              child: Wrap(
-                children: [
-                  Text(
-                    'All Coupons',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff0A4C61),
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                decoration: const ShapeDecoration(
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x7FB1D9D8),
+                      blurRadius: 6,
+                      offset: Offset(0, 4),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.only(
+                      topLeft:
+                          SmoothRadius(cornerRadius: 45, cornerSmoothing: 1),
+                      topRight:
+                          SmoothRadius(cornerRadius: 45, cornerSmoothing: 1),
                     ),
                   ),
-                  SizedBox(height: 6.h),
-                  if (coupons.isNotEmpty)
-                    ...coupons.map<Widget>((coupon) {
-                      return buildCouponPreviewCard(context, coupon);
-                    }).toList()
-                  else
-                    Center(
-                      child: Text('No coupons found.'),
-                    ),
-                ],
-              ),
-            ),
+                ),
+                padding: const EdgeInsets.all(
+                    20.0), // Padding around entire modal content
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    children: [
+                      Text(
+                        'All Coupons',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff0A4C61),
+                        ),
+                      ),
+                      SizedBox(height: 6.h),
+                      if (coupons.isNotEmpty)
+                        ...coupons.map<Widget>((coupon) {
+                          return CouponCard(
+                            coupon: coupon,
+                            onDelete: () {
+                              setState(() {
+                                coupons.remove(
+                                    coupon); // Remove the coupon from the list
+                              });
+                              onCouponsChanged(coupons); // Update parent state
+                            },
+                          );
+                        }).toList()
+                      else
+                        Center(
+                          child: Container(
+                            child: Text(
+                              'No coupons found.',
+                              style: TextStyle(
+                                  fontFamily: 'Product Sans',
+                                  color: Color(0xff0A4C61).withOpacity(0.5),
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         );
       },
