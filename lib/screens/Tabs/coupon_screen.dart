@@ -246,78 +246,87 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
     );
   }
 
-  Widget _buildCouponPreview() {
-    return Container(
-      padding: EdgeInsets.all(20),
-      decoration: ShapeDecoration(
-        shadows: [
-          BoxShadow(
-            color: Color(0xffD3EEEE),
-            blurRadius: 30,
-            offset: Offset(5, 6),
-            spreadRadius: 0,
-          ),
-        ],
-        color: Color(0xffD3EEEE),
-        shape: SmoothRectangleBorder(
-            borderRadius: SmoothBorderRadius(
-          cornerRadius: 50,
-          cornerSmoothing: 1,
-        )),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
+Widget _buildCouponPreview() {
+  return Container(
+    padding: EdgeInsets.all(25),
+    decoration: ShapeDecoration(
+      shadows: [
+        BoxShadow(
+          color: Color(0xffD3EEEE),
+          blurRadius: 30,
+          offset: Offset(5, 6),
+          spreadRadius: 0,
+        ),
+      ],
+      color: Color(0xffD3EEEE),
+      shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+        cornerRadius: 50,
+        cornerSmoothing: 1,
+      )),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Rs $discountValue OFF',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontFamily: 'Product Sans',
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xff0A4C61),
-                      ),
+                  Text(
+                    'Rs $discountValue OFF',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontFamily: 'Product Sans Black',
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff0A4C61),
                     ),
                   ),
                   SizedBox(height: 5),
-                  Container(
-                    constraints: BoxConstraints(maxWidth: 50.w),
-                    child: Text(
-                      'On all orders with a minimum order value of Rs $minCartValue',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xff0A4C61),
-                      ),
+                  Text(
+                    'On all orders with a minimum order value of Rs $minCartValue',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Color(0xff0A4C61),
                     ),
                   ),
+                  SizedBox(height: 10),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Color(0xff0A4C61),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                   decoration: ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    color: Color(0xff0A4C61).withOpacity(0.45),
+                    blurRadius: 30,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                ],
+                color: Color(0xff0A4C61),
+                // color: Colors.red,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 13,
+                    cornerSmoothing: 1,
+                  ),
+                ),
+              ),
                     child: Row(
                       children: [
                         Text(
-                          'Coupon:  ',
+                          'Coupon: ',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
+                             fontFamily: 'Product Sans',
                             color: Colors.white,
                           ),
                         ),
                         Text(
                           '$couponCode',
                           style: TextStyle(
-                            fontSize: 17,
+                            fontSize: 15,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Product Sans',
                             color: Color(0xffA3DBDB),
@@ -328,68 +337,103 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
                   ),
                 ],
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
-                decoration: ShapeDecoration(
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0xff0A4C61).withOpacity(0.45),
-                      blurRadius: 30,
-                      offset: Offset(5, 6),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                  color: Color(0xff519896),
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius(
-                      cornerRadius: 30,
-                      cornerSmoothing: 1,
-                    ),
+            ),
+            SizedBox(width: 30),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 25,vertical: 30),
+              decoration: ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    color: Color(0xff0A4C61).withOpacity(0.15),
+                    blurRadius: 20,
+                    offset: Offset(5, 6),
+                    spreadRadius: 0,
+                  ),
+                ],
+                color: Color(0xff519896),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 30,
+                    cornerSmoothing: 1,
                   ),
                 ),
+              ),
+              child: Center(
                 child: Image.asset(
-                  'assets/images/Coupon.png',
+                  'assets/images/Coupon.png', // Replace with your asset path
                   width: 50,
                 ),
               ),
-            ],
-          ),
-          SizedBox(height: 10),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Switch(
-                value: isActive,
-                onChanged: (value) {
-                  setState(() {
-                    isActive = value;
-                  });
-                },
-                activeColor: Colors.teal,
-              ),
-              SizedBox(width: 5),
-              Text(
-                'Active',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.teal[600],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 5),
-          Text(
-            'Visible on your store. Can be availed by all customers',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.teal[600],
             ),
+            
+            
+          ],
+        ),
+        SizedBox(height: 2),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 0,vertical: 2),
+          //  decoration: ShapeDecoration(
+          //       shadows: [
+          //         BoxShadow(
+          //           color: Color(0xffD3EEEE),
+          //           blurRadius: 30,
+          //           offset: Offset(5, 6),
+          //           spreadRadius: 0,
+          //         ),
+          //       ],
+          //       color: Color(0xffD3EEEE).withOpacity(0.59),
+          //       // color: Colors.red,
+          //       shape: SmoothRectangleBorder(
+          //         borderRadius: SmoothBorderRadius(
+          //           cornerRadius: 30,
+          //           cornerSmoothing: 1,
+          //         ),
+          //       ),
+          //     ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.start,
+              //   children: [
+              //     Switch(
+              //       value: isActive,
+              //       onChanged: (value) {
+              //         setState(() {
+              //           isActive = value;
+              //         });
+              //       },
+              //       activeColor: Colors.teal,
+              //     ),
+              //     SizedBox(width: 5),
+              //     Text(
+              //       'Active',
+              //       style: TextStyle(
+              //         fontSize: 16,
+              //         color: Colors.teal[600],
+              //       ),
+              //     ),
+              //   ],
+              // ),
+             
+              SizedBox(height: 10),
+               Text(
+          'Visible on your store. Can be availed by all customers',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.teal[600],
           ),
-        ],
-      ),
-    );
-  }
-
+        ),
+      
+            ],
+          ),
+        ),
+       
+      ],
+    ),
+  );
+}
   void _showDropdown(BuildContext context, String title, List<String> options,
       Function(String) onSelected) {
     showModalBottomSheet(
