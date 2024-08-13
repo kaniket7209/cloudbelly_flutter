@@ -62,9 +62,14 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
                 selectedCouponType,
                 [
                   'Fixed amount discount',
-                  'Percentage discount',
+                  
                   'Free delivery coupon',
                 ],
+                // [
+                //   'Fixed amount discount',
+                //   'Percentage discount',
+                //   'Free delivery coupon',
+                // ],
                 (value) {
                   setState(() {
                     selectedCouponType = value;
@@ -98,10 +103,16 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
                 [
                   'All customers',
                   'Repeat customers only',
-                  'New customers only',
-                  'Customers with abandoned cart',
-                  'Customers who have followed your store',
+                  'New customers only'
+                  
                 ],
+                //  [
+                //   'All customers',
+                //   'Repeat customers only',
+                //   'New customers only',
+                //   'Customers with abandoned cart',
+                //   'Customers who have followed your store',
+                // ],
                 (value) {
                   setState(() {
                     selectedApplicableFor = value;
