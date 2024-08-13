@@ -198,14 +198,13 @@ class Auth with ChangeNotifier {
     // await updateFcmToken(fcmToken);
     notifyListeners();
   }
-Future<String> updateFcmToken(
 
-     fcm_token) async {
+  Future<String> updateFcmToken(fcm_token) async {
     final String url = 'https://app.cloudbelly.in/update-user';
 
     final Map<String, dynamic> requestBody = {
       'user_id': userData?['user_id'] ?? "",
-      'fcm_token':fcm_token
+      'fcm_token': fcm_token
     };
 
     try {
@@ -223,6 +222,37 @@ Future<String> updateFcmToken(
 
       // Handle exceptions
       return '-1';
+    }
+  }
+
+  Future createNewCoupons(selectedCouponType, discountValue,
+      minCartValue, selectedApplicableFor, couponCode) async {
+    final String url = 'https://app.cloudbelly.in/coupons/create';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      "coupon_type": selectedCouponType,
+      "discount_value": discountValue,
+      "min_cart_value": minCartValue,
+      "applicable_for": selectedApplicableFor,
+      "coupon_code": couponCode
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+
+      print("created coupons  ${jsonEncode(response.body)}");
+      return jsonDecode(response.body);
+    } catch (error) {
+
+
+      // Handle exceptions
+      return {"code":200,"msg":"Unexpected errors"};
     }
   }
 
@@ -314,8 +344,6 @@ Future<String> updateFcmToken(
     notifyListeners();
   }
 
-
- 
   removeItem(item) {
     int idx = itemAdd.indexWhere((element) => element.id == item.id);
     itemAdd[idx].quantity = (itemAdd[idx].quantity ?? 0) - 1;
@@ -392,11 +420,11 @@ Future<String> updateFcmToken(
     notifyListeners();
   }
 
-  Future<String> signUp(context,email, pass, phone, type) async {
+  Future<String> signUp(context, email, pass, phone, type) async {
     const String url = 'https://app.cloudbelly.in/signup';
     final prefs = await SharedPreferences.getInstance();
 
-        _getCurrentLocation(context);
+    _getCurrentLocation(context);
     final Map<String, dynamic> requestBody = {
       "email": email,
       "password": pass,
@@ -428,7 +456,7 @@ Future<String> updateFcmToken(
             'latitude': DataMap['location']['latitude'] ?? '',
             'longitude': DataMap['location']['longitude'] ?? '',
           },
-          if (DataMap['current_location'] != null)
+        if (DataMap['current_location'] != null)
           'current_location': {
             'area': DataMap['current_location']['area'] ?? '',
             'latitude': DataMap['current_location']['latitude'] ?? '',
@@ -472,10 +500,11 @@ Future<String> updateFcmToken(
       return '-1';
     }
   }
-Future<void> _getCurrentLocation(context) async {
-  var _currentPosition;
-  var address;
-  var area;
+
+  Future<void> _getCurrentLocation(context) async {
+    var _currentPosition;
+    var address;
+    var area;
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
@@ -490,26 +519,22 @@ Future<void> _getCurrentLocation(context) async {
         address =
             '${placemark.street}, ${placemark.subLocality},${placemark.subAdministrativeArea}, ${placemark.locality}, ${placemark.administrativeArea},${placemark.country}, ${placemark.postalCode}';
         area = '${placemark.administrativeArea}';
-
-        
       } else {
         address = 'Address not found';
       }
 
-      
       await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
           _currentPosition?.latitude, _currentPosition?.longitude, area);
-          print("locLogmain.dart $_currentPosition  $area");
-
+      print("locLogmain.dart $_currentPosition  $area");
     } catch (e) {
       print('Error: $e');
     }
   }
 
-  Future<String> login(context,email, pass) async {
+  Future<String> login(context, email, pass) async {
     print("fcmToken:: $fcmToken");
     final prefs = await SharedPreferences.getInstance();
-    
+
     print('nknbnkjbn');
     _getCurrentLocation(context);
     final String url = 'https://app.cloudbelly.in/login';
@@ -534,102 +559,6 @@ Future<void> _getCurrentLocation(context) async {
         'user_name': DataMap['user_name'],
         'email': DataMap['email'],
         'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0],
-        'profile_photo': DataMap['profile_photo'] ?? '',
-        'store_availability': DataMap['store_availability'] ?? false,
-        'pan_number': DataMap['pan_number'] ?? '',
-        'aadhar_number': DataMap['aadhar_number'] ?? '',
-        if (DataMap['address'] != null)
-          'address': {
-            "location": DataMap['address']['location'],
-            "latitude": DataMap['address']['latitude'],
-            "longitude": DataMap['address']['longitude'],
-            "hno": DataMap['address']['hno'],
-            "pincode": DataMap['address']['pincode'],
-            "landmark": DataMap['address']['landmark'],
-            "type": DataMap['address']['type'],
-          },
-        if (DataMap['location'] != null)
-          'location': {
-            'details': DataMap['location']['details'] ?? '',
-            'latitude': DataMap['location']['latitude'] ?? '',
-            'longitude': DataMap['location']['longitude'] ?? '',
-          },
-           if (DataMap['current_location'] != null)
-          'current_location': {
-            'area': DataMap['current_location']['area'] ?? '',
-            'latitude': DataMap['current_location']['latitude'] ?? '',
-            'longitude': DataMap['current_location']['longitude'] ?? '',
-          },
-        if (DataMap['working_hours'] != null)
-          'working_hours': {
-            'start_time': DataMap['working_hours']['start_time'] ?? '',
-            'end_time': DataMap['working_hours']['end_time'] ?? '',
-          },
-        'delivery_addresses': DataMap['delivery_addresses'] ?? [],
-        'bank_name': DataMap['bank_name'] ?? '',
-        'pincode': DataMap['pincode'] ?? '',
-        'rating': DataMap['rating'] ?? '-',
-        'followers': DataMap['followers'] ?? [],
-        'followings': DataMap['followings'] ?? [],
-        'cover_image': DataMap['cover_image'] ?? '',
-        'account_number': DataMap['account_number'] ?? '',
-        'ifsc_code': DataMap['ifsc_code'] ?? '',
-        'phone': DataMap['phone'] ?? '',
-        'upi_id': DataMap['upi_id'] ?? '',
-        'user_type': DataMap['user_type'] ?? 'Vendor',
-      };
-      
-      
-      
-      await UserPreferences.setUser(userProfileData);
-      userData = UserPreferences.getUser();
-      print('user data:$userData');
-      notifyListeners();
-     
-      return DataMap['message'];
-    } catch (error) {
-      notifyListeners();
-
-      // Handle exceptions
-      return "-1";
-    }
-  }
-
-Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, String userType) async {
-  final prefs = await SharedPreferences.getInstance();
-  _getCurrentLocation(context); // Make sure _getCurrentLocation is defined
-  final String url = 'https://app.cloudbelly.in/common-login';
-
-  final Map<String, dynamic> requestBody = {
-    "phone": mobileNo,
-    "fcm_token": prefs.getString('fcmToken'),
-    "user_type": userType,
-  };
-
-  print("requestBody:: $requestBody");
-
-  try {
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(requestBody),
-    );
-
-    print("Response status: ${response.statusCode}");
-    print("Response body: ${response.body}");
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final Map<String, dynamic> responseBody = jsonDecode(response.body);
-      final DataMap = responseBody['data'];
-      print("data:: $DataMap");
-
-      Map<String, dynamic> userProfileData = {
-        'user_id': DataMap['user_id'],
-        'user_name': DataMap['user_name'],
-        'email': DataMap['email'],
-        'store_name': DataMap['store_name'] ?? DataMap['email'].split('@')[0] ?? "Unknown",
         'profile_photo': DataMap['profile_photo'] ?? '',
         'store_availability': DataMap['store_availability'] ?? false,
         'pan_number': DataMap['pan_number'] ?? '',
@@ -675,26 +604,125 @@ Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, 
         'user_type': DataMap['user_type'] ?? 'Vendor',
       };
 
-      await prefs.setString('userData', jsonEncode(userProfileData));
       await UserPreferences.setUser(userProfileData);
       userData = UserPreferences.getUser();
       print('user data:$userData');
+      notifyListeners();
 
+      return DataMap['message'];
+    } catch (error) {
       notifyListeners();
-      return responseBody;
-    } else {
-      print("Login/Registration failed with status code: ${response.statusCode}");
-      print("Response body: ${response.body}");
-      notifyListeners();
-      return {"code": response.statusCode};
+
+      // Handle exceptions
+      return "-1";
     }
-  } catch (error, stackTrace) {
-    print("Error during login/registration: $error");
-    print("Stack trace: $stackTrace");
-    notifyListeners();
-    return {"code": 500, "error": error.toString()};
   }
-}
+
+  Future<Map<String, dynamic>> commonLogin(
+      BuildContext context, String mobileNo, String userType) async {
+    final prefs = await SharedPreferences.getInstance();
+    _getCurrentLocation(context); // Make sure _getCurrentLocation is defined
+    final String url = 'https://app.cloudbelly.in/common-login';
+
+    final Map<String, dynamic> requestBody = {
+      "phone": mobileNo,
+      "fcm_token": prefs.getString('fcmToken'),
+      "user_type": userType,
+    };
+
+    print("requestBody:: $requestBody");
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        final DataMap = responseBody['data'];
+        print("data:: $DataMap");
+
+        Map<String, dynamic> userProfileData = {
+          'user_id': DataMap['user_id'],
+          'user_name': DataMap['user_name'],
+          'email': DataMap['email'],
+          'store_name': DataMap['store_name'] ??
+              DataMap['email'].split('@')[0] ??
+              "Unknown",
+          'profile_photo': DataMap['profile_photo'] ?? '',
+          'store_availability': DataMap['store_availability'] ?? false,
+          'pan_number': DataMap['pan_number'] ?? '',
+          'aadhar_number': DataMap['aadhar_number'] ?? '',
+          if (DataMap['address'] != null)
+            'address': {
+              "location": DataMap['address']['location'],
+              "latitude": DataMap['address']['latitude'],
+              "longitude": DataMap['address']['longitude'],
+              "hno": DataMap['address']['hno'],
+              "pincode": DataMap['address']['pincode'],
+              "landmark": DataMap['address']['landmark'],
+              "type": DataMap['address']['type'],
+            },
+          if (DataMap['location'] != null)
+            'location': {
+              'details': DataMap['location']['details'] ?? '',
+              'latitude': DataMap['location']['latitude'] ?? '',
+              'longitude': DataMap['location']['longitude'] ?? '',
+            },
+          if (DataMap['current_location'] != null)
+            'current_location': {
+              'area': DataMap['current_location']['area'] ?? '',
+              'latitude': DataMap['current_location']['latitude'] ?? '',
+              'longitude': DataMap['current_location']['longitude'] ?? '',
+            },
+          if (DataMap['working_hours'] != null)
+            'working_hours': {
+              'start_time': DataMap['working_hours']['start_time'] ?? '',
+              'end_time': DataMap['working_hours']['end_time'] ?? '',
+            },
+          'delivery_addresses': DataMap['delivery_addresses'] ?? [],
+          'bank_name': DataMap['bank_name'] ?? '',
+          'pincode': DataMap['pincode'] ?? '',
+          'rating': DataMap['rating'] ?? '-',
+          'followers': DataMap['followers'] ?? [],
+          'followings': DataMap['followings'] ?? [],
+          'cover_image': DataMap['cover_image'] ?? '',
+          'account_number': DataMap['account_number'] ?? '',
+          'ifsc_code': DataMap['ifsc_code'] ?? '',
+          'phone': DataMap['phone'] ?? '',
+          'upi_id': DataMap['upi_id'] ?? '',
+          'user_type': DataMap['user_type'] ?? 'Vendor',
+        };
+
+        await prefs.setString('userData', jsonEncode(userProfileData));
+        await UserPreferences.setUser(userProfileData);
+        userData = UserPreferences.getUser();
+        print('user data:$userData');
+
+        notifyListeners();
+        return responseBody;
+      } else {
+        print(
+            "Login/Registration failed with status code: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        notifyListeners();
+        return {"code": response.statusCode};
+      }
+    } catch (error, stackTrace) {
+      print("Error during login/registration: $error");
+      print("Stack trace: $stackTrace");
+      notifyListeners();
+      return {"code": 500, "error": error.toString()};
+    }
+  }
+
   Future<String> googleLogin(email, userType) async {
     print("fcmToken:: $fcmToken");
     final prefs = await SharedPreferences.getInstance();
@@ -762,7 +790,7 @@ Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, 
       await UserPreferences.setUser(userProfileData);
       userData = UserPreferences.getUser();
       print("userData:: ${userData}");
-     
+
       notifyListeners();
       return DataMap['message'];
     } catch (error) {
@@ -1183,23 +1211,34 @@ Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, 
     }
   }
 
-
   Future<String> updateCustomerLocation(
       double? latitude, double? longitude, String area) async {
-  var requestBodySearch;
+    var requestBodySearch;
     final String url = 'https://app.cloudbelly.in/update-user';
 
-    requestBodySearch = {"latitude": latitude, "longitude": longitude,"area":area};
+    requestBodySearch = {
+      "latitude": latitude,
+      "longitude": longitude,
+      "area": area
+    };
     print("locLogapiservice.dart $requestBodySearch");
     userData = UserPreferences.getUser();
 
-    userData?['current_location']= {"latitude": latitude, "longitude": longitude,"area":area};
+    userData?['current_location'] = {
+      "latitude": latitude,
+      "longitude": longitude,
+      "area": area
+    };
 
-   await UserPreferences.setUser(userData!);
-    
+    await UserPreferences.setUser(userData!);
+
     final Map<String, dynamic> requestBody = {
       'user_id': userData?['user_id'] ?? "",
-      "current_location": {"latitude": latitude, "longitude": longitude,"area":area}
+      "current_location": {
+        "latitude": latitude,
+        "longitude": longitude,
+        "area": area
+      }
     };
 
     try {
@@ -1868,7 +1907,7 @@ Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, 
 
   Future<String> likePost(String id, String userId) async {
     final String url = 'https://app.cloudbelly.in/update-posts';
- print("likeResp");
+    print("likeResp");
     // bool _isOK = false;
     Map<String, dynamic> requestBody = {
       "user_id": userId,
@@ -1886,9 +1925,8 @@ Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, 
       );
       print("likeResponse:: ${response.body}");
       print(response.statusCode);
- notifyListeners();
+      notifyListeners();
       return response.statusCode.toString();
- 
     } catch (error) {
       // Handle exceptions
       return '-1';
@@ -2252,17 +2290,15 @@ Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, 
       return '-1';
     }
   }
- 
-  
+
   Future<dynamic> cartInventory(List<dynamic> data) async {
     // id = '65e31e9f0bf98389f417cf71';
     final String url = 'https://app.cloudbelly.in/cart/add';
 
     // bool _isOK = false;
-   Map<String, dynamic> requestBody = {
+    Map<String, dynamic> requestBody = {
       'user_id': userData?['user_id'] ?? "",
       'items': data
-     
     };
 
     try {
@@ -2319,7 +2355,6 @@ Future<Map<String, dynamic>> commonLogin(BuildContext context, String mobileNo, 
     Map<String, dynamic> requestBody = {
       'user_id': userData?['user_id'] ?? "",
       'data': _newList
-     
     };
 
     try {
