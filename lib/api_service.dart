@@ -281,6 +281,56 @@ class Auth with ChangeNotifier {
       return {"code":200,"msg":"Unexpected errors"};
     }
   }
+Future updateCoupon(String couponId, Map<String, dynamic> updData) async {
+  final String url = 'https://app.cloudbelly.in/coupons/update';
+
+  final Map<String, dynamic> requestBody = {
+    'user_id': userData?['user_id'] ?? "",
+    'coupon_id': couponId,
+    ...updData, // Merging additional update data into the request body
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: jsonEncode(requestBody),
+    );
+
+    final responseData = jsonDecode(response.body);
+    print("Updated coupon: ${jsonEncode(responseData)}");
+    return responseData;
+  } catch (error) {
+    // Handle exceptions
+    print("Error updating coupon: $error");
+    return {"code": 400, "msg": "Unexpected error occurred"};
+  }
+}
+Future deleteCoupon(couponId) async {
+    final String url = 'https://app.cloudbelly.in/coupons/delete';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      'coupon_id':couponId
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+
+      print("created coupons  ${jsonEncode(response.body)}");
+      return jsonDecode(response.body);
+    } catch (error) {
+
+
+      // Handle exceptions
+      return {"code":200,"msg":"Unexpected errors"};
+    }
+  }
 
   bannerTogger(ProductDetails item) {
     showBanner = !showBanner;

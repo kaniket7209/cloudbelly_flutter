@@ -184,204 +184,317 @@ class _PerformanceState extends State<Performance> {
     }
   }
 
-void _showCouponsModal(BuildContext context, List<Map<String, dynamic>> coupons) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.transparent,
-    isScrollControlled: true,  // Enable full-screen modal for better pull-down gesture
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(25.0),
-      ),
-    ),
-    builder: (context) {
-      return GestureDetector(
-        behavior: HitTestBehavior.opaque,  // Ensures gestures like pulling down are recognized
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
-            ),
-          ),
-          padding: const EdgeInsets.all(20.0),  // Padding around entire modal content
-          child: SingleChildScrollView(
-            child: Wrap(
-              children: [
-                Text(
-                  'All Coupons',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff0A4C61),
-                  ),
-                ),
-                SizedBox(height: 6.h),
-                if (coupons.isNotEmpty)
-                  ...coupons.map<Widget>((coupon) {
-                    return buildCouponPreviewCard(coupon);
-                  }).toList()
-                else
-                  Center(
-                    child: Text('No coupons found.'),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
-  );
-}
-Widget buildCouponPreviewCard(Map<String, dynamic> coupon) {
-  final String discountValue = coupon['discount_value'];
-  final String minCartValue = coupon['min_cart_value'];
-  final String couponCode = coupon['coupon_code'];
+  void _showCouponsModal(
+      BuildContext context, List<Map<String, dynamic>> coupons) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled:
+          true, // Enable full-screen modal for better pull-down gesture
 
-  return Container(
-    padding: EdgeInsets.all(25),
-    margin: EdgeInsets.only(bottom: 20),  // Maintain bottom margin for gaps
-    decoration: ShapeDecoration(
-      shadows: [
-        BoxShadow(
-          color: Color(0xffD3EEEE),
-          blurRadius: 30,
-          offset: Offset(5, 6),
-          spreadRadius: 0,
-        ),
-      ],
-      color: Color(0xffD3EEEE),
-      shape: SmoothRectangleBorder(
-        borderRadius: SmoothBorderRadius(
-          cornerRadius: 50,
-          cornerSmoothing: 1,
-        ),
-      ),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      builder: (context) {
+        return GestureDetector(
+          behavior: HitTestBehavior
+              .opaque, // Ensures gestures like pulling down are recognized
+          child: Container(
+            decoration: const ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                  color: Color(0x7FB1D9D8),
+                  blurRadius: 6,
+                  offset: Offset(0, 4),
+                  spreadRadius: 0,
+                ),
+              ],
+              color: Colors.white,
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.only(
+                  topLeft: SmoothRadius(cornerRadius: 45, cornerSmoothing: 1),
+                  topRight: SmoothRadius(cornerRadius: 45, cornerSmoothing: 1),
+                ),
+              ),
+            ),
+            padding: const EdgeInsets.all(
+                20.0), // Padding around entire modal content
+            child: SingleChildScrollView(
+              child: Wrap(
                 children: [
                   Text(
-                    'Rs $discountValue OFF',
+                    'All Coupons',
                     style: TextStyle(
-                      fontSize: 22,
-                      fontFamily: 'Product Sans Black',
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Color(0xff0A4C61),
                     ),
                   ),
-                  SizedBox(height: 5),
-                  Text(
-                    'On all orders with a minimum order value of Rs $minCartValue',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Color(0xff0A4C61),
+                  SizedBox(height: 6.h),
+                  if (coupons.isNotEmpty)
+                    ...coupons.map<Widget>((coupon) {
+                      return buildCouponPreviewCard(context, coupon);
+                    }).toList()
+                  else
+                    Center(
+                      child: Text('No coupons found.'),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildCouponPreviewCard(
+      BuildContext context, Map<String, dynamic> coupon) {
+    final String discountValue = coupon['discount_value'];
+    final String minCartValue = coupon['min_cart_value'];
+    final String couponCode = coupon['coupon_code'];
+    bool isActive =
+        coupon['is_active'] ?? false; // Assuming there is an 'is_active' field
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                final result = await Provider.of<Auth>(context, listen: false)
+                    .deleteCoupon(coupon['_id']);
+                if (result['code'] == 200) {
+                  // Success: show a success message
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("Coupon deleted successfully."),
+                  ));
+                } else {
+                  // Error: show an error message
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("Failed to delete coupon: ${result['msg']}"),
+                  ));
+                }
+              },
+              child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                  decoration: ShapeDecoration(
+                    color: Color(0xffFA6E00),
+                    shape: const SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.all(
+                          SmoothRadius(cornerRadius: 9, cornerSmoothing: 1)),
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0xffFA6E00).withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    "Delete",
+                    style: TextStyle(color: Colors.white),
+                  )),
+            ),
+            SizedBox(
+              width: 2.w,
+            ),
+            GestureDetector(
+              onTap: () async {
+                // Toggle Active/Inactive state
+                bool newStatus = !isActive;
+                final updData = {
+                  'is_active': newStatus
+                }; // The field you want to update
+                final result = await Provider.of<Auth>(context, listen: false)
+                    .updateCoupon(coupon['_id'], updData);
+
+                if (result['code'] == 200) {
+                  // Success: show success message and update UI if necessary
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        "Coupon ${newStatus ? 'activated' : 'deactivated'} successfully."),
+                  ));
+                } else {
+                  // Error: show error message
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text("Failed to update coupon: ${result['msg']}"),
+                  ));
+                }
+              },
+              child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                  decoration: ShapeDecoration(
+                    color: isActive ? Colors.green : Colors.red,
+                    shape: const SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.all(
+                          SmoothRadius(cornerRadius: 9, cornerSmoothing: 1)),
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: isActive
+                            ? Colors.green.withOpacity(0.3)
+                            : Colors.red.withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Text(isActive ? "Active" : "Inactive",
+                      style: TextStyle(color: Colors.white))),
+            ),
+            SizedBox(
+              width: 8.w,
+            )
+          ],
+        ),
+        Container(
+          padding: EdgeInsets.all(25),
+          margin: EdgeInsets.only(bottom: 20),
+          decoration: ShapeDecoration(
+            shadows: [
+              BoxShadow(
+                color: Color(0xffD3EEEE),
+                blurRadius: 30,
+                offset: Offset(5, 6),
+                spreadRadius: 0,
+              ),
+            ],
+            color: Color(0xffD3EEEE),
+            shape: SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius(
+                cornerRadius: 50,
+                cornerSmoothing: 1,
+              ),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Buttons Row
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Rs $discountValue OFF',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontFamily: 'Product Sans Black',
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff0A4C61),
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          'On all orders with a minimum order value of Rs $minCartValue',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Color(0xff0A4C61),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                          decoration: ShapeDecoration(
+                            shadows: [
+                              BoxShadow(
+                                color: Color(0xff0A4C61).withOpacity(0.45),
+                                blurRadius: 30,
+                                offset: Offset(0, 4),
+                                spreadRadius: 0,
+                              ),
+                            ],
+                            color: Color(0xff0A4C61),
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 13,
+                                cornerSmoothing: 1,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Coupon: ',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'Product Sans',
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                couponCode,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Product Sans',
+                                  color: Color(0xffA3DBDB),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(width: 30),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 30),
                     decoration: ShapeDecoration(
                       shadows: [
                         BoxShadow(
-                          color: Color(0xff0A4C61).withOpacity(0.45),
-                          blurRadius: 30,
-                          offset: Offset(0, 4),
+                          color: Color(0xff0A4C61).withOpacity(0.15),
+                          blurRadius: 20,
+                          offset: Offset(5, 6),
                           spreadRadius: 0,
                         ),
                       ],
-                      color: Color(0xff0A4C61),
+                      color: Color(0xff519896),
                       shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(
-                          cornerRadius: 13,
+                          cornerRadius: 30,
                           cornerSmoothing: 1,
                         ),
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Coupon: ',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Product Sans',
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          couponCode,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Product Sans',
-                            color: Color(0xffA3DBDB),
-                          ),
-                        ),
-                      ],
+                    child: Center(
+                      child: Image.asset(
+                        'assets/images/Coupon.png', // Replace with your asset path
+                        width: 50,
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-            SizedBox(width: 30),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 30),
-              decoration: ShapeDecoration(
-                shadows: [
-                  BoxShadow(
-                    color: Color(0xff0A4C61).withOpacity(0.15),
-                    blurRadius: 20,
-                    offset: Offset(5, 6),
-                    spreadRadius: 0,
-                  ),
-                ],
-                color: Color(0xff519896),
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 30,
-                    cornerSmoothing: 1,
-                  ),
-                ),
-              ),
-              child: Center(
-                child: Image.asset(
-                  'assets/images/Coupon.png', // Replace with your asset path
-                  width: 50,
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 2),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 0, vertical: 2),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(height: 10),
-              Text(
-                'Visible on your store. Can be availed by all customers',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.teal[600],
+              SizedBox(height: 2),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10),
+                    Text(
+                      'Visible on your store. Can be availed by all customers',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.teal[600],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
       ],
-    ),
-  );
-}
+    );
+  }
 }
 
 // class _PerformanceState extends State<Performance> {
