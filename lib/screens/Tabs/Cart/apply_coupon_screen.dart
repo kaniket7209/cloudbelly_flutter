@@ -7,6 +7,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 
 class ApplyCouponScreen extends StatefulWidget {
+   double totalAmount;
+   ApplyCouponScreen({super.key, required this.totalAmount});
   @override
   _ApplyCouponScreenState createState() => _ApplyCouponScreenState();
 }
@@ -62,7 +64,7 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
           // Coupons List Section
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
               child: isLoading
                   ? Center(child: CircularProgressIndicator())
                   : SingleChildScrollView(
@@ -155,21 +157,21 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: 2.h,
+                        height: 2.5.h,
                       ),
                       Container(
                         child: Text(
                           'Apply Coupon',
                           style: TextStyle(
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Product Sans Black',
+                            fontWeight: FontWeight.w700,
                             color: Color(0xff2E0536),
-                            fontSize: 22,
+                            fontSize: 21,
                           ),
                         ),
                       ),
                       Text(
-                        'Your cart: Rs 165', // Dynamic value can be fetched from cart provider
+                        'Your cart: Rs ${widget.totalAmount}', // Dynamic value can be fetched from cart provider
                         style: TextStyle(
                           fontFamily: 'Product Sans',
                           fontSize: 14,
@@ -249,11 +251,31 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
     final String couponCode = coupon['coupon_code'];
     final String discountValue = coupon['discount_value'];
     final String minCartValue = coupon['min_cart_value'] ?? "0";
+    final bool isActive = coupon['is_active'] ?? false;
+
+  final double minCartValueDouble = double.tryParse(minCartValue) ?? 0.0;
+  final double totalCartValue = widget.totalAmount; // Assuming widget.totalAmount is available
+ String couponMessage;
+ bool added;
+  if (totalCartValue >= minCartValueDouble) {
+    added= true;
+    couponMessage = 'Save Rs $discountValue on this order';
+  } else {
+     added= false;
+    final double amountNeeded = minCartValueDouble - totalCartValue;
+    couponMessage = 'Add Rs ${amountNeeded.toStringAsFixed(2)} more to get a discount upto Rs $discountValue';
+  }
+
+    // Define background color based on is_active
+    final Color backgroundColor =
+        isActive ? Color(0xffF8D2F8) : Color(0xffE3E3E3);
+    final Color discountBadgeColor =
+        isActive ? Color(0xffFA6E00) : Color(0xff343434);
 
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       decoration: ShapeDecoration(
-        color: Colors.white,
+        color: backgroundColor,
         shape: SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius.all(
             SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
@@ -272,25 +294,28 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Discount badge
+            // Vertical Discount Badge
             Container(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
               decoration: BoxDecoration(
-                color: Color(0xffFA6E00),
+                color: discountBadgeColor,
                 borderRadius: BorderRadius.circular(40),
               ),
-              child: Text(
-                "$discountValue% OFF",
-                style: TextStyle(
-                  fontFamily: 'Product Sans',
-                  fontSize: 14,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+              child: RotatedBox(
+                quarterTurns: 3, // Rotate the text to make it vertical
+                child: Text(
+                  "Rs $discountValue   OFF",
+                  style: TextStyle(
+                    fontFamily: 'Product Sans',
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
             SizedBox(width: 20),
-            // Coupon details
+            // Coupon Details
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,19 +323,19 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                   Text(
                     couponCode,
                     style: TextStyle(
-                      fontFamily: 'Product Sans',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      fontFamily: 'Product Sans Black',
+                      fontSize: 21,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xff343434),
                     ),
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 1),
                   Text(
-                    'Save Rs $minCartValue on this order',
+                    couponMessage,
                     style: TextStyle(
                       fontFamily: 'Product Sans',
                       fontSize: 14,
-                      color: Colors.black.withOpacity(0.7),
+                      color: Color(0xffFA0000),
                     ),
                   ),
                   SizedBox(height: 5),
@@ -319,13 +344,15 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                     style: TextStyle(
                       fontFamily: 'Product Sans',
                       fontSize: 12,
-                      color: Colors.black.withOpacity(0.5),
+                      color: Color(0xff343434).withOpacity(0.5),
                     ),
                   ),
                 ],
               ),
             ),
-            // Apply button
+            if(added)
+            Divider(color: discountBadgeColor,),
+            // Apply Button
             TextButton(
               onPressed: () {
                 // Apply the coupon
@@ -333,10 +360,12 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
               child: Text(
                 "APPLY",
                 style: TextStyle(
-                  fontFamily: 'Product Sans',
-                  fontSize: 16,
-                  color: Color(0xffFA6E00),
-                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Product Sans Black',
+                  fontSize: 14,
+                  color: isActive
+                      ? discountBadgeColor
+                      : discountBadgeColor.withOpacity(0.3),
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             )
@@ -345,4 +374,5 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
       ),
     );
   }
+
 }

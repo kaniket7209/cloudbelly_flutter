@@ -1193,7 +1193,7 @@ class _ViewCartState extends State<ViewCart> {
                 }),
                 // Space(1.h),
                 const Space(33),
-                CouponWidget(),
+                CouponWidget( totalAmount: totalAmount),
                 const Space(20),
                 Container(
                   alignment: Alignment.centerLeft,
@@ -1393,7 +1393,8 @@ class DeliveryInstructionWidgetCart extends StatelessWidget {
 }
 
 class CouponWidget extends StatefulWidget {
-  CouponWidget({super.key});
+  final double totalAmount;
+  const CouponWidget({super.key,required this.totalAmount});
   @override
   State<CouponWidget> createState() => _CouponWidgetState();
 }
@@ -1424,7 +1425,7 @@ class _CouponWidgetState extends State<CouponWidget> {
               // Navigate to the coupons screen
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ApplyCouponScreen()),
+                MaterialPageRoute(builder: (context) => ApplyCouponScreen(totalAmount:widget.totalAmount)),
               );
             },
             child: Container(
