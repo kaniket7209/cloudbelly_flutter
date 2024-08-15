@@ -114,6 +114,7 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
   }
 
   Widget _buildTopCouponEntry() {
+    TextEditingController _couponCodeController = TextEditingController();
     return Material(
       color: Colors.transparent,
       child: Container(
@@ -210,6 +211,7 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                     Expanded(
                       flex: 1,
                       child: TextField(
+                        controller: _couponCodeController,
                         cursorColor: Color(0xff2E0536),
                         decoration: InputDecoration(
                           hintText: "Enter Coupon Code",
@@ -224,7 +226,8 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        // Apply the coupon
+                        _applyCoupon(_couponCodeController
+                            .text); // Apply the coupon entered in the text field
                       },
                       child: Text(
                         "APPLY",
@@ -235,7 +238,7 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -530,5 +533,49 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
         );
       },
     );
+  }
+
+  void _applyCoupon(String enteredCouponCode) {
+    if (enteredCouponCode.isEmpty) {
+      // Show error if no code is entered
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a coupon code')),
+      );
+      return;
+    }
+
+    // Search for the coupon in the list of fetched coupons
+    final coupon = coupons.firstWhere(
+      (c) => c['coupon_code'].toLowerCase() == enteredCouponCode.toLowerCase(),
+    );
+
+    if (coupon != null) {
+      // Validate the coupon based on cart total and coupon requirements
+      double minCartValue =
+          double.tryParse(coupon['min_cart_value'] ?? '0') ?? 0.0;
+      if (widget.totalAmount >= minCartValue) {
+        // Apply coupon
+        _showBottomSheet(
+            context, coupon['coupon_code'], coupon['discount_value']);
+        // Optionally update the cart with the applied discount
+        // For example:
+        // setState(() {
+        //   widget.totalAmount -= double.parse(coupon['discount_value']);
+        // });
+      } else {
+        // Show error if cart value is less than required minimum cart value
+        double difference = minCartValue - widget.totalAmount;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  'Add Rs ${difference.toStringAsFixed(2)} more to apply this coupon')),
+        );
+      }
+    } else {
+      // Show error if the coupon is invalid or not found
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid coupon code')),
+      );
+    }
   }
 }
