@@ -1,5 +1,6 @@
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -129,96 +130,116 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
             ),
           ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Container(
-              
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      child: IconButton(
-                        icon: Image.asset(
-                          'assets/images/back_double_arrow.png', // Replace with your actual asset path
-                          color: Color(0xffFA6E00),
-                          width: 24,
-                          height: 24,
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+        child: Column(
+          children: [
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    child: IconButton(
+                      icon: Image.asset(
+                        'assets/images/back_double_arrow.png', // Replace with your actual asset path
+                        color: Color(0xffFA6E00),
+                        width: 24,
+                        height: 24,
                       ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 2.h,),
-                        Container(
-                          child: Text(
-                            'Apply Coupon',
-                            style: TextStyle(
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff2E0536),
-                              fontSize: 22,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          'Your cart: Rs 165', // Dynamic value can be fetched from cart provider
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                      Container(
+                        child: Text(
+                          'Apply Coupon',
                           style: TextStyle(
                             fontFamily: 'Product Sans',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff2E0536),
+                            fontSize: 22,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Your cart: Rs 165', // Dynamic value can be fetched from cart provider
+                        style: TextStyle(
+                          fontFamily: 'Product Sans',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff2E0536),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              child: Container(
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.all(
+                      SmoothRadius(cornerRadius: 15, cornerSmoothing: 1),
+                    ),
+                    side: BorderSide(
+                      color: Color(
+                          0xffCBC0CD), // Light border color for the outline
+                      width: 1, // Border width
+                    ),
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(
+                    horizontal: 20, vertical: 2), // Adjust padding
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: TextField(
+                        cursorColor: Color(0xff2E0536),
+                        decoration: InputDecoration(
+                          hintText: "Enter Coupon Code",
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(
+                            fontFamily: 'Product Sans',
+                            fontSize: 16,
                             color: Color(0xff2E0536),
                           ),
                         ),
-                      ],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        // Handle apply coupon code logic
+                      },
+                      child: Text(
+                        "APPLY",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xffFA6E00),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "Enter Coupon Code",
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(
-                          fontFamily: 'Product Sans',
-                          fontSize: 16,
-                          color: Color(0xff2E0536),
-                        ),
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle apply coupon code logic
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xffFA6E00),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text("APPLY"),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+            SizedBox(
+              height: 2.h,
+            )
+          ],
         ),
       ),
     );
