@@ -7,8 +7,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 
 class ApplyCouponScreen extends StatefulWidget {
-   double totalAmount;
-   ApplyCouponScreen({super.key, required this.totalAmount});
+  double totalAmount;
+  ApplyCouponScreen({super.key, required this.totalAmount});
   @override
   _ApplyCouponScreenState createState() => _ApplyCouponScreenState();
 }
@@ -221,16 +221,17 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                         ),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        // Handle apply coupon code logic
+                    TextButton(
+                      onPressed: () {
+                        // Apply the coupon
                       },
                       child: Text(
                         "APPLY",
                         style: TextStyle(
+                          fontFamily: 'Product Sans Black',
                           fontSize: 14,
                           color: Color(0xffFA6E00),
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -253,18 +254,20 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
     final String minCartValue = coupon['min_cart_value'] ?? "0";
     final bool isActive = coupon['is_active'] ?? false;
 
-  final double minCartValueDouble = double.tryParse(minCartValue) ?? 0.0;
-  final double totalCartValue = widget.totalAmount; // Assuming widget.totalAmount is available
- String couponMessage;
- bool added;
-  if (totalCartValue >= minCartValueDouble) {
-    added= true;
-    couponMessage = 'Save Rs $discountValue on this order';
-  } else {
-     added= false;
-    final double amountNeeded = minCartValueDouble - totalCartValue;
-    couponMessage = 'Add Rs ${amountNeeded.toStringAsFixed(2)} more to get a discount upto Rs $discountValue';
-  }
+    final double minCartValueDouble = double.tryParse(minCartValue) ?? 0.0;
+    final double totalCartValue =
+        widget.totalAmount; // Assuming widget.totalAmount is available
+    String couponMessage;
+    bool added;
+    if (totalCartValue >= minCartValueDouble) {
+      added = true;
+      couponMessage = 'Save Rs $discountValue on this order';
+    } else {
+      added = false;
+      final double amountNeeded = minCartValueDouble - totalCartValue;
+      couponMessage =
+          'Add Rs ${amountNeeded.toStringAsFixed(2)} more to get a discount upto Rs $discountValue';
+    }
 
     // Define background color based on is_active
     final Color backgroundColor =
@@ -290,24 +293,35 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+       
           children: [
             // Vertical Discount Badge
             Container(
-              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 10),
-              decoration: BoxDecoration(
+              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+              decoration: ShapeDecoration(
                 color: discountBadgeColor,
-                borderRadius: BorderRadius.circular(40),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.all(
+                    SmoothRadius(cornerRadius: 13, cornerSmoothing: 1),
+                  ),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
               ),
               child: RotatedBox(
                 quarterTurns: 3, // Rotate the text to make it vertical
                 child: Text(
                   "Rs $discountValue   OFF",
                   style: TextStyle(
-                    fontFamily: 'Product Sans',
-                    fontSize: 14,
+                    fontFamily: 'Product Sans Black',
+                    fontSize: 20,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -315,64 +329,89 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
               ),
             ),
             SizedBox(width: 20),
+
             // Coupon Details
             Expanded(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    couponCode,
-                    style: TextStyle(
-                      fontFamily: 'Product Sans Black',
-                      fontSize: 21,
-                      fontWeight: FontWeight.w900,
-                      color: Color(0xff343434),
-                    ),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          // mainAxisAlignment: MainAxisAlignment.center,
+                          
+                          children: [
+                            Text(
+                              couponCode,
+                              style: TextStyle(
+                                fontFamily: 'Product Sans Black',
+                                fontSize: 21,
+                                fontWeight: FontWeight.w900,
+                                color: Color(0xff343434),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Apply the coupon
+                        },
+                        child: Text(
+                          "APPLY",
+                          style: TextStyle(
+                            fontFamily: 'Product Sans Black',
+                            fontSize: 16,
+                            color: isActive
+                                ? discountBadgeColor
+                                : discountBadgeColor.withOpacity(0.3),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 1),
                   Text(
                     couponMessage,
                     style: TextStyle(
                       fontFamily: 'Product Sans',
-                      fontSize: 14,
+                      fontSize: 12,
                       color: Color(0xffFA0000),
                     ),
                   ),
+                  SizedBox(height: 5),
+                  if (added) ...[
+                    Container(
+                      width: double.infinity, // This ensures full-width divider
+                      child: Divider(
+                        color: Color(0xff7A128F),
+                        thickness: 1, // Adjust the thickness if needed
+                        height:
+                            20, // Space between divider and adjacent content
+                      ),
+                    ),
+                  ],
                   SizedBox(height: 5),
                   Text(
                     'Use code $couponCode & get upto $discountValue% off on orders above Rs $minCartValue. Max discount: Rs 50',
                     style: TextStyle(
                       fontFamily: 'Product Sans',
                       fontSize: 12,
-                      color: Color(0xff343434).withOpacity(0.5),
+                      color: Color(0xff343434),
                     ),
                   ),
                 ],
               ),
             ),
-            if(added)
-            Divider(color: discountBadgeColor,),
+
             // Apply Button
-            TextButton(
-              onPressed: () {
-                // Apply the coupon
-              },
-              child: Text(
-                "APPLY",
-                style: TextStyle(
-                  fontFamily: 'Product Sans Black',
-                  fontSize: 14,
-                  color: isActive
-                      ? discountBadgeColor
-                      : discountBadgeColor.withOpacity(0.3),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            )
           ],
         ),
       ),
     );
   }
-
 }
