@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'dart:typed_data';
@@ -827,6 +826,7 @@ class ViewCart extends StatefulWidget {
 }
 
 class _ViewCartState extends State<ViewCart> {
+   double deliveryFee = 0.0;
   bool _isAddressExpnaded = false;
   ScrollController _scrollController = ScrollController();
   bool _showContainer = false;
@@ -848,7 +848,11 @@ class _ViewCartState extends State<ViewCart> {
       calculateTotalAmount();
     });
   }
-
+void updateDeliveryFee(double fee) {
+    setState(() {
+      deliveryFee = fee;
+    });
+  }
   @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);
@@ -878,23 +882,25 @@ class _ViewCartState extends State<ViewCart> {
     }
   }
 
-void calculateTotalAmount() {
-  // Get the ViewCartProvider instance
-  final viewCartProvider = context.read<ViewCartProvider>();
+  void calculateTotalAmount() {
+    // Get the ViewCartProvider instance
+    final viewCartProvider = context.read<ViewCartProvider>();
 
-  // Calculate the total product price
-  double total = viewCartProvider.productList.fold(0.0, (sum, item) {
-    int quantity = item.quantity ?? 0;
-    double price = double.tryParse(item.price ?? '0') ?? 0.0;
-    return sum + (quantity * price);
-  });
+    // Calculate the total product price
+    double total = viewCartProvider.productList.fold(0.0, (sum, item) {
+      int quantity = item.quantity ?? 0;
+      double price = double.tryParse(item.price ?? '0') ?? 0.0;
+      return sum + (quantity * price);
+    });
 
-  // Get the delivery fee from ViewCartProvider (default to 0 if not available)
-  double? deliveryFee = viewCartProvider.deliveryFee ?? 0.0;
+    // Get the delivery fee from ViewCartProvider (default to 0 if not available)
+    double? deliveryFee = viewCartProvider.deliveryFee ?? 0.0;
 
-  // Update the CartProvider's totalAmount to include the delivery fee
-  context.read<CartProvider>().updateTotalAmount(total + deliveryFee,deliveryFee);
-}
+    // Update the CartProvider's totalAmount to include the delivery fee
+    context
+        .read<CartProvider>()
+        .updateTotalAmount(total + deliveryFee, deliveryFee);
+  }
 
   void getAddressDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
@@ -1214,10 +1220,11 @@ void calculateTotalAmount() {
                 SizedBox(
                   height: 1.h,
                 ),
-                PriceWidget(
-                  totalAmount: totalAmount,
-                  sellerId: id,
-                ),
+               PriceWidget(
+  totalAmount: totalAmount,  // Pass the total amount of the cart items
+  sellerId: id,        // Pass the sellerId for delivery fee calculation
+  onDeliveryFeeCalculated: updateDeliveryFee, // Callback to update delivery fee in parent
+),
                 Space(4.h),
                 TextWidgetCart(
                     text:
@@ -1265,25 +1272,20 @@ void calculateTotalAmount() {
                         //   ),
                         // ),
                         Consumer<CartProvider>(
-  builder: (context, cartProvider, child) {
-    // Get the delivery fee from ViewCartProvider
-    double? deliveryFee = context.read<ViewCartProvider>().deliveryFee ?? 0.0;
+        builder: (context, cartProvider, child) {
+          double totalAmount = cartProvider.totalAmount + deliveryFee + 3;
 
-    // Calculate the total amount, including delivery fee and other charges
-    double totalAmount = cartProvider.totalAmount + deliveryFee + 3;
-
-    // Display the total amount
-    return Text(
-      'Rs ${totalAmount.toStringAsFixed(2)}', 
-      style: const TextStyle(
-        color: Color(0xFFF7F7F7),
-        fontSize: 16,
-        fontFamily: 'Jost',
-        fontWeight: FontWeight.w600,
+          return Text(
+            'Rs ${totalAmount.toStringAsFixed(2)}',
+            style: const TextStyle(
+              color: Color(0xFFF7F7F7),
+              fontSize: 16,
+              fontFamily: 'Jost',
+              fontWeight: FontWeight.w600,
+            ),
+          );
+        },
       ),
-    );
-  },
-),
                         const Text(
                           'View Detailed Bill ',
                           style: TextStyle(
@@ -1482,8 +1484,13 @@ class _CouponWidgetState extends State<CouponWidget> {
 class PriceWidget extends StatefulWidget {
   final double totalAmount;
   final String sellerId;
+  final Function(double) onDeliveryFeeCalculated; // Callback to parent
 
-  PriceWidget({super.key, required this.totalAmount, required this.sellerId});
+  PriceWidget({
+    required this.totalAmount,
+    required this.sellerId,
+    required this.onDeliveryFeeCalculated, // Add this parameter
+  });
 
   @override
   State<PriceWidget> createState() => _PriceWidgetState();
@@ -1495,35 +1502,33 @@ class _PriceWidgetState extends State<PriceWidget> {
   String? errorMessage;
   late ViewCartProvider _viewCartProvider;
 
-@override
-void initState() {
-  super.initState();
-
-  // Delay the execution of calculateTotalAmount until after the current frame is complete
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    // Ensure data is ready before calling the method
-    fetchDeliveryFee().then((_) {
-      calculateTotalAmount(); // Call this method after data is fetched
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchDeliveryFee();
     });
-  });
-}
+  }
+
   void calculateTotalAmount() {
-  // Get the ViewCartProvider instance
-  final viewCartProvider = context.read<ViewCartProvider>();
+    // Get the ViewCartProvider instance
+    final viewCartProvider = context.read<ViewCartProvider>();
 
-  // Calculate the total product price
-  double total = viewCartProvider.productList.fold(0.0, (sum, item) {
-    int quantity = item.quantity ?? 0;
-    double price = double.tryParse(item.price ?? '0') ?? 0.0;
-    return sum + (quantity * price);
-  });
+    // Calculate the total product price
+    double total = viewCartProvider.productList.fold(0.0, (sum, item) {
+      int quantity = item.quantity ?? 0;
+      double price = double.tryParse(item.price ?? '0') ?? 0.0;
+      return sum + (quantity * price);
+    });
 
-  // Get the delivery fee from ViewCartProvider (default to 0 if not available)
-  double? deliveryFee = viewCartProvider.deliveryFee ?? 0.0;
+    // Get the delivery fee from ViewCartProvider (default to 0 if not available)
+    double? deliveryFee = viewCartProvider.deliveryFee ?? 0.0;
 
-  // Update the CartProvider's totalAmount to include the delivery fee
-  context.read<CartProvider>().updateTotalAmount(total + deliveryFee,deliveryFee);
-}
+    // Update the CartProvider's totalAmount to include the delivery fee
+    context
+        .read<CartProvider>()
+        .updateTotalAmount(total + deliveryFee, deliveryFee);
+  }
 
   @override
   void didChangeDependencies() {
@@ -1595,11 +1600,12 @@ void initState() {
         setState(() {
           deliveryDistance = (data['distance'] as num).toDouble();
           deliveryFee = (data['price'] as num).toDouble();
+          widget.onDeliveryFeeCalculated(deliveryFee!); // 
           // Calculate the new total amount
           double totalAmount = widget.totalAmount + (deliveryFee ?? 30) + 3;
           // Update the CartProvider with the new total amount
           Provider.of<CartProvider>(context, listen: false)
-              .updateTotalAmount(totalAmount,deliveryFee);
+              .updateTotalAmount(totalAmount, deliveryFee);
         });
       } else {
         print("Failed to load delivery fee: ${response.body}");
@@ -1646,24 +1652,24 @@ void initState() {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-               Flexible(
-          child: Consumer<CartProvider>(
-            builder: (context, cartProvider, child) {
-              // Calculate the 5% tax based on the totalAmount from the CartProvider
-              double taxAmount = cartProvider.totalAmount ;
+              Flexible(
+                child: Consumer<CartProvider>(
+                  builder: (context, cartProvider, child) {
+                    // Calculate the 5% tax based on the totalAmount from the CartProvider
+                    double taxAmount = cartProvider.totalAmount;
 
-              return Text(
-                'Rs ${taxAmount.toStringAsFixed(2)}', // Display the calculated tax
-                style: const TextStyle(
-                  color: Color(0xFF383838),
-                  fontSize: 14,
-                  fontFamily: 'Jost',
-                  fontWeight: FontWeight.w600,
+                    return Text(
+                      'Rs ${taxAmount.toStringAsFixed(2)}', // Display the calculated tax
+                      style: const TextStyle(
+                        color: Color(0xFF383838),
+                        fontSize: 14,
+                        fontFamily: 'Jost',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-        ),
+              ),
             ],
           ),
           const SizedBox(height: 5),
@@ -1712,209 +1718,210 @@ void initState() {
             ],
           ),
           const SizedBox(height: 5),
-        Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          "Delivery Fee ",
-          style: TextStyle(
-            color: Color(0xFF2E0536),
-            fontSize: 12,
-            fontFamily: 'Product Sans Medium',
-            fontWeight: FontWeight.w400,
-            decoration: TextDecoration.underline,
-            decorationColor: Color(0xFF2E0536),
-          ),
-        ),
-        Flexible(
-          child: deliveryFee == null
-              ? errorMessage != null
-                  ? Text(
-                      errorMessage!,
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 12,
-                        fontFamily: 'Jost',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  : const SizedBox(
-                      width: 15,
-                      height: 15,
-                      child: CircularProgressIndicator(
-                        color: Color(0xff0A4C61),
-                        strokeWidth: 2,
-                      ),
-                    )
-              : Text(
-                  "Rs $deliveryFee",
-                  style: const TextStyle(
-                    color: Color(0xFF383838),
-                    fontSize: 14,
-                    fontFamily: 'Jost',
-                    fontWeight: FontWeight.w600,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Delivery Fee ",
+                    style: TextStyle(
+                      color: Color(0xFF2E0536),
+                      fontSize: 12,
+                      fontFamily: 'Product Sans Medium',
+                      fontWeight: FontWeight.w400,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Color(0xFF2E0536),
+                    ),
                   ),
-                ),
-        ),
-      ],
-    ),
-    const SizedBox(height: 5),
-    Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          "Platform Fee ",
-          style: TextStyle(
-            color: Color(0xFF2E0536),
-            fontSize: 12,
-            fontFamily: 'Product Sans Medium',
-            fontWeight: FontWeight.w400,
-            decoration: TextDecoration.underline,
-            decorationColor: Color(0xFF2E0536),
-          ),
-        ),
-        const Text(
-          "Rs 3",
-          style: TextStyle(
-            color: Color(0xFF383838),
-            fontSize: 14,
-            fontFamily: 'Jost',
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    ),
-    const SizedBox(height: 5),
-    const Divider(
-      color: Color(0xFFBB5104),
-      thickness: 0.5,
-    ),
-    const SizedBox(height: 2.5),
-    Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          "Packaging Charge ",
-          style: TextStyle(
-            color: Color(0xFF2E0536),
-            fontSize: 12,
-            fontFamily: 'Product Sans Medium',
-            fontWeight: FontWeight.w400,
-            decoration: TextDecoration.underline,
-            decorationColor: Color(0xFF2E0536),
-          ),
-        ),
-        Row(
-          children: [
-            const Text(
-              "Rs 15",
-              style: TextStyle(
-                color: Color(0xFF383838),
-                fontSize: 14,
-                fontFamily: 'Jost',
-                decoration: TextDecoration.lineThrough,
-                fontWeight: FontWeight.w600,
+                  Flexible(
+                    child: deliveryFee == null
+                        ? errorMessage != null
+                            ? Text(
+                                errorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12,
+                                  fontFamily: 'Jost',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              )
+                            : const SizedBox(
+                                width: 15,
+                                height: 15,
+                                child: CircularProgressIndicator(
+                                  color: Color(0xff0A4C61),
+                                  strokeWidth: 2,
+                                ),
+                              )
+                        : Text(
+                            "Rs $deliveryFee",
+                            style: const TextStyle(
+                              color: Color(0xFF383838),
+                              fontSize: 14,
+                              fontFamily: 'Jost',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                  ),
+                ],
               ),
-            ),
-            const Text(
-              "  0",
-              style: TextStyle(
-                color: Color(0xFF383838),
-                fontSize: 14,
-                fontFamily: 'Jost',
-                fontWeight: FontWeight.w600,
+              const SizedBox(height: 5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Platform Fee ",
+                    style: TextStyle(
+                      color: Color(0xFF2E0536),
+                      fontSize: 12,
+                      fontFamily: 'Product Sans Medium',
+                      fontWeight: FontWeight.w400,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Color(0xFF2E0536),
+                    ),
+                  ),
+                  const Text(
+                    "Rs 3",
+                    style: TextStyle(
+                      color: Color(0xFF383838),
+                      fontSize: 14,
+                      fontFamily: 'Jost',
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ],
-    ),
-    const SizedBox(height: 5),
-    Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          "5% Govt Taxes & Other Charges",
-          style: TextStyle(
-            color: Color(0xFF2E0536),
-            fontSize: 12,
-            fontFamily: 'Product Sans Medium',
-            fontWeight: FontWeight.w400,
-            decoration: TextDecoration.underline,
-            decorationColor: Color(0xFF2E0536),
-          ),
-        ),
-        Flexible(
-          child: Consumer<CartProvider>(
-            builder: (context, cartProvider, child) {
-              // Calculate the 5% tax based on the totalAmount from the CartProvider
-              double taxAmount = cartProvider.totalAmount * 0.05;
+              const SizedBox(height: 5),
+              const Divider(
+                color: Color(0xFFBB5104),
+                thickness: 0.5,
+              ),
+              const SizedBox(height: 2.5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Packaging Charge ",
+                    style: TextStyle(
+                      color: Color(0xFF2E0536),
+                      fontSize: 12,
+                      fontFamily: 'Product Sans Medium',
+                      fontWeight: FontWeight.w400,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Color(0xFF2E0536),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        "Rs 15",
+                        style: TextStyle(
+                          color: Color(0xFF383838),
+                          fontSize: 14,
+                          fontFamily: 'Jost',
+                          decoration: TextDecoration.lineThrough,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Text(
+                        "  0",
+                        style: TextStyle(
+                          color: Color(0xFF383838),
+                          fontSize: 14,
+                          fontFamily: 'Jost',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "5% Govt Taxes & Other Charges",
+                    style: TextStyle(
+                      color: Color(0xFF2E0536),
+                      fontSize: 12,
+                      fontFamily: 'Product Sans Medium',
+                      fontWeight: FontWeight.w400,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Color(0xFF2E0536),
+                    ),
+                  ),
+                  Flexible(
+                    child: Consumer<CartProvider>(
+                      builder: (context, cartProvider, child) {
+                        // Calculate the 5% tax based on the totalAmount from the CartProvider
+                        double taxAmount = cartProvider.totalAmount * 0.05;
 
-              return Text(
-                'Rs ${taxAmount.toStringAsFixed(2)}', // Display the calculated tax
-                style: const TextStyle(
-                  color: Color(0xFF383838),
-                  fontSize: 14,
-                  fontFamily: 'Jost',
-                  fontWeight: FontWeight.w600,
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    ),
-    const SizedBox(height: 10),
-    const Divider(
-      color: Color(0xFFBB5104),
-      thickness: 0.5,
-    ),
-    Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          "Total:",
-          style: TextStyle(
-            color: Color(0xFF383838),
-            fontSize: 16,
-            fontFamily: 'Jost',
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        // Text(
-        //   "Rs ${(widget.totalAmount + (deliveryFee ?? 30) + 3).toStringAsFixed(2)}",
-        //   style: const TextStyle(
-        //     color: Color(0xFFFA6E00),
-        //     fontSize: 16,
-        //     fontFamily: 'Jost',
-        //     fontWeight: FontWeight.w800,
-        //   ),
-        // ),
-          Flexible(
-          child: Consumer<CartProvider>(
-            builder: (context, cartProvider, child) {
-              // Calculate the 5% tax based on the totalAmount from the CartProvider
-              double amt = cartProvider.totalAmount + 3 +(deliveryFee ?? 30) ;
+                        return Text(
+                          'Rs ${taxAmount.toStringAsFixed(2)}', // Display the calculated tax
+                          style: const TextStyle(
+                            color: Color(0xFF383838),
+                            fontSize: 14,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              const Divider(
+                color: Color(0xFFBB5104),
+                thickness: 0.5,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Total:",
+                    style: TextStyle(
+                      color: Color(0xFF383838),
+                      fontSize: 16,
+                      fontFamily: 'Jost',
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  // Text(
+                  //   "Rs ${(widget.totalAmount + (deliveryFee ?? 30) + 3).toStringAsFixed(2)}",
+                  //   style: const TextStyle(
+                  //     color: Color(0xFFFA6E00),
+                  //     fontSize: 16,
+                  //     fontFamily: 'Jost',
+                  //     fontWeight: FontWeight.w800,
+                  //   ),
+                  // ),
+                  Flexible(
+                    child: Consumer<CartProvider>(
+                      builder: (context, cartProvider, child) {
+                        // Calculate the 5% tax based on the totalAmount from the CartProvider
+                        double amt =
+                            cartProvider.totalAmount + 3 + (deliveryFee ?? 30);
 
-              return Text(
-                'Rs ${amt.toStringAsFixed(2)}', // Display the calculated tax
-                style: const TextStyle(
-                  color: Color(0xFF383838),
-                  fontSize: 14,
-                  fontFamily: 'Jost',
-                  fontWeight: FontWeight.w600,
-                ),
-              );
-            },
+                        return Text(
+                          'Rs ${amt.toStringAsFixed(2)}', // Display the calculated tax
+                          style: const TextStyle(
+                            color: Color(0xFF383838),
+                            fontSize: 14,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ),
-      ],
-    ),
-  ],
-),
         ],
       ),
     );
