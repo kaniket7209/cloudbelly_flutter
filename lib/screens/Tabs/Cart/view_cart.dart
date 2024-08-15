@@ -1218,7 +1218,7 @@ class _ViewCartState extends State<ViewCart> {
                 Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "Bill Details ${deliveryFee}",
+                    "Bill Details",
                     style: TextStyle(
                       color: Color(0xff2E0536),
                       fontSize: 18,

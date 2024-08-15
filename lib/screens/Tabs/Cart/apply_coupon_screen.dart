@@ -535,15 +535,16 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
     );
   }
 
-  void _applyCoupon(String enteredCouponCode) {
-    if (enteredCouponCode.isEmpty) {
-      // Show error if no code is entered
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a coupon code')),
-      );
-      return;
-    }
+void _applyCoupon(String enteredCouponCode) {
+  // Check if the coupon code is empty
+  if (enteredCouponCode.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Please enter a coupon code')),
+    );
+    return;
+  }
 
+  try {
     // Search for the coupon in the list of fetched coupons
     final coupon = coupons.firstWhere(
       (c) => c['coupon_code'].toLowerCase() == enteredCouponCode.toLowerCase(),
@@ -553,18 +554,39 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
       // Validate the coupon based on cart total and coupon requirements
       double minCartValue =
           double.tryParse(coupon['min_cart_value'] ?? '0') ?? 0.0;
-      if (widget.totalAmount >= minCartValue) {
-        // Apply coupon
+
+      // Fetch the total amount from the CartProvider
+      double currentTotalAmount = context.read<CartProvider>().totalAmount;
+
+      // Fetch the delivery fee from the ViewCartProvider
+      double deliveryFee = context.read<ViewCartProvider>().deliveryFee ?? 0.0;
+
+      // Combine total amount and delivery fee
+      double totalAmountWithDelivery = currentTotalAmount + deliveryFee;
+
+      // Apply the discount from the coupon
+      double discountValue = double.tryParse(coupon['discount_value'] ?? '0') ?? 0.0;
+      double newTotalAmount = totalAmountWithDelivery - discountValue;
+
+      // Check if the total amount is greater than or equal to the minimum required for the coupon
+      if (totalAmountWithDelivery >= minCartValue) {
+        // Update the CartProvider with the new total
+        context.read<CartProvider>().updateTotalAmount(newTotalAmount,deliveryFee);
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Coupon applied successfully!')),
+        );
+
+        // Optionally show bottom sheet or any other UI to reflect applied coupon
         _showBottomSheet(
-            context, coupon['coupon_code'], coupon['discount_value']);
-        // Optionally update the cart with the applied discount
-        // For example:
-        // setState(() {
-        //   widget.totalAmount -= double.parse(coupon['discount_value']);
-        // });
+          context,
+          coupon['coupon_code'],
+          discountValue.toString(),
+        );
       } else {
-        // Show error if cart value is less than required minimum cart value
-        double difference = minCartValue - widget.totalAmount;
+        // Show error if the cart value is less than the required minimum cart value
+        double difference = minCartValue - totalAmountWithDelivery;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
@@ -577,5 +599,12 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
         SnackBar(content: Text('Invalid coupon code')),
       );
     }
+  } catch (e) {
+    // Handle any error during the search for the coupon
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Coupon code not found or invalid')),
+    );
   }
+}
+
 }
