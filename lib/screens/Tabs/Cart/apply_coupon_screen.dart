@@ -2,6 +2,7 @@ import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -293,9 +294,9 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Row(
-       
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Vertical Discount Badge
             Container(
@@ -318,7 +319,7 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
               child: RotatedBox(
                 quarterTurns: 3, // Rotate the text to make it vertical
                 child: Text(
-                  "Rs $discountValue   OFF",
+                  "Rs $discountValue OFF",
                   style: TextStyle(
                     fontFamily: 'Product Sans Black',
                     fontSize: 20,
@@ -329,52 +330,22 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
               ),
             ),
             SizedBox(width: 20),
-
             // Coupon Details
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          // mainAxisAlignment: MainAxisAlignment.center,
-                          
-                          children: [
-                            Text(
-                              couponCode,
-                              style: TextStyle(
-                                fontFamily: 'Product Sans Black',
-                                fontSize: 21,
-                                fontWeight: FontWeight.w900,
-                                color: Color(0xff343434),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          // Apply the coupon
-                        },
-                        child: Text(
-                          "APPLY",
-                          style: TextStyle(
-                            fontFamily: 'Product Sans Black',
-                            fontSize: 16,
-                            color: isActive
-                                ? discountBadgeColor
-                                : discountBadgeColor.withOpacity(0.3),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    couponCode,
+                    style: TextStyle(
+                      fontFamily: 'Product Sans Black',
+                      fontSize: 21,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xff343434),
+                    ),
                   ),
+                  SizedBox(height: 1),
                   Text(
                     couponMessage,
                     style: TextStyle(
@@ -385,14 +356,10 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                   ),
                   SizedBox(height: 5),
                   if (added) ...[
-                    Container(
-                      width: double.infinity, // This ensures full-width divider
-                      child: Divider(
-                        color: Color(0xff7A128F),
-                        thickness: 1, // Adjust the thickness if needed
-                        height:
-                            20, // Space between divider and adjacent content
-                      ),
+                    Divider(
+                      color: Color(0xff7A128F),
+                      thickness: 1,
+                      height: 20,
                     ),
                   ],
                   SizedBox(height: 5),
@@ -407,11 +374,161 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                 ],
               ),
             ),
-
             // Apply Button
+            TextButton(
+              onPressed: () {
+                if (isActive) {
+                  _showBottomSheet(context, couponCode, discountValue);
+                }
+              },
+              child: Text(
+                "APPLY",
+                style: TextStyle(
+                  fontFamily: 'Product Sans Black',
+                  fontSize: 16,
+                  color: isActive
+                      ? discountBadgeColor
+                      : discountBadgeColor.withOpacity(0.3),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  void _showBottomSheet(
+      BuildContext context, String couponCode, String discountValue) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 10,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '‘$couponCode’ Applied',
+                    style: TextStyle(
+                      fontFamily: 'Product Sans Black',
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff343434),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Container(
+                      width: 30, // Ensuring the container is a square
+                      height: 35,
+
+                      decoration: ShapeDecoration(
+                        color: Color(0xffFA6E00),
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius.all(
+                            SmoothRadius(cornerRadius: 9, cornerSmoothing: 1),
+                          ),
+                        ),
+                        shadows: [
+                          BoxShadow(
+                            color: Color(0xffFA6E00).withOpacity(0.44),
+                            blurRadius: 20,
+                            offset: Offset(3, 6),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 20, // Adjust icon size to fit the container
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Rs $discountValue saves with this coupon',
+                style: TextStyle(
+                  fontFamily: 'Product Sans Black',
+                  height: 1.2,
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff2E0536),
+                ),
+              ),
+              SizedBox(height: 15),
+              Text(
+                'Your coupon is successfully applied',
+                style: TextStyle(
+                  fontFamily: 'Product Sans',
+                  fontSize: 20,
+                  color: Color(0xff343434),
+                ),
+              ),
+              SizedBox(height: 40),
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                    decoration: ShapeDecoration(
+                      color: Color(0xffFA6E00),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius.all(
+                          SmoothRadius(cornerRadius: 15, cornerSmoothing: 1),
+                        ),
+                      ),
+                      shadows: [
+                        BoxShadow(
+                          color: Color(0xffFA6E00).withOpacity(0.44),
+                          blurRadius: 20,
+                          offset: Offset(3, 6),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      'NICE!',
+                      style: TextStyle(
+                          fontFamily: 'Product Sans Black',
+                          fontSize: 18,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
