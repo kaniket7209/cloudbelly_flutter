@@ -281,6 +281,32 @@ class Auth with ChangeNotifier {
       return {"code":200,"msg":"Unexpected errors"};
     }
   }
+
+ Future getCustomersCoupons(user_id) async {
+    final String url = 'https://app.cloudbelly.in/coupons/get';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': user_id
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+
+      print("fetched coupons  ${jsonEncode(response.body)}");
+      return jsonDecode(response.body);
+    } catch (error) {
+
+
+      // Handle exceptions
+      return {"code":200,"msg":"Unexpected errors"};
+    }
+  }
+
 Future updateCoupon(String couponId, Map<String, dynamic> updData) async {
   final String url = 'https://app.cloudbelly.in/coupons/update';
 

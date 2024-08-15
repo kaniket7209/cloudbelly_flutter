@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'dart:typed_data';
 import 'package:cloudbelly_app/NotificationScree.dart';
+import 'package:cloudbelly_app/screens/Tabs/Cart/apply_coupon_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
 import 'package:cloudbelly_app/prefrence_helper.dart';
 import 'package:flutter/painting.dart';
@@ -833,8 +834,6 @@ class _ViewCartState extends State<ViewCart> {
   Map<String, dynamic> response = {};
   String? orderId;
   List<Map<String, dynamic>> convertedList = [];
-  String customer_lat = "";
-  String customer_lon = "";
   // final Razorpay _razorpay = Razorpay();
   // bool _isBottomSheetOpen = false;
 
@@ -1162,6 +1161,7 @@ class _ViewCartState extends State<ViewCart> {
               ),
             ),
           ),
+
           // Space(3.5.h),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 6.w),
@@ -1193,7 +1193,23 @@ class _ViewCartState extends State<ViewCart> {
                 }),
                 // Space(1.h),
                 const Space(33),
-                const Space(16),
+                CouponWidget(),
+                const Space(20),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Bill Details",
+                    style: TextStyle(
+                      color: Color(0xff2E0536),
+                      fontSize: 18,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 1.h,
+                ),
                 PriceWidget(
                   totalAmount: totalAmount,
                   sellerId: id,
@@ -1368,6 +1384,90 @@ class DeliveryInstructionWidgetCart extends StatelessWidget {
               fontSize: 12,
               fontFamily: 'Product Sans Medium',
               fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CouponWidget extends StatefulWidget {
+  CouponWidget({super.key});
+  @override
+  State<CouponWidget> createState() => _CouponWidgetState();
+}
+
+class _CouponWidgetState extends State<CouponWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Offers & Benefits",
+              style: TextStyle(
+                color: Color(0xff2E0536),
+                fontSize: 18,
+                fontFamily: 'Product Sans',
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 1.h,
+          ),
+          GestureDetector(
+            onTap: () {
+              // Navigate to the coupons screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ApplyCouponScreen()),
+              );
+            },
+            child: Container(
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius:
+                        20, // Adjust radius for a more squircle effect
+                    cornerSmoothing: 1,
+                  ),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0xffBC73BC).withOpacity(0.2), // Shadow color
+                    blurRadius: 15,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 15.0, horizontal: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Apply Coupon",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff2E0536),
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: Color(0xffFA6E00),
+                      size: 20,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
