@@ -878,17 +878,23 @@ class _ViewCartState extends State<ViewCart> {
     }
   }
 
-  void calculateTotalAmount() {
-    double total =
-        context.read<ViewCartProvider>().productList.fold(0.0, (sum, item) {
-      int quantity = item.quantity ?? 0;
-      double price = double.tryParse(item.price ?? '0') ?? 0.0;
-      return sum + (quantity * price);
-    });
+void calculateTotalAmount() {
+  // Get the ViewCartProvider instance
+  final viewCartProvider = context.read<ViewCartProvider>();
 
-    // Update the CartProvider's totalAmount
-    context.read<CartProvider>().updateTotalAmount(total);
-  }
+  // Calculate the total product price
+  double total = viewCartProvider.productList.fold(0.0, (sum, item) {
+    int quantity = item.quantity ?? 0;
+    double price = double.tryParse(item.price ?? '0') ?? 0.0;
+    return sum + (quantity * price);
+  });
+
+  // Get the delivery fee from ViewCartProvider (default to 0 if not available)
+  double? deliveryFee = viewCartProvider.deliveryFee ?? 0.0;
+
+  // Update the CartProvider's totalAmount to include the delivery fee
+  context.read<CartProvider>().updateTotalAmount(total + deliveryFee,deliveryFee);
+}
 
   void getAddressDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
@@ -1259,30 +1265,25 @@ class _ViewCartState extends State<ViewCart> {
                         //   ),
                         // ),
                         Consumer<CartProvider>(
-                          builder: (context, cartProvider, child) {
-                            double defaultTotalAmount =
-                                100.0; // Replace with the appropriate default amount if needed
-                            double totalAmount = cartProvider.totalAmount > 0
-                                ? cartProvider.totalAmount + 3
-                                : defaultTotalAmount + 30 + 3;
+  builder: (context, cartProvider, child) {
+    // Get the delivery fee from ViewCartProvider
+    double? deliveryFee = context.read<ViewCartProvider>().deliveryFee ?? 0.0;
 
-                            print(
-                                'Total amount: $totalAmount'); // Debugging line
+    // Calculate the total amount, including delivery fee and other charges
+    double totalAmount = cartProvider.totalAmount + deliveryFee + 3;
 
-                            return Text(
-                              cartProvider.totalAmount > 0
-                                  ? 'Rs ${totalAmount.toStringAsFixed(2)}'
-                                  : 'Please select location',
-                              style: const TextStyle(
-                                color: Color(0xFFF7F7F7),
-                                fontSize: 16,
-                                fontFamily: 'Jost',
-                                fontWeight: FontWeight.w600,
-                              ),
-                            );
-                          },
-                        ),
-
+    // Display the total amount
+    return Text(
+      'Rs ${totalAmount.toStringAsFixed(2)}', 
+      style: const TextStyle(
+        color: Color(0xFFF7F7F7),
+        fontSize: 16,
+        fontFamily: 'Jost',
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  },
+),
                         const Text(
                           'View Detailed Bill ',
                           style: TextStyle(
@@ -1494,13 +1495,35 @@ class _PriceWidgetState extends State<PriceWidget> {
   String? errorMessage;
   late ViewCartProvider _viewCartProvider;
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchDeliveryFee();
+@override
+void initState() {
+  super.initState();
+
+  // Delay the execution of calculateTotalAmount until after the current frame is complete
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Ensure data is ready before calling the method
+    fetchDeliveryFee().then((_) {
+      calculateTotalAmount(); // Call this method after data is fetched
     });
-  }
+  });
+}
+  void calculateTotalAmount() {
+  // Get the ViewCartProvider instance
+  final viewCartProvider = context.read<ViewCartProvider>();
+
+  // Calculate the total product price
+  double total = viewCartProvider.productList.fold(0.0, (sum, item) {
+    int quantity = item.quantity ?? 0;
+    double price = double.tryParse(item.price ?? '0') ?? 0.0;
+    return sum + (quantity * price);
+  });
+
+  // Get the delivery fee from ViewCartProvider (default to 0 if not available)
+  double? deliveryFee = viewCartProvider.deliveryFee ?? 0.0;
+
+  // Update the CartProvider's totalAmount to include the delivery fee
+  context.read<CartProvider>().updateTotalAmount(total + deliveryFee,deliveryFee);
+}
 
   @override
   void didChangeDependencies() {
@@ -1576,7 +1599,7 @@ class _PriceWidgetState extends State<PriceWidget> {
           double totalAmount = widget.totalAmount + (deliveryFee ?? 30) + 3;
           // Update the CartProvider with the new total amount
           Provider.of<CartProvider>(context, listen: false)
-              .updateTotalAmount(totalAmount);
+              .updateTotalAmount(totalAmount,deliveryFee);
         });
       } else {
         print("Failed to load delivery fee: ${response.body}");
