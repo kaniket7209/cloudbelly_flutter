@@ -377,7 +377,7 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
             // Apply Button
             TextButton(
               onPressed: () {
-                if (isActive) {
+                if (isActive && added) {
                   _showBottomSheet(context, couponCode, discountValue);
                 }
               },
@@ -386,9 +386,9 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                 style: TextStyle(
                   fontFamily: 'Product Sans Black',
                   fontSize: 16,
-                  color: isActive
+                  color: isActive && added
                       ? discountBadgeColor
-                      : discountBadgeColor.withOpacity(0.3),
+                      : Color(0xffA2A2A2),
                   fontWeight: FontWeight.w600,
                 ),
               ),

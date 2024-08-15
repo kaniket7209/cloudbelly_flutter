@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:cloudbelly_app/NotificationScree.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/apply_coupon_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_screen.dart';
@@ -1193,7 +1195,7 @@ class _ViewCartState extends State<ViewCart> {
                 }),
                 // Space(1.h),
                 const Space(33),
-                CouponWidget( totalAmount: totalAmount),
+                CouponWidget(totalAmount: totalAmount),
                 const Space(20),
                 Container(
                   alignment: Alignment.centerLeft,
@@ -1267,9 +1269,9 @@ class _ViewCartState extends State<ViewCart> {
                             double totalAmount = cartProvider.totalAmount > 0
                                 ? cartProvider.totalAmount
                                 : defaultTotalAmount +
-                                    defaultTotalAmount * 0.05 +
+                                     
                                     30 +
-                                    15;
+                                    3;
 
                             return Text(
                               cartProvider.totalAmount > 0
@@ -1394,7 +1396,7 @@ class DeliveryInstructionWidgetCart extends StatelessWidget {
 
 class CouponWidget extends StatefulWidget {
   final double totalAmount;
-  const CouponWidget({super.key,required this.totalAmount});
+  const CouponWidget({super.key, required this.totalAmount});
   @override
   State<CouponWidget> createState() => _CouponWidgetState();
 }
@@ -1425,7 +1427,9 @@ class _CouponWidgetState extends State<CouponWidget> {
               // Navigate to the coupons screen
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ApplyCouponScreen(totalAmount:widget.totalAmount)),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        ApplyCouponScreen(totalAmount: widget.totalAmount)),
               );
             },
             child: Container(
@@ -1573,9 +1577,9 @@ class _PriceWidgetState extends State<PriceWidget> {
           deliveryFee = (data['price'] as num).toDouble();
           // Calculate the new total amount
           double totalAmount = widget.totalAmount +
-              widget.totalAmount * 0.05 +
+              
               (deliveryFee ?? 30) +
-              15;
+              3;
           // Update the CartProvider with the new total amount
           Provider.of<CartProvider>(context, listen: false)
               .updateTotalAmount(totalAmount);
@@ -1636,7 +1640,7 @@ class _PriceWidgetState extends State<PriceWidget> {
               ),
             ],
           ),
-          const SizedBox(height: 6),
+           const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1681,7 +1685,7 @@ class _PriceWidgetState extends State<PriceWidget> {
                     ),
             ],
           ),
-          const SizedBox(height: 10),
+           const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1726,12 +1730,12 @@ class _PriceWidgetState extends State<PriceWidget> {
                     ),
             ],
           ),
-          const SizedBox(height: 6),
+           const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                "Packing Charge ",
+                "Platform Fee ",
                 style: TextStyle(
                   color: Color(0xFF2E0536),
                   fontSize: 12,
@@ -1742,7 +1746,7 @@ class _PriceWidgetState extends State<PriceWidget> {
                 ),
               ),
               const Text(
-                "Rs 15",
+                "Rs 3",
                 style: TextStyle(
                   color: Color(0xFF383838),
                   fontSize: 14,
@@ -1752,27 +1756,28 @@ class _PriceWidgetState extends State<PriceWidget> {
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          const Text(
-            "Save Rs 10 on delivery fee by ordering above Rs 159",
-            style: TextStyle(
-              color: Color(0xFFD382E3),
-              fontSize: 10,
-              fontFamily: 'Product Sans Medium',
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          const SizedBox(height: 5.5),
+        
+           const SizedBox(height: 5),
+          // const Text(
+          //   "Save Rs 10 on delivery fee by ordering above Rs 159",
+          //   style: TextStyle(
+          //     color: Color(0xFFD382E3),
+          //     fontSize: 10,
+          //     fontFamily: 'Product Sans Medium',
+          //     fontWeight: FontWeight.w400,
+          //   ),
+          // ),
+           const SizedBox(height: 5),
           const Divider(
             color: Color(0xFFBB5104),
             thickness: 0.5,
           ),
-          const SizedBox(height: 14.5),
-          Row(
+          const SizedBox(height: 2.5),
+            Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                " 5% Govt Taxes & Other Charges",
+                "Packaging Charge ",
                 style: TextStyle(
                   color: Color(0xFF2E0536),
                   fontSize: 12,
@@ -1782,18 +1787,72 @@ class _PriceWidgetState extends State<PriceWidget> {
                   decorationColor: Color(0xFF2E0536),
                 ),
               ),
-              Text(
-                'Rs ${(widget.totalAmount * 0.05).toStringAsFixed(2)}',
-                style: const TextStyle(
-                  color: Color(0xFF383838),
-                  fontSize: 14,
-                  fontFamily: 'Jost',
-                  fontWeight: FontWeight.w600,
-                ),
+              Row(
+                children: [
+                  const Text(
+                    "Rs 15",
+                    style: TextStyle(
+                      color: Color(0xFF383838),
+                      fontSize: 14,
+                      fontFamily: 'Jost',
+                      decoration: TextDecoration.lineThrough,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const Text(
+                    "  0",
+                    style: TextStyle(
+                      color: Color(0xFF383838),
+                      fontSize: 14,
+                      fontFamily: 'Jost',
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 20),
+         const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "5% Govt Taxes & Other Charges",
+                style: TextStyle(
+                  color: Color(0xFF2E0536),
+                  fontSize: 12,
+                  fontFamily: 'Product Sans Medium',
+                  fontWeight: FontWeight.w400,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Color(0xFF2E0536),
+                ),
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Rs ${(widget.totalAmount * 0.05).toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      color: Color(0xFF383838),
+                      fontSize: 14,
+                      decoration: TextDecoration.lineThrough,
+                      fontFamily: 'Jost',
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    '  0',
+                    style: const TextStyle(
+                      color: Color(0xFF383838),
+                      fontSize: 14,
+                      fontFamily: 'Jost',
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
           const Divider(
             color: Color(0xFFBB5104),
             thickness: 0.5,
@@ -1811,7 +1870,7 @@ class _PriceWidgetState extends State<PriceWidget> {
                 ),
               ),
               Text(
-                "Rs ${(widget.totalAmount + widget.totalAmount * 0.05 + (deliveryFee ?? 30) + 15).toStringAsFixed(2)}",
+                "Rs ${(widget.totalAmount  + (deliveryFee ?? 30) + 3).toStringAsFixed(2)}",
                 style: const TextStyle(
                   color: Color(0xFFFA6E00),
                   fontSize: 16,
