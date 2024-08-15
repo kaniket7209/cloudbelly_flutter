@@ -826,7 +826,7 @@ class ViewCart extends StatefulWidget {
 }
 
 class _ViewCartState extends State<ViewCart> {
-   double deliveryFee = 0.0;
+  double deliveryFee = 0.0;
   bool _isAddressExpnaded = false;
   ScrollController _scrollController = ScrollController();
   bool _showContainer = false;
@@ -848,11 +848,13 @@ class _ViewCartState extends State<ViewCart> {
       calculateTotalAmount();
     });
   }
-void updateDeliveryFee(double fee) {
+
+  void updateDeliveryFee(double fee) {
     setState(() {
       deliveryFee = fee;
     });
   }
+
   @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);
@@ -1203,12 +1205,20 @@ void updateDeliveryFee(double fee) {
                 }),
                 // Space(1.h),
                 const Space(33),
-                CouponWidget(totalAmount: totalAmount),
+                
+                Consumer2<CartProvider, ViewCartProvider>(
+                  builder: (context, cartProvider, viewCartProvider, child) {
+                    double totalAmount = cartProvider.totalAmount;
+
+                    return CouponWidget(
+                        totalAmount: totalAmount + deliveryFee + 3);
+                  },
+                ),
                 const Space(20),
                 Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "Bill Details",
+                    "Bill Details ${deliveryFee}",
                     style: TextStyle(
                       color: Color(0xff2E0536),
                       fontSize: 18,
@@ -1220,11 +1230,14 @@ void updateDeliveryFee(double fee) {
                 SizedBox(
                   height: 1.h,
                 ),
-               PriceWidget(
-  totalAmount: totalAmount,  // Pass the total amount of the cart items
-  sellerId: id,        // Pass the sellerId for delivery fee calculation
-  onDeliveryFeeCalculated: updateDeliveryFee, // Callback to update delivery fee in parent
-),
+                PriceWidget(
+                  totalAmount:
+                      totalAmount, // Pass the total amount of the cart items
+                  sellerId:
+                      id, // Pass the sellerId for delivery fee calculation
+                  onDeliveryFeeCalculated:
+                      updateDeliveryFee, // Callback to update delivery fee in parent
+                ),
                 Space(4.h),
                 TextWidgetCart(
                     text:
@@ -1272,20 +1285,21 @@ void updateDeliveryFee(double fee) {
                         //   ),
                         // ),
                         Consumer<CartProvider>(
-        builder: (context, cartProvider, child) {
-          double totalAmount = cartProvider.totalAmount + deliveryFee + 3;
+                          builder: (context, cartProvider, child) {
+                            double totalAmount =
+                                cartProvider.totalAmount + deliveryFee + 3;
 
-          return Text(
-            'Rs ${totalAmount.toStringAsFixed(2)}',
-            style: const TextStyle(
-              color: Color(0xFFF7F7F7),
-              fontSize: 16,
-              fontFamily: 'Jost',
-              fontWeight: FontWeight.w600,
-            ),
-          );
-        },
-      ),
+                            return Text(
+                              'Rs ${totalAmount.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                color: Color(0xFFF7F7F7),
+                                fontSize: 16,
+                                fontFamily: 'Jost',
+                                fontWeight: FontWeight.w600,
+                              ),
+                            );
+                          },
+                        ),
                         const Text(
                           'View Detailed Bill ',
                           style: TextStyle(
@@ -1404,6 +1418,7 @@ class CouponWidget extends StatefulWidget {
 class _CouponWidgetState extends State<CouponWidget> {
   @override
   Widget build(BuildContext context) {
+    print("coupwidget  ${widget.totalAmount}");
     return Container(
       child: Column(
         children: [
@@ -1424,13 +1439,12 @@ class _CouponWidgetState extends State<CouponWidget> {
           ),
           GestureDetector(
             onTap: () {
-              // Navigate to the coupons screen
+              // Use Consumer to access the CartProvider and ViewCartProvider
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        ApplyCouponScreen(totalAmount: widget.totalAmount)),
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ApplyCouponScreen(totalAmount: widget.totalAmount)));
             },
             child: Container(
               decoration: ShapeDecoration(
@@ -1600,7 +1614,7 @@ class _PriceWidgetState extends State<PriceWidget> {
         setState(() {
           deliveryDistance = (data['distance'] as num).toDouble();
           deliveryFee = (data['price'] as num).toDouble();
-          widget.onDeliveryFeeCalculated(deliveryFee!); // 
+          widget.onDeliveryFeeCalculated(deliveryFee!); //
           // Calculate the new total amount
           double totalAmount = widget.totalAmount + (deliveryFee ?? 30) + 3;
           // Update the CartProvider with the new total amount
