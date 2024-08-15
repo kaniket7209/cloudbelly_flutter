@@ -879,19 +879,15 @@ class _ViewCartState extends State<ViewCart> {
   }
 
   void calculateTotalAmount() {
-    totalAmount =
+    double total =
         context.read<ViewCartProvider>().productList.fold(0.0, (sum, item) {
-      // Ensure price and quantity are not null and parse correctly
       int quantity = item.quantity ?? 0;
       double price = double.tryParse(item.price ?? '0') ?? 0.0;
-
-      double totalPrice = quantity * price;
-
-      return sum + totalPrice;
+      return sum + (quantity * price);
     });
 
-    print(totalAmount);
-    setState(() {});
+    // Update the CartProvider's totalAmount
+    context.read<CartProvider>().updateTotalAmount(total);
   }
 
   void getAddressDetails() async {
@@ -1268,10 +1264,10 @@ class _ViewCartState extends State<ViewCart> {
                                 100.0; // Replace with the appropriate default amount if needed
                             double totalAmount = cartProvider.totalAmount > 0
                                 ? cartProvider.totalAmount
-                                : defaultTotalAmount +
-                                     
-                                    30 +
-                                    3;
+                                : defaultTotalAmount + 30 + 3;
+
+                            print(
+                                'Total amount: $totalAmount'); // Debugging line
 
                             return Text(
                               cartProvider.totalAmount > 0
@@ -1286,8 +1282,9 @@ class _ViewCartState extends State<ViewCart> {
                             );
                           },
                         ),
+
                         const Text(
-                          'View Detailed Bill',
+                          'View Detailed Bill ',
                           style: TextStyle(
                             color: Color(0xFFF7F7F7),
                             fontSize: 12,
@@ -1576,10 +1573,7 @@ class _PriceWidgetState extends State<PriceWidget> {
           deliveryDistance = (data['distance'] as num).toDouble();
           deliveryFee = (data['price'] as num).toDouble();
           // Calculate the new total amount
-          double totalAmount = widget.totalAmount +
-              
-              (deliveryFee ?? 30) +
-              3;
+          double totalAmount = widget.totalAmount + (deliveryFee ?? 30) + 3;
           // Update the CartProvider with the new total amount
           Provider.of<CartProvider>(context, listen: false)
               .updateTotalAmount(totalAmount);
@@ -1640,7 +1634,7 @@ class _PriceWidgetState extends State<PriceWidget> {
               ),
             ],
           ),
-           const SizedBox(height: 5),
+          const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1685,201 +1679,192 @@ class _PriceWidgetState extends State<PriceWidget> {
                     ),
             ],
           ),
-           const SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Delivery Fee ",
-                style: TextStyle(
-                  color: Color(0xFF2E0536),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans Medium',
-                  fontWeight: FontWeight.w400,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Color(0xFF2E0536),
-                ),
-              ),
-              deliveryFee == null
-                  ? errorMessage != null
-                      ? Text(
-                          errorMessage!,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 12,
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )
-                      : const SizedBox(
-                          width: 15,
-                          height: 15,
-                          child: CircularProgressIndicator(
-                            color: Color(0xff0A4C61),
-                            strokeWidth: 2,
-                          ),
-                        )
-                  : Text(
-                      "Rs $deliveryFee",
+          const SizedBox(height: 5),
+        Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          "Delivery Fee ",
+          style: TextStyle(
+            color: Color(0xFF2E0536),
+            fontSize: 12,
+            fontFamily: 'Product Sans Medium',
+            fontWeight: FontWeight.w400,
+            decoration: TextDecoration.underline,
+            decorationColor: Color(0xFF2E0536),
+          ),
+        ),
+        Flexible(
+          child: deliveryFee == null
+              ? errorMessage != null
+                  ? Text(
+                      errorMessage!,
                       style: const TextStyle(
-                        color: Color(0xFF383838),
-                        fontSize: 14,
+                        color: Colors.red,
+                        fontSize: 12,
                         fontFamily: 'Jost',
                         fontWeight: FontWeight.w600,
                       ),
-                    ),
-            ],
-          ),
-           const SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Platform Fee ",
-                style: TextStyle(
-                  color: Color(0xFF2E0536),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans Medium',
-                  fontWeight: FontWeight.w400,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Color(0xFF2E0536),
+                    )
+                  : const SizedBox(
+                      width: 15,
+                      height: 15,
+                      child: CircularProgressIndicator(
+                        color: Color(0xff0A4C61),
+                        strokeWidth: 2,
+                      ),
+                    )
+              : Text(
+                  "Rs $deliveryFee",
+                  style: const TextStyle(
+                    color: Color(0xFF383838),
+                    fontSize: 14,
+                    fontFamily: 'Jost',
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 5),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          "Platform Fee ",
+          style: TextStyle(
+            color: Color(0xFF2E0536),
+            fontSize: 12,
+            fontFamily: 'Product Sans Medium',
+            fontWeight: FontWeight.w400,
+            decoration: TextDecoration.underline,
+            decorationColor: Color(0xFF2E0536),
+          ),
+        ),
+        const Text(
+          "Rs 3",
+          style: TextStyle(
+            color: Color(0xFF383838),
+            fontSize: 14,
+            fontFamily: 'Jost',
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 5),
+    const Divider(
+      color: Color(0xFFBB5104),
+      thickness: 0.5,
+    ),
+    const SizedBox(height: 2.5),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          "Packaging Charge ",
+          style: TextStyle(
+            color: Color(0xFF2E0536),
+            fontSize: 12,
+            fontFamily: 'Product Sans Medium',
+            fontWeight: FontWeight.w400,
+            decoration: TextDecoration.underline,
+            decorationColor: Color(0xFF2E0536),
+          ),
+        ),
+        Row(
+          children: [
+            const Text(
+              "Rs 15",
+              style: TextStyle(
+                color: Color(0xFF383838),
+                fontSize: 14,
+                fontFamily: 'Jost',
+                decoration: TextDecoration.lineThrough,
+                fontWeight: FontWeight.w600,
               ),
-              const Text(
-                "Rs 3",
-                style: TextStyle(
+            ),
+            const Text(
+              "  0",
+              style: TextStyle(
+                color: Color(0xFF383838),
+                fontSize: 14,
+                fontFamily: 'Jost',
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+    const SizedBox(height: 5),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          "5% Govt Taxes & Other Charges",
+          style: TextStyle(
+            color: Color(0xFF2E0536),
+            fontSize: 12,
+            fontFamily: 'Product Sans Medium',
+            fontWeight: FontWeight.w400,
+            decoration: TextDecoration.underline,
+            decorationColor: Color(0xFF2E0536),
+          ),
+        ),
+        Flexible(
+          child: Consumer<CartProvider>(
+            builder: (context, cartProvider, child) {
+              // Calculate the 5% tax based on the totalAmount from the CartProvider
+              double taxAmount = cartProvider.totalAmount * 0.05;
+
+              return Text(
+                'Rs ${taxAmount.toStringAsFixed(2)}', // Display the calculated tax
+                style: const TextStyle(
                   color: Color(0xFF383838),
                   fontSize: 14,
                   fontFamily: 'Jost',
                   fontWeight: FontWeight.w600,
                 ),
-              ),
-            ],
+              );
+            },
           ),
-        
-           const SizedBox(height: 5),
-          // const Text(
-          //   "Save Rs 10 on delivery fee by ordering above Rs 159",
-          //   style: TextStyle(
-          //     color: Color(0xFFD382E3),
-          //     fontSize: 10,
-          //     fontFamily: 'Product Sans Medium',
-          //     fontWeight: FontWeight.w400,
-          //   ),
-          // ),
-           const SizedBox(height: 5),
-          const Divider(
-            color: Color(0xFFBB5104),
-            thickness: 0.5,
+        ),
+      ],
+    ),
+    const SizedBox(height: 10),
+    const Divider(
+      color: Color(0xFFBB5104),
+      thickness: 0.5,
+    ),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          "Total:",
+          style: TextStyle(
+            color: Color(0xFF383838),
+            fontSize: 16,
+            fontFamily: 'Jost',
+            fontWeight: FontWeight.w600,
           ),
-          const SizedBox(height: 2.5),
-            Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Packaging Charge ",
-                style: TextStyle(
-                  color: Color(0xFF2E0536),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans Medium',
-                  fontWeight: FontWeight.w400,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Color(0xFF2E0536),
-                ),
-              ),
-              Row(
-                children: [
-                  const Text(
-                    "Rs 15",
-                    style: TextStyle(
-                      color: Color(0xFF383838),
-                      fontSize: 14,
-                      fontFamily: 'Jost',
-                      decoration: TextDecoration.lineThrough,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const Text(
-                    "  0",
-                    style: TextStyle(
-                      color: Color(0xFF383838),
-                      fontSize: 14,
-                      fontFamily: 'Jost',
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+        ),
+        Text(
+          "Rs ${(widget.totalAmount + (deliveryFee ?? 30) + 3).toStringAsFixed(2)}",
+          style: const TextStyle(
+            color: Color(0xFFFA6E00),
+            fontSize: 16,
+            fontFamily: 'Jost',
+            fontWeight: FontWeight.w800,
           ),
-         const SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "5% Govt Taxes & Other Charges",
-                style: TextStyle(
-                  color: Color(0xFF2E0536),
-                  fontSize: 12,
-                  fontFamily: 'Product Sans Medium',
-                  fontWeight: FontWeight.w400,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Color(0xFF2E0536),
-                ),
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Rs ${(widget.totalAmount * 0.05).toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      color: Color(0xFF383838),
-                      fontSize: 14,
-                      decoration: TextDecoration.lineThrough,
-                      fontFamily: 'Jost',
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    '  0',
-                    style: const TextStyle(
-                      color: Color(0xFF383838),
-                      fontSize: 14,
-                      fontFamily: 'Jost',
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          const Divider(
-            color: Color(0xFFBB5104),
-            thickness: 0.5,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Total:",
-                style: TextStyle(
-                  color: Color(0xFF383838),
-                  fontSize: 16,
-                  fontFamily: 'Jost',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                "Rs ${(widget.totalAmount  + (deliveryFee ?? 30) + 3).toStringAsFixed(2)}",
-                style: const TextStyle(
-                  color: Color(0xFFFA6E00),
-                  fontSize: 16,
-                  fontFamily: 'Jost',
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ],
-          )
+        ),
+      ],
+    ),
+  ],
+),
         ],
       ),
     );
@@ -2098,16 +2083,14 @@ class _MenuItemInCartState extends State<MenuItemInCart> {
             ),
           ),
           IconButton(
-            icon: const Icon(
-              Icons.keyboard_arrow_up_sharp,
-              size: 35,
-            ),
+            icon: const Icon(Icons.keyboard_arrow_up_sharp, size: 35),
             onPressed: () {
               setState(() {
                 if (widget.productDetails.quantity! < 10) {
                   widget.productDetails.quantity =
                       widget.productDetails.quantity! + 1;
                   updateTotalPrice(widget.productDetails);
+                  widget.onQuantityChanged();
                 }
               });
             },
