@@ -1263,7 +1263,7 @@ class _ViewCartState extends State<ViewCart> {
                             double defaultTotalAmount =
                                 100.0; // Replace with the appropriate default amount if needed
                             double totalAmount = cartProvider.totalAmount > 0
-                                ? cartProvider.totalAmount
+                                ? cartProvider.totalAmount + 3
                                 : defaultTotalAmount + 30 + 3;
 
                             print(
@@ -1623,15 +1623,24 @@ class _PriceWidgetState extends State<PriceWidget> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              Text(
-                "Rs ${widget.totalAmount}",
+               Flexible(
+          child: Consumer<CartProvider>(
+            builder: (context, cartProvider, child) {
+              // Calculate the 5% tax based on the totalAmount from the CartProvider
+              double taxAmount = cartProvider.totalAmount ;
+
+              return Text(
+                'Rs ${taxAmount.toStringAsFixed(2)}', // Display the calculated tax
                 style: const TextStyle(
                   color: Color(0xFF383838),
                   fontSize: 14,
                   fontFamily: 'Jost',
                   fontWeight: FontWeight.w600,
                 ),
-              ),
+              );
+            },
+          ),
+        ),
             ],
           ),
           const SizedBox(height: 5),
@@ -1852,13 +1861,31 @@ class _PriceWidgetState extends State<PriceWidget> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        Text(
-          "Rs ${(widget.totalAmount + (deliveryFee ?? 30) + 3).toStringAsFixed(2)}",
-          style: const TextStyle(
-            color: Color(0xFFFA6E00),
-            fontSize: 16,
-            fontFamily: 'Jost',
-            fontWeight: FontWeight.w800,
+        // Text(
+        //   "Rs ${(widget.totalAmount + (deliveryFee ?? 30) + 3).toStringAsFixed(2)}",
+        //   style: const TextStyle(
+        //     color: Color(0xFFFA6E00),
+        //     fontSize: 16,
+        //     fontFamily: 'Jost',
+        //     fontWeight: FontWeight.w800,
+        //   ),
+        // ),
+          Flexible(
+          child: Consumer<CartProvider>(
+            builder: (context, cartProvider, child) {
+              // Calculate the 5% tax based on the totalAmount from the CartProvider
+              double amt = cartProvider.totalAmount + 3 +(deliveryFee ?? 30) ;
+
+              return Text(
+                'Rs ${amt.toStringAsFixed(2)}', // Display the calculated tax
+                style: const TextStyle(
+                  color: Color(0xFF383838),
+                  fontSize: 14,
+                  fontFamily: 'Jost',
+                  fontWeight: FontWeight.w600,
+                ),
+              );
+            },
           ),
         ),
       ],
