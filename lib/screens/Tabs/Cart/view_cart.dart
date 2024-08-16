@@ -924,7 +924,7 @@ class _ViewCartState extends State<ViewCart> {
     setState(() {});
   }
 
-  void createProductOrder() async {
+  void createProductOrder(deliveryFee) async {
     print(
         "addmodel ${context.read<ViewCartProvider>().addressModel?.location}");
     if (context.read<ViewCartProvider>().addressModel?.location == null) {
@@ -935,7 +935,7 @@ class _ViewCartState extends State<ViewCart> {
       print("sellerid $id");
       var response = await Provider.of<Auth>(context, listen: false)
           .createProductOrder(
-              convertedList, context.read<ViewCartProvider>().addressModel, id);
+              convertedList, context.read<ViewCartProvider>().addressModel, id,deliveryFee);
 
       print("create order response $response");
       if (response['message'] == 'Order processed successfully') {
@@ -1333,7 +1333,7 @@ class _ViewCartState extends State<ViewCart> {
                           convertedList.add(newItem);
                         });
                         // print("convertedList  $convertedList");
-                        createProductOrder();
+                        createProductOrder(deliveryFee);
                       },
                       child: Container(
                         height: 41,

@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:ffi';
 
 // import 'dart:html';
 
@@ -2168,7 +2169,7 @@ Future deleteCoupon(couponId) async {
   }
 
   Future<dynamic> createProductOrder(
-      List<dynamic> list, AddressModel? addressModel, String userId) async {
+      List<dynamic> list, AddressModel? addressModel, String userId,double deliveryFee) async {
     print("list:: $list");
     final String url = '${baseUrl}order/create';
     print(userData?['user_id']);
@@ -2179,6 +2180,7 @@ Future deleteCoupon(couponId) async {
       "items": list,
       "order_from_user_id": userId,
       "location": addressModel,
+      "deliveryFee":deliveryFee
     };
 
     try {
@@ -2187,7 +2189,7 @@ Future deleteCoupon(couponId) async {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-      // print(response.body);
+      print("paysucreateorder  ${jsonEncode(requestBody)}");
       // print(response.statusCode);
 
       // Parse the response body
