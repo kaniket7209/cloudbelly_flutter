@@ -54,6 +54,7 @@ class _ProfileViewState extends State<ProfileView> {
   String countFollowers = '';
   String countFollowings = '';
   ScrollController t1 = new ScrollController();
+  String kycStatus = 'not verified';
 
   bool checkFollow() {
     String id = widget.userIdList.first;
@@ -104,10 +105,17 @@ class _ProfileViewState extends State<ProfileView> {
   Future<void> getUserInfo(List<String> userIds) async {
     // AppWideLoadingBanner().loadingBanner(context);
     // _isLoad = true;
+    
     userList =
         await Provider.of<Auth>(context, listen: false).getUserDetails(userIds);
         // print(" viewProfi ${userList.first.followers?.length}  followers ${userList.first.followings?.length}  followings  ");
     // _isLoad = false;
+     List<dynamic> fetchedUserDetails =
+        await Provider.of<Auth>(context, listen: false).getUserInfo(userIds);
+        if(fetchedUserDetails[0] != null) {
+         
+          kycStatus = fetchedUserDetails[0]!['kyc_status'];
+        }
    
     //Navigator.pop(context);
   }
@@ -141,6 +149,7 @@ class _ProfileViewState extends State<ProfileView> {
       final feedData = json.encode(
         {
           'menu': menu,
+          'kyc_status':kycStatus
         },
       );
       prefs.setString('menuData', feedData);
@@ -345,9 +354,8 @@ Color sharedProfileColour(userType){
                                         ),
                                       ),
                                     ),
-                                    // StoreNameWidget(
-                                    //   name: userList.first.storeName,
-                                    // ),
+
+                                    
                                     Space(2.h),
                                     Center(
                                       child: ConstrainedBox(
@@ -1171,7 +1179,8 @@ Color sharedProfileColour(userType){
                                                     scroll: t1,
                                                     categories: categories,
                                                     user: widget
-                                                        .userIdList.first),
+                                                        .userIdList.first,
+                                                        kycStatus:kycStatus),
                                               if (_activeButtonIndex == 3)
                                                 Container(
                                                   constraints: BoxConstraints(

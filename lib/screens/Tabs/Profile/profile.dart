@@ -57,6 +57,7 @@ class _ProfileState extends State<Profile> {
   List<dynamic> menuList = [];
   List<dynamic> feedList = [];
   bool _switchValue = false;
+  String kycStatus = 'not verified';
   // final RefreshController _refreshController =
   //     RefreshController(initialRefresh: false);
 
@@ -196,8 +197,9 @@ class _ProfileState extends State<Profile> {
     if (userData != null) {
       userData['store_availability'] = _switchValue;
       userData['fssai'] = res['fssai'];
-      userData['kyc_status'] = res['kyc_status'] ?? 'verified';
+      userData['kyc_status'] = res['kyc_status'] ?? 'not verified';
       await UserPreferences.setUser(userData);
+      kycStatus = userData['kyc_status'];
 
       setState(() {
         Provider.of<Auth>(context, listen: false).userData?['kyc_status'] =
@@ -1169,6 +1171,7 @@ class _ProfileState extends State<Profile> {
                                     menuList: menuList,
                                     categories: categories,
                                     scroll: t1,
+                                    kycStatus:kycStatus
                                   ),
                                 if (_activeButtonIndex == 3)
                                   Container(
@@ -1987,10 +1990,12 @@ class Menu extends StatefulWidget {
     required this.menuList,
     required this.categories,
     this.user,
-    required this.scroll,
+    required this.scroll, 
+    required  this.kycStatus,
   }) : _isLoading = isLoading;
   final scroll;
   final bool _isLoading;
+  final String kycStatus;
   final List menuList;
   final List<String> categories;
   // ignore: prefer_typing_uninitialized_variables
@@ -2267,6 +2272,7 @@ class _MenuState extends State<Menu> {
                                                 storeAvailability:
                                                     storeAvailability,
                                                 data: widget.menuList[index],
+                                                kycStatus:widget.kycStatus,
                                                 scroll: widget.scroll),
                                       if (!_iscategorySearch && _searchOn)
                                         for (int index = 0;
@@ -2281,7 +2287,7 @@ class _MenuState extends State<Menu> {
                                                 storeAvailability:
                                                     storeAvailability,
                                                 data: widget.menuList[index],
-                                                scroll: widget.scroll),
+                                                scroll: widget.scroll,kycStatus:widget.kycStatus),
                                       if (!_searchOn)
                                         for (int index = 0;
                                             index < widget.menuList.length;
@@ -2290,7 +2296,7 @@ class _MenuState extends State<Menu> {
                                               storeAvailability:
                                                   storeAvailability,
                                               data: widget.menuList[index],
-                                              scroll: widget.scroll),
+                                              scroll: widget.scroll,kycStatus:widget.kycStatus),
                                       const SizedBox(height: 150),
                                     ],
                                   ),

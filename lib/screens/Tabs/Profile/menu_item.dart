@@ -23,10 +23,11 @@ class MenuItem extends StatefulWidget {
       {super.key,
       required this.data,
       required this.scroll,
-      required this.storeAvailability});
+      required this.storeAvailability,required this.kycStatus});
   var scroll;
   dynamic data;
   bool storeAvailability;
+  String kycStatus;
   @override
   State<MenuItem> createState() => _MenuItemState();
 }
@@ -301,7 +302,7 @@ class _MenuItemState extends State<MenuItem> {
                 ),
 
                 // vendor login - stock_status null || stock_status true //visited profile  -
-                if (widget.storeAvailability)
+                if (widget.storeAvailability && widget.kycStatus == 'verified')
                   if (widget.data['stock_status'] == null ||
                       widget.data['stock_status']) ...{
                     Positioned(

@@ -20,6 +20,8 @@ class UserModel {
   final List<Followers>? followers;
   final List<Followers>? followings;
 
+  
+
   UserModel({
     this.id,
     this.userId,
@@ -32,6 +34,7 @@ class UserModel {
     this.posts,
     this.followers,
     this.followings,
+
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
