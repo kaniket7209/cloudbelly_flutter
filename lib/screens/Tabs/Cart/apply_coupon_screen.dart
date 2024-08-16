@@ -252,133 +252,139 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
     );
   }
 
-  Widget _buildCouponCard(BuildContext context, Map<String, dynamic> coupon) {
-    final String couponCode = coupon['coupon_code'];
-    final String discountValue = coupon['discount_value'];
-    final String minCartValue = coupon['min_cart_value'] ?? "0";
-    final bool isActive = coupon['is_active'] ?? false;
+ Widget _buildCouponCard(BuildContext context, Map<String, dynamic> coupon) {
+  final String couponCode = coupon['coupon_code'];
+  final String discountValue = coupon['discount_value'];
+  final String minCartValue = coupon['min_cart_value'] ?? "0";
+  final bool isActive = coupon['is_active'] ?? false;
 
-    final double minCartValueDouble = double.tryParse(minCartValue) ?? 0.0;
-    final double totalCartValue =
-        widget.totalAmount; // Assuming widget.totalAmount is available
-    String couponMessage;
-    bool added;
-    if (totalCartValue >= minCartValueDouble) {
-      added = true;
-      couponMessage = 'Save Rs $discountValue on this order';
-    } else {
-      added = false;
-      final double amountNeeded = minCartValueDouble - totalCartValue;
-      couponMessage =
-          'Add Rs ${amountNeeded.toStringAsFixed(2)} more to get a discount upto Rs $discountValue';
-    }
+  final double minCartValueDouble = double.tryParse(minCartValue) ?? 0.0;
+  final double totalCartValue = widget.totalAmount;
+  String couponMessage;
+  bool added;
+  if (totalCartValue >= minCartValueDouble) {
+    added = true;
+    couponMessage = 'Save Rs $discountValue on this order';
+  } else {
+    added = false;
+    final double amountNeeded = minCartValueDouble - totalCartValue;
+    couponMessage =
+        'Add Rs ${amountNeeded.toStringAsFixed(2)} more to get a discount up to Rs $discountValue';
+  }
 
-    // Define background color based on is_active
-    final Color backgroundColor =
-        isActive ? Color(0xffF8D2F8) : Color(0xffE3E3E3);
-    final Color discountBadgeColor =
-        isActive ? Color(0xffFA6E00) : Color(0xff343434);
+  final Color backgroundColor =
+      isActive ? Color(0xffF8D2F8) : Color(0xffE3E3E3);
+  final Color discountBadgeColor =
+      isActive ? Color(0xffFA6E00) : Color(0xff343434);
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 20),
-      decoration: ShapeDecoration(
-        color: backgroundColor,
-        shape: SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius.all(
-            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
-          ),
+  return Container(
+    margin: EdgeInsets.only(bottom: 20),
+    decoration: ShapeDecoration(
+      color: backgroundColor,
+      shape: SmoothRectangleBorder(
+        borderRadius: SmoothBorderRadius.all(
+          SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
         ),
-        shadows: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Vertical Discount Badge
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-              decoration: ShapeDecoration(
-                color: discountBadgeColor,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius.all(
-                    SmoothRadius(cornerRadius: 13, cornerSmoothing: 1),
+      shadows: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.3),
+          blurRadius: 10,
+          offset: Offset(0, 4),
+        ),
+      ],
+    ),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Stack(
+        children: [
+          // Coupon Details and Discount Badge
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Vertical Discount Badge
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                decoration: ShapeDecoration(
+                  color: discountBadgeColor,
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.all(
+                      SmoothRadius(cornerRadius: 13, cornerSmoothing: 1),
+                    ),
                   ),
+                  shadows: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
                 ),
-                shadows: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: RotatedBox(
-                quarterTurns: 3, // Rotate the text to make it vertical
-                child: Text(
-                  "Rs $discountValue OFF",
-                  style: TextStyle(
-                    fontFamily: 'Product Sans Black',
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 20),
-            // Coupon Details
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    couponCode,
+                child: RotatedBox(
+                  quarterTurns: 3,
+                  child: Text(
+                    "Rs $discountValue OFF",
                     style: TextStyle(
                       fontFamily: 'Product Sans Black',
-                      fontSize: 21,
-                      fontWeight: FontWeight.w900,
-                      color: Color(0xff343434),
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 1),
-                  Text(
-                    couponMessage,
-                    style: TextStyle(
-                      fontFamily: 'Product Sans',
-                      fontSize: 12,
-                      color: Color(0xffFA0000),
+                ),
+              ),
+              SizedBox(width: 20),
+              // Coupon Details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      couponCode,
+                      style: TextStyle(
+                        fontFamily: 'Product Sans Black',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xff343434),
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 5),
-                  if (added) ...[
-                    Divider(
+             
+                    Text(
+                      couponMessage,
+                      style: TextStyle(
+                        fontFamily: 'Product Sans',
+                        fontSize: 12,
+                        color: Color(0xffFA0000),
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    if(!isActive && added)...[
+Divider(
                       color: Color(0xff7A128F),
                       thickness: 1,
                       height: 20,
                     ),
-                  ],
-                  SizedBox(height: 5),
-                  Text(
-                    'Use code $couponCode & get upto $discountValue% off on orders above Rs $minCartValue. Max discount: Rs 50',
-                    style: TextStyle(
-                      fontFamily: 'Product Sans',
-                      fontSize: 12,
-                      color: Color(0xff343434),
+                    ],
+                    
+                    SizedBox(height: 5),
+                    Text(
+                      'Use code $couponCode & get upto Rs $discountValue off on orders above Rs $minCartValue. Max discount: Rs 50',
+                      style: TextStyle(
+                        fontFamily: 'Product Sans',
+                        fontSize: 12,
+                        color: Color(0xff343434),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            // Apply Button
-            TextButton(
+            ],
+          ),
+          // Apply Button at the Top Right Corner
+          Positioned(
+            top: 0,
+            right: 0,
+            child: TextButton(
               onPressed: () {
                 if (isActive && added) {
                   _showBottomSheet(context, couponCode, discountValue);
@@ -396,11 +402,12 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   void _showBottomSheet(
       BuildContext context, String couponCode, String discountValue) {
@@ -535,76 +542,80 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
     );
   }
 
-void _applyCoupon(String enteredCouponCode) {
-  // Check if the coupon code is empty
-  if (enteredCouponCode.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Please enter a coupon code')),
-    );
-    return;
-  }
+  void _applyCoupon(String enteredCouponCode) {
+    // Check if the coupon code is empty
+    if (enteredCouponCode.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a coupon code')),
+      );
+      return;
+    }
 
-  try {
-    // Search for the coupon in the list of fetched coupons
-    final coupon = coupons.firstWhere(
-      (c) => c['coupon_code'].toLowerCase() == enteredCouponCode.toLowerCase(),
-    );
+    try {
+      // Search for the coupon in the list of fetched coupons
+      final coupon = coupons.firstWhere(
+        (c) =>
+            c['coupon_code'].toLowerCase() == enteredCouponCode.toLowerCase(),
+      );
 
-    if (coupon != null) {
-      // Validate the coupon based on cart total and coupon requirements
-      double minCartValue =
-          double.tryParse(coupon['min_cart_value'] ?? '0') ?? 0.0;
+      if (coupon != null) {
+        // Validate the coupon based on cart total and coupon requirements
+        double minCartValue =
+            double.tryParse(coupon['min_cart_value'] ?? '0') ?? 0.0;
 
-      // Fetch the total amount from the CartProvider
-      double currentTotalAmount = context.read<CartProvider>().totalAmount;
+        // Fetch the total amount from the CartProvider
+        double currentTotalAmount = context.read<CartProvider>().totalAmount;
 
-      // Fetch the delivery fee from the ViewCartProvider
-      double deliveryFee = context.read<ViewCartProvider>().deliveryFee ?? 0.0;
+        // Fetch the delivery fee from the ViewCartProvider
+        double deliveryFee =
+            context.read<ViewCartProvider>().deliveryFee ?? 0.0;
 
-      // Combine total amount and delivery fee
-      double totalAmountWithDelivery = currentTotalAmount + deliveryFee;
+        // Combine total amount and delivery fee
+        double totalAmountWithDelivery = currentTotalAmount + deliveryFee;
 
-      // Apply the discount from the coupon
-      double discountValue = double.tryParse(coupon['discount_value'] ?? '0') ?? 0.0;
-      double newTotalAmount = totalAmountWithDelivery - discountValue;
+        // Apply the discount from the coupon
+        double discountValue =
+            double.tryParse(coupon['discount_value'] ?? '0') ?? 0.0;
+        double newTotalAmount = totalAmountWithDelivery - discountValue;
 
-      // Check if the total amount is greater than or equal to the minimum required for the coupon
-      if (totalAmountWithDelivery >= minCartValue) {
-        // Update the CartProvider with the new total
-        context.read<CartProvider>().updateTotalAmount(newTotalAmount,deliveryFee);
+        // Check if the total amount is greater than or equal to the minimum required for the coupon
+        if (totalAmountWithDelivery >= minCartValue) {
+          // Update the CartProvider with the new total
+          context
+              .read<CartProvider>()
+              .updateTotalAmount(newTotalAmount, deliveryFee);
 
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Coupon applied successfully!')),
-        );
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Coupon applied successfully!')),
+          );
 
-        // Optionally show bottom sheet or any other UI to reflect applied coupon
-        _showBottomSheet(
-          context,
-          coupon['coupon_code'],
-          discountValue.toString(),
-        );
+          // Optionally show bottom sheet or any other UI to reflect applied coupon
+          _showBottomSheet(
+            context,
+            coupon['coupon_code'],
+            discountValue.toString(),
+          );
+        } else {
+          // Show error if the cart value is less than the required minimum cart value
+          double difference = minCartValue - totalAmountWithDelivery;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    'Add Rs ${difference.toStringAsFixed(2)} more to apply this coupon')),
+          );
+        }
       } else {
-        // Show error if the cart value is less than the required minimum cart value
-        double difference = minCartValue - totalAmountWithDelivery;
+        // Show error if the coupon is invalid or not found
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  'Add Rs ${difference.toStringAsFixed(2)} more to apply this coupon')),
+          SnackBar(content: Text('Invalid coupon code')),
         );
       }
-    } else {
-      // Show error if the coupon is invalid or not found
+    } catch (e) {
+      // Handle any error during the search for the coupon
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invalid coupon code')),
+        SnackBar(content: Text('Coupon code not found or invalid')),
       );
     }
-  } catch (e) {
-    // Handle any error during the search for the coupon
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Coupon code not found or invalid')),
-    );
   }
-}
-
 }

@@ -1205,7 +1205,7 @@ class _ViewCartState extends State<ViewCart> {
                 }),
                 // Space(1.h),
                 const Space(33),
-                
+
                 Consumer2<CartProvider, ViewCartProvider>(
                   builder: (context, cartProvider, viewCartProvider, child) {
                     double totalAmount = cartProvider.totalAmount;
@@ -1873,11 +1873,10 @@ class _PriceWidgetState extends State<PriceWidget> {
                         // Calculate the 5% tax based on the totalAmount from the CartProvider
                         double taxAmount = cartProvider.totalAmount * 0.05;
 
-                        return
-                         Row(
+                        return Row(
                           mainAxisAlignment: MainAxisAlignment.end,
-                           children: [
-                             Text(
+                          children: [
+                            Text(
                               'Rs ${taxAmount.toStringAsFixed(2)}', // Display the calculated tax
                               style: const TextStyle(
                                 color: Color(0xFF383838),
@@ -1886,8 +1885,8 @@ class _PriceWidgetState extends State<PriceWidget> {
                                 decoration: TextDecoration.lineThrough,
                                 fontWeight: FontWeight.w600,
                               ),
-                                                     ),
-                                                      Text(
+                            ),
+                            Text(
                               '  0', // Display the calculated tax
                               style: const TextStyle(
                                 color: Color(0xFF383838),
@@ -1895,9 +1894,9 @@ class _PriceWidgetState extends State<PriceWidget> {
                                 fontFamily: 'Jost',
                                 fontWeight: FontWeight.w600,
                               ),
-                                                     ),
-                           ],
-                         );
+                            ),
+                          ],
+                        );
                       },
                     ),
                   ),
