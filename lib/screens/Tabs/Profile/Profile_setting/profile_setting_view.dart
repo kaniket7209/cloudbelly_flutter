@@ -2456,18 +2456,37 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               'Customer')
           ? GestureDetector(
               onVerticalDragUpdate: (details) {
-    // Check if the vertical drag is significant enough and the bottom sheet isn't already open
+                // Check if the vertical drag is significant enough and the bottom sheet isn't already open
 
-    if (details.primaryDelta! < -20 && !_isBottomSheetOpen) {
-      _isBottomSheetOpen = true;  // Set the flag to prevent multiple openings
-      showPastOrdersBottomSheet(context).then((_) {
-        _isBottomSheetOpen = false;  // Reset the flag when the bottom sheet is closed
-      }).catchError((error) {
-        print("Error showing bottom sheet: $error");
-        _isBottomSheetOpen = false;  // Ensure the flag is reset on error
-      });
-    }
-  },
+                if (details.primaryDelta! < -50 && !_isBottomSheetOpen) {
+                  _isBottomSheetOpen =
+                      true; // Set the flag to prevent multiple openings
+                  showPastOrdersBottomSheet(context).then((_) {
+                    _isBottomSheetOpen =
+                        false; // Reset the flag when the bottom sheet is closed
+                  }).catchError((error) {
+                    print("Error showing bottom sheet: $error");
+                    _isBottomSheetOpen =
+                        false; // Ensure the flag is reset on error
+                  });
+                }
+              },
+               onTap: () {
+                // Check if the vertical drag is significant enough and the bottom sheet isn't already open
+
+                if (!_isBottomSheetOpen) {
+                  _isBottomSheetOpen =
+                      true; // Set the flag to prevent multiple openings
+                  showPastOrdersBottomSheet(context).then((_) {
+                    _isBottomSheetOpen =
+                        false; // Reset the flag when the bottom sheet is closed
+                  }).catchError((error) {
+                    print("Error showing bottom sheet: $error");
+                    _isBottomSheetOpen =
+                        false; // Ensure the flag is reset on error
+                  });
+                }
+              },
               child: Container(
                 decoration: ShapeDecoration(
                   shadows: [
@@ -2551,44 +2570,52 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   Future<void> showPastOrdersBottomSheet(BuildContext context) async {
     try {
-      // Start loading data before showing the bottom sheet
-      await Provider.of<Auth>(context, listen: false).getNotificationList();
+      var orderDetails =
+          []; // Ensure this is defined outside the try block if needed elsewhere
+      String user_type =
+          Provider.of<Auth>(context, listen: false).userData!['user_type'];
+      if (user_type != 'Customer') {
+        orderDetails = Provider.of<Auth>(context, listen: false).orderDetails;
+      } else {
+        orderDetails =
+            Provider.of<Auth>(context, listen: false).customerOrderDetails;
+      }
+      if (orderDetails.isEmpty) {
+        await Provider.of<Auth>(context, listen: false).getNotificationList();
+        // Refresh orderDetails after fetching data
+        orderDetails = user_type != 'Customer'
+            ? Provider.of<Auth>(context, listen: false).orderDetails
+            : Provider.of<Auth>(context, listen: false).customerOrderDetails;
+      }
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) =>
+            buildBottomSheet(context, orderDetails),
+      );
     } catch (error) {
       print('Failed to fetch notifications: $error');
       return; // Exit if data fails to load
     }
+  }
 
-    // Continue with showing the bottom sheet after data is loaded
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.9,
-          minChildSize: 0.5,
-          maxChildSize: 1.0,
-          expand: false,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return createUI(
-                context, scrollController); // Your UI creation function
-          },
-        );
+  Widget buildBottomSheet(BuildContext context, List<dynamic> orderDetails) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.9,
+      minChildSize: 0.5,
+      maxChildSize: 1.0,
+      expand: false,
+      builder: (BuildContext context, ScrollController scrollController) {
+        return createUI(context, scrollController, orderDetails);
       },
     );
   }
 
-  Widget createUI(BuildContext context, ScrollController scrollController) {
-    var orderDetails = [];
-    String user_type =
-        Provider.of<Auth>(context, listen: false).userData!['user_type'];
-    if (user_type != 'Customer') {
-      orderDetails = Provider.of<Auth>(context, listen: false).orderDetails;
-    } else {
-      orderDetails =
-          Provider.of<Auth>(context, listen: false).customerOrderDetails;
-    }
+  Widget createUI(BuildContext context, ScrollController scrollController,
+      List orderDetails) {
     return Container(
       decoration: const ShapeDecoration(
         shadows: [
@@ -3221,7 +3248,7 @@ class OrderItem extends StatelessWidget {
                   '${orderData['cutomer_location']['location']}',
                   style: TextStyle(
                     color: Color(0xff8BDFDD),
-                    fontSize: 12,
+                    fontSize: 14,
                     fontFamily: 'Product Sans',
                   ),
                 ),
@@ -3232,7 +3259,7 @@ class OrderItem extends StatelessWidget {
                   'Rs ${orderData['amount']}',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 16,
                     fontFamily: 'Product Sans',
                   ),
                 ),
