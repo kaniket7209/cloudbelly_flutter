@@ -1774,7 +1774,7 @@ class _PriceWidgetState extends State<PriceWidget> {
                                 ),
                               )
                         : Text(
-                            "Rs $deliveryFee",
+                            "Rs ${deliveryFee?.toStringAsFixed(2)}",
                             style: const TextStyle(
                               color: Color(0xFF383838),
                               fontSize: 14,
