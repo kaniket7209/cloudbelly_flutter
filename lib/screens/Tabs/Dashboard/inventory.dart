@@ -1760,7 +1760,7 @@ class Make_Update_ListWidget extends StatelessWidget {
             color: color ?? const Color.fromRGBO(84, 166, 193, 1),
             shape: SmoothRectangleBorder(
               borderRadius: SmoothBorderRadius(
-                cornerRadius: 10,
+                cornerRadius: 15,
                 cornerSmoothing: 1,
               ),
             ),

@@ -53,6 +53,20 @@ class _PerformanceState extends State<Performance> {
     return Container(
       child: Column(
         children: [
+          const Center(
+          child: Text(
+            "Manage your coupons",
+            style: TextStyle(
+              color: Color.fromRGBO(10, 76, 97, 1),
+              fontSize: 20,
+              fontFamily: 'Jost',
+              fontWeight: FontWeight.w600,
+              height: 0,
+              letterSpacing: 0.14,
+            ),
+          ),
+        ),
+        const Space(14),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -75,7 +89,7 @@ class _PerformanceState extends State<Performance> {
                     color: Color(0xff0A4C61),
                     shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(
-                        cornerRadius: 10,
+                        cornerRadius: 15,
                         cornerSmoothing: 1,
                       ),
                     ),
@@ -116,7 +130,7 @@ class _PerformanceState extends State<Performance> {
                     color: Color(0xff0A4C61),
                     shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(
-                        cornerRadius: 10,
+                        cornerRadius: 15,
                         cornerSmoothing: 1,
                       ),
                     ),
