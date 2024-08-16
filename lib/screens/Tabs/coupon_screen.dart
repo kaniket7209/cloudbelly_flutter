@@ -56,26 +56,26 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
             children: [
               SizedBox(height: 20),
               _buildSectionTitle('Coupon information'),
-              SizedBox(height: 10),
-              _buildDropdownField(
-                'Coupon type',
-                selectedCouponType,
-                [
-                  'Fixed amount discount',
+              // SizedBox(height: 10),
+              // _buildDropdownField(
+              //   'Coupon type',
+              //   selectedCouponType,
+              //   [
+              //     'Fixed amount discount',
                   
-                  'Free delivery coupon',
-                ],
-                // [
-                //   'Fixed amount discount',
-                //   'Percentage discount',
-                //   'Free delivery coupon',
-                // ],
-                (value) {
-                  setState(() {
-                    selectedCouponType = value;
-                  });
-                },
-              ),
+              //     'Free delivery coupon',
+              //   ],
+              //   // [
+              //   //   'Fixed amount discount',
+              //   //   'Percentage discount',
+              //   //   'Free delivery coupon',
+              //   // ],
+              //   (value) {
+              //     setState(() {
+              //       selectedCouponType = value;
+              //     });
+              //   },
+              // ),
               SizedBox(height: 10),
               _buildTextField(
                 'Discount value',
@@ -226,7 +226,8 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
       title,
       style: TextStyle(
         fontSize: 18,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 1,
         color: Color(0xff0A4C61),
       ),
     );
@@ -278,7 +279,7 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
 
   Widget _buildTextField(String hint, Function(String) onChanged) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: const SmoothRectangleBorder(

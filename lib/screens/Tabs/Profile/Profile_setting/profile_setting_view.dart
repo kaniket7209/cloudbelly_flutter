@@ -19,7 +19,6 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -510,13 +509,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
         Map<String, dynamic>? userData = {
           'user_id':
               Provider.of<Auth>(context, listen: false).userData?['user_id'],
-        
-            
-          
-          
-          
           'phone': numberController.text ?? '',
-         
         };
         await UserPreferences.setUser(userData);
         userDetails = UserPreferences.getUser();
@@ -1153,6 +1146,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
     String userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
     Color boxShadowColor;
+    bool _isBottomSheetOpen = false;
 
     if (userType == 'Vendor') {
       boxShadowColor = const Color(0xff0A4C61);
@@ -2447,9 +2441,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   // Navigator.of(context).pop();
                 },
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                      
-                      ),
+                  filter: ImageFilter.blur(),
                   child: Container(
                     color: Colors.transparent, // Transparent color
                   ),
@@ -2460,14 +2452,22 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
         ),
       ),
       bottomNavigationBar: (Provider.of<Auth>(context, listen: false)
-                      .userData!['user_type'] !=
-                  'Customer') 
+                  .userData!['user_type'] !=
+              'Customer')
           ? GestureDetector(
               onVerticalDragUpdate: (details) {
-                if (details.primaryDelta! < -20) {
-                  showPastOrdersBottomSheet(context);
-                }
-              },
+    // Check if the vertical drag is significant enough and the bottom sheet isn't already open
+
+    if (details.primaryDelta! < -20 && !_isBottomSheetOpen) {
+      _isBottomSheetOpen = true;  // Set the flag to prevent multiple openings
+      showPastOrdersBottomSheet(context).then((_) {
+        _isBottomSheetOpen = false;  // Reset the flag when the bottom sheet is closed
+      }).catchError((error) {
+        print("Error showing bottom sheet: $error");
+        _isBottomSheetOpen = false;  // Ensure the flag is reset on error
+      });
+    }
+  },
               child: Container(
                 decoration: ShapeDecoration(
                   shadows: [
@@ -2550,176 +2550,184 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   }
 
   Future<void> showPastOrdersBottomSheet(BuildContext context) async {
-    // Get order details
-    String user_type =
-        Provider.of<Auth>(context, listen: false).userData!['user_type'];
-    var orderDetails = [];
-    if (user_type != 'Customer') {
-      orderDetails = Provider.of<Auth>(context, listen: false).orderDetails;
-    } else {
-      orderDetails =
-          Provider.of<Auth>(context, listen: false).customerOrderDetails;
+    try {
+      // Start loading data before showing the bottom sheet
+      await Provider.of<Auth>(context, listen: false).getNotificationList();
+    } catch (error) {
+      print('Failed to fetch notifications: $error');
+      return; // Exit if data fails to load
     }
 
-    print(" $user_type orderDetailssetting ${json.encode(orderDetails)}");
-    await showModalBottomSheet(
+    // Continue with showing the bottom sheet after data is loaded
+    showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.9, // Initial size of the sheet
-          minChildSize: 0.5, // Minimum size the sheet can be dragged down to
-          maxChildSize: 1.0, // Maximum size the sheet can be expanded to
-          expand: false, // Allow the sheet to expand
+          initialChildSize: 0.9,
+          minChildSize: 0.5,
+          maxChildSize: 1.0,
+          expand: false,
           builder: (BuildContext context, ScrollController scrollController) {
-            return Container(
-              decoration: const ShapeDecoration(
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x7FB1D9D8),
-                    blurRadius: 6,
-                    offset: Offset(0, 4),
-                    spreadRadius: 0,
-                  ),
-                ],
-                color: Color(0xFF0A4C61),
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius.only(
-                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                    topRight:
-                        SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                  ),
-                ),
-              ),
-              padding: EdgeInsets.all(16),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  children: [
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
-                      width: 30,
-                      height: 6,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFFFFFFFF).withOpacity(0.5),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6)),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Center(
-                      child: Text(
-                        'Past orders',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: 'Product Sans Black',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 4.0, right: 0),
-                        decoration: BoxDecoration(
-                          color: Color(0xffFA6E00),
-                          borderRadius: BorderRadius.circular(2.0),
-                        ),
-                        height: 4.0,
-                        child: IntrinsicWidth(
-                          child: Text(
-                            'Past orders',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Product Sans Black',
-                              color: Colors.transparent,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    for (var order in orderDetails) ...[
-                      OrderItem(orderData: order),
-                      Divider(color: Colors.white.withOpacity(0.3)),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            formatItems(order['items']),
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontFamily: "Product Sans",
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Center(
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          width: 150,
-                          decoration: ShapeDecoration(
-                            shadows: [
-                              BoxShadow(
-                                offset: const Offset(5, 6),
-                                color: Color(0xff093745).withOpacity(1),
-                                blurRadius: 30,
-                              ),
-                            ],
-                            color: Color(0xff519896),
-                            shape: SmoothRectangleBorder(
-                              borderRadius: SmoothBorderRadius(
-                                cornerRadius: 15.5,
-                                cornerSmoothing: 1,
-                              ),
-                            ),
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              showOrderDetailsBottomSheet(context, order);
-                            },
-                            child: Center(
-                              child: Text(
-                                'Show details',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            );
+            return createUI(
+                context, scrollController); // Your UI creation function
           },
         );
       },
+    );
+  }
+
+  Widget createUI(BuildContext context, ScrollController scrollController) {
+    var orderDetails = [];
+    String user_type =
+        Provider.of<Auth>(context, listen: false).userData!['user_type'];
+    if (user_type != 'Customer') {
+      orderDetails = Provider.of<Auth>(context, listen: false).orderDetails;
+    } else {
+      orderDetails =
+          Provider.of<Auth>(context, listen: false).customerOrderDetails;
+    }
+    return Container(
+      decoration: const ShapeDecoration(
+        shadows: [
+          BoxShadow(
+            color: Color(0x7FB1D9D8),
+            blurRadius: 6,
+            offset: Offset(0, 4),
+            spreadRadius: 0,
+          ),
+        ],
+        color: Color(0xFF0A4C61),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.only(
+            topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+            topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+          ),
+        ),
+      ),
+      padding: EdgeInsets.all(16),
+      child: SingleChildScrollView(
+        controller: scrollController,
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+              width: 30,
+              height: 6,
+              decoration: ShapeDecoration(
+                color: const Color(0xFFFFFFFF).withOpacity(0.5),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6)),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Center(
+              child: Text(
+                'Past orders',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontFamily: 'Product Sans Black',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                margin: const EdgeInsets.only(top: 4.0, right: 0),
+                decoration: BoxDecoration(
+                  color: Color(0xffFA6E00),
+                  borderRadius: BorderRadius.circular(2.0),
+                ),
+                height: 4.0,
+                child: IntrinsicWidth(
+                  child: Text(
+                    'Past orders',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans Black',
+                      color: Colors.transparent,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 25,
+            ),
+            for (var order in orderDetails) ...[
+              OrderItem(orderData: order),
+              Divider(color: Colors.white.withOpacity(0.3)),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    formatItems(order['items']),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontFamily: "Product Sans",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 25,
+              ),
+              Center(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  width: 150,
+                  decoration: ShapeDecoration(
+                    shadows: [
+                      BoxShadow(
+                        offset: const Offset(5, 6),
+                        color: Color(0xff093745).withOpacity(1),
+                        blurRadius: 30,
+                      ),
+                    ],
+                    color: Color(0xff519896),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 15.5,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      showOrderDetailsBottomSheet(context, order);
+                    },
+                    child: Center(
+                      child: Text(
+                        'Show details',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -2766,178 +2774,220 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
     }
   }
 
-Future<void> showOrderDetailsBottomSheet(BuildContext context, var order) async {
-  await showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    backgroundColor: Colors.transparent,
-    builder: (BuildContext context) {
-
- DateFormat dateFormat = DateFormat('EEE, dd MMM yyyy HH:mm:ss \'GMT\'', 'en_US');
-DateTime orderDate = dateFormat.parseUTC(order['created_date']).toLocal();
-double itemTotal = order['items']
-    .map<double>((item) => num.parse(item['price_each'].toString()).toDouble() * num.parse(item['quantity'].toString()).toDouble())
-    .reduce((double value, double element) => value + element);
-String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
-      return DraggableScrollableSheet(
-        initialChildSize: 0.9,
-        minChildSize: 0.5,
-        maxChildSize: 1.0,
-        expand: false,
-        builder: (BuildContext context, ScrollController scrollController) {
-          return Container(
-            decoration: const ShapeDecoration(
-              shadows: [
-                BoxShadow(
-                  color: Color(0x7FB1D9D8),
-                  blurRadius: 6,
-                  offset: Offset(0, 4),
-                  spreadRadius: 0,
-                ),
-              ],
-              color: Color(0xFF0A4C61),
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius.only(
-                  topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
-                  topRight: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+  Future<void> showOrderDetailsBottomSheet(
+      BuildContext context, var order) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        DateFormat dateFormat =
+            DateFormat('EEE, dd MMM yyyy HH:mm:ss \'GMT\'', 'en_US');
+        DateTime orderDate =
+            dateFormat.parseUTC(order['created_date']).toLocal();
+        double itemTotal = order['items']
+            .map<double>((item) =>
+                num.parse(item['price_each'].toString()).toDouble() *
+                num.parse(item['quantity'].toString()).toDouble())
+            .reduce((double value, double element) => value + element);
+        String formattedDate =
+            DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
+        return DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          minChildSize: 0.5,
+          maxChildSize: 1.0,
+          expand: false,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return Container(
+              decoration: const ShapeDecoration(
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x7FB1D9D8),
+                    blurRadius: 6,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                  ),
+                ],
+                color: Color(0xFF0A4C61),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius.only(
+                    topLeft: SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                    topRight:
+                        SmoothRadius(cornerRadius: 50, cornerSmoothing: 1),
+                  ),
                 ),
               ),
-            ),
-            padding: EdgeInsets.all(16),
-            child: SingleChildScrollView(
-              controller: scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      width: 30,
-                      height: 6,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xffFA6E00).withOpacity(0.5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+              padding: EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        width: 30,
+                        height: 6,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xffFA6E00).withOpacity(0.5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 15),
-                  
-                  SizedBox(height: 15),
-                  Text(
-                    'ORDER #${order['order_no']}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 22,
-                      letterSpacing: 1.2,
-                      fontFamily: 'Product Sans Medium',
-                    ),
-                  ),
-                  SizedBox(height: 2),
-                  Text(
-                    'Rs ${order['amount']}',
-                    style: TextStyle(
-                      color: Color(0xff8BDFDD),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                      letterSpacing: 1.2,
-                      fontFamily: 'Product Sans Medium',
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        children: [
-                          Icon(Icons.location_on_outlined, color: Colors.white, size: 30),
-                          Container(
-                            height: 30,
-                            width: 2,
-                            color: Colors.white,
-                          ),
-                          Icon(Icons.work, color: Colors.white, size: 30),
-                        ],
+                    SizedBox(height: 15),
+                    SizedBox(height: 15),
+                    Text(
+                      'ORDER #${order['order_no']}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 22,
+                        letterSpacing: 1.2,
+                        fontFamily: 'Product Sans Medium',
                       ),
-                      SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'Rs ${order['amount']}',
+                      style: TextStyle(
+                        color: Color(0xff8BDFDD),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        letterSpacing: 1.2,
+                        fontFamily: 'Product Sans Medium',
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          children: [
+                            Icon(Icons.location_on_outlined,
+                                color: Colors.white, size: 30),
+                            Container(
+                              height: 30,
+                              width: 2,
+                              color: Colors.white,
+                            ),
+                            Icon(Icons.work, color: Colors.white, size: 30),
+                          ],
+                        ),
+                        SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              order['store_name'],
+                              style: TextStyle(
+                                color: Color(0xFFFFA726),
+                                fontSize: 16,
+                                fontFamily: 'Product Sans Black',
+                              ),
+                            ),
+                            Text(
+                              '${order['location']['location']}',
+                              style: TextStyle(
+                                color: Color(0xff8BDFDD),
+                                fontSize: 14,
+                                fontFamily: 'Product Sans',
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Work',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: 'Product Sans Black',
+                              ),
+                            ),
+                            Text(
+                              '${order['cutomer_location']['location']}',
+                              style: TextStyle(
+                                color: Color(0xff8BDFDD),
+                                fontSize: 14,
+                                fontFamily: 'Product Sans',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Order delivered on $formattedDate ',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 12,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'BILL DETAILS',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Product Sans Black',
+                      ),
+                    ),
+                    Divider(color: Colors.white.withOpacity(0.3)),
+                    for (var item in order['items']) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            order['store_name'],
-                            style: TextStyle(
-                              color: Color(0xFFFFA726),
-                              fontSize: 16,
-                              fontFamily: 'Product Sans Black',
-                            ),
-                          ),
-                          Text(
-                            '${order['location']['location']}',
-                            style: TextStyle(
-                              color: Color(0xff8BDFDD),
-                              fontSize: 14,
-                              fontFamily: 'Product Sans',
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Work',
+                            '${item['name']}',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: 'Product Sans Black',
+                              fontSize: 14,
+                              fontFamily: 'Product Sans',
                             ),
                           ),
                           Text(
-                            '${order['cutomer_location']['location']}',
+                            'Rs ${item['price_each']}',
                             style: TextStyle(
-                              color: Color(0xff8BDFDD),
+                              color: Colors.white,
                               fontSize: 14,
                               fontFamily: 'Product Sans',
                             ),
                           ),
                         ],
                       ),
+                      SizedBox(height: 5),
+                      // Text(
+                      //   'Personal, Pan',
+                      //   style: TextStyle(
+                      //     color: Colors.white.withOpacity(0.7),
+                      //     fontSize: 12,
+                      //     fontFamily: 'Product Sans',
+                      //   ),
+                      // ),
+                      // SizedBox(height: 15),
                     ],
-                  ),
-                 
-                  SizedBox(height: 10),
-                  Text(
-                     'Order delivered on $formattedDate ',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
-                      fontSize: 12,
-                      fontFamily: 'Product Sans',
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    'BILL DETAILS',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Product Sans Black',
-                    ),
-                  ),
-                  Divider(color: Colors.white.withOpacity(0.3)),
-                  for (var item in order['items']) ...[
+                    SizedBox(height: 15),
+                    Divider(color: Colors.white.withOpacity(0.3)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '${item['name']}',
+                          'Item Total',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 14,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
                             fontFamily: 'Product Sans',
                           ),
                         ),
                         Text(
-                          'Rs ${item['price_each']}',
+                          'Rs ${itemTotal}',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -2947,229 +2997,192 @@ String formattedDate = DateFormat('dd-MM-yyyy hh:mm a').format(orderDate);
                       ],
                     ),
                     SizedBox(height: 5),
-                    // Text(
-                    //   'Personal, Pan',
-                    //   style: TextStyle(
-                    //     color: Colors.white.withOpacity(0.7),
-                    //     fontSize: 12,
-                    //     fontFamily: 'Product Sans',
-                    //   ),
-                    // ),
-                    // SizedBox(height: 15),
-                  ],
-                  SizedBox(height: 15),
-                  Divider(color: Colors.white.withOpacity(0.3)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Item Total',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                  
-                      Text(
-                        'Rs ${itemTotal}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Order Packing Charges',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                      Text(
-                        'Rs 15',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Platform fee',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                      Text(
-                        'Rs 0',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Delivery Partner fee',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                      Text(
-                        'Rs 30',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-               
-                 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Taxes',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                      Text(
-                        'Rs ${(itemTotal * 0.05).toStringAsFixed(2)}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Cash/Online',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                      Text(
-                        order['payment_method'] == 'online'?'Online':'Cash',
-                        // '${order['payment_method']}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Product Sans',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Total Bill',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Product Sans Black',
-                        ),
-                      ),
-                      SizedBox(width: 20),
-                      Text(
-                        'Rs ${order['total_price']}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Product Sans Black',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 50),
-                  Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        width: 150,
-                        decoration: ShapeDecoration(
-                          shadows: [
-                            BoxShadow(
-                              offset: const Offset(5, 6),
-                              color: Color(0xff093745).withOpacity(1),
-                              blurRadius: 30,
-                            ),
-                          ],
-                          color: Color(0xff519896),
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                              cornerRadius: 15.5,
-                              cornerSmoothing: 1,
-                            ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Order Packing Charges',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
                           ),
                         ),
-                        child: Center(
-                          child: Text(
-                            'Close',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                        Text(
+                          'Rs 15',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Platform fee',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                        Text(
+                          'Rs 0',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Delivery Partner fee',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                        Text(
+                          'Rs 30',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Taxes',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                        Text(
+                          'Rs ${(itemTotal * 0.05).toStringAsFixed(2)}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Cash/Online',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                        Text(
+                          order['payment_method'] == 'online'
+                              ? 'Online'
+                              : 'Cash',
+                          // '${order['payment_method']}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Product Sans',
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Total Bill',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Product Sans Black',
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Text(
+                          'Rs ${order['total_price']}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Product Sans Black',
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 50),
+                    Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          width: 150,
+                          decoration: ShapeDecoration(
+                            shadows: [
+                              BoxShadow(
+                                offset: const Offset(5, 6),
+                                color: Color(0xff093745).withOpacity(1),
+                                blurRadius: 30,
+                              ),
+                            ],
+                            color: Color(0xff519896),
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 15.5,
+                                cornerSmoothing: 1,
+                              ),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Close',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
-
+            );
+          },
+        );
+      },
+    );
+  }
 }
 
 class OrderItem extends StatelessWidget {
