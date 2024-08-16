@@ -583,7 +583,7 @@ Divider(
           // Update the CartProvider with the new total
           context
               .read<CartProvider>()
-              .updateTotalAmount(newTotalAmount, deliveryFee);
+              .updateProductTotal(newTotalAmount);
 
           // Show success message
           ScaffoldMessenger.of(context).showSnackBar(

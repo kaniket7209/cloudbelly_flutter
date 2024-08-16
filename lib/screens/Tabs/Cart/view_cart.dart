@@ -899,22 +899,24 @@ class _ViewCartState extends State<ViewCart> {
     double? deliveryFee = viewCartProvider.deliveryFee ?? 0.0;
 
     // Update the CartProvider's totalAmount to include the delivery fee
+    print("$total  totpriceee");
     context
         .read<CartProvider>()
-        .updateTotalAmount(total + deliveryFee, deliveryFee);
+        .updateProductTotal(total);
   }
 
   void getAddressDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
-
+    
     addressList = await Provider.of<Auth>(context, listen: false)
         .getAddressList()
         .then((value) {
-      print("details:: ${jsonEncode(value)}");
+      
       Navigator.of(context).pop();
       context.read<TransitionEffect>().setBlurSigma(5.0);
       AddressBottomSheet()
           .DelievryAddressSheet(context, value.deliveryAddresses);
+      
       return null;
     });
     print("list:: ${jsonEncode(addressList)}");
@@ -1287,7 +1289,7 @@ class _ViewCartState extends State<ViewCart> {
                         Consumer<CartProvider>(
                           builder: (context, cartProvider, child) {
                             double totalAmount =
-                                cartProvider.totalAmount + deliveryFee + 3;
+                               cartProvider.productTotal + deliveryFee + 3;
 
                             return Text(
                               'Rs ${totalAmount.toStringAsFixed(2)}',
@@ -1516,14 +1518,14 @@ class _PriceWidgetState extends State<PriceWidget> {
   String? errorMessage;
   late ViewCartProvider _viewCartProvider;
 
-@override
-void initState() {
-  super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) async {
-    await fetchDeliveryFee();
-    calculateTotalAmount();
-  });
-}
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await fetchDeliveryFee();
+      calculateTotalAmount();
+    });
+  }
 
   void calculateTotalAmount() async {
     // Get the ViewCartProvider instance
@@ -1542,7 +1544,7 @@ void initState() {
     // Update the CartProvider's totalAmount to include the delivery fee
     context
         .read<CartProvider>()
-        .updateTotalAmount(total + deliveryFee, deliveryFee);
+        .updateProductTotal(total);
   }
 
   @override
@@ -1619,8 +1621,9 @@ void initState() {
           // Calculate the new total amount
           double totalAmount = widget.totalAmount + (deliveryFee ?? 30) + 3;
           // Update the CartProvider with the new total amount
-          Provider.of<CartProvider>(context, listen: false)
-              .updateTotalAmount(totalAmount, deliveryFee);
+          // Provider.of<CartProvider>(context, listen: false)
+          //     .updateTotalAmount(totalAmount, deliveryFee);
+          Provider.of<CartProvider>(context, listen: false).updateDeliveryFee(totalAmount);
         });
       } else {
         print("Failed to load delivery fee: ${response.body}");
@@ -1670,8 +1673,8 @@ void initState() {
               Flexible(
                 child: Consumer<CartProvider>(
                   builder: (context, cartProvider, child) {
-                    // Calculate the 5% tax based on the totalAmount from the CartProvider
-                    double taxAmount = cartProvider.totalAmount;
+                    
+                    double taxAmount = cartProvider.productTotal;
 
                     return Text(
                       'Rs ${taxAmount.toStringAsFixed(2)}', // Display the calculated tax
@@ -1872,7 +1875,7 @@ void initState() {
                     child: Consumer<CartProvider>(
                       builder: (context, cartProvider, child) {
                         // Calculate the 5% tax based on the totalAmount from the CartProvider
-                        double taxAmount = cartProvider.totalAmount * 0.05;
+                        double taxAmount = cartProvider.productTotal * 0.05;
 
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -1934,7 +1937,7 @@ void initState() {
                       builder: (context, cartProvider, child) {
                         // Calculate the 5% tax based on the totalAmount from the CartProvider
                         double amt =
-                            cartProvider.totalAmount + 3 + (deliveryFee ?? 30);
+                            cartProvider.productTotal + 3 + (deliveryFee ?? 30);
 
                         return Text(
                           'Rs ${amt.toStringAsFixed(2)}', // Display the calculated tax

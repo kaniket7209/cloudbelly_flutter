@@ -3,6 +3,7 @@ import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/prefrence_helper.dart';
+import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/dashboard.dart';
 import 'package:cloudbelly_app/screens/Tabs/Dashboard/store_setup_sheets.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart';
@@ -167,20 +168,14 @@ class _AddAddressViewState extends State<AddAddressView> {
           String response =
               await Provider.of<Auth>(context, listen: false).addAddress(
             address,
-            /* AddressModel(
-            location: locationController.text.trim(),
-            latitude: widget.latitude.toString(),
-            longitude: widget.longitude.toString(),
-            hno: flatNoController.text.trim(),
-            pincode: pinCodeController.text.trim(),
-            landmark: landMarkController.text.trim(),
-            type: type,
-          ),*/
+            
           );
           Navigator.pop(context);
           if (response == "Delivery details updated successfully") {
             Navigator.pop(context);
             //context.read<TransitionEffect>().set(0);
+          
+
             Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (context) => ViewCart()));
           } else {
@@ -195,24 +190,7 @@ class _AddAddressViewState extends State<AddAddressView> {
             Map<String, dynamic>? userData = {
               'user_id': Provider.of<Auth>(context, listen: false)
                   .userData?['user_id'],
-              'user_name': Provider.of<Auth>(context, listen: false)
-                  .userData?['user_name'],
-              'email':
-                  Provider.of<Auth>(context, listen: false).userData?['email'],
-              'store_name': Provider.of<Auth>(context, listen: false)
-                  .userData?['store_name'],
-              'profile_photo': Provider.of<Auth>(context, listen: false)
-                      .userData?['profile_photo'] ??
-                  '',
-              'store_availability': Provider.of<Auth>(context, listen: false)
-                      .userData?['store_availability'] ??
-                  false,
-              'pan_number': Provider.of<Auth>(context, listen: false)
-                      .userData?['pan_number'] ??
-                  '',
-              'aadhar_number': Provider.of<Auth>(context, listen: false)
-                      .userData?['aadhar_number'] ??
-                  '',
+              
               if (Provider.of<Auth>(context, listen: false)
                       .userData?['address'] !=
                   null)
@@ -239,51 +217,11 @@ class _AddAddressViewState extends State<AddAddressView> {
                           .userData?['location']['longitude'] ??
                       '',
                 },
-              if (Provider.of<Auth>(context, listen: false)
-                      .userData?['working_hours'] !=
-                  null)
-                'working_hours': {
-                  'start_time': Provider.of<Auth>(context, listen: false)
-                          .userData?['working_hours']['start_time'] ??
-                      '',
-                  'end_time': Provider.of<Auth>(context, listen: false)
-                          .userData?['working_hours']['end_time'] ??
-                      '',
-                },
+              
               'delivery_addresses': Provider.of<Auth>(context, listen: false)
                       .userData?['delivery_addresses'] ??
                   [],
-              'bank_name': Provider.of<Auth>(context, listen: false)
-                      .userData?['bank_name'] ??
-                  '',
-              'pincode': pinCodeController.text,
-              'rating': Provider.of<Auth>(context, listen: false)
-                      .userData?['rating'] ??
-                  '-',
-              'followers': Provider.of<Auth>(context, listen: false)
-                      .userData?['followers'] ??
-                  [],
-              'followings': Provider.of<Auth>(context, listen: false)
-                      .userData?['followings'] ??
-                  [],
-              'cover_image': Provider.of<Auth>(context, listen: false)
-                      .userData?['cover_image'] ??
-                  '',
-              'account_number': Provider.of<Auth>(context, listen: false)
-                      .userData?['account_number'] ??
-                  '',
-              'ifsc_code': Provider.of<Auth>(context, listen: false)
-                      .userData?['ifsc_code'] ??
-                  '',
-              'phone': Provider.of<Auth>(context, listen: false)
-                      .userData?['phone'] ??
-                  '',
-              'upi_id': Provider.of<Auth>(context, listen: false)
-                      .userData?['upi_id'] ??
-                  '',
-              'user_type': Provider.of<Auth>(context, listen: false)
-                      .userData?['user_type'] ??
-                  'Vendor',
+             
             };
             await UserPreferences.setUser(userData);
             //  print('pin: ${pan_number}');

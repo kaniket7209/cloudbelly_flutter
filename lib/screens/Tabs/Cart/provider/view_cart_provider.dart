@@ -36,13 +36,29 @@ class ViewCartProvider with ChangeNotifier {
   }
 }
 class CartProvider with ChangeNotifier {
-  double _totalAmount = 0.0;
+  double _productTotal = 0.0; // Variable to store the total product cost
+  double _deliveryFee = 0.0;  // Variable to store the current delivery fee
+  double _totalAmount = 0.0;  // Variable to store the overall total
 
+  double get productTotal => _productTotal;
+  double get deliveryFee => _deliveryFee;
   double get totalAmount => _totalAmount;
 
-  void updateTotalAmount(double productTotal, double? deliveryFee) {
-    // Calculate total amount with the delivery fee
-    _totalAmount = productTotal + (deliveryFee ?? 0.0);
+  // Method to update the total amount for products only
+  void updateProductTotal(double productTotal) {
+    _productTotal = productTotal;
+    calculateTotalAmount();  // Recalculate the total amount after updating
+  }
+
+  // Method to update the delivery fee only
+  void updateDeliveryFee(double newDeliveryFee) {
+    _deliveryFee = newDeliveryFee;
+    calculateTotalAmount();  // Recalculate the total amount after updating
+  }
+
+  // Private method to calculate the total amount
+  void calculateTotalAmount() {
+    _totalAmount = _productTotal + _deliveryFee;
     notifyListeners();
   }
 }
