@@ -68,8 +68,9 @@ class _PerformanceState extends State<Performance> {
         ),
         const Space(14),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
               GestureDetector(
                 onTap: () async {
                   // Fetch the updated list of coupons after any modification
@@ -109,6 +110,10 @@ class _PerformanceState extends State<Performance> {
                   ),
                 ),
               ),
+             const Space(
+              25,
+              isHorizontal: true,
+            ),
               GestureDetector(
                 onTap: () async {
                   Navigator.push(
@@ -265,71 +270,68 @@ class _PerformanceState extends State<Performance> {
     }
   }
 
-  void _showCouponsModal(
-      BuildContext context,
-      List<Map<String, dynamic>> coupons,
-      Function(List<Map<String, dynamic>>) onCouponsChanged) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled:
-          true, // Enable full-screen modal for better pull-down gesture
-      builder: (context) {
-        return GestureDetector(
-          behavior: HitTestBehavior
-              .opaque, // Ensures gestures like pulling down are recognized
-          child: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Container(
-                decoration: const ShapeDecoration(
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x7FB1D9D8),
-                      blurRadius: 6,
-                      offset: Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 45, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 45, cornerSmoothing: 1),
-                    ),
-                  ),
+void _showCouponsModal(
+    BuildContext context,
+    List<Map<String, dynamic>> coupons,
+    Function(List<Map<String, dynamic>>) onCouponsChanged) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true, // Enable full-screen modal for better pull-down gesture
+    isDismissible: true, // Make the bottom sheet dismissible by dragging down
+    builder: (context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.9, // Initial height of the sheet when opened (50% of the screen height)
+        minChildSize: 0.5,  // Minimum height the sheet can be dragged down to (50% of the screen)
+        maxChildSize: 0.9, // Maximum height the sheet can expand to (90% of the screen)
+        expand: false, // Prevent the sheet from expanding to full height automatically
+        builder: (BuildContext context, ScrollController scrollController) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(45),
+                topRight: Radius.circular(45),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x7FB1D9D8),
+                  blurRadius: 6,
+                  offset: Offset(0, -4),
+                  spreadRadius: 0,
                 ),
-                padding: const EdgeInsets.all(
-                    20.0), // Padding around entire modal content
-                child: SingleChildScrollView(
-                  child: Wrap(
-                    children: [
-                      Text(
-                        'All Coupons',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xff0A4C61),
+              ],
+            ),
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Wrap(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        Text(
+                          'All Coupons',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff0A4C61),
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 6.h),
-                      if (coupons.isNotEmpty)
-                        ...coupons.map<Widget>((coupon) {
-                          return CouponCard(
-                            coupon: coupon,
-                            onDelete: () {
-                              setState(() {
-                                coupons.remove(
-                                    coupon); // Remove the coupon from the list
-                              });
-                              onCouponsChanged(coupons); // Update parent state
-                            },
-                          );
-                        }).toList()
-                      else
-                        Center(
-                          child: Container(
+                        SizedBox(height: 20), // Space between title and first item
+                        if (coupons.isNotEmpty)
+                          ...coupons.map<Widget>((coupon) {
+                            return CouponCard(
+                              coupon: coupon,
+                              onDelete: () {
+                                coupons.remove(coupon); // Remove the coupon from the list
+                                onCouponsChanged(coupons); // Update parent state
+                                setState(() {});
+                              },
+                            );
+                          }).toList(),
+                        if (coupons.isEmpty)
+                          Center(
                             child: Text(
                               'No coupons found.',
                               style: TextStyle(
@@ -339,18 +341,19 @@ class _PerformanceState extends State<Performance> {
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+  
   Widget buildCouponPreviewCard(
       BuildContext context, Map<String, dynamic> coupon) {
     final String discountValue = coupon['discount_value'];

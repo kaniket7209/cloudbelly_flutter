@@ -261,7 +261,7 @@ class Auth with ChangeNotifier {
     final String url = 'https://app.cloudbelly.in/coupons/get';
 
     final Map<String, dynamic> requestBody = {
-      'user_id': userData?['user_id'] ?? ""
+      'user_id': userData?['user_id'] 
     };
 
     try {
@@ -272,7 +272,8 @@ class Auth with ChangeNotifier {
       );
 
 
-      print("created coupons  ${jsonEncode(response.body)}");
+      print("payload coupons  ${jsonEncode(requestBody)}");
+      print("fetched coupons  ${jsonEncode(response.body)}");
       return jsonDecode(response.body);
     } catch (error) {
 

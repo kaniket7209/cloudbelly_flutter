@@ -543,7 +543,7 @@ class _NewCouponScreenState extends State<NewCouponScreen> {
                     letterSpacing: 1,
                     fontFamily: 'Product Sans',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xff519896),
+                    color: Color(0xff0A4C61),
                   ),
                 ),
                 SizedBox(height: 20),

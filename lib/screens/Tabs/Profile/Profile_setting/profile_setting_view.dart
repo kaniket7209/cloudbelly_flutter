@@ -3236,9 +3236,10 @@ class OrderItem extends StatelessWidget {
                   '${orderData['buyer_store_name']}',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                     fontFamily: 'Product Sans Medium',
-                    color: Colors.white,
+                    letterSpacing: 1,
+                    color: Color.fromARGB(255, 227, 133, 62),
                   ),
                 ),
                 SizedBox(
