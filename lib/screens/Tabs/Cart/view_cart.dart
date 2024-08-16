@@ -1516,15 +1516,16 @@ class _PriceWidgetState extends State<PriceWidget> {
   String? errorMessage;
   late ViewCartProvider _viewCartProvider;
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchDeliveryFee();
-    });
-  }
+@override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    await fetchDeliveryFee();
+    calculateTotalAmount();
+  });
+}
 
-  void calculateTotalAmount() {
+  void calculateTotalAmount() async {
     // Get the ViewCartProvider instance
     final viewCartProvider = context.read<ViewCartProvider>();
 
