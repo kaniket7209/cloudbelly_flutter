@@ -510,102 +510,13 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
         Map<String, dynamic>? userData = {
           'user_id':
               Provider.of<Auth>(context, listen: false).userData?['user_id'],
-          'user_name':
-              Provider.of<Auth>(context, listen: false).userData?['user_name'],
-          'email': Provider.of<Auth>(context, listen: false).userData?['email'],
-          'store_name':
-              Provider.of<Auth>(context, listen: false).userData?['store_name'],
-          'profile_photo': Provider.of<Auth>(context, listen: false)
-                  .userData?['profile_photo'] ??
-              '',
-          'store_availability': Provider.of<Auth>(context, listen: false)
-                  .userData?['store_availability'] ??
-              false,
-          'pan_number': Provider.of<Auth>(context, listen: false)
-                  .userData?['pan_number'] ??
-              '',
-          'aadhar_number': Provider.of<Auth>(context, listen: false)
-                  .userData?['aadhar_number'] ??
-              '',
-          if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
-              null)
-            'address': {
-              "location": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['location'],
-              "latitude": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['latitude'],
-              "longitude": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['longitude'],
-              "hno": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['hno'],
-              "pincode": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['pincode'],
-              "landmark": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['landmark'],
-              "type": Provider.of<Auth>(context, listen: false)
-                  .userData?['address']['type'],
-            },
-          if (Provider.of<Auth>(context, listen: false).userData?['location'] !=
-              null)
-            'location': {
-              'details': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['details'] ??
-                  '',
-              'latitude': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['latitude'] ??
-                  '',
-              'longitude': Provider.of<Auth>(context, listen: false)
-                      .userData?['location']['longitude'] ??
-                  '',
-            },
-          if (Provider.of<Auth>(context, listen: false)
-                  .userData?['working_hours'] !=
-              null)
-            'working_hours': {
-              'start_time': Provider.of<Auth>(context, listen: false)
-                      .userData?['working_hours']['start_time'] ??
-                  '',
-              'end_time': Provider.of<Auth>(context, listen: false)
-                      .userData?['working_hours']['end_time'] ??
-                  '',
-            },
-          'delivery_addresses': Provider.of<Auth>(context, listen: false)
-                  .userData?['delivery_addresses'] ??
-              [],
-          'bank_name': Provider.of<Auth>(context, listen: false)
-                  .userData?['bank_name'] ??
-              '',
-          'pincode':
-              Provider.of<Auth>(context, listen: false).userData?['pincode'] ??
-                  '',
-          'rating':
-              Provider.of<Auth>(context, listen: false).userData?['rating'] ??
-                  '-',
-          'followers': Provider.of<Auth>(context, listen: false)
-                  .userData?['followers'] ??
-              [],
-          'followings': Provider.of<Auth>(context, listen: false)
-                  .userData?['followings'] ??
-              [],
-          'cover_image': Provider.of<Auth>(context, listen: false)
-                  .userData?['cover_image'] ??
-              '',
-          'account_number': Provider.of<Auth>(context, listen: false)
-                  .userData?['account_number'] ??
-              '',
-          'ifsc_code': Provider.of<Auth>(context, listen: false)
-                  .userData?['ifsc_code'] ??
-              '',
+        
+            
+          
+          
+          
           'phone': numberController.text ?? '',
-          'upi_id':
-              Provider.of<Auth>(context, listen: false).userData?['upi_id'] ??
-                  '',
-          'fssai':
-              Provider.of<Auth>(context, listen: false).userData?['fssai'] ??
-                  '',
-          'user_type': Provider.of<Auth>(context, listen: false)
-                  .userData?['user_type'] ??
-              'Vendor',
+         
         };
         await UserPreferences.setUser(userData);
         userDetails = UserPreferences.getUser();
