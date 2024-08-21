@@ -441,29 +441,33 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
   Map<int, bool> expandedOrderIndices = {};
-  Widget _buildActionButtons(Map<String, dynamic> notification, bool isAccepted,
+ Widget _buildActionButtons(Map<String, dynamic> notification, bool isAccepted,
     Color boxShadowColor, int index) {
-  // Fetch service availability asynchronously and build UI based on the result
+  // Local method to asynchronously check service availability
+  Future<bool> getServiceAvailability() {
+    if (notification['status'] == 'Submitted') {
+      return checkServiceAvailability(
+        notification['order_from_user_id'],
+        notification['customer_location']['latitude'],
+        notification['customer_location']['longitude']
+      );
+    } else {
+      return Future.value(false);
+    }
+  }
+
   return FutureBuilder<bool>(
-    future: checkServiceAvailability(
-      notification['order_from_user_id'],
-      notification['customer_location']['latitude'],
-      notification['customer_location']['longitude']
-    ),
+    future: getServiceAvailability(),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         // While waiting for the data, return a loader.
-        return Container(width: 20,height: 20,child: CircularProgressIndicator());
+        return Container(width: 20, height: 20, child: CircularProgressIndicator());
       } else if (snapshot.hasError) {
         // In case of error, show an error message.
         return Text("Error: ${snapshot.error}");
-      } else if (snapshot.hasData && snapshot.data!) {
-        // Only proceed with building action buttons if service is available
-        return buildActionButtonsRow(notification, boxShadowColor, index,snapshot.data!);
       } else {
-        // Handle the case when service is not available
-        // return Text("Service Not Available", style: TextStyle(color: Colors.red));
-        return buildActionButtonsRow(notification, boxShadowColor, index,false);
+        // Use the service availability to build the row
+        return buildActionButtonsRow(notification, boxShadowColor, index, snapshot.data ?? false);
       }
     },
   );
@@ -478,6 +482,32 @@ class _NotificationScreenState extends State<NotificationScreen> {
           notification['order_from_user_id'],
           newStatus,
         );
+        setState(() {}); // Trigger UI update
+      } catch (e) {
+        print("${e.toString()}");
+      }
+    }
+    void assignDeliveryPartner() async {
+      print("assignDeliveryPartner ");
+      try {
+        var res = await Provider.of<Auth>(context, listen: false).assignDeliveryPartnerUengage(
+          notification['_id'],
+          notification['user_id'],
+          notification['order_from_user_id']
+        );
+        print("resvv  $res");
+        setState(() {}); // Trigger UI update
+      } catch (e) {
+        print("${e.toString()}");
+      }
+    }
+    void getDeliveryTaskStatus() async {
+      print("getDeliveryStatus ");
+      try {
+        var res = await Provider.of<Auth>(context, listen: false).getTaskStatus(11
+         
+        );
+        print("resvv  $res");
         setState(() {}); // Trigger UI update
       } catch (e) {
         print("${e.toString()}");
@@ -863,6 +893,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ],
                 ),
                 Text(
+                  
                   'Completed',
                   style: TextStyle(
                       fontSize: 18.0,
@@ -896,7 +927,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
-    } else if (notification['status'] == 'Packed') {
+    } 
+    else if (notification['status'] == 'Packed'  && serviceAvailable ) {
       return Row(
         children: [
           Container(
@@ -1053,7 +1085,109 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
-    } else if (notification['status'] == 'Out for delivery') {
+    } 
+    //  for delivery true
+     else if (notification['status'] == 'Packed'  && !serviceAvailable ) {
+      return Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: ShapeDecoration(
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 13,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              image: DecorationImage(
+                image: NetworkImage(notification['buyer_logo']),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 10.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 110,
+                      child: Text(
+                        expandedOrderIndices[index] ?? false
+                            ? formatItems(notification['items'])
+                            : oneItem(notification['items']),
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            color: Color(0xff0A4C61),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Product Sans'),
+                      ),
+                    ),
+                    if (notification['items'].length > 1)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            expandedOrderIndices[index] =
+                                !(expandedOrderIndices[index] ?? false);
+                          });
+                        },
+                        child: Icon(
+                          (expandedOrderIndices[index] ?? false)
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Color(0xffFA6E00),
+                        ),
+                      ),
+                  ],
+                ),
+                Text(
+                  'Completed',
+                  style: TextStyle(
+                      fontSize: 18.0,
+                      color: Color(0xff519896),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans'),
+                ),
+              ],
+            ),
+          ),
+          
+          SizedBox(
+            width: 10,
+          ),
+          // Out for delivery button
+          GestureDetector(
+            onTap: () => assignDeliveryPartner(),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+              decoration: ShapeDecoration(
+                color: Color(0xffFA6E00),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 1,
+                  ),
+                ),
+              ),
+              child: Text(
+                "Assign delivery",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontFamily: 'Product Sans'),
+              ),
+            ),
+          ),
+        ],
+      );
+    } 
+  //delivery end
+    
+    else if (notification['status'] == 'Out for delivery' ) {
       return Row(
         children: [
           Container(
@@ -1148,7 +1282,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
-    } else if (notification['status'] == 'Delivered') {
+    } 
+  
+    else if (notification['status'] == 'Delivered') {
       return Row(
         children: [
           Container(

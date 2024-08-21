@@ -170,6 +170,46 @@ class Auth with ChangeNotifier {
     }
   }
 
+  Future<dynamic> assignDeliveryPartnerUengage(
+      String orderId, String userId, String orderFrom) async {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/order/assign_delivery"),
+      headers: headers,
+      body: jsonEncode({
+        "user_id": userId,
+        "order_from_user_id": orderFrom,
+        "order_id": orderId
+      }),
+    );
+    if (response.statusCode == 200) {
+      print("responseAssign ${json.encode(response.body)}");
+      final orderIndex =
+          orderDetails.indexWhere((order) => order['_id'] == orderId);
+      if (orderIndex != -1) {
+        orderDetails[orderIndex]['status'] = 'delivery_assigned';
+        notifyListeners();
+      }
+    } else {
+      throw Exception('Failed to accept order');
+    }
+  }
+ Future<dynamic> getTaskStatus(
+       taskId) async {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/task_status"),
+      headers: headers,
+      body: jsonEncode({
+        "task_id": taskId,
+        
+      }),
+    );
+    if (response.statusCode == 200) {
+      print("resTask ${json.encode(response.body)}");
+     
+    } else {
+      throw Exception('Task not found');
+    }
+  }
   Future<void> markOrderAsDelivered(
       String orderId, String userId, String orderFrom) async {
     final response = await http.post(
@@ -226,8 +266,8 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future createNewCoupons(selectedCouponType, discountValue,
-      minCartValue, selectedApplicableFor, couponCode) async {
+  Future createNewCoupons(selectedCouponType, discountValue, minCartValue,
+      selectedApplicableFor, couponCode) async {
     final String url = 'https://app.cloudbelly.in/coupons/create';
 
     final Map<String, dynamic> requestBody = {
@@ -246,24 +286,18 @@ class Auth with ChangeNotifier {
         body: jsonEncode(requestBody),
       );
 
-
       print("created coupons  ${jsonEncode(response.body)}");
       return jsonDecode(response.body);
     } catch (error) {
-
-
       // Handle exceptions
-      return {"code":200,"msg":"Unexpected errors"};
+      return {"code": 200, "msg": "Unexpected errors"};
     }
   }
-
 
   Future getCouponsByUserId() async {
     final String url = 'https://app.cloudbelly.in/coupons/get';
 
-    final Map<String, dynamic> requestBody = {
-      'user_id': userData?['user_id'] 
-    };
+    final Map<String, dynamic> requestBody = {'user_id': userData?['user_id']};
 
     try {
       final response = await http.post(
@@ -271,25 +305,20 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-
 
       print("payload coupons  ${jsonEncode(requestBody)}");
       print("fetched coupons  ${jsonEncode(response.body)}");
       return jsonDecode(response.body);
     } catch (error) {
-
-
       // Handle exceptions
-      return {"code":200,"msg":"Unexpected errors"};
+      return {"code": 200, "msg": "Unexpected errors"};
     }
   }
 
- Future getCustomersCoupons(user_id) async {
+  Future getCustomersCoupons(user_id) async {
     final String url = 'https://app.cloudbelly.in/coupons/get';
 
-    final Map<String, dynamic> requestBody = {
-      'user_id': user_id
-    };
+    final Map<String, dynamic> requestBody = {'user_id': user_id};
 
     try {
       final response = await http.post(
@@ -297,25 +326,22 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-
 
       print("fetched coupons  ${jsonEncode(response.body)}");
       return jsonDecode(response.body);
     } catch (error) {
-
-
       // Handle exceptions
-      return {"code":200,"msg":"Unexpected errors"};
+      return {"code": 200, "msg": "Unexpected errors"};
     }
   }
- 
- Future getDistance(sellerUserId,latitude,longitude) async {
+
+  Future getDistance(sellerUserId, latitude, longitude) async {
     final String url = 'https://app.cloudbelly.in/get_distance';
 
     final Map<String, dynamic> requestBody = {
       'seller_user_id': sellerUserId,
-      'latitude':latitude,
-      "longitude":longitude
+      'latitude': latitude,
+      "longitude": longitude
     };
 
     try {
@@ -324,49 +350,22 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-
 
       print("fetched   ${jsonEncode(response.body)}");
       return jsonDecode(response.body);
     } catch (error) {
-
-
       // Handle exceptions
-      return {"code":500,"msg":"Unexpected errors"};
+      return {"code": 500, "msg": "Unexpected errors"};
     }
   }
 
-Future updateCoupon(String couponId, Map<String, dynamic> updData) async {
-  final String url = 'https://app.cloudbelly.in/coupons/update';
-
-  final Map<String, dynamic> requestBody = {
-    'user_id': userData?['user_id'] ?? "",
-    'coupon_id': couponId,
-    ...updData, // Merging additional update data into the request body
-  };
-
-  try {
-    final response = await http.post(
-      Uri.parse(url),
-      headers: headers,
-      body: jsonEncode(requestBody),
-    );
-
-    final responseData = jsonDecode(response.body);
-    print("Updated coupon: ${jsonEncode(responseData)}");
-    return responseData;
-  } catch (error) {
-    // Handle exceptions
-    print("Error updating coupon: $error");
-    return {"code": 400, "msg": "Unexpected error occurred"};
-  }
-}
-Future deleteCoupon(couponId) async {
-    final String url = 'https://app.cloudbelly.in/coupons/delete';
+  Future updateCoupon(String couponId, Map<String, dynamic> updData) async {
+    final String url = 'https://app.cloudbelly.in/coupons/update';
 
     final Map<String, dynamic> requestBody = {
       'user_id': userData?['user_id'] ?? "",
-      'coupon_id':couponId
+      'coupon_id': couponId,
+      ...updData, // Merging additional update data into the request body
     };
 
     try {
@@ -376,14 +375,36 @@ Future deleteCoupon(couponId) async {
         body: jsonEncode(requestBody),
       );
 
+      final responseData = jsonDecode(response.body);
+      print("Updated coupon: ${jsonEncode(responseData)}");
+      return responseData;
+    } catch (error) {
+      // Handle exceptions
+      print("Error updating coupon: $error");
+      return {"code": 400, "msg": "Unexpected error occurred"};
+    }
+  }
+
+  Future deleteCoupon(couponId) async {
+    final String url = 'https://app.cloudbelly.in/coupons/delete';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      'coupon_id': couponId
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
 
       print("created coupons  ${jsonEncode(response.body)}");
       return jsonDecode(response.body);
     } catch (error) {
-
-
       // Handle exceptions
-      return {"code":200,"msg":"Unexpected errors"};
+      return {"code": 200, "msg": "Unexpected errors"};
     }
   }
 
@@ -2195,8 +2216,8 @@ Future deleteCoupon(couponId) async {
     }
   }
 
-  Future<dynamic> createProductOrder(
-      List<dynamic> list, AddressModel? addressModel, String userId,double deliveryFee) async {
+  Future<dynamic> createProductOrder(List<dynamic> list,
+      AddressModel? addressModel, String userId, double deliveryFee) async {
     print("list:: $list");
     final String url = '${baseUrl}order/create';
     print(userData?['user_id']);
@@ -2207,7 +2228,7 @@ Future deleteCoupon(couponId) async {
       "items": list,
       "order_from_user_id": userId,
       "location": addressModel,
-      "deliveryFee":deliveryFee
+      "deliveryFee": deliveryFee
     };
 
     try {
@@ -2344,8 +2365,7 @@ Future deleteCoupon(couponId) async {
 
       List<UserModel> userList =
           jsonResponse.map((json) => UserModel.fromJson(json)).toList();
-      print(
-          "ucidi: ${userList[0]}  ${userList[0].followings?.length}");
+      print("ucidi: ${userList[0]}  ${userList[0].followings?.length}");
       notifyListeners();
       return userList;
     } catch (error) {
