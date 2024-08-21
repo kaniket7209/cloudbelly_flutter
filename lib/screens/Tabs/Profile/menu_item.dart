@@ -302,7 +302,7 @@ class _MenuItemState extends State<MenuItem> {
                 ),
 
                 // vendor login - stock_status null || stock_status true //visited profile  -
-                if (widget.storeAvailability && widget.kycStatus == 'verified')
+                if (widget.storeAvailability )
                   if (widget.data['stock_status'] == null ||
                       widget.data['stock_status']) ...{
                     Positioned(

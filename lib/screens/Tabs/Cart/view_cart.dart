@@ -932,7 +932,7 @@ class _ViewCartState extends State<ViewCart> {
     } else {
       AppWideLoadingBanner().loadingBanner(context);
       var id = Provider.of<ViewCartProvider>(context, listen: false).SellterId;
-      print("sellerid $id");
+      print("sellerid $id deliveryFee $deliveryFee");
       var response = await Provider.of<Auth>(context, listen: false)
           .createProductOrder(
               convertedList, context.read<ViewCartProvider>().addressModel, id,deliveryFee);
@@ -1420,7 +1420,7 @@ class CouponWidget extends StatefulWidget {
 class _CouponWidgetState extends State<CouponWidget> {
   @override
   Widget build(BuildContext context) {
-    print("coupwidget  ${widget.totalAmount}");
+
     return Container(
       child: Column(
         children: [

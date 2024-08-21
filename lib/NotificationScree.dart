@@ -293,8 +293,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     final notification = displayedNotifications[index];
                     return Container(
                         margin: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
-                        padding: const EdgeInsets.all(16.0),
+                            vertical: 5.0, horizontal: 16.0),
+                        padding: const EdgeInsets.fromLTRB(10,10,15,10),
                         decoration: ShapeDecoration(
                           color: Colors.white,
                           shape: SmoothRectangleBorder(
@@ -428,10 +428,48 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   bool showFullItems = false;
-
+ Future<bool> checkServiceAvailability(String userId, String latitude, String longitude) async {
+    try {
+      var response = await Provider.of<Auth>(context, listen: false).getDistance(userId, latitude, longitude);
+      if (response != null && response['service_available'] != null) {
+        return response['service_available'];
+      }
+      return false;
+    } catch (e) {
+      print("Error checking service availability: $e");
+      return false;
+    }
+  }
   Map<int, bool> expandedOrderIndices = {};
   Widget _buildActionButtons(Map<String, dynamic> notification, bool isAccepted,
-      Color boxShadowColor, int index) {
+    Color boxShadowColor, int index) {
+  // Fetch service availability asynchronously and build UI based on the result
+  return FutureBuilder<bool>(
+    future: checkServiceAvailability(
+      notification['order_from_user_id'],
+      notification['customer_location']['latitude'],
+      notification['customer_location']['longitude']
+    ),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        // While waiting for the data, return a loader.
+        return Container(width: 20,height: 20,child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        // In case of error, show an error message.
+        return Text("Error: ${snapshot.error}");
+      } else if (snapshot.hasData && snapshot.data!) {
+        // Only proceed with building action buttons if service is available
+        return buildActionButtonsRow(notification, boxShadowColor, index,snapshot.data!);
+      } else {
+        // Handle the case when service is not available
+        // return Text("Service Not Available", style: TextStyle(color: Colors.red));
+        return buildActionButtonsRow(notification, boxShadowColor, index,false);
+      }
+    },
+  );
+}
+  Widget buildActionButtonsRow(Map<String, dynamic> notification,
+      Color boxShadowColor, int index,bool serviceAvailable) {
     void handleStatusChange(String newStatus) async {
       try {
         await Provider.of<Auth>(context, listen: false).statusChange(
@@ -455,12 +493,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
           // Buyer logo
 
           Container(
-            width: 35,
-            height: 35,
+            width: 40,
+            height: 40,
             decoration: ShapeDecoration(
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius(
-                  cornerRadius: 8,
+                  cornerRadius: 13,
                   cornerSmoothing: 1,
                 ),
               ),
@@ -502,18 +540,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                     Text(
                       notification['payment_method'] == 'online'
-                          ? 'Paid'
-                          : 'Cod',
+                          ? 'PAID'
+                          : 'COD',
                       style: TextStyle(
-                          decoration: notification['payment_method'] == 'online'
-                              ? TextDecoration.underline
-                              : TextDecoration.none,
+                          decoration: 
+                               TextDecoration.underline
+                              ,
                           // decorationThickness: 4,
 
-                          fontSize: 14.0,
-                          color: notification['payment_method'] == 'online'
-                              ? Color(0xff0A4C61)
-                              : Colors.transparent,
+                          fontSize: 12.0,
+                          color: 
+                               Color(0xff0A4C61),
+                            
                           fontFamily: 'Product Sans'
 
                           // fontWeight: FontWeight.bold,
@@ -521,7 +559,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ],
                 ),
+                Container(padding: EdgeInsets.only(top: 2),child: Text(
+                  serviceAvailable?'*Deliverable':'*Self Delivery',
+                  style: TextStyle(
+                    color: Color(0xffFA6E00),fontFamily: 'Product Sans',fontWeight:FontWeight.bold,fontSize: 10 
+                    ),
+                    )
+                    )
               ],
+
             ),
           ),
           Column(
@@ -536,7 +582,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ),
               ),
               SizedBox(
-                height: 10,
+                height: 5,
               ),
               Row(
                 children: [
@@ -592,18 +638,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     child: Container(
                       width: 30,
                       height: 30,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFD4F4F),
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: boxShadowColor
-                                .withOpacity(0.2), // Color with 35% opacity
-                            blurRadius: 10, // Blur amount
-                            offset: Offset(0, 4), // X and Y offset
+                      decoration: ShapeDecoration(
+                            color: Color(0xFFFD4F4F),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 10.0,
+                              cornerSmoothing: 1,
+                            ),
                           ),
-                        ],
-                      ),
+                          shadows: [
+                            BoxShadow(
+                              color: boxShadowColor
+                                .withOpacity(0.2), 
+                              
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                     
                       child: Icon(Icons.close, color: Colors.white, size: 20),
                     ),
                   ),
@@ -624,18 +677,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     child: Container(
                       width: 30,
                       height: 30,
-                      decoration: BoxDecoration(
-                        color: Color(0xff1ACD0A),
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: boxShadowColor
-                                .withOpacity(0.2), // Color with 35% opacity
-                            blurRadius: 10, // Blur amount
-                            offset: Offset(0, 4), // X and Y offset
+                       decoration: ShapeDecoration(
+                            color: Color(0xff1ACD0A),
+                          shape: SmoothRectangleBorder(
+                            borderRadius: SmoothBorderRadius(
+                              cornerRadius: 10.0,
+                              cornerSmoothing: 1,
+                            ),
                           ),
-                        ],
-                      ),
+                          shadows: [
+                            BoxShadow(
+                              color: boxShadowColor
+                                .withOpacity(0.2), 
+                              
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                      
                       child: Icon(Icons.check, color: Colors.white, size: 20),
                     ),
                   ),
@@ -645,17 +705,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
+   
     } else if (notification['status'] == 'Accepted') {
       return Row(
         children: [
           // Buyer logo
           Container(
-            width: 35,
-            height: 35,
+            width: 40,
+            height: 40,
             decoration: ShapeDecoration(
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius(
-                  cornerRadius: 8,
+                  cornerRadius: 13,
                   cornerSmoothing: 1,
                 ),
               ),
@@ -751,12 +812,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
       return Row(
         children: [
           Container(
-            width: 35,
-            height: 35,
+            width: 40,
+            height: 40,
             decoration: ShapeDecoration(
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius(
-                  cornerRadius: 8,
+                  cornerRadius: 13,
                   cornerSmoothing: 1,
                 ),
               ),
@@ -839,12 +900,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
       return Row(
         children: [
           Container(
-            width: 35,
-            height: 35,
+            width: 40,
+            height: 40,
             decoration: ShapeDecoration(
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius(
-                  cornerRadius: 8,
+                  cornerRadius: 13,
                   cornerSmoothing: 1,
                 ),
               ),
@@ -996,12 +1057,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
       return Row(
         children: [
           Container(
-            width: 35,
-            height: 35,
+            width: 40,
+            height: 40,
             decoration: ShapeDecoration(
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius(
-                  cornerRadius: 8,
+                  cornerRadius: 13,
                   cornerSmoothing: 1,
                 ),
               ),
@@ -1091,12 +1152,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
       return Row(
         children: [
           Container(
-            width: 35,
-            height: 35,
+            width: 40,
+            height: 40,
             decoration: ShapeDecoration(
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius(
-                  cornerRadius: 8,
+                  cornerRadius: 13,
                   cornerSmoothing: 1,
                 ),
               ),
@@ -1201,25 +1262,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 // for order tracking
   Widget _buildActionButtonsCustomer(Map<String, dynamic> notification,
       bool isAccepted, Color boxShadowColor, index) {
-    //      Color backColour;
-    // if (notification['status'] == 'Submitted') {
-    //   backColour = const Color(0xff0A4C61);
-    // } else if (notification['status'] == 'Accepted') {
-    //   backColour = const Color(0xff2E0536);
-    // }
-    // else if (notification['status'] == 'Packed') {
-    //   backColour = Color.fromARGB(0, 115, 188, 150);
-    // }
-    // else if (notification['status'] == 'Prepared') {
-    //   backColour = Color.fromARGB(0, 115, 188, 150);
-    // }
-    // else if (notification['status'] == 'Out for delivery') {
-    //   backColour = Color.fromARGB(0, 115, 188, 150);
-    // }
-    // else { // delivered
-    //   backColour = const Color.fromRGBO(77, 191, 74, 0.6);
-    // }
-
+  
     if (notification['status'] == 'Submitted' ||
         notification['status'] == 'Accepted' ||
         notification['status'] == 'Out for delivery' ||
@@ -1228,8 +1271,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
       return Row(
         children: [
           Container(
-            width: 35,
-            height: 35,
+            width: 40,
+            height: 40,
             decoration: ShapeDecoration(
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius(

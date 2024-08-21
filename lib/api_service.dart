@@ -196,7 +196,7 @@ class Auth with ChangeNotifier {
   // Auth._internal();
   void getToken(String? token) async {
     fcmToken = token;
-    // await updateFcmToken(fcmToken);
+    await updateFcmToken(fcmToken);
     notifyListeners();
   }
 
@@ -306,6 +306,33 @@ class Auth with ChangeNotifier {
 
       // Handle exceptions
       return {"code":200,"msg":"Unexpected errors"};
+    }
+  }
+ 
+ Future getDistance(sellerUserId,latitude,longitude) async {
+    final String url = 'https://app.cloudbelly.in/get_distance';
+
+    final Map<String, dynamic> requestBody = {
+      'seller_user_id': sellerUserId,
+      'latitude':latitude,
+      "longitude":longitude
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+
+
+      print("fetched   ${jsonEncode(response.body)}");
+      return jsonDecode(response.body);
+    } catch (error) {
+
+
+      // Handle exceptions
+      return {"code":500,"msg":"Unexpected errors"};
     }
   }
 
