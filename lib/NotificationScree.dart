@@ -928,7 +928,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ],
       );
     } 
-    else if (notification['status'] == 'Packed'  && serviceAvailable ) {
+    else if (notification['status'] == 'Packed'  && !serviceAvailable ) {
       return Row(
         children: [
           Container(
@@ -1087,7 +1087,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       );
     } 
     //  for delivery true
-     else if (notification['status'] == 'Packed'  && !serviceAvailable ) {
+     else if (notification['status'] == 'Packed'  && serviceAvailable ) {
       return Row(
         children: [
           Container(

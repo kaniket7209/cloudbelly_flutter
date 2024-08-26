@@ -1277,6 +1277,15 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                       .setBlurSigma(0);
                                 },
                                 child: Container(
+                                  decoration: ShapeDecoration(
+                                              color:  Colors.white,
+                                              shape: SmoothRectangleBorder(
+                                    borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 40,
+                                  cornerSmoothing: 1,
+                                )),
+                                            ),
+                                 
                                   // height: 35.h,
                                   width: double.infinity,
                                   padding: EdgeInsets.only(
@@ -1318,12 +1327,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                               shadows: [
                                                 BoxShadow(
                                                   offset: Offset(0, 4),
-                                                  color: boxShadowColor
-                                                      .withOpacity(0.3),
+                                                  color: Color(0xffD3EEEE)
+                                                      .withOpacity(0.5),
                                                   blurRadius: 20,
                                                 )
                                               ],
-                                              color: Color(0xFFA5C8C799),
+                                              color: Color(0xffD3EEEE),
                                               shape: SmoothRectangleBorder(
                                                 borderRadius:
                                                     SmoothBorderRadius.all(
@@ -1332,6 +1341,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                                             cornerSmoothing:
                                                                 1)),
                                               ),
+                                            
                                             ),
                                           ),
                                           const Space(
@@ -1358,6 +1368,48 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                         ],
                                       ),
                                       Space(1.h),
+                                      // Row(
+                                      //   children: [
+                                      //     Container(
+                                      //       height: 25,
+                                      //       width: 25,
+                                      //       decoration: ShapeDecoration(
+                                      //         shadows: [
+                                      //           BoxShadow(
+                                      //             offset: Offset(0, 4),
+                                      //             color: boxShadowColor
+                                      //                 .withOpacity(0.3),
+                                      //             blurRadius: 20,
+                                      //           )
+                                      //         ],
+                                      //         color: Color(0xFFA5C8C799),
+                                      //         shape: SmoothRectangleBorder(
+                                      //           borderRadius:
+                                      //               SmoothBorderRadius.all(
+                                      //                   SmoothRadius(
+                                      //                       cornerRadius: 10,
+                                      //                       cornerSmoothing:
+                                      //                           1)),
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //     const Space(
+                                      //       16,
+                                      //       isHorizontal: true,
+                                      //     ),
+                                      //     Text(
+                                      //       "Add cover photo",
+                                      //       style: TextStyle(
+                                      //           fontSize: 14,
+                                      //           color: boxShadowColor,
+                                      //           fontFamily: 'Product Sans',
+                                      //           fontWeight: FontWeight.w700),
+                                      //     ),
+                                      //   ],
+                                      // ),
+                                     
+                                     
+                                      // Space(1.h),
                                       Row(
                                         children: [
                                           Container(
@@ -1367,12 +1419,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                               shadows: [
                                                 BoxShadow(
                                                   offset: Offset(0, 4),
-                                                  color: boxShadowColor
-                                                      .withOpacity(0.3),
+                                                  color: Color(0xffD3EEEE)
+                                                      .withOpacity(0.5),
                                                   blurRadius: 20,
                                                 )
                                               ],
-                                              color: Color(0xFFA5C8C799),
+                                              color: Color(0xffD3EEEE),
                                               shape: SmoothRectangleBorder(
                                                 borderRadius:
                                                     SmoothBorderRadius.all(
@@ -1381,46 +1433,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                                             cornerSmoothing:
                                                                 1)),
                                               ),
-                                            ),
-                                          ),
-                                          const Space(
-                                            16,
-                                            isHorizontal: true,
-                                          ),
-                                          Text(
-                                            "Add cover photo",
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: boxShadowColor,
-                                                fontFamily: 'Product Sans',
-                                                fontWeight: FontWeight.w700),
-                                          ),
-                                        ],
-                                      ),
-                                      Space(1.h),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            height: 25,
-                                            width: 25,
-                                            decoration: ShapeDecoration(
-                                              shadows: [
-                                                BoxShadow(
-                                                  offset: Offset(0, 4),
-                                                  color: boxShadowColor
-                                                      .withOpacity(0.3),
-                                                  blurRadius: 20,
-                                                )
-                                              ],
-                                              color: Color(0xFFA5C8C799),
-                                              shape: SmoothRectangleBorder(
-                                                borderRadius:
-                                                    SmoothBorderRadius.all(
-                                                        SmoothRadius(
-                                                            cornerRadius: 10,
-                                                            cornerSmoothing:
-                                                                1)),
-                                              ),
+                                            
                                             ),
                                           ),
                                           const Space(
@@ -1457,12 +1470,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                               shadows: [
                                                 BoxShadow(
                                                   offset: Offset(0, 4),
-                                                  color: boxShadowColor
-                                                      .withOpacity(0.3),
+                                                  color: Color(0xffD3EEEE)
+                                                      .withOpacity(0.5),
                                                   blurRadius: 20,
                                                 )
                                               ],
-                                              color: Color(0xFFA5C8C799),
+                                              color: Color(0xffD3EEEE),
                                               shape: SmoothRectangleBorder(
                                                 borderRadius:
                                                     SmoothBorderRadius.all(
@@ -1471,6 +1484,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                                             cornerSmoothing:
                                                                 1)),
                                               ),
+                                            
                                             ),
                                           ),
                                           const Space(
@@ -2616,6 +2630,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   Widget createUI(BuildContext context, ScrollController scrollController,
       List orderDetails) {
+         print("orderDetdails ${json.encode(orderDetails[3])}");
     return Container(
       decoration: const ShapeDecoration(
         shadows: [
@@ -2689,6 +2704,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               height: 25,
             ),
             for (var order in orderDetails) ...[
+            
               OrderItem(orderData: order),
               Divider(color: Colors.white.withOpacity(0.3)),
               SizedBox(
@@ -2803,6 +2819,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   Future<void> showOrderDetailsBottomSheet(
       BuildContext context, var order) async {
+        print("ddff $order");
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -2917,6 +2934,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               ),
                             ),
                             Text(
+                             
                               '${order['location']['location']}',
                               style: TextStyle(
                                 color: Color(0xff8BDFDD),
@@ -2935,6 +2953,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                             ),
                             Text(
                               '${order['cutomer_location']['location']}',
+                            
                               style: TextStyle(
                                 color: Color(0xff8BDFDD),
                                 fontSize: 14,
@@ -3233,7 +3252,7 @@ class OrderItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${orderData['buyer_store_name']}',
+                  '${orderData['buyer_store_name'] ?? 'Unknown Store'}',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
@@ -3246,7 +3265,7 @@ class OrderItem extends StatelessWidget {
                   height: 2,
                 ),
                 Text(
-                  '${orderData['cutomer_location']['location']}',
+                  '${orderData['customer_location']?['location'] ?? 'Unknown Location'}',
                   style: TextStyle(
                     color: Color(0xff8BDFDD),
                     fontSize: 14,
@@ -3257,7 +3276,7 @@ class OrderItem extends StatelessWidget {
                   height: 2,
                 ),
                 Text(
-                  'Rs ${orderData['amount']}',
+                  'Rs ${orderData['amount'] ?? 0}',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,

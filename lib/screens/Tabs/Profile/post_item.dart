@@ -82,7 +82,7 @@ class _PostItemState extends State<PostItem> {
     if (widget.data != oldWidget.data) {
 
       _getLikeData();
-      setState(() {}); // Force rebuild when data changes
+      // setState(() {}); // Force rebuild when data changes
     }
   }
   List<String> getFittedText(String text) {

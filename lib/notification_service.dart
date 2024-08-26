@@ -27,7 +27,7 @@ Future<void> initializeNotification() async {
 
 Future<void> showNotification(RemoteMessage message) async {
   // Choose the appropriate notification details based on the payload
-  final bool isOrderNotification = message.data['type'] == 'order';
+  final bool isOrderNotification = message.data['type'] == 'incoming_order';
   print("isOrderNotification  $isOrderNotification");
   const AndroidNotificationDetails androidPlatformChannelSpecificsCatSound =  AndroidNotificationDetails(
     'high_importance_channel_order', // id
