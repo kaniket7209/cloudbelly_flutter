@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/assignRider.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/main.dart';
+import 'package:lottie/lottie.dart'; // Import Lottie
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/toast_notification.dart';
@@ -16,6 +18,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -190,8 +193,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       bool showAll,
       bool isAccepted,
       String user_type) {
-    final List<Map<String, dynamic>> displayedNotifications =
-        notifications;
+    final List<Map<String, dynamic>> displayedNotifications = notifications;
     // final List<Map<String, dynamic>> displayedNotifications =
     //     showAll ? notifications : notifications.take(10).toList();
 
@@ -236,7 +238,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ],
           ))
         : SingleChildScrollView(
-          child: Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
@@ -274,7 +276,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     //               // color: Colors.transparent,
                     //               color: boxShadowColor,
                     //               fontWeight: FontWeight.bold,
-                                  
+
                     //               fontFamily: 'Product Sans'),
                     //         ),
                     //         SizedBox(width: 5),
@@ -285,16 +287,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     //       ],
                     //     ),
                     //   )
-                 
                   ],
                 ),
                 Column(
-                  children: List.generate(displayedNotifications.length, (index) {
+                  children:
+                      List.generate(displayedNotifications.length, (index) {
                     final notification = displayedNotifications[index];
                     return Container(
                         margin: const EdgeInsets.symmetric(
                             vertical: 5.0, horizontal: 16.0),
-                        padding: const EdgeInsets.fromLTRB(10,10,15,10),
+                        padding: const EdgeInsets.fromLTRB(10, 10, 15, 10),
                         decoration: ShapeDecoration(
                           color: Colors.white,
                           shape: SmoothRectangleBorder(
@@ -321,7 +323,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 )
               ],
             ),
-        );
+          );
   }
 
   Widget buildOrderTracking(
@@ -330,8 +332,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       bool showAll,
       bool isAccepted,
       String user_type) {
-    final List<Map<String, dynamic>> displayedNotifications =
-      notifications;
+    final List<Map<String, dynamic>> displayedNotifications = notifications;
     // final List<Map<String, dynamic>> displayedNotifications =
     //     showAll ? notifications : notifications.take(10).toList();
 
@@ -376,7 +377,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ],
           ))
         : SingleChildScrollView(
-          child: Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
@@ -392,7 +393,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ],
                 ),
                 Column(
-                  children: List.generate(displayedNotifications.length, (index) {
+                  children:
+                      List.generate(displayedNotifications.length, (index) {
                     final notification = displayedNotifications[index];
                     return Container(
                         // margin: const EdgeInsets.symmetric(
@@ -424,13 +426,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 )
               ],
             ),
-        );
+          );
   }
 
   bool showFullItems = false;
- Future<bool> checkServiceAvailability(String userId, String latitude, String longitude) async {
+  Future<bool> checkServiceAvailability(
+      String userId, String latitude, String longitude) async {
     try {
-      var response = await Provider.of<Auth>(context, listen: false).getDistance(userId, latitude, longitude);
+      var response = await Provider.of<Auth>(context, listen: false)
+          .getDistance(userId, latitude, longitude);
       if (response != null && response['service_available'] != null) {
         return response['service_available'];
       }
@@ -440,40 +444,43 @@ class _NotificationScreenState extends State<NotificationScreen> {
       return false;
     }
   }
+
   Map<int, bool> expandedOrderIndices = {};
- Widget _buildActionButtons(Map<String, dynamic> notification, bool isAccepted,
-    Color boxShadowColor, int index) {
-  // Local method to asynchronously check service availability
-  Future<bool> getServiceAvailability() {
-    if (notification['status'] == 'Submitted') {
-      return checkServiceAvailability(
-        notification['order_from_user_id'],
-        notification['customer_location']['latitude'],
-        notification['customer_location']['longitude']
-      );
-    } else {
-      return Future.value(false);
+  Widget _buildActionButtons(Map<String, dynamic> notification, bool isAccepted,
+      Color boxShadowColor, int index) {
+    // Local method to asynchronously check service availability
+    Future<bool> getServiceAvailability() {
+      if (notification['status'] == 'Submitted') {
+        return checkServiceAvailability(
+            notification['order_from_user_id'],
+            notification['customer_location']['latitude'],
+            notification['customer_location']['longitude']);
+      } else {
+        return Future.value(false);
+      }
     }
+
+    return FutureBuilder<bool>(
+      future: getServiceAvailability(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // While waiting for the data, return a loader.
+          return Container(
+              width: 20, height: 20, child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          // In case of error, show an error message.
+          return Text("Error: ${snapshot.error}");
+        } else {
+          // Use the service availability to build the row
+          return buildActionButtonsRow(
+              notification, boxShadowColor, index, snapshot.data ?? false);
+        }
+      },
+    );
   }
 
-  return FutureBuilder<bool>(
-    future: getServiceAvailability(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        // While waiting for the data, return a loader.
-        return Container(width: 20, height: 20, child: CircularProgressIndicator());
-      } else if (snapshot.hasError) {
-        // In case of error, show an error message.
-        return Text("Error: ${snapshot.error}");
-      } else {
-        // Use the service availability to build the row
-        return buildActionButtonsRow(notification, boxShadowColor, index, snapshot.data ?? false);
-      }
-    },
-  );
-}
   Widget buildActionButtonsRow(Map<String, dynamic> notification,
-      Color boxShadowColor, int index,bool serviceAvailable) {
+      Color boxShadowColor, int index, bool serviceAvailable) {
     void handleStatusChange(String newStatus) async {
       try {
         await Provider.of<Auth>(context, listen: false).statusChange(
@@ -487,26 +494,50 @@ class _NotificationScreenState extends State<NotificationScreen> {
         print("${e.toString()}");
       }
     }
-    void assignDeliveryPartner() async {
-      print("assignDeliveryPartner ");
-      try {
-        var res = await Provider.of<Auth>(context, listen: false).assignDeliveryPartnerUengage(
-          notification['_id'],
-          notification['user_id'],
-          notification['order_from_user_id']
-        );
-        print("resvv  $res");
-        setState(() {}); // Trigger UI update
-      } catch (e) {
-        print("${e.toString()}");
-      }
+
+  void assignDeliveryPartner() async {
+  print("assignDeliveryPartner");
+  try {
+    // Call the API and get the response
+    var res = await Provider.of<Auth>(context, listen: false)
+        .assignDeliveryPartnerUengage(
+            notification['_id'], notification['user_id'], notification['order_from_user_id']);
+    
+    // Parse the response string into a JSON object
+    var parsedRes = jsonDecode(res);
+    
+    print("Parsed Response: $parsedRes");
+
+    // Extract the needed values
+    String statusCode = parsedRes['Status_code'];
+    int taskId = parsedRes['taskId'];
+    String vendorOrderId = parsedRes['vendor_order_id'];
+
+    // Check the conditions for the response
+    if (parsedRes['status'] == true && statusCode == "ACCEPTED") {
+      print("Task ID: $taskId, Vendor Order ID: $vendorOrderId");
+
+      // Show the modal bottom sheet and pass the taskId
+     showModalBottomSheet(
+  context: context,
+  builder: (BuildContext context) {
+    return AssignDeliveryModal(taskId,notification['_id'], notification['user_id'], notification['order_from_user_id']); // Ensure taskId is passed correctly and the constructor exists
+  },
+  isScrollControlled: true,
+);
+    } else {
+      // Handle cases where the task is not accepted
+      print("Task not accepted");
     }
+  } catch (e) {
+    print(e.toString());
+  }
+}
     void getDeliveryTaskStatus() async {
       print("getDeliveryStatus ");
       try {
-        var res = await Provider.of<Auth>(context, listen: false).getTaskStatus(11
-         
-        );
+        var res =
+            await Provider.of<Auth>(context, listen: false).getTaskStatus(11);
         print("resvv  $res");
         setState(() {}); // Trigger UI update
       } catch (e) {
@@ -573,15 +604,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           ? 'PAID'
                           : 'COD',
                       style: TextStyle(
-                          decoration: 
-                               TextDecoration.underline
-                              ,
+                          decoration: TextDecoration.underline,
                           // decorationThickness: 4,
 
                           fontSize: 12.0,
-                          color: 
-                               Color(0xff0A4C61),
-                            
+                          color: Color(0xff0A4C61),
                           fontFamily: 'Product Sans'
 
                           // fontWeight: FontWeight.bold,
@@ -589,15 +616,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ],
                 ),
-                Container(padding: EdgeInsets.only(top: 2),child: Text(
-                  serviceAvailable?'*Deliverable':'*Self Delivery',
-                  style: TextStyle(
-                    color: Color(0xffFA6E00),fontFamily: 'Product Sans',fontWeight:FontWeight.bold,fontSize: 10 
-                    ),
-                    )
-                    )
+                Container(
+                    padding: EdgeInsets.only(top: 2),
+                    child: Text(
+                      serviceAvailable ? '*Deliverable' : '*Self Delivery',
+                      style: TextStyle(
+                          color: Color(0xffFA6E00),
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10),
+                    ))
               ],
-
             ),
           ),
           Column(
@@ -669,24 +698,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       width: 30,
                       height: 30,
                       decoration: ShapeDecoration(
-                            color: Color(0xFFFD4F4F),
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                              cornerRadius: 10.0,
-                              cornerSmoothing: 1,
-                            ),
+                        color: Color(0xFFFD4F4F),
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 10.0,
+                            cornerSmoothing: 1,
                           ),
-                          shadows: [
-                            BoxShadow(
-                              color: boxShadowColor
-                                .withOpacity(0.2), 
-                              
-                              blurRadius: 10,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
                         ),
-                     
+                        shadows: [
+                          BoxShadow(
+                            color: boxShadowColor.withOpacity(0.2),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
                       child: Icon(Icons.close, color: Colors.white, size: 20),
                     ),
                   ),
@@ -707,25 +733,22 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     child: Container(
                       width: 30,
                       height: 30,
-                       decoration: ShapeDecoration(
-                            color: Color(0xff1ACD0A),
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                              cornerRadius: 10.0,
-                              cornerSmoothing: 1,
-                            ),
+                      decoration: ShapeDecoration(
+                        color: Color(0xff1ACD0A),
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 10.0,
+                            cornerSmoothing: 1,
                           ),
-                          shadows: [
-                            BoxShadow(
-                              color: boxShadowColor
-                                .withOpacity(0.2), 
-                              
-                              blurRadius: 10,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
                         ),
-                      
+                        shadows: [
+                          BoxShadow(
+                            color: boxShadowColor.withOpacity(0.2),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
                       child: Icon(Icons.check, color: Colors.white, size: 20),
                     ),
                   ),
@@ -735,7 +758,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
-   
     } else if (notification['status'] == 'Accepted') {
       return Row(
         children: [
@@ -893,7 +915,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ],
                 ),
                 Text(
-                  
                   'Completed',
                   style: TextStyle(
                       fontSize: 18.0,
@@ -927,8 +948,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
-    } 
-    else if (notification['status'] == 'Packed'  && !serviceAvailable ) {
+    }
+    // for manual delivery delivery = false  make serviceAvailable false here only for testing now make it serviceAvailable else !serviceAvailable
+    else if (notification['status'] == 'Packed' && !serviceAvailable) {
       return Row(
         children: [
           Container(
@@ -1085,9 +1107,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
-    } 
+    }
     //  for delivery true
-     else if (notification['status'] == 'Packed'  && serviceAvailable ) {
+    else if (notification['status'] == 'Packed' && serviceAvailable) {
       return Row(
         children: [
           Container(
@@ -1155,7 +1177,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ],
             ),
           ),
-          
+
           SizedBox(
             width: 10,
           ),
@@ -1184,10 +1206,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
-    } 
-  //delivery end
-    
-    else if (notification['status'] == 'Out for delivery' ) {
+    }
+    //delivery end
+
+    else if (notification['status'] == 'Out for delivery') {
       return Row(
         children: [
           Container(
@@ -1282,9 +1304,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
-    } 
-  
-    else if (notification['status'] == 'Delivered') {
+    } else if (notification['status'] == 'Delivered') {
       return Row(
         children: [
           Container(
@@ -1398,7 +1418,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
 // for order tracking
   Widget _buildActionButtonsCustomer(Map<String, dynamic> notification,
       bool isAccepted, Color boxShadowColor, index) {
-  
     if (notification['status'] == 'Submitted' ||
         notification['status'] == 'Accepted' ||
         notification['status'] == 'Out for delivery' ||
@@ -1593,12 +1612,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ],
           ))
         : SingleChildScrollView(
-          child: Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 1.0, horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 1.0, horizontal: 16.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -1639,13 +1658,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       //       ],
                       //     ),
                       //   )
-                   
-                   
                     ],
                   ),
                 ),
                 Column(
-                  children: List.generate(displayedNotifications.length, (index) {
+                  children:
+                      List.generate(displayedNotifications.length, (index) {
                     final notification = displayedNotifications[index];
                     return Container(
                       margin: const EdgeInsets.symmetric(
@@ -1673,7 +1691,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ),
                             child: GestureDetector(
                               onTap: () {
-                                print("redirect ${notification['msg']['from']}");
+                                print(
+                                    "redirect ${notification['msg']['from']}");
                                 String userId = notification['msg']['from'];
                                 navigatorKey.currentState?.push(
                                   MaterialPageRoute(
@@ -1690,10 +1709,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 child: notification['msg']
                                                 ['from_profile_photo'] !=
                                             null &&
-                                        notification['msg']['from_profile_photo']
+                                        notification['msg']
+                                                ['from_profile_photo']
                                             .isNotEmpty
                                     ? Image.network(
-                                        notification['msg']['from_profile_photo'],
+                                        notification['msg']
+                                            ['from_profile_photo'],
                                         fit: BoxFit.cover,
                                         width: 35,
                                         height: 35,
@@ -1715,7 +1736,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               ),
                             ),
                           ),
-          
+
                           //social profile logo
                           SizedBox(width: 16.0),
                           Expanded(
@@ -1733,7 +1754,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 Text(
                                   timeAgo(notification['timestamp']),
                                   style: TextStyle(
-                                      fontSize: 10.0, color: Color(0xfffFA6E00)),
+                                      fontSize: 10.0,
+                                      color: Color(0xfffFA6E00)),
                                 ),
                               ],
                             ),
@@ -1745,7 +1767,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 )
               ],
             ),
-        );
+          );
   }
 
   @override
@@ -2392,6 +2414,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 }
+
 
 class PaymentScreen extends StatefulWidget {
   final ScrollController scrollController;

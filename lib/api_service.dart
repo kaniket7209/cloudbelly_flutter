@@ -183,14 +183,15 @@ class Auth with ChangeNotifier {
     );
     if (response.statusCode == 200) {
       print("responseAssign ${json.encode(response.body)}");
-      final orderIndex =
-          orderDetails.indexWhere((order) => order['_id'] == orderId);
-      if (orderIndex != -1) {
-        orderDetails[orderIndex]['status'] = 'delivery_assigned';
-        notifyListeners();
-      }
+      // final orderIndex =
+      //     orderDetails.indexWhere((order) => order['_id'] == orderId);
+      // if (orderIndex != -1) {
+      //   orderDetails[orderIndex]['status'] = 'searching_rider';
+      //   notifyListeners();
+      // }
+      return response.body;
     } else {
-      throw Exception('Failed to accept order');
+      throw Exception('Failed to search  rider for this order');
     }
   }
  Future<dynamic> getTaskStatus(
@@ -205,11 +206,36 @@ class Auth with ChangeNotifier {
     );
     if (response.statusCode == 200) {
       print("resTask ${json.encode(response.body)}");
+      return response.body;
      
     } else {
       throw Exception('Task not found');
     }
   }
+  
+  Future<dynamic> cancelDeliveryTask(
+       taskId,orderFrom,userId,orderId) async {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/order/cancel_task"),
+      headers: headers,
+      body: jsonEncode({
+        "task_id": taskId,
+         "user_id": userId,
+        "order_from_user_id": orderFrom,
+        "order_id": orderId
+
+        
+      }),
+    );
+    if (response.statusCode == 200) {
+      print("cancekTask ${json.encode(response.body)}");
+      return response.body;
+     
+    } else {
+      throw Exception('Task not found');
+    }
+  }
+  
   Future<void> markOrderAsDelivered(
       String orderId, String userId, String orderFrom) async {
     final response = await http.post(
