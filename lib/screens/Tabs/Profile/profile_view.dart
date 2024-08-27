@@ -601,28 +601,40 @@ class _ProfileViewState extends State<ProfileView> {
                                                                       .phone ??
                                                                   '';
                                                           print(
-                                                              "phnlen $phoneNumber ${phoneNumber.length}");
+                                                              "Phone number length: $phoneNumber (${phoneNumber.length})");
 
+                                                          // Check if the phone number is a 10-digit number
                                                           if (phoneNumber
                                                                   .length ==
                                                               10) {
-                                                            final url = Uri.parse(
-                                                                'https://wa.me/91$phoneNumber');
+                                                            final whatsappUrl =
+                                                                Uri.parse(
+                                                                    'whatsapp://send?phone=91$phoneNumber');
                                                             print(
-                                                                "Launching WhatsApp URL: $url");
+                                                                "Launching WhatsApp URL: $whatsappUrl");
 
-                                                            // Check if the URL can be launched
-                                                            if (await canLaunchUrl(
-                                                                url)) {
-                                                              await launchUrl(
-                                                                  url);
-                                                            } else {
+                                                            try {
+                                                              // Check if the URL can be launched
+                                                              if (await canLaunchUrl(
+                                                                  whatsappUrl)) {
+                                                                await launchUrl(
+                                                                    whatsappUrl);
+                                                              } else {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                  const SnackBar(
+                                                                      content: Text(
+                                                                          'Could not launch WhatsApp. Please make sure WhatsApp is installed.')),
+                                                                );
+                                                              }
+                                                            } catch (e) {
                                                               ScaffoldMessenger
                                                                       .of(context)
                                                                   .showSnackBar(
-                                                                const SnackBar(
+                                                                SnackBar(
                                                                     content: Text(
-                                                                        'Could not launch WhatsApp. Please try again.')),
+                                                                        'Error launching WhatsApp: $e')),
                                                               );
                                                             }
                                                           } else {
@@ -636,14 +648,15 @@ class _ProfileViewState extends State<ProfileView> {
                                                           }
                                                         },
                                                         child: Container(
-                                                          padding: EdgeInsets
-                                                              .fromLTRB(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .fromLTRB(
                                                                   0, 7, 12, 2),
                                                           child: Image.asset(
                                                               'assets/images/WhatsApp.png',
                                                               width: 27),
                                                         ),
-                                                      )
+                                                      ),
                                                     ],
                                                   ),
                                                   Row(

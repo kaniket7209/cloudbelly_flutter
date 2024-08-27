@@ -506,59 +506,43 @@ class _ProfileState extends State<Profile> {
                                               ],
                                             ),
                                           ),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              final phoneNumber =
-                                                  Provider.of<Auth>(context,
-                                                              listen: false)
-                                                          .userData?['phone'] ??
-                                                      '';
+                                         GestureDetector(
+  onTap: () async {
+    final phoneNumber = Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '';
 
-                                              if (phoneNumber.length == 10) {
-                                                final url = Uri.parse(
-                                                    'https://wa.me/91$phoneNumber');
+    if (phoneNumber.length == 10) {
+      final whatsappUrl = Uri.parse('whatsapp://send?phone=91$phoneNumber');
 
-                                                try {
-                                                  if (await canLaunchUrl(url)) {
-                                                    await launchUrl(url);
-                                                  } else {
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                            'Could not launch WhatsApp. Please try again.'),
-                                                      ),
-                                                    );
-                                                  }
-                                                } catch (e) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content:
-                                                          Text('Error: $e'),
-                                                    ),
-                                                  );
-                                                }
-                                              } else {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  const SnackBar(
-                                                    content: Text(
-                                                        'WhatsApp number is incorrect. It is not a 10-digit number.'),
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      0, 7, 12, 2),
-                                              child: Image.asset(
-                                                  'assets/images/WhatsApp.png',
-                                                  width: 27),
-                                            ),
-                                          )
+      try {
+        if (await canLaunchUrl(whatsappUrl)) {
+          await launchUrl(whatsappUrl);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not launch WhatsApp. Please make sure WhatsApp is installed.'),
+            ),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error launching WhatsApp: $e'),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('WhatsApp number is incorrect. It is not a 10-digit number.'),
+        ),
+      );
+    }
+  },
+  child: Container(
+    padding: const EdgeInsets.fromLTRB(0, 7, 12, 2),
+    child: Image.asset('assets/images/WhatsApp.png', width: 27),
+  ),
+)
                                         ],
                                       ),
                                     ),
