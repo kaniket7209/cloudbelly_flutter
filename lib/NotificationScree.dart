@@ -495,114 +495,119 @@ class _NotificationScreenState extends State<NotificationScreen> {
       }
     }
 
+    void assignDeliveryPartner() async {
+      print("assignDeliveryPartner");
+      handleStatusChange('assigning_rider');
+      // Show a loading indicator or similar UI until the task assignment is complete
+      // showModalBottomSheet(
+      //   context: context,
+      //   isScrollControlled: true,
+      //   backgroundColor: Colors.transparent,
+      //   builder: (context) => Container(
+      //     height: MediaQuery.of(context).size.height * 0.5,
+      //     decoration: BoxDecoration(
+      //       color: Colors.white,
+      //       borderRadius: BorderRadius.only(
+      //         topLeft: Radius.circular(30),
+      //         topRight: Radius.circular(30),
+      //       ),
+      //     ),
+      //     child: Center(
+      //       child: CircularProgressIndicator(), // Show loading spinner
+      //     ),
+      //   ),
+      // );
 
-void assignDeliveryPartner() async {
-  print("assignDeliveryPartner");
+      try {
+        // Call the API and get the response
+        var res = await Provider.of<Auth>(context, listen: false)
+            .assignDeliveryPartnerUengage(
+          notification['_id'],
+          notification['user_id'],
+          notification['order_from_user_id'],
+        );
 
-  // Show a loading indicator or similar UI until the task assignment is complete
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) => Container(
-      height: MediaQuery.of(context).size.height * 0.5,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-      ),
-      child: Center(
-        child: CircularProgressIndicator(), // Show loading spinner
-      ),
-    ),
-  );
+        // Parse the response
+        var parsedRes = jsonDecode(res);
+        print("Parsed Response: $parsedRes");
 
-  try {
-    // Call the API and get the response
-    var res = await Provider.of<Auth>(context, listen: false).assignDeliveryPartnerUengage(
-      notification['_id'],
-      notification['user_id'],
-      notification['order_from_user_id'],
-    );
+        // Check the conditions for the response
+        if (parsedRes['status'] == true &&
+            parsedRes['Status_code'] == "ACCEPTED") {
+          int taskId = parsedRes['taskId'];
+          String vendorOrderId = parsedRes['vendor_order_id'];
 
-    // Parse the response
-    var parsedRes = jsonDecode(res);
-    print("Parsed Response: $parsedRes");
+          print("Task ID: $taskId, Vendor Order ID: $vendorOrderId");
+          _onRefresh();
 
-    // Check the conditions for the response
-    if (parsedRes['status'] == true && parsedRes['Status_code'] == "ACCEPTED") {
-      int taskId = parsedRes['taskId'];
-      String vendorOrderId = parsedRes['vendor_order_id'];
+          // Close the loading modal
+          // Navigator.pop(context);
 
-      print("Task ID: $taskId, Vendor Order ID: $vendorOrderId");
+          // Show the Delivery Status Modal (Replace AssignDeliveryModal with DeliveryStatusScreen)
+          // showModalBottomSheet(
+          //   context: context,
+          //   barrierColor: Colors.black.withOpacity(0.3),
+          //   isScrollControlled: true,
+          //   backgroundColor: Colors.white,
+          //   builder: (context) => DraggableScrollableSheet(
+          //     initialChildSize: 0.9,
+          //     minChildSize: 0.5,
+          //     maxChildSize: 0.9,
+          //     builder: (BuildContext context, ScrollController scrollController) {
+          //       return DeliveryStatusScreen(
+          //         // taskId: taskId, // Pass necessary parameters to the screen
+          //         // vendorOrderId: vendorOrderId,
+          //         scrollController: scrollController,
+          //       );
+          //     },
+          //   ),
+          // );
+        } else {
+          // Handle task not accepted case
+          print("Task not accepted");
 
-      // Close the loading modal
-      Navigator.pop(context);
+          // Optionally close the loading modal and show an error message
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Task not accepted. Please try again later.')),
+          );
+        }
+      } catch (e) {
+        print(e.toString());
 
-      // Show the Delivery Status Modal (Replace AssignDeliveryModal with DeliveryStatusScreen)
-      showModalBottomSheet(
+        // Close the loading modal in case of an error
+        Navigator.pop(context);
+
+        // Show an error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error occurred: ${e.toString()}')),
+        );
+      }
+    }
+
+// Helper function to show error dialogs
+    void _showErrorDialog(String message) {
+      Navigator.pop(context); // Close any open modals
+      showDialog(
         context: context,
-        barrierColor: Colors.black.withOpacity(0.3),
-        isScrollControlled: true,
-        backgroundColor: Colors.white,
-        builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.9,
-          minChildSize: 0.5,
-          maxChildSize: 0.9,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return DeliveryStatusScreen(
-              // taskId: taskId, // Pass necessary parameters to the screen
-              // vendorOrderId: vendorOrderId,
-              scrollController: scrollController,
-            );
-          },
-        ),
-      );
-    } else {
-      // Handle task not accepted case
-      print("Task not accepted");
-
-      // Optionally close the loading modal and show an error message
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Task not accepted. Please try again later.')),
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
       );
     }
-  } catch (e) {
-    print(e.toString());
 
-    // Close the loading modal in case of an error
-    Navigator.pop(context);
-
-    // Show an error message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error occurred: ${e.toString()}')),
-    );
-  }
-}
-// Helper function to show error dialogs
-void _showErrorDialog(String message) {
-  Navigator.pop(context); // Close any open modals
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('OK'),
-          ),
-        ],
-      );
-    },
-  );
-}
     void getDeliveryTaskStatus() async {
       print("getDeliveryStatus ");
       try {
@@ -1278,8 +1283,376 @@ void _showErrorDialog(String message) {
       );
     }
     //delivery end
+    else if (notification['status'] == 'assigning_rider') {
+      return Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: ShapeDecoration(
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 13,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              image: DecorationImage(
+                image: NetworkImage(notification['buyer_logo']),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 10.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 110,
+                      child: Text(
+                        expandedOrderIndices[index] ?? false
+                            ? formatItems(notification['items'])
+                            : oneItem(notification['items']),
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            color: Color(0xff0A4C61),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Product Sans'),
+                      ),
+                    ),
+                    if (notification['items'].length > 1)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            expandedOrderIndices[index] =
+                                !(expandedOrderIndices[index] ?? false);
+                          });
+                        },
+                        child: Icon(
+                          (expandedOrderIndices[index] ?? false)
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Color(0xffFA6E00),
+                        ),
+                      ),
+                  ],
+                ),
+                Text(
+                  'Completed',
+                  style: TextStyle(
+                      fontSize: 18.0,
+                      color: Color(0xff519896),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans'),
+                ),
+              ],
+            ),
+          ),
 
-    else if (notification['status'] == 'Out for delivery') {
+          SizedBox(
+            width: 10,
+          ),
+          // Out for delivery button
+          GestureDetector(
+            onTap: () => (),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+              decoration: ShapeDecoration(
+                color: Color(0xffFA6E00),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 1,
+                  ),
+                ),
+              ),
+              child: Text(
+                "Looking For Rider",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Product Sans'),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    //if assgined rider
+    else if (notification['status'] == 'assigned_rider' || notification['status'] == 'Out for delivery' && !serviceAvailable) {
+      return Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: ShapeDecoration(
+                  shape: SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius(
+                      cornerRadius: 13,
+                      cornerSmoothing: 1,
+                    ),
+                  ),
+                  image: DecorationImage(
+                    image: NetworkImage(notification['buyer_logo']),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              SizedBox(width: 10.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 110,
+                          child: Text(
+                            expandedOrderIndices[index] ?? false
+                                ? formatItems(notification['items'])
+                                : oneItem(notification['items']),
+                            style: TextStyle(
+                                fontSize: 14.0,
+                                color: Color(0xff0A4C61),
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Product Sans'),
+                          ),
+                        ),
+                        if (notification['items'].length > 1)
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                expandedOrderIndices[index] =
+                                    !(expandedOrderIndices[index] ?? false);
+                              });
+                            },
+                            child: Icon(
+                              (expandedOrderIndices[index] ?? false)
+                                  ? Icons.keyboard_arrow_up
+                                  : Icons.keyboard_arrow_down,
+                              color: Color(0xffFA6E00),
+                            ),
+                          ),
+                      ],
+                    ),
+                    Text(
+                      'Order ID - ${notification['order_no']}',
+                      style: TextStyle(
+                          fontSize: 12.0,
+                          color: Color(0xff519896),
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Product Sans'),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xff519896).withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 7,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        final phoneNumber = notification['customer_phone'];
+                        final url = 'tel:$phoneNumber';
+                        if (await canLaunch(url)) {
+                          await launch(url);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Could not launch phone call')),
+                          );
+                        }
+                      },
+                      child: CircleAvatar(
+                        radius: 9,
+                        backgroundColor: const Color(0xFFFA6E00),
+                        child: Image.asset('assets/images/Phone.png'),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        if (notification['location'] != null &&
+                            notification['location']['latitude'] != null) {
+                          final String googleMapsUrl =
+                              'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
+                          if (await canLaunch(googleMapsUrl)) {
+                            await launch(googleMapsUrl);
+                          } else {
+                            throw 'Could not open the map.';
+                          }
+                        }
+                      },
+                      child: CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Colors.white,
+                        child: Image.asset('assets/images/Location.png'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(
+                width: 10,
+              ),
+              // Out for delivery button
+              GestureDetector(
+                onTap: () => (),
+                child: Container(
+                  padding: notification['status'] == 'Out for delivery' ?EdgeInsets.fromLTRB(5, 10, 5, 10): EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  decoration: ShapeDecoration(
+                    color: const Color(0xff2BC500),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                  ),
+                  child:  Text(
+                   notification['status'] == 'Out for delivery' ? 'Out for delivery':"Assigned",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize:notification['status'] == 'Out for delivery'?11: 12,
+                        letterSpacing: notification['status'] == 'Out for delivery'?0.5:1,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Product Sans'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          //for rider info
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+            decoration: ShapeDecoration(
+        color: Color(0xffD3EEEE),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 16.0,
+            cornerSmoothing: 1,
+          ),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0xffD3EEEE).withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+            child: Row(
+              children: [
+                
+              
+                Text(
+                  '${notification['rider_name']}',
+                  style: TextStyle(
+                      fontSize: 14.0,
+                      color: Color(0xff0A4C61),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans'),
+                ),
+                Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xff519896).withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 7,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          final phoneNumber = notification['customer_phone'];
+                          final url = 'tel:$phoneNumber';
+                          if (await canLaunch(url)) {
+                            await launch(url);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text('Could not launch phone call')),
+                            );
+                          }
+                        },
+                        child: CircleAvatar(
+                          radius: 9,
+                          backgroundColor: const Color(0xFFFA6E00),
+                          child: Image.asset('assets/images/Phone.png'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            
+                const SizedBox(
+                  width: 10,
+                ),
+                // Out for delivery button
+                GestureDetector(
+                  onTap: () => handleStatusChange('Out for delivery'),
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
+                    decoration: ShapeDecoration(
+                      color: const Color(0xff0A4C61),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 12,
+                          cornerSmoothing: 1,
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "Track",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          letterSpacing: 1,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Product Sans'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        
+        ],
+      );
+    } else if (notification['status'] == 'Out for delivery' && !serviceAvailable) {
       return Row(
         children: [
           Container(
@@ -1872,10 +2245,8 @@ void _showErrorDialog(String message) {
                   itemProvider.acceptedOrders.isNotEmpty || // for accepted
                   itemProvider.incomingOrders.isNotEmpty || // for incoming
                   itemProvider.paymentDetails.isNotEmpty ||
-                  itemProvider.trackCustomerOrders.isNotEmpty  ||
-                  itemProvider.deliveryStatus.isNotEmpty 
-
-                  ;
+                  itemProvider.trackCustomerOrders.isNotEmpty ||
+                  itemProvider.deliveryStatus.isNotEmpty;
 
           return hasNotifications
               ? SmartRefresher(
@@ -2123,95 +2494,101 @@ void _showErrorDialog(String message) {
                           ),
                         SizedBox(height: 30),
                         // for delivery status allocation
-                       if (itemProvider.deliveryStatus.isNotEmpty)
-  Container(
-    decoration: ShapeDecoration(
-      color: Color(0xff0A4C61),
-      shape: SmoothRectangleBorder(
-        borderRadius: SmoothBorderRadius(
-          cornerRadius: 21.0,
-          cornerSmoothing: 1,
-        ),
-      ),
-      shadows: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.2),
-          spreadRadius: 2,
-          blurRadius: 10,
-          offset: Offset(0, 3),
-        ),
-      ],
-    ),
-    padding: EdgeInsets.all(15),
-    child: ElevatedButton(
-      onPressed: () {
-        showModalBottomSheet(
-          context: context,
-          barrierColor: Colors.transparent,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (context) => DraggableScrollableSheet(
-            initialChildSize: 0.95,
-            minChildSize: 0.5,
-            maxChildSize: 0.95,
-            builder: (BuildContext context, ScrollController scrollController) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: Colors.transparent, // Set transparent background
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0),
-                  ),
-                  child: DeliveryStatusScreen(scrollController: scrollController),
-                ),
-              );
-            },
-          ),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        maximumSize: Size(200, 100),
-        backgroundColor: Color(0xffFA6E00),
-        shape: SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius(
-            cornerRadius: 14.0,
-            cornerSmoothing: 1,
-          ),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Delivery Status',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Product Sans',
-            ),
-          ),
-          SizedBox(width: 10),
-          CircleAvatar(
-            radius: 10,
-            backgroundColor: Color(0xffFCFF52),
-            child: Text(
-              '${itemProvider.deliveryStatus.length}',
-              style: TextStyle(
-                color: Color(0xff0A4C61),
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  ),
-SizedBox(height: 30),
+                        if (itemProvider.deliveryStatus.isNotEmpty)
+                          Container(
+                            decoration: ShapeDecoration(
+                              color: Color(0xff0A4C61),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 21.0,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(15),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  barrierColor: Colors.transparent,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (context) =>
+                                      DraggableScrollableSheet(
+                                    initialChildSize: 0.95,
+                                    minChildSize: 0.5,
+                                    maxChildSize: 0.95,
+                                    builder: (BuildContext context,
+                                        ScrollController scrollController) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors
+                                              .transparent, // Set transparent background
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(30.0),
+                                            topRight: Radius.circular(30.0),
+                                          ),
+                                          child: DeliveryStatusScreen(
+                                              scrollController:
+                                                  scrollController),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                maximumSize: Size(200, 100),
+                                backgroundColor: Color(0xffFA6E00),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 14.0,
+                                    cornerSmoothing: 1,
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Delivery Status',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Product Sans',
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: Color(0xffFCFF52),
+                                    child: Text(
+                                      '${itemProvider.deliveryStatus.length}',
+                                      style: TextStyle(
+                                        color: Color(0xff0A4C61),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        SizedBox(height: 30),
                       ],
                     ),
                   ),
@@ -2461,95 +2838,101 @@ SizedBox(height: 30),
                           ),
                         SizedBox(height: 30),
                         //for delivery status allocation
-                       if (itemProvider.deliveryStatus.isNotEmpty)
-  Container(
-    decoration: ShapeDecoration(
-      color: Color(0xff0A4C61),
-      shape: SmoothRectangleBorder(
-        borderRadius: SmoothBorderRadius(
-          cornerRadius: 21.0,
-          cornerSmoothing: 1,
-        ),
-      ),
-      shadows: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.2),
-          spreadRadius: 2,
-          blurRadius: 10,
-          offset: Offset(0, 3),
-        ),
-      ],
-    ),
-    padding: EdgeInsets.all(15),
-    child: ElevatedButton(
-      onPressed: () {
-        showModalBottomSheet(
-          context: context,
-          barrierColor: Colors.transparent,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (context) => DraggableScrollableSheet(
-            initialChildSize: 0.95,
-            minChildSize: 0.5,
-            maxChildSize: 0.95,
-            builder: (BuildContext context, ScrollController scrollController) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: Colors.transparent, // Set transparent background
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0),
-                  ),
-                  child: DeliveryStatusScreen(scrollController: scrollController),
-                ),
-              );
-            },
-          ),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        maximumSize: Size(200, 100),
-        backgroundColor: Color(0xffFA6E00),
-        shape: SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius(
-            cornerRadius: 14.0,
-            cornerSmoothing: 1,
-          ),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Delivery Status',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Product Sans',
-            ),
-          ),
-          SizedBox(width: 10),
-          CircleAvatar(
-            radius: 10,
-            backgroundColor: Color(0xffFCFF52),
-            child: Text(
-              '${itemProvider.deliveryStatus.length}',
-              style: TextStyle(
-                color: Color(0xff0A4C61),
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  ),
-SizedBox(height: 30),
+                        if (itemProvider.deliveryStatus.isNotEmpty)
+                          Container(
+                            decoration: ShapeDecoration(
+                              color: Color(0xff0A4C61),
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 21.0,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(15),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  barrierColor: Colors.transparent,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (context) =>
+                                      DraggableScrollableSheet(
+                                    initialChildSize: 0.95,
+                                    minChildSize: 0.5,
+                                    maxChildSize: 0.95,
+                                    builder: (BuildContext context,
+                                        ScrollController scrollController) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors
+                                              .transparent, // Set transparent background
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(30.0),
+                                            topRight: Radius.circular(30.0),
+                                          ),
+                                          child: DeliveryStatusScreen(
+                                              scrollController:
+                                                  scrollController),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                maximumSize: Size(200, 100),
+                                backgroundColor: Color(0xffFA6E00),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 14.0,
+                                    cornerSmoothing: 1,
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Delivery Status',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Product Sans',
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: Color(0xffFCFF52),
+                                    child: Text(
+                                      '${itemProvider.deliveryStatus.length}',
+                                      style: TextStyle(
+                                        color: Color(0xff0A4C61),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        SizedBox(height: 30),
                       ],
                     ),
                   ),

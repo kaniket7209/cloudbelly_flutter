@@ -112,7 +112,7 @@ class DeliveryStatusCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: ShapeDecoration(
-                    color: Color(0xff7CC1BF),
+                    color: notification['delivery_status']  == 'assigning' ? Color(0xff7CC1BF):Color(0xffF14343),
                     shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(
                         cornerRadius: 14.0,
@@ -128,7 +128,7 @@ class DeliveryStatusCard extends StatelessWidget {
                     ]
                     ),
                 child: Text(
-                 notification['delivery_status']  == 'assigning' ?'Looking for...':'Not assigned',
+                 notification['delivery_status']  == 'assigning' ? 'Looking for...' : 'Not assigned',
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -136,6 +136,7 @@ class DeliveryStatusCard extends StatelessWidget {
                       fontFamily: 'Product Sans'),
                 ),
               ),
+             
             ],
           ),
           SizedBox(height: 10),
