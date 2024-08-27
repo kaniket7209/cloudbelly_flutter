@@ -495,43 +495,113 @@ class _NotificationScreenState extends State<NotificationScreen> {
       }
     }
 
-  void assignDeliveryPartner() async {
+
+void assignDeliveryPartner() async {
   print("assignDeliveryPartner");
+
+  // Show a loading indicator or similar UI until the task assignment is complete
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => Container(
+      height: MediaQuery.of(context).size.height * 0.5,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        ),
+      ),
+      child: Center(
+        child: CircularProgressIndicator(), // Show loading spinner
+      ),
+    ),
+  );
+
   try {
     // Call the API and get the response
-    var res = await Provider.of<Auth>(context, listen: false)
-        .assignDeliveryPartnerUengage(
-            notification['_id'], notification['user_id'], notification['order_from_user_id']);
-    
-    // Parse the response string into a JSON object
+    var res = await Provider.of<Auth>(context, listen: false).assignDeliveryPartnerUengage(
+      notification['_id'],
+      notification['user_id'],
+      notification['order_from_user_id'],
+    );
+
+    // Parse the response
     var parsedRes = jsonDecode(res);
-    
     print("Parsed Response: $parsedRes");
 
-    // Extract the needed values
-    String statusCode = parsedRes['Status_code'];
-    int taskId = parsedRes['taskId'];
-    String vendorOrderId = parsedRes['vendor_order_id'];
-
     // Check the conditions for the response
-    if (parsedRes['status'] == true && statusCode == "ACCEPTED") {
+    if (parsedRes['status'] == true && parsedRes['Status_code'] == "ACCEPTED") {
+      int taskId = parsedRes['taskId'];
+      String vendorOrderId = parsedRes['vendor_order_id'];
+
       print("Task ID: $taskId, Vendor Order ID: $vendorOrderId");
 
-      // Show the modal bottom sheet and pass the taskId
-     showModalBottomSheet(
-  context: context,
-  builder: (BuildContext context) {
-    return AssignDeliveryModal(taskId,notification['_id'], notification['user_id'], notification['order_from_user_id']); // Ensure taskId is passed correctly and the constructor exists
-  },
-  isScrollControlled: true,
-);
+      // Close the loading modal
+      Navigator.pop(context);
+
+      // Show the Delivery Status Modal (Replace AssignDeliveryModal with DeliveryStatusScreen)
+      showModalBottomSheet(
+        context: context,
+        barrierColor: Colors.black.withOpacity(0.3),
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          minChildSize: 0.5,
+          maxChildSize: 0.9,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return DeliveryStatusScreen(
+              // taskId: taskId, // Pass necessary parameters to the screen
+              // vendorOrderId: vendorOrderId,
+              scrollController: scrollController,
+            );
+          },
+        ),
+      );
     } else {
-      // Handle cases where the task is not accepted
+      // Handle task not accepted case
       print("Task not accepted");
+
+      // Optionally close the loading modal and show an error message
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Task not accepted. Please try again later.')),
+      );
     }
   } catch (e) {
     print(e.toString());
+
+    // Close the loading modal in case of an error
+    Navigator.pop(context);
+
+    // Show an error message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error occurred: ${e.toString()}')),
+    );
   }
+}
+// Helper function to show error dialogs
+void _showErrorDialog(String message) {
+  Navigator.pop(context); // Close any open modals
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
 }
     void getDeliveryTaskStatus() async {
       print("getDeliveryStatus ");
@@ -950,7 +1020,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       );
     }
     // for manual delivery delivery = false  make serviceAvailable false here only for testing now make it serviceAvailable else !serviceAvailable
-    else if (notification['status'] == 'Packed' && !serviceAvailable) {
+    else if (notification['status'] == 'Packed' && serviceAvailable) {
       return Row(
         children: [
           Container(
@@ -1109,7 +1179,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       );
     }
     //  for delivery true
-    else if (notification['status'] == 'Packed' && serviceAvailable) {
+    else if (notification['status'] == 'Packed' && !serviceAvailable) {
       return Row(
         children: [
           Container(
@@ -1777,7 +1847,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     final int initialTabIndex =
         args != null ? args['initialTabIndex'] : widget.initialTabIndex;
     final bool redirect = widget.redirect;
-    print("initialTabIndex $initialTabIndex $redirect");
+    print("initialTabIndex $initialTabIndex $redirect ");
 
     String? userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
@@ -1802,7 +1872,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   itemProvider.acceptedOrders.isNotEmpty || // for accepted
                   itemProvider.incomingOrders.isNotEmpty || // for incoming
                   itemProvider.paymentDetails.isNotEmpty ||
-                  itemProvider.trackCustomerOrders.isNotEmpty;
+                  itemProvider.trackCustomerOrders.isNotEmpty  ||
+                  itemProvider.deliveryStatus.isNotEmpty 
+
+                  ;
 
           return hasNotifications
               ? SmartRefresher(
@@ -2049,6 +2122,96 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ),
                           ),
                         SizedBox(height: 30),
+                        // for delivery status allocation
+                       if (itemProvider.deliveryStatus.isNotEmpty)
+  Container(
+    decoration: ShapeDecoration(
+      color: Color(0xff0A4C61),
+      shape: SmoothRectangleBorder(
+        borderRadius: SmoothBorderRadius(
+          cornerRadius: 21.0,
+          cornerSmoothing: 1,
+        ),
+      ),
+      shadows: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2),
+          spreadRadius: 2,
+          blurRadius: 10,
+          offset: Offset(0, 3),
+        ),
+      ],
+    ),
+    padding: EdgeInsets.all(15),
+    child: ElevatedButton(
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          barrierColor: Colors.transparent,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => DraggableScrollableSheet(
+            initialChildSize: 0.95,
+            minChildSize: 0.5,
+            maxChildSize: 0.95,
+            builder: (BuildContext context, ScrollController scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.transparent, // Set transparent background
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30.0),
+                    topRight: Radius.circular(30.0),
+                  ),
+                  child: DeliveryStatusScreen(scrollController: scrollController),
+                ),
+              );
+            },
+          ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        maximumSize: Size(200, 100),
+        backgroundColor: Color(0xffFA6E00),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 14.0,
+            cornerSmoothing: 1,
+          ),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Delivery Status',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Product Sans',
+            ),
+          ),
+          SizedBox(width: 10),
+          CircleAvatar(
+            radius: 10,
+            backgroundColor: Color(0xffFCFF52),
+            child: Text(
+              '${itemProvider.deliveryStatus.length}',
+              style: TextStyle(
+                color: Color(0xff0A4C61),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
+SizedBox(height: 30),
                       ],
                     ),
                   ),
@@ -2297,6 +2460,96 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ),
                           ),
                         SizedBox(height: 30),
+                        //for delivery status allocation
+                       if (itemProvider.deliveryStatus.isNotEmpty)
+  Container(
+    decoration: ShapeDecoration(
+      color: Color(0xff0A4C61),
+      shape: SmoothRectangleBorder(
+        borderRadius: SmoothBorderRadius(
+          cornerRadius: 21.0,
+          cornerSmoothing: 1,
+        ),
+      ),
+      shadows: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2),
+          spreadRadius: 2,
+          blurRadius: 10,
+          offset: Offset(0, 3),
+        ),
+      ],
+    ),
+    padding: EdgeInsets.all(15),
+    child: ElevatedButton(
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          barrierColor: Colors.transparent,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => DraggableScrollableSheet(
+            initialChildSize: 0.95,
+            minChildSize: 0.5,
+            maxChildSize: 0.95,
+            builder: (BuildContext context, ScrollController scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.transparent, // Set transparent background
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30.0),
+                    topRight: Radius.circular(30.0),
+                  ),
+                  child: DeliveryStatusScreen(scrollController: scrollController),
+                ),
+              );
+            },
+          ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        maximumSize: Size(200, 100),
+        backgroundColor: Color(0xffFA6E00),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 14.0,
+            cornerSmoothing: 1,
+          ),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Delivery Status',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Product Sans',
+            ),
+          ),
+          SizedBox(width: 10),
+          CircleAvatar(
+            radius: 10,
+            backgroundColor: Color(0xffFCFF52),
+            child: Text(
+              '${itemProvider.deliveryStatus.length}',
+              style: TextStyle(
+                color: Color(0xff0A4C61),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
+SizedBox(height: 30),
                       ],
                     ),
                   ),
@@ -2414,7 +2667,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 }
-
 
 class PaymentScreen extends StatefulWidget {
   final ScrollController scrollController;
