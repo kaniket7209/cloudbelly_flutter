@@ -1383,7 +1383,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
       );
     }
     //if assgined rider
-    else if (notification['status'] == 'assigned_rider' || notification['status'] == 'Out for delivery' && !serviceAvailable) {
+    else if (notification['status'] == 'assigned_rider' ||
+        notification['status'] == 'Out for delivery' && !serviceAvailable) {
       return Column(
         children: [
           Row(
@@ -1522,7 +1523,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
               GestureDetector(
                 onTap: () => (),
                 child: Container(
-                  padding: notification['status'] == 'Out for delivery' ?EdgeInsets.fromLTRB(5, 10, 5, 10): EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  padding: notification['status'] == 'Out for delivery'
+                      ? EdgeInsets.fromLTRB(5, 10, 5, 10)
+                      : EdgeInsets.fromLTRB(15, 10, 15, 10),
                   decoration: ShapeDecoration(
                     color: const Color(0xff2BC500),
                     shape: SmoothRectangleBorder(
@@ -1532,12 +1535,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       ),
                     ),
                   ),
-                  child:  Text(
-                   notification['status'] == 'Out for delivery' ? 'Out for delivery':"Assigned",
+                  child: Text(
+                    notification['status'] == 'Out for delivery'
+                        ? 'Out for delivery'
+                        : "Assigned",
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize:notification['status'] == 'Out for delivery'?11: 12,
-                        letterSpacing: notification['status'] == 'Out for delivery'?0.5:1,
+                        fontSize: notification['status'] == 'Out for delivery'
+                            ? 11
+                            : 12,
+                        letterSpacing:
+                            notification['status'] == 'Out for delivery'
+                                ? 0.5
+                                : 1,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Product Sans'),
                   ),
@@ -1548,40 +1558,43 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
           //for rider info
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: ShapeDecoration(
-        color: Color(0xffD3EEEE),
-        shape: SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius(
-            cornerRadius: 16.0,
-            cornerSmoothing: 1,
-          ),
-        ),
-        shadows: [
-          BoxShadow(
-            color: Color(0xffD3EEEE).withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 10,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
+              color: Color(0xffD3EEEE),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 16.0,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              shadows: [
+                BoxShadow(
+                  color: Color(0xffD3EEEE).withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 10,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
             child: Row(
               children: [
-                
-              
                 Text(
-                  '${notification['rider_name']}',
+                  '${notification['rider_name']} is your rider',
                   style: TextStyle(
                       fontSize: 14.0,
                       color: Color(0xff0A4C61),
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Product Sans'),
                 ),
+
+                // const SizedBox(
+                //   width: 10,
+                // ),
+                Spacer(),
                 Container(
                   padding: EdgeInsets.all(5),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(12.0),
                     boxShadow: [
                       BoxShadow(
@@ -1597,7 +1610,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     children: [
                       GestureDetector(
                         onTap: () async {
-                          final phoneNumber = notification['customer_phone'];
+                          final phoneNumber = notification['rider_contact'];
                           final url = 'tel:$phoneNumber';
                           if (await canLaunch(url)) {
                             await launch(url);
@@ -1617,13 +1630,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ],
                   ),
                 ),
-            
-                const SizedBox(
+                SizedBox(
                   width: 10,
                 ),
                 // Out for delivery button
                 GestureDetector(
-                  onTap: () => handleStatusChange('Out for delivery'),
+                  onTap: () => (), //track link
                   child: Container(
                     padding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
                     decoration: ShapeDecoration(
@@ -1646,13 +1658,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ),
                 ),
+             
+             
               ],
             ),
           ),
-        
         ],
       );
-    } else if (notification['status'] == 'Out for delivery' && !serviceAvailable) {
+    } else if (notification['status'] == 'Out for delivery' &&
+        !serviceAvailable) {
       return Row(
         children: [
           Container(
