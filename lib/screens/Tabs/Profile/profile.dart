@@ -513,34 +513,51 @@ class _ProfileState extends State<Profile> {
                                                               listen: false)
                                                           .userData?['phone'] ??
                                                       '';
+
                                               if (phoneNumber.length == 10) {
-                                                final url = 'https://wa.me/91' +
-                                                    phoneNumber;
-                                                if (await canLaunch(url)) {
-                                                  await launch(url);
-                                                } else {
+                                                final url = Uri.parse(
+                                                    'https://wa.me/91$phoneNumber');
+
+                                                try {
+                                                  if (await canLaunchUrl(url)) {
+                                                    await launchUrl(url);
+                                                  } else {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                            'Could not launch WhatsApp. Please try again.'),
+                                                      ),
+                                                    );
+                                                  }
+                                                } catch (e) {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(
-                                                    const SnackBar(
-                                                        content: Text(
-                                                            'Could not launch whatsapp ')),
+                                                    SnackBar(
+                                                      content:
+                                                          Text('Error: $e'),
+                                                    ),
                                                   );
                                                 }
                                               } else {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   const SnackBar(
-                                                      content: Text(
-                                                          ' Whatsapp number is incorrect. Its not 10 digit ')),
+                                                    content: Text(
+                                                        'WhatsApp number is incorrect. It is not a 10-digit number.'),
+                                                  ),
                                                 );
                                               }
                                             },
                                             child: Container(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 7, 12, 2),
-                                                child: Image.asset(
-                                                    'assets/images/WhatsApp.png',
-                                                    width: 27)),
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 7, 12, 2),
+                                              child: Image.asset(
+                                                  'assets/images/WhatsApp.png',
+                                                  width: 27),
+                                            ),
                                           )
                                         ],
                                       ),
@@ -886,7 +903,6 @@ class _ProfileState extends State<Profile> {
                                 // if (userType == UserType.Vendor.name)
                                 Center(
                                   child: Container(
-                                    
                                     // padding: EdgeInsets.only(
                                     //     top: 1.h, right: 20.w),
                                     width: 30,
@@ -895,7 +911,8 @@ class _ProfileState extends State<Profile> {
                                       color: const Color(0xFFFA6E00)
                                           .withOpacity(0.5),
                                       shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(6)),
+                                          borderRadius:
+                                              BorderRadius.circular(6)),
                                     ),
                                   ),
                                 ),
@@ -911,11 +928,10 @@ class _ProfileState extends State<Profile> {
                                                 MainAxisAlignment.spaceAround,
                                             children: [
                                               Container(
-                                                 width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3.33,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    3.33,
                                                 child: TouchableOpacity(
                                                   onTap: () {
                                                     setState(() {
@@ -931,11 +947,10 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                               ),
                                               Container(
-                                                 width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3.33,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    3.33,
                                                 child: TouchableOpacity(
                                                   onTap: () {
                                                     setState(() {
@@ -955,11 +970,10 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                               ),
                                               Container(
-                                                 width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3.33,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    3.33,
                                                 child: TouchableOpacity(
                                                   onTap: () {
                                                     setState(() {
@@ -975,11 +989,10 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                               ),
                                               Container(
-                                                 width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3.33,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    3.33,
                                                 child: TouchableOpacity(
                                                   onTap: () {
                                                     setState(() {
@@ -1005,7 +1018,7 @@ class _ProfileState extends State<Profile> {
                                                         .spaceAround,
                                                 children: [
                                                   Container(
-                                                     width:
+                                                    width:
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width /
@@ -1013,10 +1026,12 @@ class _ProfileState extends State<Profile> {
                                                     child: TouchableOpacity(
                                                       onTap: () {
                                                         setState(() {
-                                                          _activeButtonIndex = 1;
+                                                          _activeButtonIndex =
+                                                              1;
                                                         });
                                                       },
-                                                      child: CommonButtonProfile(
+                                                      child:
+                                                          CommonButtonProfile(
                                                         isActive:
                                                             _activeButtonIndex ==
                                                                 1,
@@ -1026,7 +1041,7 @@ class _ProfileState extends State<Profile> {
                                                     ),
                                                   ),
                                                   Container(
-                                                     width:
+                                                    width:
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width /
@@ -1034,10 +1049,12 @@ class _ProfileState extends State<Profile> {
                                                     child: TouchableOpacity(
                                                       onTap: () {
                                                         setState(() {
-                                                          _activeButtonIndex = 3;
+                                                          _activeButtonIndex =
+                                                              3;
                                                         });
                                                       },
-                                                      child: CommonButtonProfile(
+                                                      child:
+                                                          CommonButtonProfile(
                                                         isActive:
                                                             _activeButtonIndex ==
                                                                 3,

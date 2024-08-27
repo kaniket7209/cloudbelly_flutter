@@ -375,7 +375,7 @@ class _PostItemState extends State<PostItem> {
                             ),
                             child: Image.network(
                               widget.isSharePost == "No"
-                                  ? widget.userModel?.profilePhoto
+                                  ? widget.userModel?.profilePhoto ?? ''
                                   : widget.isProfilePost
                                       ? (Provider.of<Auth>(context,
                                               listen: false)

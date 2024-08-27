@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:cloudbelly_app/NotificationScree.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
@@ -1278,14 +1279,14 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                 },
                                 child: Container(
                                   decoration: ShapeDecoration(
-                                              color:  Colors.white,
-                                              shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 40,
-                                  cornerSmoothing: 1,
-                                )),
-                                            ),
-                                 
+                                    color: Colors.white,
+                                    shape: SmoothRectangleBorder(
+                                        borderRadius: SmoothBorderRadius(
+                                      cornerRadius: 40,
+                                      cornerSmoothing: 1,
+                                    )),
+                                  ),
+
                                   // height: 35.h,
                                   width: double.infinity,
                                   padding: EdgeInsets.only(
@@ -1341,7 +1342,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                                             cornerSmoothing:
                                                                 1)),
                                               ),
-                                            
                                             ),
                                           ),
                                           const Space(
@@ -1407,8 +1407,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                       //     ),
                                       //   ],
                                       // ),
-                                     
-                                     
+
                                       // Space(1.h),
                                       Row(
                                         children: [
@@ -1433,7 +1432,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                                             cornerSmoothing:
                                                                 1)),
                                               ),
-                                            
                                             ),
                                           ),
                                           const Space(
@@ -1484,7 +1482,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                                             cornerSmoothing:
                                                                 1)),
                                               ),
-                                            
                                             ),
                                           ),
                                           const Space(
@@ -2485,7 +2482,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   });
                 }
               },
-               onTap: () {
+              onTap: () {
                 // Check if the vertical drag is significant enough and the bottom sheet isn't already open
 
                 if (!_isBottomSheetOpen) {
@@ -2588,12 +2585,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
           []; // Ensure this is defined outside the try block if needed elsewhere
       String user_type =
           Provider.of<Auth>(context, listen: false).userData!['user_type'];
-      if (user_type != 'Customer') {
-        orderDetails = Provider.of<Auth>(context, listen: false).orderDetails;
-      } else {
-        orderDetails =
-            Provider.of<Auth>(context, listen: false).customerOrderDetails;
-      }
+      // if (user_type != 'Customer') {
+      //   orderDetails = Provider.of<Auth>(context, listen: false).orderDetails;
+      // } else {
+      //   orderDetails =
+      //       Provider.of<Auth>(context, listen: false).customerOrderDetails;
+      // }
       if (orderDetails.isEmpty) {
         await Provider.of<Auth>(context, listen: false).getNotificationList();
         // Refresh orderDetails after fetching data
@@ -2630,7 +2627,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   Widget createUI(BuildContext context, ScrollController scrollController,
       List orderDetails) {
-         print("orderDetdails ${json.encode(orderDetails[3])}");
     return Container(
       decoration: const ShapeDecoration(
         shadows: [
@@ -2704,7 +2700,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               height: 25,
             ),
             for (var order in orderDetails) ...[
-            
               OrderItem(orderData: order),
               Divider(color: Colors.white.withOpacity(0.3)),
               SizedBox(
@@ -2819,7 +2814,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   Future<void> showOrderDetailsBottomSheet(
       BuildContext context, var order) async {
-        print("ddff $order");
+    print("ddff $order");
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -2896,7 +2891,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     ),
                     SizedBox(height: 2),
                     Text(
-                      'Rs ${order['amount']}',
+                      // 'Rs ${order['amount']}',
+
+                      'Rs ${order['total_price']}',
                       style: TextStyle(
                         color: Color(0xff8BDFDD),
                         fontWeight: FontWeight.w500,
@@ -2934,7 +2931,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               ),
                             ),
                             Text(
-                             
                               '${order['location']['location']}',
                               style: TextStyle(
                                 color: Color(0xff8BDFDD),
@@ -2952,8 +2948,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               ),
                             ),
                             Text(
-                              '${order['cutomer_location']['location']}',
-                            
+                              '${order['customer_location']?['location'] ?? 'Unknown Location'}',
                               style: TextStyle(
                                 color: Color(0xff8BDFDD),
                                 fontSize: 14,
@@ -3055,7 +3050,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           ),
                         ),
                         Text(
-                          'Rs 15',
+                          'Rs ${order['packing_charges'] ?? 0}',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -3077,7 +3072,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           ),
                         ),
                         Text(
-                          'Rs 0',
+                          'Rs ${order['platform_fee'] ?? 0}',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -3099,7 +3094,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           ),
                         ),
                         Text(
-                          'Rs 30',
+                          'Rs ${order['deliveryFee'] ?? 0}',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -3121,7 +3116,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           ),
                         ),
                         Text(
-                          'Rs ${(itemTotal * 0.05).toStringAsFixed(2)}',
+                          'Rs ${order['taxes'] ?? 0}',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -3180,7 +3175,38 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 50),
+                    Divider(),
+                     Container(
+                      width: 100.w,
+                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           Text(
+                                'Note:- ',
+                                style: TextStyle(
+                                  color: Color(0xffFA6E00),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Product Sans Black',
+                                ),
+                              ),
+                              Container(
+                                constraints: BoxConstraints(maxWidth: 100.w),
+                                child: Text(
+                                 'At the end of each month, vendors who have used ${"Cloudbelly's"} 3rd-party delivery service will need to settle the accumulated delivery fees. \nThese fees are only applicable if you havent used the self-delivery option and have opted for ${"Cloudbelly's"} delivery services instead.' ,
+                                  style: TextStyle(
+                                    color: Color(0xffFA6E00),
+                                    fontSize: 12,
+                                    // fontWeight: FontWeight.bold,
+                                    fontFamily: 'Product Sans Black',
+                                  ),
+                                ),
+                              ),
+                         ],
+                       ),
+                     ),
+                    SizedBox(height: 30),
                     Center(
                       child: GestureDetector(
                         onTap: () {
@@ -3276,7 +3302,7 @@ class OrderItem extends StatelessWidget {
                   height: 2,
                 ),
                 Text(
-                  'Rs ${orderData['amount'] ?? 0}',
+                  'Rs ${orderData['total_price'] ?? 0}',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -3285,43 +3311,55 @@ class OrderItem extends StatelessWidget {
                 ),
               ],
             ),
-            Row(
+            Column(
               children: [
-                Text(
-                  'Delivered',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Product Sans Medium',
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Container(
-                  width: 18,
-                  height: 18,
-                  decoration: ShapeDecoration(
-                    shadows: [
-                      BoxShadow(
-                        offset: const Offset(5, 6),
-                        color: Color(0xff17BF39).withOpacity(0.45),
-                        blurRadius: 30,
-                      ),
-                    ],
-                    color: Color(0xff17BF39),
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                        cornerRadius: 6,
-                        cornerSmoothing: 1,
+                Row(
+                  children: [
+                    Text(
+                      'Delivered',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Product Sans Medium',
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                  child: Icon(
-                    Icons.check,
-                    size: 16,
-                    color: Colors.white,
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Container(
+                      width: 18,
+                      height: 18,
+                      decoration: ShapeDecoration(
+                        shadows: [
+                          BoxShadow(
+                            offset: const Offset(5, 6),
+                            color: Color(0xff17BF39).withOpacity(0.45),
+                            blurRadius: 30,
+                          ),
+                        ],
+                        color: Color(0xff17BF39),
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 6,
+                            cornerSmoothing: 1,
+                          ),
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.check,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  timeAgo(orderData['created_date']),
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 227, 133, 62),
+                    fontSize: 12,
+                    fontFamily: 'Product Sans',
                   ),
                 ),
               ],

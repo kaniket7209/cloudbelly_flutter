@@ -111,6 +111,7 @@ class _QrViewState extends State<QrView> {
         "prof ${Provider.of<Auth>(context, listen: false).userData?['profile_photo']}");
     final String profileUrl =
         "https://app.cloudbelly.in/profile?profileId=$userId";
+        print("profileUrl  $profileUrl");
     final String profilePhoto =
         Provider.of<Auth>(context, listen: false).userData?['profile_photo'] ??
             '';

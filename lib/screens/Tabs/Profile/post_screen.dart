@@ -158,7 +158,7 @@ print("dataref ${Data}");
                   // print(item);
                   bool _isMultiple = item['multiple_files'] != null &&
                       item['multiple_files'].length != 0;
-                  log("item:: $item");
+                  log("item:: $item  $userId $_isMultiple $isSelfProfile");
                   return PostItem(
                     isMultiple: _isMultiple,
                     data: item,

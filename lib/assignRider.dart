@@ -272,7 +272,7 @@ class DeliveryPartnerNotAssignedModal extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   // Handle manual delivery
-                  Navigator.pop(context); // Close the modal
+                 Navigator.of(context).popUntil((route) => route.isFirst); // Close the modal
                 },
                 child: Container(
                     padding:

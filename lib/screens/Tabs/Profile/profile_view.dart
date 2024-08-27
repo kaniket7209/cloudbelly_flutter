@@ -59,7 +59,7 @@ class _ProfileViewState extends State<ProfileView> {
   bool checkFollow() {
     String id = widget.userIdList.first;
     List<dynamic> temp =
-    // userList.first.followings
+        // userList.first.followings
         Provider.of<Auth>(context, listen: false).userData?['followings'];
     for (var user in temp) {
       if (user['user_id'] == id) {
@@ -105,22 +105,20 @@ class _ProfileViewState extends State<ProfileView> {
   Future<void> getUserInfo(List<String> userIds) async {
     // AppWideLoadingBanner().loadingBanner(context);
     // _isLoad = true;
-    
+
     userList =
         await Provider.of<Auth>(context, listen: false).getUserDetails(userIds);
-        // print(" viewProfi ${userList.first.followers?.length}  followers ${userList.first.followings?.length}  followings  ");
+    // print(" viewProfi ${userList.first.followers?.length}  followers ${userList.first.followings?.length}  followings  ");
     // _isLoad = false;
-     List<dynamic> fetchedUserDetails =
+    List<dynamic> fetchedUserDetails =
         await Provider.of<Auth>(context, listen: false).getUserInfo(userIds);
-        if(fetchedUserDetails[0] != null) {
-         
-          kycStatus = fetchedUserDetails[0]!['kyc_status'];
-        }
-   
+    if (fetchedUserDetails[0] != null) {
+      kycStatus = fetchedUserDetails[0]!['kyc_status'];
+    }
+
     //Navigator.pop(context);
   }
 
- 
   Future<void> _loading() async {
     getUserInfo(widget.userIdList);
     final prefs = await SharedPreferences.getInstance();
@@ -147,10 +145,7 @@ class _ProfileViewState extends State<ProfileView> {
         // _refreshController.refreshCompleted();
       });
       final feedData = json.encode(
-        {
-          'menu': menu,
-          'kyc_status':kycStatus
-        },
+        {'menu': menu, 'kyc_status': kycStatus},
       );
       prefs.setString('menuData', feedData);
     });
@@ -244,20 +239,20 @@ class _ProfileViewState extends State<ProfileView> {
       boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
     }
 
-Color sharedProfileColour(userType){
-  Color profileColour;
-  // userType= userList.first.userType;
-  if (userType == 'Vendor') {
-      profileColour = const Color(0xff0A4C61);
-    } else if (userType == 'Customer') {
-      profileColour = const Color(0xff2E0536);
-    } else if (userType == 'Supplier') {
-      profileColour = Color.fromARGB(0, 115, 188, 150);
-    } else {
-      profileColour = const Color.fromRGBO(77, 191, 74, 0.6);
+    Color sharedProfileColour(userType) {
+      Color profileColour;
+      // userType= userList.first.userType;
+      if (userType == 'Vendor') {
+        profileColour = const Color(0xff0A4C61);
+      } else if (userType == 'Customer') {
+        profileColour = const Color(0xff2E0536);
+      } else if (userType == 'Supplier') {
+        profileColour = Color.fromARGB(0, 115, 188, 150);
+      } else {
+        profileColour = const Color.fromRGBO(77, 191, 74, 0.6);
+      }
+      return profileColour;
     }
-    return profileColour;
-}
 
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
@@ -341,21 +336,21 @@ Color sharedProfileColour(userType){
                                                 CrossAxisAlignment.center,
                                             children: [
                                               CustomIconButton(
-                                                text: 'back',
-                                                ic: Icons
-                                                    .arrow_back_ios_new_outlined,
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                color: sharedProfileColour(userList.first.userType).withOpacity(0.4)
-                                              ),
+                                                  text: 'back',
+                                                  ic: Icons
+                                                      .arrow_back_ios_new_outlined,
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  color: sharedProfileColour(
+                                                          userList
+                                                              .first.userType)
+                                                      .withOpacity(0.4)),
                                             ],
                                           ),
                                         ),
                                       ),
                                     ),
-
-                                    
                                     Space(2.h),
                                     Center(
                                       child: ConstrainedBox(
@@ -566,8 +561,10 @@ Color sharedProfileColour(userType){
                                                                       .storeName ??
                                                                   'Unknown', // Provide a default value
                                                               style: TextStyle(
-                                                                  color:
-                                                                      sharedProfileColour(userList.first.userType),
+                                                                  color: sharedProfileColour(
+                                                                      userList
+                                                                          .first
+                                                                          .userType),
                                                                   fontFamily:
                                                                       'Ubuntu',
                                                                   fontSize: 22,
@@ -583,8 +580,10 @@ Color sharedProfileColour(userType){
                                                                       .userType ??
                                                                   'Unknown', // Provide a default value
                                                               style: TextStyle(
-                                                                color:
-                                                                    sharedProfileColour(userList.first.userType),
+                                                                color: sharedProfileColour(
+                                                                    userList
+                                                                        .first
+                                                                        .userType),
                                                                 fontFamily:
                                                                     'Product Sans',
                                                                 fontSize: 12,
@@ -595,43 +594,56 @@ Color sharedProfileColour(userType){
                                                           ],
                                                         ),
                                                       ),
-                                                       GestureDetector(
-                                            onTap: () async {
-                                              final phoneNumber =
-                                                   userList.first.phone ??
-                                                      '';
-                                                      print("phnlen $phoneNumber ${phoneNumber.length}");
-                                              if (phoneNumber.length == 10) {
-                                                final url = 'https://wa.me/91' +
-                                                    phoneNumber;
-                                                if (await canLaunch(url)) {
-                                                  await launch(url);
-                                                } else {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                        content: Text(
-                                                            'Could not launch whatsapp ')),
-                                                  );
-                                                }
-                                              }
-                                              else {
-                                                ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                    content: Text(
-                                                        ' Whatsapp number is incorrect. Its not 10 digit ')),
-                                              );
-                                              }
-                                            },
-                                            child: Container(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 7, 12, 2),
-                                                child: Image.asset(
-                                                    'assets/images/WhatsApp.png',
-                                                    width: 27)),
-                                          )
-                                         
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          final phoneNumber =
+                                                              userList.first
+                                                                      .phone ??
+                                                                  '';
+                                                          print(
+                                                              "phnlen $phoneNumber ${phoneNumber.length}");
+
+                                                          if (phoneNumber
+                                                                  .length ==
+                                                              10) {
+                                                            final url = Uri.parse(
+                                                                'https://wa.me/91$phoneNumber');
+                                                            print(
+                                                                "Launching WhatsApp URL: $url");
+
+                                                            // Check if the URL can be launched
+                                                            if (await canLaunchUrl(
+                                                                url)) {
+                                                              await launchUrl(
+                                                                  url);
+                                                            } else {
+                                                              ScaffoldMessenger
+                                                                      .of(context)
+                                                                  .showSnackBar(
+                                                                const SnackBar(
+                                                                    content: Text(
+                                                                        'Could not launch WhatsApp. Please try again.')),
+                                                              );
+                                                            }
+                                                          } else {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              const SnackBar(
+                                                                  content: Text(
+                                                                      'WhatsApp number is incorrect. It is not a 10-digit number.')),
+                                                            );
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                                  0, 7, 12, 2),
+                                                          child: Image.asset(
+                                                              'assets/images/WhatsApp.png',
+                                                              width: 27),
+                                                        ),
+                                                      )
                                                     ],
                                                   ),
                                                   Row(
@@ -645,28 +657,35 @@ Color sharedProfileColour(userType){
                                                                 listen: false)
                                                             .userData?['rating'],
                                                         txt: 'Rating',
-                                                        color: sharedProfileColour(userList.first.userType),
+                                                        color:
+                                                            sharedProfileColour(
+                                                                userList.first
+                                                                    .userType),
                                                       ),
                                                       ColumnWidgetHomeScreen(
-                                                        data: userList
-                                                                .first
-                                                                .followers
-                                                                ?.length
-                                                                .toString() ??
-                                                            "",
-                                                        txt: 'Followers',
-                                                        color: sharedProfileColour(userList.first.userType)
-                                                      ),
+                                                          data: userList
+                                                                  .first
+                                                                  .followers
+                                                                  ?.length
+                                                                  .toString() ??
+                                                              "",
+                                                          txt: 'Followers',
+                                                          color:
+                                                              sharedProfileColour(
+                                                                  userList.first
+                                                                      .userType)),
                                                       ColumnWidgetHomeScreen(
-                                                        data:  userList
-                                                                .first
-                                                                .followings
-                                                                ?.length
-                                                                .toString() ??
-                                                            "",
-                                                        txt: 'Following',
-                                                        color: sharedProfileColour(userList.first.userType)
-                                                      )
+                                                          data: userList
+                                                                  .first
+                                                                  .followings
+                                                                  ?.length
+                                                                  .toString() ??
+                                                              "",
+                                                          txt: 'Following',
+                                                          color:
+                                                              sharedProfileColour(
+                                                                  userList.first
+                                                                      .userType))
                                                     ],
                                                   ),
                                                   Space(2.h),
@@ -692,7 +711,8 @@ Color sharedProfileColour(userType){
                                                                   .follow(widget
                                                                       .userIdList
                                                                       .first);
-                                                                     getUserInfo(widget.userIdList);
+                                                              getUserInfo(widget
+                                                                  .userIdList);
                                                               if (response[
                                                                       'code'] ==
                                                                   200) {
@@ -755,7 +775,8 @@ Color sharedProfileColour(userType){
                                                                         widget
                                                                             .userIdList
                                                                             .first);
-                                                                           getUserInfo(widget.userIdList);
+                                                                getUserInfo(widget
+                                                                    .userIdList);
                                                                 setState(() {
                                                                   _isFollowing =
                                                                       false;
@@ -836,8 +857,9 @@ Color sharedProfileColour(userType){
                                                   width: 30,
                                                   height: 6,
                                                   decoration: ShapeDecoration(
-                                                    color: const Color(0xFFFA6E00)
-                                        .withOpacity(0.5),
+                                                    color:
+                                                        const Color(0xFFFA6E00)
+                                                            .withOpacity(0.5),
                                                     shape:
                                                         RoundedRectangleBorder(
                                                             borderRadius:
@@ -863,15 +885,17 @@ Color sharedProfileColour(userType){
                                                                       1;
                                                                 });
                                                               },
-                                                              child:
-                                                                  CommonButtonProfile(
-                                                                isActive:
-                                                                    _activeButtonIndex ==
-                                                                        1,
-                                                                txt: 'Content',
-                                                                width: 52,
-                                                                color: sharedProfileColour(userList.first.userType)
-                                                              ),
+                                                              child: CommonButtonProfile(
+                                                                  isActive:
+                                                                      _activeButtonIndex ==
+                                                                          1,
+                                                                  txt:
+                                                                      'Content',
+                                                                  width: 52,
+                                                                  color: sharedProfileColour(
+                                                                      userList
+                                                                          .first
+                                                                          .userType)),
                                                             ),
                                                             TouchableOpacity(
                                                               onTap: () {
@@ -884,15 +908,16 @@ Color sharedProfileColour(userType){
                                                                     _scrollToTop();
                                                                 });
                                                               },
-                                                              child:
-                                                                  CommonButtonProfile(
-                                                                isActive:
-                                                                    _activeButtonIndex ==
-                                                                        2,
-                                                                txt: 'Menu',
-                                                                width: 52,
-                                                                color: sharedProfileColour(userList.first.userType)
-                                                              ),
+                                                              child: CommonButtonProfile(
+                                                                  isActive:
+                                                                      _activeButtonIndex ==
+                                                                          2,
+                                                                  txt: 'Menu',
+                                                                  width: 52,
+                                                                  color: sharedProfileColour(
+                                                                      userList
+                                                                          .first
+                                                                          .userType)),
                                                             ),
                                                             TouchableOpacity(
                                                               onTap: () {
@@ -901,15 +926,16 @@ Color sharedProfileColour(userType){
                                                                       3;
                                                                 });
                                                               },
-                                                              child:
-                                                                  CommonButtonProfile(
-                                                                isActive:
-                                                                    _activeButtonIndex ==
-                                                                        3,
-                                                                txt: 'About',
-                                                                width: 52,
-                                                                color: sharedProfileColour(userList.first.userType)
-                                                              ),
+                                                              child: CommonButtonProfile(
+                                                                  isActive:
+                                                                      _activeButtonIndex ==
+                                                                          3,
+                                                                  txt: 'About',
+                                                                  width: 52,
+                                                                  color: sharedProfileColour(
+                                                                      userList
+                                                                          .first
+                                                                          .userType)),
                                                             ),
                                                             TouchableOpacity(
                                                               onTap: () {
@@ -918,15 +944,17 @@ Color sharedProfileColour(userType){
                                                                       4;
                                                                 });
                                                               },
-                                                              child:
-                                                                  CommonButtonProfile(
-                                                                isActive:
-                                                                    _activeButtonIndex ==
-                                                                        4,
-                                                                txt: 'Reviews',
-                                                                width: 52,
-                                                                color: sharedProfileColour(userList.first.userType)
-                                                              ),
+                                                              child: CommonButtonProfile(
+                                                                  isActive:
+                                                                      _activeButtonIndex ==
+                                                                          4,
+                                                                  txt:
+                                                                      'Reviews',
+                                                                  width: 52,
+                                                                  color: sharedProfileColour(
+                                                                      userList
+                                                                          .first
+                                                                          .userType)),
                                                             ),
                                                           ]),
                                                     )
@@ -947,16 +975,16 @@ Color sharedProfileColour(userType){
                                                                           1;
                                                                     });
                                                                   },
-                                                                  child:
-                                                                      CommonButtonProfile(
-                                                                    isActive:
-                                                                        _activeButtonIndex ==
-                                                                            1,
-                                                                    txt:
-                                                                        'Content',
-                                                                    width: 52,
-                                                                    color: sharedProfileColour(userList.first.userType)
-                                                                  ),
+                                                                  child: CommonButtonProfile(
+                                                                      isActive:
+                                                                          _activeButtonIndex ==
+                                                                              1,
+                                                                      txt:
+                                                                          'Content',
+                                                                      width: 52,
+                                                                      color: sharedProfileColour(userList
+                                                                          .first
+                                                                          .userType)),
                                                                 ),
                                                                 TouchableOpacity(
                                                                   onTap: () {
@@ -966,16 +994,16 @@ Color sharedProfileColour(userType){
                                                                           3;
                                                                     });
                                                                   },
-                                                                  child:
-                                                                      CommonButtonProfile(
-                                                                    isActive:
-                                                                        _activeButtonIndex ==
-                                                                            3,
-                                                                    txt:
-                                                                        'Reviews',
-                                                                    width: 52,
-                                                                    color: sharedProfileColour(userList.first.userType)
-                                                                  ),
+                                                                  child: CommonButtonProfile(
+                                                                      isActive:
+                                                                          _activeButtonIndex ==
+                                                                              3,
+                                                                      txt:
+                                                                          'Reviews',
+                                                                      width: 52,
+                                                                      color: sharedProfileColour(userList
+                                                                          .first
+                                                                          .userType)),
                                                                 ),
                                                               ]),
                                                         )
@@ -994,16 +1022,16 @@ Color sharedProfileColour(userType){
                                                                           1;
                                                                     });
                                                                   },
-                                                                  child:
-                                                                      CommonButtonProfile(
-                                                                    isActive:
-                                                                        _activeButtonIndex ==
-                                                                            1,
-                                                                    txt:
-                                                                        'Content',
-                                                                    width: 52,
-                                                                    color: sharedProfileColour(userList.first.userType)
-                                                                  ),
+                                                                  child: CommonButtonProfile(
+                                                                      isActive:
+                                                                          _activeButtonIndex ==
+                                                                              1,
+                                                                      txt:
+                                                                          'Content',
+                                                                      width: 52,
+                                                                      color: sharedProfileColour(userList
+                                                                          .first
+                                                                          .userType)),
                                                                 ),
                                                                 TouchableOpacity(
                                                                   onTap: () {
@@ -1017,15 +1045,16 @@ Color sharedProfileColour(userType){
                                                                         _scrollToTop();
                                                                     });
                                                                   },
-                                                                  child:
-                                                                      CommonButtonProfile(
-                                                                    isActive:
-                                                                        _activeButtonIndex ==
-                                                                            2,
-                                                                    txt: 'Menu',
-                                                                    width: 40,
-                                                                    color: sharedProfileColour(userList.first.userType)
-                                                                  ),
+                                                                  child: CommonButtonProfile(
+                                                                      isActive:
+                                                                          _activeButtonIndex ==
+                                                                              2,
+                                                                      txt:
+                                                                          'Menu',
+                                                                      width: 40,
+                                                                      color: sharedProfileColour(userList
+                                                                          .first
+                                                                          .userType)),
                                                                 ),
                                                                 TouchableOpacity(
                                                                   onTap: () {
@@ -1035,16 +1064,16 @@ Color sharedProfileColour(userType){
                                                                           3;
                                                                     });
                                                                   },
-                                                                  child:
-                                                                      CommonButtonProfile(
-                                                                    isActive:
-                                                                        _activeButtonIndex ==
-                                                                            3,
-                                                                    txt:
-                                                                        'Reviews',
-                                                                    width: 52,
-                                                                    color: sharedProfileColour(userList.first.userType)
-                                                                  ),
+                                                                  child: CommonButtonProfile(
+                                                                      isActive:
+                                                                          _activeButtonIndex ==
+                                                                              3,
+                                                                      txt:
+                                                                          'Reviews',
+                                                                      width: 52,
+                                                                      color: sharedProfileColour(userList
+                                                                          .first
+                                                                          .userType)),
                                                                 ),
                                                               ]),
                                                         ),
@@ -1178,9 +1207,9 @@ Color sharedProfileColour(userType){
                                                     menuList: menuList,
                                                     scroll: t1,
                                                     categories: categories,
-                                                    user: widget
-                                                        .userIdList.first,
-                                                        kycStatus:kycStatus),
+                                                    user:
+                                                        widget.userIdList.first,
+                                                    kycStatus: kycStatus),
                                               if (_activeButtonIndex == 3)
                                                 Container(
                                                   constraints: BoxConstraints(
