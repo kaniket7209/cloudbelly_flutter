@@ -150,23 +150,29 @@ class DeliveryStatusCard extends StatelessWidget {
               SizedBox(
                 width: 3.w,
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  Text(
-                    "Deliver to ",
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xffFA6E00),
-                        fontFamily: 'Product Sans'),
-                  ),
-                  Text(
-                    "${notification['customer_location']['hno']}  ${notification['customer_location']['location']}",
-                    style: TextStyle(fontSize: 12, color: Color(0xff8BDFDD)),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Deliver to ",
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xffFA6E00),
+                            fontFamily: 'Product Sans'),
+                      ),
+                      Text(
+                        "${notification['customer_location']['hno']}  ${notification['customer_location']['location']}",
+                        style: TextStyle(fontSize: 12, color: Color(0xff8BDFDD)),
+                      ),
+                    ],
                   ),
                 ],
               ),
+              Spacer(),
+           Container(child: Image.asset('assets/images/delivery.png',width: 50))
             ],
           ),
           SizedBox(height: 20),
@@ -178,6 +184,8 @@ class DeliveryStatusCard extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     // Handle "Deliver manually" logic
+                    Provider.of<Auth>(context, listen: false).statusChange(notification['_id'], notification['user_id'], notification['order_from_user_id'], 'self_delivery');
+                    Navigator.of(context).pop();
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),

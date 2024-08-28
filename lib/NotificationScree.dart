@@ -921,7 +921,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 color: Color(0xff0A4C61),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
-                    cornerRadius: 12,
+                    cornerRadius: 13.5,
                     cornerSmoothing: 1,
                   ),
                 ),
@@ -1009,7 +1009,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 color: Color(0xff5FF59B),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
-                    cornerRadius: 12,
+                    cornerRadius: 13.5,
                     cornerSmoothing: 1,
                   ),
                 ),
@@ -1026,6 +1026,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
     // for manual delivery delivery = false  make serviceAvailable false here only for testing now make it serviceAvailable else !serviceAvailable
     else if (notification['status'] == 'Packed' && serviceAvailable) {
+      //false
       return Row(
         children: [
           Container(
@@ -1166,7 +1167,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 color: Color(0xffFA6E00),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
-                    cornerRadius: 12,
+                    cornerRadius: 13.5,
                     cornerSmoothing: 1,
                   ),
                 ),
@@ -1185,6 +1186,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
     //  for delivery true
     else if (notification['status'] == 'Packed' && !serviceAvailable) {
+      //true
       return Row(
         children: [
           Container(
@@ -1265,7 +1267,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 color: Color(0xffFA6E00),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
-                    cornerRadius: 12,
+                    cornerRadius: 13.5,
                     cornerSmoothing: 1,
                   ),
                 ),
@@ -1275,6 +1277,163 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
+                    fontFamily: 'Product Sans'),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (notification['status'] == 'self_delivery') {
+      return Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: ShapeDecoration(
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 13,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              image: DecorationImage(
+                image: NetworkImage(notification['buyer_logo']),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 10.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 110,
+                      child: Text(
+                        expandedOrderIndices[index] ?? false
+                            ? formatItems(notification['items'])
+                            : oneItem(notification['items']),
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            color: Color(0xff0A4C61),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Product Sans'),
+                      ),
+                    ),
+                    if (notification['items'].length > 1)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            expandedOrderIndices[index] =
+                                !(expandedOrderIndices[index] ?? false);
+                          });
+                        },
+                        child: Icon(
+                          (expandedOrderIndices[index] ?? false)
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: Color(0xffFA6E00),
+                        ),
+                      ),
+                  ],
+                ),
+                Text(
+                  'Completed',
+                  style: TextStyle(
+                      fontSize: 18.0,
+                      color: Color(0xff519896),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Product Sans'),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xff519896).withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 7,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    final phoneNumber = notification['customer_phone'];
+                    final url = 'tel:$phoneNumber';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Could not launch phone call')),
+                      );
+                    }
+                  },
+                  child: CircleAvatar(
+                    radius: 9,
+                    backgroundColor: const Color(0xFFFA6E00),
+                    child: Image.asset('assets/images/Phone.png'),
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    if (notification['location'] != null &&
+                        notification['location']['latitude'] != null) {
+                      final String googleMapsUrl =
+                          'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
+                      if (await canLaunch(googleMapsUrl)) {
+                        await launch(googleMapsUrl);
+                      } else {
+                        throw 'Could not open the map.';
+                      }
+                    }
+                  },
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Colors.white,
+                    child: Image.asset('assets/images/Location.png'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(
+            width: 10,
+          ),
+          // Out for delivery button
+          GestureDetector(
+            onTap: () => handleStatusChange('Out for delivery'),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              decoration: ShapeDecoration(
+                color: Color(0xffFA6E00),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 13.5,
+                    cornerSmoothing: 1,
+                  ),
+                ),
+              ),
+              child: Text(
+                "Out for delivery",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
                     fontFamily: 'Product Sans'),
               ),
             ),
@@ -1364,7 +1523,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 color: Color(0xffFA6E00),
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius(
-                    cornerRadius: 12,
+                    cornerRadius: 13.5,
                     cornerSmoothing: 1,
                   ),
                 ),
@@ -1383,7 +1542,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       );
     }
     //if assgined rider
-    else if (notification['status'] == 'assigned_rider' ||
+    else if (notification['status'] == 'assigned' ||
         notification['status'] == 'Out for delivery' && !serviceAvailable) {
       return Column(
         children: [
@@ -1521,33 +1680,34 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
               // Out for delivery button
               GestureDetector(
-                onTap: () => (),
+                onTap: () async {
+                  if (notification['tracking_link'] != null &&
+                      notification['tracking_link'] != '') {
+                    final String tracking_link = notification['tracking_link'];
+                    if (await canLaunch(tracking_link)) {
+                      await launch(tracking_link);
+                    } else {
+                      throw 'Could not open the tracking link.';
+                    }
+                  }
+                },
                 child: Container(
-                  padding: notification['status'] == 'Out for delivery'
-                      ? EdgeInsets.fromLTRB(5, 10, 5, 10)
-                      : EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  padding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
                   decoration: ShapeDecoration(
-                    color: const Color(0xff2BC500),
+                    color: const Color(0xff229F00),
                     shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(
-                        cornerRadius: 12,
+                        cornerRadius: 13.5,
                         cornerSmoothing: 1,
                       ),
                     ),
                   ),
-                  child: Text(
-                    notification['status'] == 'Out for delivery'
-                        ? 'Out for delivery'
-                        : "Assigned",
+                  child: const Text(
+                    "Track",
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: notification['status'] == 'Out for delivery'
-                            ? 11
-                            : 12,
-                        letterSpacing:
-                            notification['status'] == 'Out for delivery'
-                                ? 0.5
-                                : 1,
+                        fontSize: 14,
+                        letterSpacing: 1,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Product Sans'),
                   ),
@@ -1555,10 +1715,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
             ],
           ),
-
+          SizedBox(
+            height: 10,
+          ),
           //for rider info
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             decoration: ShapeDecoration(
               color: Color(0xffD3EEEE),
               shape: SmoothRectangleBorder(
@@ -1579,7 +1741,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             child: Row(
               children: [
                 Text(
-                  '${notification['rider_name']} is your rider',
+                  '${notification['rider_name']} is on the way',
                   style: TextStyle(
                       fontSize: 14.0,
                       color: Color(0xff0A4C61),
@@ -1587,10 +1749,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       fontFamily: 'Product Sans'),
                 ),
 
-                // const SizedBox(
-                //   width: 10,
-                // ),
                 Spacer(),
+
                 Container(
                   padding: EdgeInsets.all(5),
                   decoration: BoxDecoration(
@@ -1630,36 +1790,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
+
                 // Out for delivery button
-                GestureDetector(
-                  onTap: () => (), //track link
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(25, 10, 25, 10),
-                    decoration: ShapeDecoration(
-                      color: const Color(0xff0A4C61),
-                      shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius(
-                          cornerRadius: 12,
-                          cornerSmoothing: 1,
-                        ),
-                      ),
-                    ),
-                    child: const Text(
-                      "Track",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          letterSpacing: 1,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Product Sans'),
-                    ),
-                  ),
-                ),
-             
-             
               ],
             ),
           ),
@@ -3138,7 +3270,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     color: const Color(0xFFFA6E00),
                     shape: SmoothRectangleBorder(
                       borderRadius: SmoothBorderRadius(
-                        cornerRadius: 12,
+                        cornerRadius: 13.5,
                         cornerSmoothing: 1,
                       ),
                     ),

@@ -68,7 +68,8 @@ class Auth with ChangeNotifier {
           order['status'] == 'Prepared' ||
           order['status'] == 'Packed' ||
           order['status'] == 'assigning_rider' ||
-          order['status'] == 'assigned_rider' ||
+          order['status'] == 'assigned' ||
+          order['status'] == 'self_delivery' ||
           order['status'] == 'Out for delivery')
       .toList();
   List<Map<String, dynamic>> get trackCustomerOrders => customerOrderDetails

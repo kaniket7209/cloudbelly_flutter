@@ -42,10 +42,11 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
       bank_name =
           Provider.of<Auth>(context, listen: false).userData?['bank_name'];
     }
-    if (Provider.of<Auth>(context, listen: false).userData?['preferred_payment_method'] !=
+    if (Provider.of<Auth>(context, listen: false)
+            .userData?['preferred_payment_method'] !=
         null) {
-      preferred_payment_method =
-          Provider.of<Auth>(context, listen: false).userData?['preferred_payment_method'];
+      preferred_payment_method = Provider.of<Auth>(context, listen: false)
+          .userData?['preferred_payment_method'];
     }
 
     if (Provider.of<Auth>(context, listen: false).userData?['account_number'] !=
@@ -81,8 +82,8 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
 
         String msg;
         if (upiController.text != '') {
-          msg = await Provider.of<Auth>(context, listen: false)
-              .storeSetup3('', '', '', upiController.text, preferred_payment_method);
+          msg = await Provider.of<Auth>(context, listen: false).storeSetup3(
+              '', '', '', upiController.text, preferred_payment_method);
         } else {
           msg = await Provider.of<Auth>(context, listen: false).storeSetup3(
               bank_name,
@@ -313,77 +314,99 @@ class _PaymentDetailsViewState extends State<PaymentDetailsView> {
                     width: MediaQuery.of(context).size.width - 50,
                     child: TextWidgetStoreSetup(
                         label:
-                            'Select preffered payment method for your customers')),
+                            'Select preffered payment method for your customers.')),
                 Space(1.h),
-               Container(
-  padding: const EdgeInsets.only(left: 14),
-  decoration: ShapeDecoration(
-    shadows: [
-      BoxShadow(
-        offset: const Offset(0, 4),
-        color: Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
-                UserType.Vendor.name
-            ? const Color.fromRGBO(165, 200, 199, 0.6)
-            : Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
-                    UserType.Supplier.name
-                ? const Color.fromRGBO(77, 191, 74, 0.3)
-                : const Color.fromRGBO(130, 47, 130, 0.7),
-        blurRadius: 20,
-      )
-    ],
-    color: Colors.white,
-    shape: const SmoothRectangleBorder(
-      borderRadius: SmoothBorderRadius.all(
-          SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
-    ),
-  ),
-  height: 6.h,
-  child: Center(
-    child: DropdownButton<String>(
-      isExpanded: true,
-      alignment: Alignment.centerLeft,
-      hint: Text(
-        preferred_payment_method.isEmpty ? 'Choose from the list' : preferred_payment_method,
-        textAlign: TextAlign.left,
-        style: TextStyle(
-          fontSize: 14,
-          color: Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
-                  UserType.Vendor.name
-              ? const Color(0xFF0A4C61)
-              : const Color(0xFF2E0536),
-          fontFamily: 'Product Sans',
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-      onChanged: (value) {
-        setState(() {
-          preferred_payment_method = value.toString();
-          _isSelected = true;
-        });
-      },
-      underline: Container(),
-      items: ['Both Online and COD', 'COD Only', 'Online Only']
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(
-            value,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF0A4C61),
-              fontFamily: 'Product Sans',
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        );
-      }).toList(),
-    ),
-  ),
-),
+                Container(
+                  padding: const EdgeInsets.only(left: 14),
+                  decoration: ShapeDecoration(
+                    shadows: [
+                      BoxShadow(
+                        offset: const Offset(0, 4),
+                        color: Provider.of<Auth>(context, listen: false)
+                                    .userData?['user_type'] ==
+                                UserType.Vendor.name
+                            ? const Color.fromRGBO(165, 200, 199, 0.6)
+                            : Provider.of<Auth>(context, listen: false)
+                                        .userData?['user_type'] ==
+                                    UserType.Supplier.name
+                                ? const Color.fromRGBO(77, 191, 74, 0.3)
+                                : const Color.fromRGBO(130, 47, 130, 0.7),
+                        blurRadius: 20,
+                      )
+                    ],
+                    color: Colors.white,
+                    shape: const SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.all(
+                          SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+                    ),
+                  ),
+                  height: 6.h,
+                  child: Center(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      alignment: Alignment.centerLeft,
+                      hint: Text(
+                        preferred_payment_method.isEmpty
+                            ? 'Choose from the list'
+                            : preferred_payment_method,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Provider.of<Auth>(context, listen: false)
+                                      .userData?['user_type'] ==
+                                  UserType.Vendor.name
+                              ? const Color(0xFF0A4C61)
+                              : const Color(0xFF2E0536),
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          preferred_payment_method = value.toString();
+                          _isSelected = true;
+                        });
+                      },
+                      underline: Container(),
+                      items: ['Both Online and COD', 'COD Only', 'Online Only']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF0A4C61),
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
                 Space(
                   3.h,
                 ),
-              
+                Container(
+                    width: MediaQuery.of(context).size.width - 50,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Note:- ',
+                          style: TextStyle(
+                              fontFamily: 'Product Sans', color: Colors.red,fontSize: 14,fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'If you want delivery from Cloudbelly, choose Online only. We ${"don't"} accept COD for delivery from our end.\n\nIf you can deliver by youself then choose any of your choice',
+                          style: TextStyle(
+                              fontFamily: 'Product Sans', color: Colors.red,fontSize: 14),
+                        ),
+                      ],
+                    )),
                 // TextWidgetStoreSetup(label: 'Select your bank'),
                 // Space(1.h),
                 // Container(
