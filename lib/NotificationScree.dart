@@ -93,6 +93,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   void dispose() {
     _pageController.dispose();
     _scrollController.dispose();
+
     super.dispose();
   }
 
@@ -726,11 +727,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           notification['location']['latitude'] != null) {
                         final String googleMapsUrl =
                             'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
-                        if (await canLaunch(googleMapsUrl)) {
-                          await launch(googleMapsUrl);
-                        } else {
-                          throw 'Could not open the map.';
-                        }
+                       _launchURL(googleMapsUrl);
                       }
                     },
                     child: Container(
@@ -1113,16 +1110,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    final phoneNumber = notification['customer_phone'];
-                    final url = 'tel:$phoneNumber';
-                    if (await canLaunch(url)) {
-                      await launch(url);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Could not launch phone call')),
-                      );
-                    }
-                  },
+                        final phoneNumber = notification['customer_phone'];
+                        final url = 'tel:$phoneNumber';
+
+                        try {
+                          await _launchURL(url);
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Could not launch phone call $e')),
+                          );
+                        }
+                      },
                   child: CircleAvatar(
                     radius: 9,
                     backgroundColor: const Color(0xFFFA6E00),
@@ -1138,11 +1138,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         notification['location']['latitude'] != null) {
                       final String googleMapsUrl =
                           'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
-                      if (await canLaunch(googleMapsUrl)) {
-                        await launch(googleMapsUrl);
-                      } else {
-                        throw 'Could not open the map.';
-                      }
+                     _launchURL(googleMapsUrl);
                     }
                   },
                   child: CircleAvatar(
@@ -1370,16 +1366,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    final phoneNumber = notification['customer_phone'];
-                    final url = 'tel:$phoneNumber';
-                    if (await canLaunch(url)) {
-                      await launch(url);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Could not launch phone call')),
-                      );
-                    }
-                  },
+                        final phoneNumber = notification['customer_phone'];
+                        final url = 'tel:$phoneNumber';
+
+                        try {
+                          await _launchURL(url);
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Could not launch phone call $e')),
+                          );
+                        }
+                      },
                   child: CircleAvatar(
                     radius: 9,
                     backgroundColor: const Color(0xFFFA6E00),
@@ -1395,11 +1394,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         notification['location']['latitude'] != null) {
                       final String googleMapsUrl =
                           'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
-                      if (await canLaunch(googleMapsUrl)) {
-                        await launch(googleMapsUrl);
-                      } else {
-                        throw 'Could not open the map.';
-                      }
+                     _launchURL(googleMapsUrl);
                     }
                   },
                   child: CircleAvatar(
@@ -1516,7 +1511,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
           // Out for delivery button
           GestureDetector(
-            onTap: () => (),
+            onTap: () => setState(() {}),
             child: Container(
               padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
               decoration: ShapeDecoration(
@@ -1543,6 +1538,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
     //if assgined rider
     else if (notification['status'] == 'assigned' ||
+        notification['status'] == 'reached_pickup' ||
+        notification['status'] == 'order_accepted' ||
+        notification['status'] == 'dispatched' ||
         notification['status'] == 'Out for delivery' && !serviceAvailable) {
       return Column(
         children: [
@@ -1634,12 +1632,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       onTap: () async {
                         final phoneNumber = notification['customer_phone'];
                         final url = 'tel:$phoneNumber';
-                        if (await canLaunch(url)) {
-                          await launch(url);
-                        } else {
+
+                        try {
+                          await _launchURL(url);
+                        } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text('Could not launch phone call')),
+                                content:
+                                    Text('Could not launch phone call $e')),
                           );
                         }
                       },
@@ -1658,11 +1658,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             notification['location']['latitude'] != null) {
                           final String googleMapsUrl =
                               'https://www.google.com/maps/search/?api=1&query=${notification['location']['latitude']},${notification['location']['longitude']}';
-                          if (await canLaunch(googleMapsUrl)) {
-                            await launch(googleMapsUrl);
-                          } else {
-                            throw 'Could not open the map.';
-                          }
+                         _launchURL(googleMapsUrl);
                         }
                       },
                       child: CircleAvatar(
@@ -1744,13 +1740,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ),
             child: Row(
               children: [
-                Text(
-                  '${notification['rider_name']} is on the way',
-                  style: TextStyle(
-                      fontSize: 14.0,
-                      color: Color(0xff0A4C61),
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Product Sans'),
+                Container(
+                  constraints: BoxConstraints(maxWidth: 50.w),
+                  child: Text(
+                    // '${notification['rider_name']} is on the way',
+                    getDeliveryStatusMessage(
+                        notification['rider_name'], notification['status']),
+                    style: TextStyle(
+                        fontSize: 14.0,
+                        color: Color(0xff0A4C61),
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Product Sans'),
+                  ),
                 ),
 
                 Spacer(),
@@ -1773,18 +1774,20 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       GestureDetector(
-                        onTap: () async {
-                          final phoneNumber = notification['rider_contact'];
-                          final url = 'tel:$phoneNumber';
-                          if (await canLaunch(url)) {
-                            await launch(url);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text('Could not launch phone call')),
-                            );
-                          }
-                        },
+                       onTap: () async {
+                        final phoneNumber = notification['rider_contact'];
+                        final url = 'tel:$phoneNumber';
+
+                        try {
+                          await _launchURL(url);
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Could not launch phone call $e')),
+                          );
+                        }
+                      },
                         child: CircleAvatar(
                           radius: 9,
                           backgroundColor: const Color(0xFFFA6E00),
@@ -2102,16 +2105,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    final phoneNumber = notification['phone'];
-                    final url = 'tel:$phoneNumber';
-                    if (await canLaunch(url)) {
-                      await launch(url);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Could not launch phone call')),
-                      );
-                    }
-                  },
+                        final phoneNumber = notification['phone'];
+                        final url = 'tel:$phoneNumber';
+
+                        try {
+                          await _launchURL(url);
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Could not launch phone call $e')),
+                          );
+                        }
+                      },
                   child: CircleAvatar(
                     radius: 9,
                     backgroundColor: const Color(0xFFFA6E00),
@@ -3201,6 +3207,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 }
 
+String getDeliveryStatusMessage(String riderName, String statusKey) {
+  final Map<String, String> mapDelStatus = {
+    'assigned': 'Your order has been assigned to $riderName.',
+    'dispatched': '$riderName is on the way to deliver your order.',
+    'reached_pickup': '$riderName has reached the pickup location.',
+    'delivered': '$riderName has delivered your order.',
+    'order_accepted': 'Your order has been accepted by $riderName.',
+    'order_cancelled':
+        'Unfortunately, your order has been cancelled by $riderName.',
+  };
+
+  // Return the appropriate message based on the statusKey
+  return mapDelStatus[statusKey] ?? 'Your order status has changed.';
+}
+
 class PaymentScreen extends StatefulWidget {
   final ScrollController scrollController;
 
@@ -3559,5 +3580,18 @@ String _getInitials(String name) {
   } else {
     return nameParts[0].substring(0, 1).toUpperCase() +
         nameParts[1].substring(0, 1).toUpperCase();
+  }
+}
+
+Future<void> _launchURL(String url) async {
+  try {
+    final Uri urlLink = Uri.parse(url);
+
+    await launchUrl(
+      urlLink,
+      mode: LaunchMode.externalApplication,
+    );
+  } catch (e) {
+    print('Could not open the  link: $e');
   }
 }
