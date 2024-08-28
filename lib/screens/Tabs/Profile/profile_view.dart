@@ -608,35 +608,13 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   .length ==
                                                               10) {
                                                             final whatsappUrl =
-                                                                Uri.parse(
-                                                                    'whatsapp://send?phone=91$phoneNumber');
+                                                                'https://wa.me/91$phoneNumber';
                                                             print(
                                                                 "Launching WhatsApp URL: $whatsappUrl");
 
-                                                            try {
-                                                              // Check if the URL can be launched
-                                                              if (await canLaunchUrl(
-                                                                  whatsappUrl)) {
-                                                                await launchUrl(
-                                                                    whatsappUrl);
-                                                              } else {
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(
-                                                                  const SnackBar(
-                                                                      content: Text(
-                                                                          'Could not launch WhatsApp. Please make sure WhatsApp is installed.')),
-                                                                );
-                                                              }
-                                                            } catch (e) {
-                                                              ScaffoldMessenger
-                                                                      .of(context)
-                                                                  .showSnackBar(
-                                                                SnackBar(
-                                                                    content: Text(
-                                                                        'Error launching WhatsApp: $e')),
-                                                              );
-                                                            }
+                                                            // Check if the URL can be launched
+                                                            _launchURL(
+                                                                whatsappUrl);
                                                           } else {
                                                             ScaffoldMessenger
                                                                     .of(context)
@@ -1312,5 +1290,18 @@ class _ProfileViewState extends State<ProfileView> {
               ),
       ),
     );
+  }
+}
+
+Future<void> _launchURL(String url) async {
+  try {
+    final Uri urlLink = Uri.parse(url);
+
+    await launchUrl(
+      urlLink,
+      mode: LaunchMode.externalApplication,
+    );
+  } catch (e) {
+    print('Could not open the  link: $e');
   }
 }

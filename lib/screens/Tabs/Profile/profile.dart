@@ -506,43 +506,37 @@ class _ProfileState extends State<Profile> {
                                               ],
                                             ),
                                           ),
-                                         GestureDetector(
-  onTap: () async {
-    final phoneNumber = Provider.of<Auth>(context, listen: false).userData?['phone'] ?? '';
+                                          GestureDetector(
+                                            onTap: () async {
+                                              final phoneNumber =
+                                                  Provider.of<Auth>(context,
+                                                              listen: false)
+                                                          .userData?['phone'] ??
+                                                      '';
 
-    if (phoneNumber.length == 10) {
-      final whatsappUrl = Uri.parse('whatsapp://send?phone=91$phoneNumber');
-
-      try {
-        if (await canLaunchUrl(whatsappUrl)) {
-          await launchUrl(whatsappUrl);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Could not launch WhatsApp. Please make sure WhatsApp is installed.'),
-            ),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error launching WhatsApp: $e'),
-          ),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('WhatsApp number is incorrect. It is not a 10-digit number.'),
-        ),
-      );
-    }
-  },
-  child: Container(
-    padding: const EdgeInsets.fromLTRB(0, 7, 12, 2),
-    child: Image.asset('assets/images/WhatsApp.png', width: 27),
-  ),
-)
+                                              if (phoneNumber.length == 10) {
+                                                final whatsappUrl =
+                                                    'https://wa.me/91$phoneNumber';
+                                                _launchURL(whatsappUrl);
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        'WhatsApp number is incorrect. It is not a 10-digit number.'),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 7, 12, 2),
+                                              child: Image.asset(
+                                                  'assets/images/WhatsApp.png',
+                                                  width: 27),
+                                            ),
+                                          )
                                         ],
                                       ),
                                     ),
@@ -1377,6 +1371,20 @@ class _ProfileState extends State<Profile> {
       TOastNotification()
           .showErrorToast(context, 'Your KYC status is incomplete');
     }
+  }
+}
+
+Future<void> _launchURL(String url) async {
+  try {
+    final Uri urlLink = Uri.parse(url);
+
+    await launchUrl(
+      urlLink,
+      mode: LaunchMode.externalApplication,
+    );
+  } catch (e) {
+    print('Could not open the  link: $e');
+ 
   }
 }
 

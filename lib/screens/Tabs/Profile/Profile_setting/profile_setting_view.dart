@@ -3176,36 +3176,36 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                       ],
                     ),
                     Divider(),
-                     Container(
+                    Container(
                       width: 100.w,
-                       child: Column(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                         children: [
-                           Text(
-                                'Note:- ',
-                                style: TextStyle(
-                                  color: Color(0xffFA6E00),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Product Sans Black',
-                                ),
+                        children: [
+                          Text(
+                            'Note:- ',
+                            style: TextStyle(
+                              color: Color(0xffFA6E00),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Product Sans Black',
+                            ),
+                          ),
+                          Container(
+                            constraints: BoxConstraints(maxWidth: 100.w),
+                            child: Text(
+                              'At the end of each month, vendors who have used ${"Cloudbelly's"} 3rd-party delivery service will need to settle the accumulated delivery fees. \nThese fees are only applicable if you havent used the self-delivery option and have opted for ${"Cloudbelly's"} delivery services instead.',
+                              style: TextStyle(
+                                color: Color(0xffFA6E00),
+                                fontSize: 12,
+                                // fontWeight: FontWeight.bold,
+                                fontFamily: 'Product Sans Black',
                               ),
-                              Container(
-                                constraints: BoxConstraints(maxWidth: 100.w),
-                                child: Text(
-                                 'At the end of each month, vendors who have used ${"Cloudbelly's"} 3rd-party delivery service will need to settle the accumulated delivery fees. \nThese fees are only applicable if you havent used the self-delivery option and have opted for ${"Cloudbelly's"} delivery services instead.' ,
-                                  style: TextStyle(
-                                    color: Color(0xffFA6E00),
-                                    fontSize: 12,
-                                    // fontWeight: FontWeight.bold,
-                                    fontFamily: 'Product Sans Black',
-                                  ),
-                                ),
-                              ),
-                         ],
-                       ),
-                     ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     SizedBox(height: 30),
                     Center(
                       child: GestureDetector(
@@ -3386,9 +3386,14 @@ String formatItems(List<dynamic> items) {
 }
 
 Future<void> _launchURL(String url) async {
-  if (await canLaunchUrl(Uri.parse(url))) {
-    await launchUrl(Uri.parse(url));
-  } else {
-    throw 'Could not launch $url';
+  try {
+    final Uri urlLink = Uri.parse(url);
+
+    await launchUrl(
+      urlLink,
+      mode: LaunchMode.externalApplication,
+    );
+  } catch (e) {
+    print('Could not open the  link: $e');
   }
 }

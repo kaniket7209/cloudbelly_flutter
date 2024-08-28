@@ -12,13 +12,19 @@ class RestaurantCard extends StatelessWidget {
 
   RestaurantCard({required this.restaurant});
 
-  void _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+   
+ Future<void> _launchURL(String url) async {
+  try {
+    final Uri urlLink = Uri.parse(url);
+
+    await launchUrl(
+      urlLink,
+      mode: LaunchMode.externalApplication,
+    );
+  } catch (e) {
+    print('Could not open the  link: $e');
   }
+}
 
   @override
   Widget build(BuildContext context) {

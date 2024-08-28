@@ -1683,11 +1683,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 onTap: () async {
                   if (notification['tracking_link'] != null &&
                       notification['tracking_link'] != '') {
-                    final String tracking_link = notification['tracking_link'];
-                    if (await canLaunch(tracking_link)) {
-                      await launch(tracking_link);
-                    } else {
-                      throw 'Could not open the tracking link.';
+                    try {
+                      final Uri url = Uri.parse(notification['tracking_link']);
+                      print("notification['tracking_link']: $url");
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } catch (e) {
+                      print('Could not open the tracking link: $e');
                     }
                   }
                 },

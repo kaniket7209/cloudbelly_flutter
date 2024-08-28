@@ -70,13 +70,18 @@ class _GoogleLoginState extends State<GoogleLogin> {
     }
   }
 
-  Future<void> _launchURL(String url) async {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
-      throw 'Could not launch $url';
-    }
+ Future<void> _launchURL(String url) async {
+  try {
+    final Uri urlLink = Uri.parse(url);
+
+    await launchUrl(
+      urlLink,
+      mode: LaunchMode.externalApplication,
+    );
+  } catch (e) {
+    print('Could not open the  link: $e');
   }
+}
 
   @override
   Widget build(BuildContext context) {
