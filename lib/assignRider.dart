@@ -219,6 +219,8 @@ class DeliveryStatusCard extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     // Handle "Cancel & refund" logic
+                     Provider.of<Auth>(context, listen: false).cancelDeliveryTask(notification['task_id'], notification['user_id'], notification['order_from_user_id'], notification['_id']);
+                    Navigator.of(context).pop();
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),

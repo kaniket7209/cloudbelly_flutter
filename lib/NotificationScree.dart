@@ -1022,7 +1022,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       );
     }
     // for manual delivery delivery = false  make serviceAvailable false here only for testing now make it serviceAvailable else !serviceAvailable
-    else if (notification['status'] == 'Packed' && serviceAvailable) {
+    else if (notification['status'] == 'Packed' && !serviceAvailable) {
       //false
       return Row(
         children: [
@@ -1181,7 +1181,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       );
     }
     //  for delivery true
-    else if (notification['status'] == 'Packed' && !serviceAvailable) {
+    else if (notification['status'] == 'Packed' && serviceAvailable) {
       //true
       return Row(
         children: [
@@ -1541,7 +1541,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         notification['status'] == 'reached_pickup' ||
         notification['status'] == 'order_accepted' ||
         notification['status'] == 'dispatched' ||
-        notification['status'] == 'Out for delivery' && !serviceAvailable) {
+        notification['status'] == 'Out for delivery' && serviceAvailable) {
       return Column(
         children: [
           Row(
@@ -1877,7 +1877,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
           // Delivered button
           GestureDetector(
-            onTap: () => handleStatusChange('Delivered'),
+            onTap: () => handleStatusChange('delivered'),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: ShapeDecoration(
@@ -1900,7 +1900,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       );
-    } else if (notification['status'] == 'Delivered') {
+    } else if (notification['status'] == 'delivered') {
       return Row(
         children: [
           Container(
@@ -3213,7 +3213,7 @@ String getDeliveryStatusMessage(String riderName, String statusKey) {
     'dispatched': '$riderName is on the way to deliver your order.',
     'reached_pickup': '$riderName has reached the pickup location.',
     'delivered': '$riderName has delivered your order.',
-    'order_accepted': 'Your order has been accepted by $riderName.',
+    'order_accepted': 'Your order has been accepted by customer.',
     'order_cancelled':
         'Unfortunately, your order has been cancelled by $riderName.',
   };

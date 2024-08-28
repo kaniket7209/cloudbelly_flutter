@@ -71,6 +71,7 @@ class Auth with ChangeNotifier {
           order['status'] == 'assigned' ||
           order['status'] == 'dispatched' ||
           order['status'] == 'self_delivery' ||
+         
           
           order['status'] == 'reached_pickup' ||
           order['status'] == 'order_accepted' ||

@@ -3355,7 +3355,7 @@ class OrderItem extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  timeAgo(orderData['created_date']),
+                  timeAgo(orderData['updated_at'] ?? orderData['created_date']),
                   style: TextStyle(
                     color: Color.fromARGB(255, 227, 133, 62),
                     fontSize: 12,
