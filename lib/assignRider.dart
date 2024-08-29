@@ -65,7 +65,7 @@ class DeliveryStatusCard extends StatelessWidget {
     print("notificationnotificationnotif $notification");
     return Container(
       // margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      padding: const EdgeInsets.fromLTRB( 30, 25,30,0),
+      padding: const EdgeInsets.fromLTRB( 30, 25,20,0),
       decoration: ShapeDecoration(
         color: Color(0xff0A4C61),
         shape: SmoothRectangleBorder(
@@ -101,9 +101,12 @@ class DeliveryStatusCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    "To be delivered, ${notification['items'].length} items, Rs ${notification['total_price']}",
-                    style: TextStyle(fontSize: 14, color: Color(0xff8BDFDD)),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: 60.w),
+                    child: Text(
+                      "To be delivered, ${notification['items'].length} items, Rs ${notification['total_price']}",
+                      style: TextStyle(fontSize: 14, color: Color(0xff8BDFDD)),
+                    ),
                   ),
                 ],
               ),

@@ -2,24 +2,19 @@ import 'dart:convert';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/assignRider.dart';
-import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/main.dart';
-import 'package:lottie/lottie.dart'; // Import Lottie
+// Import Lottie
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
-import 'package:cloudbelly_app/widgets/space.dart';
-import 'package:cloudbelly_app/widgets/toast_notification.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -451,7 +446,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       Color boxShadowColor, int index) {
     // Local method to asynchronously check service availability
     Future<bool> getServiceAvailability() {
-      if (notification['status'] == 'Submitted') {
+      if (notification['status'] == 'Submitted' ||notification['status'] == 'Packed'  ) {
         return checkServiceAvailability(
             notification['order_from_user_id'],
             notification['customer_location']['latitude'],
@@ -620,7 +615,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         print("${e.toString()}");
       }
     }
-
+print("serviceAvailable es  $serviceAvailable");
     if (notification['status'] == 'Submitted') {
       // print("notification ${json.encode(notification['payment_method'])}");
       return Row(
