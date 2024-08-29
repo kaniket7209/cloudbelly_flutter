@@ -764,7 +764,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   ),
                 ),
               ),
-              height: MediaQuery.of(context).size.height * 0.4,
+              height: MediaQuery.of(context).size.height / 2.5,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(40, 10, 40, 20),
                 child: Column(
@@ -922,53 +922,55 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
             }
 
             return SingleChildScrollView(
-              child: Container(
-                decoration: const ShapeDecoration(
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x7FB1D9D8),
-                      blurRadius: 6,
-                      offset: Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                  color: Colors.white,
-                  shape: SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.only(
-                      topLeft:
-                          SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
-                      topRight:
-                          SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
-                    ),
-                  ),
-                ),
+              child: Padding(
                 padding: EdgeInsets.only(
-                  left: 40,
-                  right: 5,
-                  top: 10,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                 
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        margin: EdgeInsets.only(top: 5),
-                        padding:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                        width: 30,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFA6E00).withOpacity(0.55),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  decoration: const ShapeDecoration(
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0x7FB1D9D8),
+                        blurRadius: 6,
+                        offset: Offset(0, 4),
+                        spreadRadius: 0,
+                      ),
+                    ],
+                    color: Colors.white,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.only(
+                        topLeft:
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                        topRight:
+                            SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Container(
-                      child: Text(
+                  ),
+                  padding: EdgeInsets.symmetric(
+                  horizontal: 40,vertical: 20,
+                ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          margin: EdgeInsets.only(top: 5),
+                          padding:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                          width: 30,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFA6E00).withOpacity(0.55),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
                         'Delete your account',
                         style: TextStyle(
                           color: Color(0xFFEA3323),
@@ -977,9 +979,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    Container(
-                      child: Text(
+                      Text(
                         'Enter OTP',
                         style: TextStyle(
                           color: Color(0xFF0A4C61),
@@ -988,148 +988,147 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           fontFamily: 'Product Sans',
                         ),
                       ),
-                    ),
-                    SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: List.generate(6, (index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 10.0),
-                          child: Container(
-                            width: 45,
-                            height: 45,
-                            decoration: ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                  color: Color(0xffDBF5F5),
-                                  blurRadius: 20,
-                                  offset: Offset(0, 12),
-                                  spreadRadius: 0,
-                                ),
-                              ],
-                              color: const Color(0xffD3EEEE),
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 13,
-                                  cornerSmoothing: 1,
-                                ),
-                              ),
-                            ),
-                            child: Center(
-                              child: TextField(
-                                cursorColor: Color(0xff0A4C61),
-                                textAlign: TextAlign.center,
-                                keyboardType: TextInputType.number,
-                                maxLength: 1,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: List.generate(6, (index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: Container(
+                              width: 45,
+                              height: 45,
+                              decoration: ShapeDecoration(
+                                shadows: [
+                                  BoxShadow(
+                                    color: Color(0xffDBF5F5),
+                                    blurRadius: 20,
+                                    offset: Offset(0, 12),
+                                    spreadRadius: 0,
+                                  ),
                                 ],
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  counterText: '',
+                                color: const Color(0xffD3EEEE),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 13,
+                                    cornerSmoothing: 1,
+                                  ),
                                 ),
-                                onChanged: (value) {
-                                  if (value.length == 1) {
-                                    otp[index] = value;
-                                    if (index != 5) {
-                                      FocusScope.of(context).nextFocus();
-                                    } else {
-                                      FocusScope.of(context).unfocus();
+                              ),
+                              child: Center(
+                                child: TextField(
+                                  cursorColor: Color(0xff0A4C61),
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  maxLength: 1,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    counterText: '',
+                                  ),
+                                  onChanged: (value) {
+                                    if (value.length == 1) {
+                                      otp[index] = value;
+                                      if (index != 5) {
+                                        FocusScope.of(context).nextFocus();
+                                      } else {
+                                        FocusScope.of(context).unfocus();
+                                      }
+                                    } else if (value.length == 0 &&
+                                        index != 0) {
+                                      FocusScope.of(context).previousFocus();
                                     }
-                                  } else if (value.length == 0 && index != 0) {
-                                    FocusScope.of(context).previousFocus();
-                                  }
-                                },
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      }),
-                    ),
-                    SizedBox(height: 8),
-                    Container(
-                      padding: EdgeInsets.only(right: 40),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            TextButton(
-                              onPressed: resendOtp,
-                              child: Text(
-                                'Resend',
+                          );
+                        }),
+                      ),
+                      SizedBox(height: 8),
+                      Padding(
+                        padding: EdgeInsets.only(right: 40),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                onPressed: resendOtp,
+                                child: Text(
+                                  'Resend',
+                                  style: TextStyle(
+                                    color: Color(0xFFFB8020),
+                                    fontSize: 14,
+                                    fontFamily: 'Product Sans',
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                'OTP ',
                                 style: TextStyle(
-                                  color: Color(0xFFFB8020),
+                                  color: Color(0xFF0A4C61),
                                   fontSize: 14,
                                   fontFamily: 'Product Sans',
                                 ),
                               ),
-                            ),
-                            Text(
-                              'OTP in',
-                              style: TextStyle(
-                                color: Color(0xFF0A4C61),
-                                fontSize: 14,
-                                fontFamily: 'Product Sans',
-                              ),
-                            ),
-                            Text(
-                              ' 60 seconds',
-                              style: TextStyle(
-                                color: Color(0xFF0A4C61),
-                                fontSize: 14,
-                                fontFamily: 'Product Sans',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Container(
-                      padding: EdgeInsets.only(right: 40),
-                      child: Center(
-                        child: GestureDetector(
-                          onTap: _submitOtp,
-                          child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 7.w, vertical: 1.h),
-                              // margin: EdgeInsets.only(bottom: 2.h),
-                              decoration: ShapeDecoration(
-                                shadows: [
-                                  BoxShadow(
-                                    offset: const Offset(5, 6),
-                                    color: Color(0xffF82E52).withOpacity(0.45),
-                                    blurRadius: 30,
-                                    spreadRadius: 0,
-                                  ),
-                                ],
-                                color: Color(0xffF82E52),
-                                shape: SmoothRectangleBorder(
-                                    borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 17,
-                                  cornerSmoothing: 1,
-                                )),
-                              ),
-                              child: const Text(
-                                'Delete Now',
+                              Text(
+                                ' if not received in WhatsApp',
                                 style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
+                                  color: Color(0xFF0A4C61),
+                                  fontSize: 14,
                                   fontFamily: 'Product Sans',
-                                  fontWeight: FontWeight.bold,
-                                  // height: 0,
-                                  letterSpacing: 0.14,
                                 ),
-                              )),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    )
-                  ],
+                      SizedBox(height: 16),
+                      Padding(
+                        padding: EdgeInsets.only(right: 0),
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: _submitOtp,
+                            child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 7.w, vertical: 1.h),
+                                decoration: ShapeDecoration(
+                                  shadows: [
+                                    BoxShadow(
+                                      offset: const Offset(5, 6),
+                                      color:
+                                          Color(0xffF82E52).withOpacity(0.45),
+                                      blurRadius: 30,
+                                      spreadRadius: 0,
+                                    ),
+                                  ],
+                                  color: Color(0xffF82E52),
+                                  shape: SmoothRectangleBorder(
+                                    borderRadius: SmoothBorderRadius(
+                                      cornerRadius: 17,
+                                      cornerSmoothing: 1,
+                                    ),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Delete Now',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.14,
+                                  ),
+                                )),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -1141,8 +1140,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "jsonre  ${json.encode(Provider.of<Auth>(context, listen: true).userData)}");
+
     print("756 $kycVerified kyc  $kycSetup  kyset  $paymentSetup pay");
     String userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];

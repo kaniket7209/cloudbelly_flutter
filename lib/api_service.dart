@@ -2342,7 +2342,7 @@ class Auth with ChangeNotifier {
         body: jsonEncode(requestBody),
       );
 
-      print("jsonResponse:: ${response.body}");
+    
 
       return jsonDecode((response.body));
     } catch (error) {
@@ -2376,8 +2376,7 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-      print("jsonResponse:: ${response.body}");
-      print("jsonResponse:: ${response2.body}");
+    
 
       return jsonDecode((response.body));
     } catch (error) {

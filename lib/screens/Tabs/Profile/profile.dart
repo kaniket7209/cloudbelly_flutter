@@ -1384,7 +1384,6 @@ Future<void> _launchURL(String url) async {
     );
   } catch (e) {
     print('Could not open the  link: $e');
- 
   }
 }
 
@@ -2123,6 +2122,7 @@ class _MenuState extends State<Menu> {
 
     String userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    print("widget.menuList  ${widget.menuList}");
     Color boxShadowColor;
     Color categorySelected = Color(0xff70BAD2);
     if (userType == 'Vendor') {
@@ -2134,6 +2134,9 @@ class _MenuState extends State<Menu> {
     } else {
       boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
     }
+    print("Category Search is ON");
+    print("Search Text: ${_controller.text}");
+    print("Total Menu Items: ${widget.menuList.length}");
     return Container(
       width: 90.w,
       height: 90.h,
@@ -2343,7 +2346,7 @@ class _MenuState extends State<Menu> {
                                             index++)
                                           if (widget.menuList[index]['category']
                                               .toString()
-                                              .contains(_controller.text))
+                                              == _controller.text)
                                             MenuItem(
                                                 storeAvailability:
                                                     storeAvailability,

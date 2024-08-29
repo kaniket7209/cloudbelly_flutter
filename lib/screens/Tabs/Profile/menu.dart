@@ -34,11 +34,11 @@ class _MenuState extends State<Menu> {
                     true, // Allow the GridView to shrink-wrap its content
                 addAutomaticKeepAlives: true,
                 itemBuilder: (context, index) {
-                  data[index]['VEG'] == null ? data[index]['VEG'] = true : null;
+                  data[index]['type'] == null ? data[index]['type'] = 'Veg' : 'Non Veg';
                   // data[index]['description'] =
                   //     'Indian delicacies served with tasty gravy, all from your very own kitchen...';
 
-                  return data[index]['VEG'] != null
+                  return data[index]['type'] != null
                       ? MenuItem(data: data[index], scroll: null, storeAvailability: storeAvailability,kycStatus:kycStatus)
                       : SizedBox.shrink();
                 });
