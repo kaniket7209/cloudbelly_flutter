@@ -53,7 +53,8 @@ Future<void> showNotification(RemoteMessage message) async {
     'high_importance_channel', // id
     'High Importance Notifications', // title
     channelDescription:
-        'This channel is used for important notifications.', // description
+        'This channel is used for important notifications.',
+         // description
     importance: Importance.high,
     priority: Priority.high,
     playSound: true, // Default notification sound
