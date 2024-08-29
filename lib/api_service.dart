@@ -1785,7 +1785,7 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-      log("menudata:: ${jsonDecode((response.body))}");
+     
       return jsonDecode((response.body));
     } catch (error) {
       // Handle exceptions
@@ -2312,7 +2312,7 @@ class Auth with ChangeNotifier {
         body: jsonEncode(requestBody),
       );
 
-      print("userDetailsForKey:: ${response.body}");
+      
 
       return jsonDecode(response.body);
     } catch (error) {

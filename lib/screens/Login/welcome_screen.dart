@@ -3,8 +3,7 @@ import 'dart:io';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as parser;  // Add this to your pubspec.yaml
-import 'package:responsive_sizer/responsive_sizer.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloudbelly_app/screens/Login/commonLoginScreen.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
@@ -22,7 +21,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    _checkForUpdates();
+    // Start the update check asynchronously
+    Future.microtask(() => _checkForUpdates());
   }
 
   Future<String> _getVersionFromLocalProperties() async {
@@ -75,23 +75,22 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     }
   }
 
-Future<String> _getLatestVersionFromAPI() async {
-  final url = 'https://app.cloudbelly.in/version';
-  try {
-    final response = await http.get(Uri.parse(url));
-    
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['version'];
-    } else {
-      throw Exception('Failed to load version info from API');
-
+  Future<String> _getLatestVersionFromAPI() async {
+    final url = 'https://app.cloudbelly.in/version';
+    try {
+      final response = await http.get(Uri.parse(url));
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['version'];
+      } else {
+        throw Exception('Failed to load version info from API');
+      }
+    } catch (e) {
+      print('Error fetching version from API: $e');
+      throw Exception('Failed to fetch the latest version from API');
     }
-  } catch (e) {
-    print('Error fetching version from API: $e');
-    throw Exception('Failed to fetch the latest version from API');
   }
-}
  
   bool _isNewVersionAvailable(String currentVersion, String newVersion) {
     final current = currentVersion.split('.').map(int.parse).toList();
@@ -104,103 +103,102 @@ Future<String> _getLatestVersionFromAPI() async {
     return false;
   }
 
- void _showUpdateDialog(newVersion) {
-  showDialog(
-    barrierColor: Color(0xffEFF9FB),
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: Color(0xff0A4C61),
-        shape: SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius(
-            cornerRadius: 20,
-            cornerSmoothing: 1,
+  void _showUpdateDialog(newVersion) {
+    showDialog(
+      barrierColor: Color(0xffEFF9FB),
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color(0xff0A4C61),
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(
+              cornerRadius: 20,
+              cornerSmoothing: 1,
+            ),
           ),
-        ),
-        title: Text(
-          'Update Available  ($newVersion)',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontFamily: 'Product Sans',
+          title: Text(
+            'Update Available  ($newVersion)',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontFamily: 'Product Sans',
+            ),
           ),
-        ),
-        content: Text(
-          'A new version of the app is available. Please update to continue.',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-            fontFamily: 'Product Sans',
+          content: Text(
+            'A new version of the app is available. Please update to continue.',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+              fontFamily: 'Product Sans',
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _checkLoginStatus();
-            },
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.white,
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius(
-                  cornerRadius: 12,
-                  cornerSmoothing: 1,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _checkLoginStatus();
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 1,
+                  ),
+                ),
+              ),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                child: Text(
+                  'No Thanks',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFFFA6E00),
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Product Sans',
+                  ),
                 ),
               ),
             ),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 2),
-              child: Text(
-                'No Thanks',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFFFA6E00),
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Product Sans',
+            ElevatedButton(
+              onPressed: () async {
+                final url = Uri.parse(
+                    'https://play.google.com/store/apps/details?id=com.app.cloudbelly_app');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url);
+                } else {
+                  print('Could not launch $url');
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xffFA6E00),
+                shape: SmoothRectangleBorder(
+                  borderRadius: SmoothBorderRadius(
+                    cornerRadius: 12,
+                    cornerSmoothing: 1,
+                  ),
+                ),
+              ),
+              child: Container(
+                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: Text(
+                  'Update',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontFamily: 'Product Sans',
+                  ),
                 ),
               ),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final url = Uri.parse(
-                  'https://play.google.com/store/apps/details?id=com.app.cloudbelly_app');
-              if (await canLaunchUrl(url)) {
-                await launchUrl(url);
-              } else {
-                print('Could not launch $url');
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xffFA6E00),
-              shape: SmoothRectangleBorder(
-                borderRadius: SmoothBorderRadius(
-                  cornerRadius: 12,
-                  cornerSmoothing: 1,
-                ),
-              ),
-              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
-            child: Container(
-               padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-              child: Text(
-                'Update',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontFamily: 'Product Sans',
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
@@ -217,10 +215,8 @@ Future<String> _getLatestVersionFromAPI() async {
       backgroundColor: Colors.white,
       body: Center(
         child: Container(
-          child:  Image.asset('assets/images/cloudbelly_logo.png',
-                  width: 500, height: 500),
-         
-          
+          child: Image.asset('assets/images/cloudbelly_logo.png',
+              width: 500, height: 500),
         ),
       ),
     );

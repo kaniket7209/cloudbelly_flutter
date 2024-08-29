@@ -227,14 +227,14 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
       // Simulate sending OTP
       final res = await Provider.of<Auth>(context, listen: false)
           .sendOtp(whatsAppController.text);
-      print("resOTP $res");
+      
       if (res == '200') {
         // OTP sent successfully, open the next page
         Navigator.pop(context); // Close the current dialog if any
         openEnterOtpBottomSheet(context, whatsAppController.text);
       } else {
         // Error occurred, print the error
-        print("Failed to send OTP. Error code: $res");
+       
         TOastNotification().showErrorToast(context,
             'Failed to send OTP. Please check the number ${whatsAppController.text}');
       }
@@ -441,20 +441,20 @@ class __EnterOtpBottomSheetState extends State<_EnterOtpBottomSheet> {
   }
 
   void startTimer() {
-    print("Starting timer...");
+    
     _timer?.cancel(); // Cancel any existing timer
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_counter > 0) {
         setState(() {
           _counter--;
-          print("Counter: $_counter");
+         
         });
       } else {
         _timer?.cancel();
-        print("Timer complete");
+        
       }
     });
-    print("_timer initialized: $_timer");
+   
   }
 
   Future<void> resendOtp() async {
@@ -471,9 +471,9 @@ class __EnterOtpBottomSheetState extends State<_EnterOtpBottomSheet> {
 
   Future<void> _submitOtp() async {
   final prefs = await SharedPreferences.getInstance();
-  print("otp is ${widget.otp}");
+
   final otpCode = widget.otp.join();
-  print('Entered OTP: $otpCode');
+
   final res = await Provider.of<Auth>(context, listen: false)
       .verifyOtp(widget.mobileNo, otpCode);
 
@@ -498,13 +498,13 @@ class __EnterOtpBottomSheetState extends State<_EnterOtpBottomSheet> {
       if (!mounted) return; // Check if the widget is still mounted
       Navigator.of(context).pushReplacementNamed(Tabs.routeName);
     } else if (logRes['code'] == 400) {
-      print("openEnterUserTypeBottomSheet");
+    
       await openEnterUserTypeBottomSheet(context, widget.mobileNo);
     } else {
       TOastNotification().showErrorToast(context, 'Unexpected error. Please try again');
     }
   } else {
-    print("Failed to verify OTP. : $res");
+
     TOastNotification().showErrorToast(context, 'Wrong OTP');
   }
 }

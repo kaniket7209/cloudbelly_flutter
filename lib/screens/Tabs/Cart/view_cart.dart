@@ -97,12 +97,11 @@ class _PaymentOptionsState extends State<PaymentOptions> {
     };
 
     try {
-      print("Sending request to $url with payload: $payload");
+
       final response = await http.post(Uri.parse(url),
           body: jsonEncode(payload),
           headers: {'Content-Type': 'application/json'});
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
+
 
       if (response.statusCode == 200) {
         setState(() {
