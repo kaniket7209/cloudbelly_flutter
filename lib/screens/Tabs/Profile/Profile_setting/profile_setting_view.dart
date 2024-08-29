@@ -1594,13 +1594,17 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           Provider.of<Auth>(context, listen: false)
                               .userData?['phone']);
                     },
-                    child: Text(
-                      "Delete Account ",
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: boxShadowColor,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w700),
+                    child: Container(
+                      height: 4.h,
+                      
+                      child: Text(
+                        "Delete Account ",
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: boxShadowColor,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w700),
+                      ),
                     ),
                   ),
                 ],
@@ -3184,7 +3188,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                             'Note:- ',
                             style: TextStyle(
                               color: Color(0xffFA6E00),
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'Product Sans Black',
                             ),
@@ -3195,7 +3199,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                               'At the end of each month, vendors who have used ${"Cloudbelly's"} 3rd-party delivery service will need to settle the accumulated delivery fees. \nThese fees are only applicable if you havent used the self-delivery option and have opted for ${"Cloudbelly's"} delivery services instead.',
                               style: TextStyle(
                                 color: Color(0xffFA6E00),
-                                fontSize: 12,
+                                fontSize: 11,
                                 // fontWeight: FontWeight.bold,
                                 fontFamily: 'Product Sans Black',
                               ),
