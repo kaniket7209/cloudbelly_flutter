@@ -188,6 +188,7 @@ class DeliveryStatusCard extends StatelessWidget {
                   onTap: () {
                     // Handle "Deliver manually" logic
                     Provider.of<Auth>(context, listen: false).statusChange(notification['_id'], notification['user_id'], notification['order_from_user_id'], 'self_delivery');
+                  Provider.of<Auth>(context, listen: false).cancelDelivery(notification['task_id']);
                     Navigator.of(context).pop();
                   },
                   child: Container(

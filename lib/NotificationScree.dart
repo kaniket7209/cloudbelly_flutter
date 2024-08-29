@@ -247,42 +247,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                     ),
-                    // if (notifications.length > 0)
-                    //   GestureDetector(
-                    //     onTap: () {
-                    //       setState(() {
-                    //         if (title == 'Socials') {
-                    //           showAllSocialNotifications =
-                    //               !showAllSocialNotifications;
-                    //         } else if (title == 'Accepted Orders') {
-                    //           showAllAcceptedOrderNotifications =
-                    //               !showAllAcceptedOrderNotifications;
-                    //         } else if (title == 'Incoming Orders') {
-                    //           showAllIncomingOrderNotifications =
-                    //               !showAllIncomingOrderNotifications;
-                    //         }
-                    //       });
-                    //     },
-                    //     child: Row(
-                    //       mainAxisSize: MainAxisSize.min,
-                    //       children: [
-                    //         Text(
-                    //           showAll ? 'See less' : 'See all',
-                    //           style:  TextStyle(
-                    //               // color: Colors.transparent,
-                    //               color: boxShadowColor,
-                    //               fontWeight: FontWeight.bold,
-
-                    //               fontFamily: 'Product Sans'),
-                    //         ),
-                    //         SizedBox(width: 5),
-                    //         Image.asset(
-                    //           'assets/icons/next_arrow.png',
-                    //           width: 10,
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   )
+                   
                   ],
                 ),
                 Column(
@@ -616,6 +581,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       }
     }
 print("serviceAvailable es  $serviceAvailable");
+
     if (notification['status'] == 'Submitted') {
       // print("notification ${json.encode(notification['payment_method'])}");
       return Row(
@@ -1552,7 +1518,7 @@ print("serviceAvailable es  $serviceAvailable");
                     ),
                   ),
                   image: DecorationImage(
-                    image: NetworkImage(notification['buyer_logo']),
+                    image: NetworkImage(notification['buyer_logo']) ,
                     fit: BoxFit.cover,
                   ),
                 ),

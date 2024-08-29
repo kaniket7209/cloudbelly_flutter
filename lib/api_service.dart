@@ -253,6 +253,27 @@ class Auth with ChangeNotifier {
     }
   }
   
+  // cancel_delivery
+  Future<dynamic> cancelDelivery(
+       taskId) async {
+    final response = await http.post(
+      Uri.parse("https://app.cloudbelly.in/cancel_delivery"),
+      headers: headers,
+      body: jsonEncode({
+        "task_id": taskId
+
+        
+      }),
+    );
+    if (response.statusCode == 200) {
+      print("cancekDel ${json.encode(response.body)}");
+      return response.body;
+     
+    } else {
+      throw Exception('Task not found');
+    }
+  }
+  
   Future<void> markOrderAsDelivered(
       String orderId, String userId, String orderFrom) async {
     final response = await http.post(

@@ -1,109 +1,52 @@
-import 'dart:convert';
-import 'package:cloudbelly_app/constants/assets.dart';
-import 'package:cloudbelly_app/prefrence_helper.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart'; // Import Lottie
-import 'package:provider/provider.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/screens/Login/login_screen.dart';
-import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
-import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
-import 'package:cloudbelly_app/widgets/space.dart';
-import 'package:cloudbelly_app/widgets/toast_notification.dart';
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-class WelcomeScreen extends StatefulWidget {
-  static const routeName = '/welcome-screen';
+Future<void> initializeNotification() async {
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    description: 'This channel is used for important notifications.', // description
+    importance: Importance.high,
+  );
 
-  @override
-  State<WelcomeScreen> createState() => _WelcomeScreenState();
+  print('Creating notification channel...');
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+  print('Notification channel created.');
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
-  bool _isAvailable = false;
+Future<void> showNotification(RemoteMessage message) async {
+  // Set the largeIcon to your drawable resource
+  final largeIcon = const DrawableResourceAndroidBitmap('cloudbelly_logo');
 
-  @override
-  void initState()  {
-    super.initState();
-    Future.delayed(const Duration(microseconds: 1000), () {
-      UserPreferences().isLogin == true
-          ? Navigator.of(context).pushReplacementNamed(Tabs.routeName)
-          : Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
-      //_getUserData();
-    });
-  }
+  // Set the notification details
+  final bool isOrderNotification = message.data['type'] == 'incoming_order';
 
-  Future<void> moveToNextPage() async {
-    UserPreferences().isLogin == true
-        ? Navigator.of(context).pushReplacementNamed(Tabs.routeName)
-        : Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
-  }
+  final AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    channelDescription: 'This channel is used for important notifications.', // description
+    importance: Importance.high,
+    priority: Priority.high,
+    playSound: true,
+    largeIcon: largeIcon,  // Set the large icon here
+  );
 
-  Future<void> _getUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final temp = await Provider.of<Auth>(context, listen: false).tryAutoLogin();
-    setState(() {
-      _isAvailable = temp;
-    });
+  final NotificationDetails platformChannelSpecifics = NotificationDetails(
+    android: androidPlatformChannelSpecifics,
+  );
 
-    if (_isAvailable) {
-      final extractedUserData =
-          json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
-      AppWideLoadingBanner().loadingBanner(context);
-      String msg = await Provider.of<Auth>(context, listen: false)
-          .login(context,extractedUserData['email'], extractedUserData['password']);
-      Navigator.of(context).pop();
-      if (msg == 'Login successful') {
-        await prefs.remove('feedData');
-        await prefs.remove('menuData');
-        TOastNotification().showSuccesToast(context, msg);
-        Navigator.of(context).pushReplacementNamed(Tabs.routeName);
-      } else {
-        msg = msg == '-1' ? "Error!" : msg;
-        TOastNotification().showErrorToast(context, msg);
-        Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
-      }
-    } else {
-      Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
-    }
-  }
+  print('Showing notification with custom logo... ${message.data['type']}');
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(child: Image.asset(Assets.appIcon)),
-            /*Space(10.h),
-            TweenAnimationBuilder(
-              tween: Tween<double>(begin: 0, end: 1),
-              duration: Duration(seconds: 3),
-              builder: (context, double value, child) {
-                return Opacity(opacity: value, child: child);
-              },
-              child: Image.asset('assets/images/cloudbelly_logo.png',
-                  width: 200, height: 200),
-            ),
-
-            Lottie.asset('assets/Animation - 1710085539831.json',
-                width: 500, height: 500), // Lottie animation
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Text("Loading.....".toUpperCase(),
-                  style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600)),
-            ),*/
-          ],
-        ),
-      ),
-    );
-  }
+  await flutterLocalNotificationsPlugin.show(
+    message.hashCode,
+    message.notification?.title,
+    message.notification?.body,
+    platformChannelSpecifics,
+    payload: message.data['type'], // Add payload data if needed
+  );
+  print('Notification shown.');
 }
