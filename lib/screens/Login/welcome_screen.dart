@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;  // Add this to your pubspec.yaml
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloudbelly_app/screens/Login/commonLoginScreen.dart';
 import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
@@ -63,7 +65,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       final newVersion = await _getLatestVersionFromAPI();
 
       if (_isNewVersionAvailable(currentVersion, newVersion)) {
-        _showUpdateDialog();
+        _showUpdateDialog(newVersion);
       } else {
         _checkLoginStatus();
       }
@@ -102,40 +104,103 @@ Future<String> _getLatestVersionFromAPI() async {
     return false;
   }
 
-  void _showUpdateDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Update Available'),
-          content: Text(
-              'A new version of the app is available. Please update to continue.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _checkLoginStatus();
-              },
-              child: Text('No Thanks'),
+ void _showUpdateDialog(newVersion) {
+  showDialog(
+    barrierColor: Color(0xffEFF9FB),
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Color(0xff0A4C61),
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius(
+            cornerRadius: 20,
+            cornerSmoothing: 1,
+          ),
+        ),
+        title: Text(
+          'Update Available  ($newVersion)',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontFamily: 'Product Sans',
+          ),
+        ),
+        content: Text(
+          'A new version of the app is available. Please update to continue.',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            fontFamily: 'Product Sans',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _checkLoginStatus();
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.white,
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 12,
+                  cornerSmoothing: 1,
+                ),
+              ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                final url = Uri.parse(
-                    'https://play.google.com/store/apps/details?id=com.app.cloudbelly_app');
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url);
-                } else {
-                  print('Could not launch $url');
-                }
-              },
-              child: Text('Update'),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 2),
+              child: Text(
+                'No Thanks',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFFFA6E00),
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Product Sans',
+                ),
+              ),
             ),
-          ],
-        );
-      },
-    );
-  }
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final url = Uri.parse(
+                  'https://play.google.com/store/apps/details?id=com.app.cloudbelly_app');
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+              } else {
+                print('Could not launch $url');
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xffFA6E00),
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius(
+                  cornerRadius: 12,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            child: Container(
+               padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+              child: Text(
+                'Update',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontFamily: 'Product Sans',
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
 
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
