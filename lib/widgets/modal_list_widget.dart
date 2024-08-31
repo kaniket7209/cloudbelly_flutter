@@ -1,3 +1,4 @@
+import 'package:cloudbelly_app/NotificationScree.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -7,7 +8,8 @@ class UserDetailsModal extends StatefulWidget {
   final String title;
   final List<String> userIds;
   final String actionButtonText;
-  final VoidCallback onReload; // Callback to trigger reload in the parent widget
+  final VoidCallback
+      onReload; // Callback to trigger reload in the parent widget
 
   UserDetailsModal({
     required this.title,
@@ -26,7 +28,8 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
   @override
   void initState() {
     super.initState();
-    _userDetails = Provider.of<Auth>(context, listen: false).getUserInfo(widget.userIds);
+    _userDetails =
+        Provider.of<Auth>(context, listen: false).getUserInfo(widget.userIds);
   }
 
   bool checkFollow(String userId) {
@@ -38,6 +41,17 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
       }
     }
     return false;
+  }
+
+  String timeOfEvent(String userId) {
+    List<dynamic> temp =
+        Provider.of<Auth>(context, listen: false).userData?['followings'] ?? [];
+    for (var user in temp) {
+      if (user['user_id'] == userId) {
+        return "Followed ${timeAgo(user['followed_at'])}";
+      }
+    }
+    return "";
   }
 
   void _toggleFollowStatus(String userId) async {
@@ -89,7 +103,8 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.only(
                     topLeft: SmoothRadius(cornerRadius: 20, cornerSmoothing: 1),
-                    topRight: SmoothRadius(cornerRadius: 20, cornerSmoothing: 1),
+                    topRight:
+                        SmoothRadius(cornerRadius: 20, cornerSmoothing: 1),
                   ),
                 ),
               ),
@@ -97,22 +112,24 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                 children: [
                   SizedBox(height: 10),
                   Container(
-                    width: 40,
+                    width: 30,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: Color(0xffFA6E00),
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   Text(
                     widget.title,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Color(0xff0A4C61),
+                      fontFamily: 'Product Sans',
                     ),
                   ),
+                  SizedBox(height: 20),
                   Expanded(
                     child: ListView.builder(
                       controller: controller,
@@ -122,16 +139,63 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                         final isFollowing = checkFollow(user['_id']);
 
                         return ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: user['profile_photo'] != null
-                                ? NetworkImage(user['profile_photo'])
-                                : null,
-                            child: user['profile_photo'] == null
-                                ? Text(user['store_name'].substring(0, 1))
-                                : null,
+                          leading: Container(
+                            width: 50, // Set width for the avatar
+                            height: 50, // Set height for the avatar
+                            decoration: ShapeDecoration(
+                              color: Colors.grey[
+                                  200], // Background color if no image is present
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius:
+                                      15, // Adjust this value for desired squircle effect
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: Color(0xffA5C8C7).withOpacity(0.4),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                  15), // Ensure the image matches the squircle shape
+                              child: user['profile_photo'] != null
+                                  ? Image.network(
+                                      user['profile_photo'],
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Center(
+                                      child: Text(
+                                        user['store_name'].substring(0, 1),
+                                        style: TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                            ),
                           ),
-                          title: Text(user['store_name']),
-                          subtitle: Text(user['user_type']),
+                          title: Text(
+                            user['store_name'],
+                            style: TextStyle(
+                              fontFamily: 'Product Sans',
+                              fontSize: 16,
+                              color: user['user_type'] == 'Customer'
+                                  ? const Color(0xff2E0536)
+                                  : const Color(0xff0A4C61),
+                            ),
+                          ),
+                          subtitle: Text(
+                              timeOfEvent(
+                                user['_id'],
+                              ),
+                              style: TextStyle(
+                                  fontFamily: 'Product Sans',
+                                  fontSize: 12,
+                                  color: Color(0xffFA6E00))),
                           trailing: ElevatedButton(
                             onPressed: () => _toggleFollowStatus(user['_id']),
                             style: ElevatedButton.styleFrom(
@@ -141,11 +205,19 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                                   cornerSmoothing: 1,
                                 ),
                               ),
-                              backgroundColor: isFollowing ? Colors.red : Colors.blue,
+                              backgroundColor: isFollowing
+                                  ? Color(0xffF14343)
+                                  : Color(0xff0A4C61),
                             ),
-                            child: Text(
-                              isFollowing ? 'Unfollow' : 'Follow',
-                              style: TextStyle(color: Colors.white),
+                            child: Container(
+                              child: Text(
+                                isFollowing ? 'Unfollow' : 'Follow',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13),
+                              ),
                             ),
                           ),
                         );
