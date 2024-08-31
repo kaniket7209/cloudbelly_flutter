@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:ffi';
+import 'dart:typed_data';
 
 // import 'dart:html';
 
@@ -1841,7 +1842,36 @@ class Auth with ChangeNotifier {
       return '';
     }
   }
+  Future<Uint8List?> bellyAiTextToImage(String prompt) async {
+  final String url = 'https://app.cloudbelly.in/text-to-image';
 
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        // Add any other headers if necessary (e.g., Authorization)
+      },
+      body: {
+        'prompt': prompt,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // The response body contains the binary image data directly
+      return response.bodyBytes;
+    } else {
+      // Handle non-200 responses
+      print('Error: Server responded with status code ${response.statusCode}');
+      return null;
+    }
+  } catch (error) {
+    // Handle exceptions
+    print('Error: $error');
+    return null;
+  }
+}
+  
   Future<dynamic> unfollow(String id) async {
     final String url = 'https://app.cloudbelly.in/unfollow';
 

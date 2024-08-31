@@ -8,6 +8,7 @@ import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/cart.dart';
 import 'package:cloudbelly_app/screens/Tabs/belly_gpt.dart';
 import 'package:cloudbelly_app/screens/Tabs/coupon_screen.dart';
+import 'package:cloudbelly_app/screens/Tabs/image_generation.dart';
 import 'package:cloudbelly_app/screens/Tabs/order_page.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
 import 'package:cloudbelly_app/screens/Tabs/Search/search_view.dart';
@@ -224,15 +225,15 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                                   _bellyGpt,
                                 ),
                               ),
-                              // SizedBox(width: 30),
-                              // Expanded(
-                              //   child: _buildShortcutButton(
-                              //     context,
-                              //     'Edit menu',
+                              SizedBox(width: 30),
+                              Expanded(
+                                child: _buildShortcutButton(
+                                  context,
+                                  'Image Generation',
               
-                              //     _editMenu,
-                              //   ),
-                              // ),
+                                  _imageGeneration,
+                                ),
+                              ),
                             ],
                           ),
               
@@ -435,8 +436,17 @@ void _createNewCoupon(BuildContext context) {
   });
 }
 
-  void _editMenu() {
+  void _imageGeneration() {
     // Handle editing the menu
+      if (_isNavigating) return; // Prevents multiple navigations
+  
+  _isNavigating = true;
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => ImageGeneration()),
+  ).then((_) {
+    _isNavigating = false; // Reset the flag after navigation completes
+  });
   }
   void _bellyGpt(){
     if (_isNavigating) return; // Prevents multiple navigations
