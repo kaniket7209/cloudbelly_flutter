@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudbelly_app/NotificationScree.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:provider/provider.dart';
@@ -141,43 +142,59 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                         final isFollowing = checkFollow(user['_id']);
 
                         return ListTile(
-                          leading: Container(
-                            width: 50, // Set width for the avatar
-                            height: 50, // Set height for the avatar
-                            decoration: ShapeDecoration(
-                              color: Colors.grey[
-                                  200], // Background color if no image is present
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius:
-                                      15, // Adjust this value for desired squircle effect
-                                  cornerSmoothing: 1,
+                          leading: GestureDetector(
+                             onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileView(
+                      userIdList: [
+                       user['_id']
+                      ], // Adjust this according to your ProfileView constructor
+                    ),
+                  ),
+                ).then((value) {
+                  // You can clear the userId or perform any other actions here if needed
+                });
+              },
+                            child: Container(
+                              width: 50, // Set width for the avatar
+                              height: 50, // Set height for the avatar
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[
+                                    200], // Background color if no image is present
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius:
+                                        15, // Adjust this value for desired squircle effect
+                                    cornerSmoothing: 1,
+                                  ),
                                 ),
+                                shadows: [
+                                  BoxShadow(
+                                    color: Color(0xffA5C8C7).withOpacity(0.4),
+                                    blurRadius: 10,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                              shadows: [
-                                BoxShadow(
-                                  color: Color(0xffA5C8C7).withOpacity(0.4),
-                                  blurRadius: 10,
-                                  offset: Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  15), // Ensure the image matches the squircle shape
-                              child: user['profile_photo'] != null
-                                  ? Image.network(
-                                      user['profile_photo'],
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Center(
-                                      child: Text(
-                                        user['store_name'].substring(0, 1),
-                                        style: TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                    15), // Ensure the image matches the squircle shape
+                                child: user['profile_photo'] != null
+                                    ? Image.network(
+                                        user['profile_photo'],
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Center(
+                                        child: Text(
+                                          user['store_name'].substring(0, 1),
+                                          style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
-                                    ),
+                              ),
                             ),
                           ),
                           title: Text(

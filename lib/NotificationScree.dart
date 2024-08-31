@@ -2130,8 +2130,8 @@ print("serviceAvailable es  $serviceAvailable");
 
   Widget buildSocialNotificationList(
       String title, List notifications, bool showAll, String user_type) {
-    final List displayedNotifications =
-        showAll ? notifications : notifications.take(10).toList();
+    final List displayedNotifications =notifications;
+        
     Color boxShadowColor;
 
     if (user_type == 'Vendor') {
@@ -2189,35 +2189,7 @@ print("serviceAvailable es  $serviceAvailable");
                             fontSize: 18,
                             fontWeight: FontWeight.bold),
                       ),
-                      // if (notifications.length > 0)
-                      //   GestureDetector(
-                      //     onTap: () {
-                      //       setState(() {
-                      //         if (title == 'Socials') {
-                      //           showAllSocialNotifications =
-                      //               !showAllSocialNotifications;
-                      //         }
-                      //       });
-                      //     },
-                      //     child: Row(
-                      //       mainAxisSize: MainAxisSize.min,
-                      //       children: [
-                      //         Text(
-                      //           showAll ? 'See less' : 'See all',
-                      //           style: TextStyle(
-                      //               color: Color(0xff0A4C61),
-                      //               //  color: Colors.transparent,
-                      //               fontWeight: FontWeight.bold,
-                      //               fontFamily: 'Product Sans'),
-                      //         ),
-                      //         SizedBox(width: 5),
-                      //         Image.asset(
-                      //           'assets/icons/next_arrow.png',
-                      //           width: 10,
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   )
+                      
                     ],
                   ),
                 ),
