@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:cloudbelly_app/api_service.dart'; // Assuming you have this file to handle API calls
 
@@ -14,28 +15,46 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
   bool _isLoading = false;
 
   Future<void> _askBellyGPT() async {
-     setState(() {
+    print("Button clicked");
+
+    setState(() {
       _isLoading = true;
+      _formattedResponseWidgets = [
+        Center(
+          child: CircularProgressIndicator(),
+        ),
+      ];
     });
+
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+
     final prompt = _promptController.text.trim();
+    print("Prompt: $prompt");
 
     if (prompt.isEmpty) {
-      // Handle empty input
+      setState(() {
+        _isLoading = false;
+        _formattedResponseWidgets = [];
+      });
       return;
     }
 
-   
-
     try {
-      final response = await Provider.of<Auth>(context, listen: false)
-          .askBellyGPT(prompt); // Replace this with your actual API call
-
+      final response = await Provider.of<Auth>(context, listen: false).askBellyGPT(prompt);
+      print("Response received");
       setState(() {
         _formattedResponseWidgets = _formatResponse(response);
       });
     } catch (error) {
       print('Error: $error');
-      // Handle error, maybe show a Snackbar or Toast
+      setState(() {
+        _formattedResponseWidgets = [
+          Text(
+            'Error: $error',
+            style: TextStyle(color: Colors.red),
+          ),
+        ];
+      });
     } finally {
       setState(() {
         _isLoading = false;
@@ -58,7 +77,11 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
         line = line.replaceAll("**", "");
         widgets.add(Text(
           line,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, fontFamily: 'Product Sans', color: Color(0xff1B7997)),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              fontFamily: 'Product Sans',
+              color: Color(0xff1B7997)),
         ));
       } else if (RegExp(r'^\d+\..*').hasMatch(line) || line.startsWith('* ')) {
         // Handle list items
@@ -66,8 +89,11 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
           isListOpen = true;
           widgets.add(SizedBox(height: 10));
         }
-        widgets.add(Text("• ${line.replaceAll(RegExp(r'^\d+\.\s*|\*\s*'), '')}",
-            style: TextStyle(fontSize: 16,color: Color(0xff1B7997),fontFamily: 'Product Sans')));
+        widgets.add(Text(
+          "• ${line.replaceAll(RegExp(r'^\d+\.\s*|\*\s*'), '')}",
+          style: TextStyle(
+              fontSize: 16, color: Color(0xff1B7997), fontFamily: 'Product Sans'),
+        ));
       } else {
         if (isListOpen) {
           isListOpen = false;
@@ -75,7 +101,8 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
         }
         widgets.add(Text(
           line,
-          style: TextStyle(fontSize: 16,color: Color(0xff1B7997),fontFamily: 'Product Sans'),
+          style: TextStyle(
+              fontSize: 16, color: Color(0xff1B7997), fontFamily: 'Product Sans'),
         ));
       }
     }
@@ -84,6 +111,7 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
   }
 
   void _showInputBottomSheet(BuildContext context) {
+    print("_isLoading $_isLoading");
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -162,7 +190,13 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                     ),
                     SizedBox(height: 20),
                     GestureDetector(
-                      onTap: _isLoading ? null : _askBellyGPT, // Prevent multiple taps
+                      onTap: _isLoading
+                          ? null
+                          : () {
+                              SystemChannels.textInput
+                                  .invokeMethod('TextInput.hide');
+                              _askBellyGPT();
+                            }, // Prevent multiple taps
                       child: Center(
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -209,6 +243,7 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("_isLoading_isLoading  $_isLoading");
     return Scaffold(
       backgroundColor: Color(0xffEFF9FB),
       body: Padding(
@@ -244,7 +279,7 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                           children: [
                             IconButton(
                               icon: Image.asset(
-                                'assets/images/back_double_arrow.png',
+                                                                'assets/images/back_double_arrow.png',
                                 color: Color(0xffFA6E00),
                                 width: 24,
                                 height: 24,
@@ -265,7 +300,11 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                           ],
                         ),
                         SizedBox(height: 8),
-                        if (_formattedResponseWidgets.isNotEmpty)
+                        if (_isLoading) 
+                          Center(
+                            child: CircularProgressIndicator(), // Show a loading indicator
+                          )
+                        else if (_formattedResponseWidgets.isNotEmpty)
                           ..._formattedResponseWidgets,
                       ],
                     ),
@@ -297,10 +336,11 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                   child: Text(
                     'Ask bellyGPT',
                     style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: 'Product Sans',
-                        fontWeight: FontWeight.bold,
-                                               color: Colors.white),
+                      fontSize: 16,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
