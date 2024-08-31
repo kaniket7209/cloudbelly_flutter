@@ -9,6 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
+import 'package:share_plus/share_plus.dart';
+
 class ImageGeneration extends StatefulWidget {
   @override
   _ImageGenerationState createState() => _ImageGenerationState();
@@ -237,7 +239,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
                 padding: EdgeInsets.all(16.0),
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 0,vertical: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 0, vertical: 20),
                     decoration: ShapeDecoration(
                       color: Colors.white,
                       shape: SmoothRectangleBorder(
@@ -256,7 +258,6 @@ class _ImageGenerationState extends State<ImageGeneration> {
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      
                       children: [
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -316,33 +317,43 @@ class _ImageGenerationState extends State<ImageGeneration> {
                         else if (_imageData != null)
                           Column(
                             children: [
-                              SizedBox(height: 30,),
+                              SizedBox(
+                                height: 30,
+                              ),
                               Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                alignment: Alignment.centerLeft,
-                                  child: Text(_promptController.text.trim(),style: TextStyle(fontFamily: 'Product Sans',fontSize: 18,fontWeight: FontWeight.bold,color: Color(0xff1B7997)),)),
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    _promptController.text.trim(),
+                                    style: TextStyle(
+                                        fontFamily: 'Product Sans',
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff1B7997)),
+                                  )),
                               if (_imageData !=
                                   null) // Ensure image data is not null
                                 Container(
                                   width: double.infinity,
                                   height: MediaQuery.of(context).size.width *
                                       1, // Fixed height based on screen width
-                                   decoration: ShapeDecoration(
-                    shadows: [
-                      BoxShadow(
-                        offset: const Offset(0, 3),
-                        color: Color(0xff1B7997).withOpacity(0.31),
-                        blurRadius: 30,
-                      ),
-                    ],
-                    color: Color(0xffFA6E00),
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                        cornerRadius: 15,
-                        cornerSmoothing: 1,
-                      ),
-                    ),
-                  ),
+                                  decoration: ShapeDecoration(
+                                    shadows: [
+                                      BoxShadow(
+                                        offset: const Offset(0, 3),
+                                        color:
+                                            Color(0xff1B7997).withOpacity(0.31),
+                                        blurRadius: 30,
+                                      ),
+                                    ],
+                                    color: Color(0xffFA6E00),
+                                    shape: SmoothRectangleBorder(
+                                      borderRadius: SmoothBorderRadius(
+                                        cornerRadius: 15,
+                                        cornerSmoothing: 1,
+                                      ),
+                                    ),
+                                  ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(15),
                                     child: Image.memory(
@@ -370,7 +381,27 @@ class _ImageGenerationState extends State<ImageGeneration> {
                               ElevatedButton.icon(
                                 onPressed: _downloadImage,
                                 icon: Icon(Icons.download_rounded),
-                                label: Text('Download Image'),
+                                label: Text('Download Image',style: TextStyle(fontFamily: 'Product Sans',fontWeight: FontWeight.bold,letterSpacing: 1),),
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Color(0xffFA6E00),
+                                  shape: SmoothRectangleBorder(
+                                    borderRadius: SmoothBorderRadius(
+                                      cornerRadius: 15,
+                                      cornerSmoothing: 1,
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                ),
+                              ),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  _shareImage(
+                                      _imageData); // Call the async function within a synchronous function
+                                },
+                                icon: Icon(Icons.share),
+                                label: Text('Share Image',style: TextStyle(fontFamily: 'Product Sans',fontWeight: FontWeight.bold,letterSpacing: 1)),
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
                                   backgroundColor: Color(0xff0A4C61),
@@ -384,6 +415,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                       horizontal: 20, vertical: 10),
                                 ),
                               ),
+                          
                             ],
                           )
                         else
@@ -441,5 +473,25 @@ class _ImageGenerationState extends State<ImageGeneration> {
         ),
       ),
     );
+  }
+}
+
+Future<void> _shareImage(Uint8List? imageData) async {
+  if (imageData == null) return;
+
+  try {
+    final directory = await getTemporaryDirectory();
+    final imagePath = '${directory.path}/generated_image.jpg';
+    final imageFile = File(imagePath);
+
+    await imageFile.writeAsBytes(imageData);
+
+    await Share.shareFiles([imageFile.path],
+        text: 'Check out this image I generated using Belly AI from Cloudbelly . !');
+  } catch (e) {
+    print('Error sharing image: $e');
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(content: Text('Error sharing image')),
+    // );
   }
 }
