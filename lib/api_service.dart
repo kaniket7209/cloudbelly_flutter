@@ -1815,13 +1815,14 @@ class Auth with ChangeNotifier {
   }
 
   Future<dynamic> follow(String id) async {
+
     final String url = 'https://app.cloudbelly.in/follow';
 
     final Map<String, dynamic> requestBody = {
       "current_user_id": userData?['user_id'],
       "profile_user_id": id,
     };
-
+print("requestBody ${jsonEncode(requestBody)}");
     try {
       final response = await http.post(
         Uri.parse(url),

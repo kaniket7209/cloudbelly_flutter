@@ -1404,11 +1404,9 @@ class _ProfileState extends State<Profile> {
           .showErrorToast(context, 'Your KYC status is incomplete');
     }
   }
-}
-
 void _showFollowers(BuildContext context, List<dynamic> followers) {
   List<String> userIds = followers.map((item) => item['user_id'] as String).toList();
-  
+
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -1416,16 +1414,18 @@ void _showFollowers(BuildContext context, List<dynamic> followers) {
     builder: (context) => UserDetailsModal(
       title: 'Followers',
       userIds: userIds,
-      actionButtonText: 'Unfollow', // Button text will be dynamically determined
-      onActionButtonPressed: () {
-        // This function will be defined inside UserDetailsModal
+      actionButtonText: 'Unfollow',
+      onReload: () {
+        // Your code to reload the parent widget's state
+        fetchUserDetailsbyKey();
+       
       },
     ),
   );
 }
 void _showFollowings(BuildContext context, List<dynamic> followings) {
   List<String> userIds = followings.map((item) => item['user_id'] as String).toList();
-  
+
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -1433,13 +1433,19 @@ void _showFollowings(BuildContext context, List<dynamic> followings) {
     builder: (context) => UserDetailsModal(
       title: 'Followings',
       userIds: userIds,
-      actionButtonText: 'Unfollow', // Button text will be dynamically determined
-      onActionButtonPressed: () {
-        // This function will be defined inside UserDetailsModal
+      actionButtonText: 'Unfollow',
+      onReload: () {
+        // Your code to reload the parent widget's state
+         fetchUserDetailsbyKey();
+       
       },
     ),
   );
 }
+}
+
+
+
 Future<void> _launchURL(String url) async {
   try {
     final Uri urlLink = Uri.parse(url);
