@@ -9,6 +9,7 @@ import 'package:cloudbelly_app/screens/Tabs/Dashboard/social_status.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/Profile_setting/profile_setting_view.dart';
 import 'package:cloudbelly_app/widgets/appwide_banner.dart';
 import 'package:cloudbelly_app/widgets/custom_icon_button.dart';
+import 'package:cloudbelly_app/widgets/modal_list_widget.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -363,7 +364,7 @@ class StoreLogoWidget extends StatelessWidget {
         const Space(15),
         userData?['profile_photo'] != ''
             ? GestureDetector(
-              onTap: () => (),
+              onTap: () => openFullScreen(context,userData?['profile_photo']),
               child: Container(
                   height: 70,
                   width: 70,

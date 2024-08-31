@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudbelly_app/NotificationScree.dart';
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:flutter/material.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:provider/provider.dart';
@@ -232,4 +234,102 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
       },
     );
   }
+}
+
+Future<void> openFullScreen(
+  BuildContext context,
+  String imageUrl,
+) async {
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return Container(
+            decoration: const ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                  color: Color(0x7FB1D9D8),
+                  blurRadius: 6,
+                  offset: Offset(0, 4),
+                  spreadRadius: 0,
+                ),
+              ],
+              color: Colors.white,
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.only(
+                  topLeft: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                  topRight: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                ),
+              ),
+            ),
+            height: MediaQuery.of(context).size.height * 0.58,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Center(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 10),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                      width: 30,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFA6E00).withOpacity(0.55),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(20, 13, 20, 20),
+                    width: double.infinity,
+                    decoration: ShapeDecoration(
+                      shadows: [
+                        BoxShadow(
+                          color: Color(0xff0F3A47).withOpacity(0.45),
+                          blurRadius: 25,
+                          offset: Offset(3, 4),
+                          spreadRadius: 0,
+                        ),
+                      ],
+                      color: const Color.fromRGBO(239, 255, 254, 1),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 30,
+                          cornerSmoothing: 1,
+                        ),
+                      ),
+                    ),
+                    child: ClipSmoothRect(
+                      radius: SmoothBorderRadius(
+                        cornerRadius: 30,
+                        cornerSmoothing: 1,
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => GlobalVariables()
+                            .imageloadingBuilderForImage(context, null),
+                        errorWidget: (context, url, error) => GlobalVariables()
+                            .imageErrorBuilderForImage(context, error, null),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
 }
