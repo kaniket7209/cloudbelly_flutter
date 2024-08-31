@@ -1,4 +1,5 @@
 import 'package:cloudbelly_app/api_service.dart';
+import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -48,6 +49,30 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
     }
   }
 
+  bool checkFollow(String userId) {
+    List<dynamic> followings =
+        Provider.of<Auth>(context, listen: false).userData?['followings'] ?? [];
+    for (var user in followings) {
+      if (user['user_id'] == userId) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void _toggleFollow(String userId) async {
+    final userProvider = Provider.of<Auth>(context, listen: false);
+
+    if (checkFollow(userId)) {
+      await userProvider.unfollow(userId);
+    } else {
+      await userProvider.follow(userId);
+    }
+
+    // Refresh the user details after follow/unfollow action
+    _fetchUserDetails();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
@@ -95,19 +120,38 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                             itemCount: users.length,
                             itemBuilder: (context, index) {
                               final user = users[index];
+                              final isFollowing = checkFollow(user['_id']);
+
                               return ListTile(
-                                leading: CircleAvatar(
-                                  backgroundImage: user['profile_photo'] != null
-                                      ? NetworkImage(user['profile_photo'])
-                                      : null,
-                                  child: user['profile_photo'] == null
-                                      ? Text(user['store_name']?.substring(0, 1) ?? '')
-                                      : null,
+                                leading: GestureDetector(
+                                  onTap: () =>  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileView(
+                      userIdList: [
+                       user['_id']
+                      ], // Adjust this according to your ProfileView constructor
+                    ),
+                  ),
+                ).then((value) {
+                  // You can clear the userId or perform any other actions here if needed
+                }),
+                                  child: Container(
+                                    
+                                    child: CircleAvatar(
+                                      backgroundImage: user['profile_photo'] != null
+                                          ? NetworkImage(user['profile_photo'])
+                                          : null,
+                                      child: user['profile_photo'] == null
+                                          ? Text(user['store_name']?.substring(0, 1) ?? '')
+                                          : null,
+                                    ),
+                                  ),
                                 ),
                                 title: Text(user['store_name'] ?? ''),
                                 subtitle: Text(user['user_name'] ?? ''),
                                 trailing: ElevatedButton(
-                                  onPressed: widget.onActionButtonPressed,
+                                  onPressed: () => _toggleFollow(user['_id']),
                                   style: ElevatedButton.styleFrom(
                                     shape: SmoothRectangleBorder(
                                       borderRadius: SmoothBorderRadius(
@@ -115,10 +159,10 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                                         cornerSmoothing: 1,
                                       ),
                                     ),
-                                    backgroundColor: Colors.blue,
+                                    backgroundColor: isFollowing ? Colors.red : Colors.blue,
                                   ),
                                   child: Text(
-                                    widget.actionButtonText,
+                                    isFollowing ? 'Unfollow' : 'Follow',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),

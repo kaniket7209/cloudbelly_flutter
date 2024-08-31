@@ -1407,23 +1407,8 @@ class _ProfileState extends State<Profile> {
 }
 
 void _showFollowers(BuildContext context, List<dynamic> followers) {
-  // Convert the followers to a list of user IDs
-  List<String> userIds = [];
-
-  for (var item in followers) {
-    if (item is Map<String, dynamic> && item.containsKey('user_id')) {
-      final userId = item['user_id'];
-      if (userId != null) {
-        userIds.add(userId.toString()); // Ensure it's converted to String
-      }
-    }
-  }
-
-  if (userIds.isEmpty) {
-    print("No valid userIds found.");
-    return;
-  }
-
+  List<String> userIds = followers.map((item) => item['user_id'] as String).toList();
+  
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -1431,26 +1416,16 @@ void _showFollowers(BuildContext context, List<dynamic> followers) {
     builder: (context) => UserDetailsModal(
       title: 'Followers',
       userIds: userIds,
-      actionButtonText: 'Unfollow',
+      actionButtonText: 'Unfollow', // Button text will be dynamically determined
       onActionButtonPressed: () {
-        // Define what should happen when the button is pressed
+        // This function will be defined inside UserDetailsModal
       },
     ),
   );
 }
-
 void _showFollowings(BuildContext context, List<dynamic> followings) {
-  // Convert the followings to a list of user IDs
-  List<String> userIds = followings
-      .map((item) => item['user_id'] as String)
-      .where((id) => id != null)
-      .toList();
-
-  if (userIds.isEmpty) {
-    print("No valid userIds found.");
-    return;
-  }
-
+  List<String> userIds = followings.map((item) => item['user_id'] as String).toList();
+  
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -1458,14 +1433,13 @@ void _showFollowings(BuildContext context, List<dynamic> followings) {
     builder: (context) => UserDetailsModal(
       title: 'Followings',
       userIds: userIds,
-      actionButtonText: 'Unfollow',
+      actionButtonText: 'Unfollow', // Button text will be dynamically determined
       onActionButtonPressed: () {
-        // Define what should happen when the button is pressed
+        // This function will be defined inside UserDetailsModal
       },
     ),
   );
 }
-
 Future<void> _launchURL(String url) async {
   try {
     final Uri urlLink = Uri.parse(url);
