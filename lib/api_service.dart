@@ -71,8 +71,6 @@ class Auth with ChangeNotifier {
           order['status'] == 'assigned' ||
           order['status'] == 'dispatched' ||
           order['status'] == 'self_delivery' ||
-         
-          
           order['status'] == 'reached_pickup' ||
           order['status'] == 'order_accepted' ||
           order['status'] == 'order_cancelled' ||
@@ -90,12 +88,8 @@ class Auth with ChangeNotifier {
           // order['status'] == 'Delivered'
           )
       .toList();
-       List<Map<String, dynamic>> get deliveryStatus => orderDetails
-      .where((order) =>
-              order['delivery_status'] == 'assigning' 
-            
-         
-          )
+  List<Map<String, dynamic>> get deliveryStatus => orderDetails
+      .where((order) => order['delivery_status'] == 'assigning')
       .toList();
 
   List<Map<String, dynamic>> get paymentVerifications => paymentDetails;
@@ -211,69 +205,57 @@ class Auth with ChangeNotifier {
       throw Exception('Failed to search  rider for this order');
     }
   }
- Future<dynamic> getTaskStatus(
-       taskId) async {
+
+  Future<dynamic> getTaskStatus(taskId) async {
     final response = await http.post(
       Uri.parse("https://app.cloudbelly.in/task_status"),
       headers: headers,
       body: jsonEncode({
         "task_id": taskId,
-        
       }),
     );
     if (response.statusCode == 200) {
       print("resTask ${json.encode(response.body)}");
       return response.body;
-     
     } else {
       throw Exception('Task not found');
     }
   }
-  
-  Future<dynamic> cancelDeliveryTask(
-       taskId,orderFrom,userId,orderId) async {
+
+  Future<dynamic> cancelDeliveryTask(taskId, orderFrom, userId, orderId) async {
     final response = await http.post(
       Uri.parse("https://app.cloudbelly.in/order/cancel_task"),
       headers: headers,
       body: jsonEncode({
         "task_id": taskId,
-         "user_id": userId,
+        "user_id": userId,
         "order_from_user_id": orderFrom,
         "order_id": orderId
-
-        
       }),
     );
     if (response.statusCode == 200) {
       print("cancekTask ${json.encode(response.body)}");
       return response.body;
-     
     } else {
       throw Exception('Task not found');
     }
   }
-  
+
   // cancel_delivery
-  Future<dynamic> cancelDelivery(
-       taskId) async {
+  Future<dynamic> cancelDelivery(taskId) async {
     final response = await http.post(
       Uri.parse("https://app.cloudbelly.in/cancel_delivery"),
       headers: headers,
-      body: jsonEncode({
-        "task_id": taskId
-
-        
-      }),
+      body: jsonEncode({"task_id": taskId}),
     );
     if (response.statusCode == 200) {
       print("cancekDel ${json.encode(response.body)}");
       return response.body;
-     
     } else {
       throw Exception('Task not found');
     }
   }
-  
+
   Future<void> markOrderAsDelivered(
       String orderId, String userId, String orderFrom) async {
     final response = await http.post(
@@ -1806,7 +1788,7 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-     
+
       return jsonDecode((response.body));
     } catch (error) {
       // Handle exceptions
@@ -1815,14 +1797,13 @@ class Auth with ChangeNotifier {
   }
 
   Future<dynamic> follow(String id) async {
-
     final String url = 'https://app.cloudbelly.in/follow';
 
     final Map<String, dynamic> requestBody = {
       "current_user_id": userData?['user_id'],
       "profile_user_id": id,
     };
-print("requestBody ${jsonEncode(requestBody)}");
+    print("requestBody ${jsonEncode(requestBody)}");
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -1837,6 +1818,27 @@ print("requestBody ${jsonEncode(requestBody)}");
     } catch (error) {
       // Handle exceptions
       return '-1';
+    }
+  }
+
+  Future<dynamic> askBellyGPT(String prompt) async {
+    final String url = 'https://app.cloudbelly.in/belly-gpt';
+
+    final Map<String, dynamic> requestBody = {
+      "query": prompt,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      notifyListeners();
+      return jsonDecode(response.body)['response'];
+    } catch (error) {
+      // Handle exceptions
+      return '';
     }
   }
 
@@ -2334,8 +2336,6 @@ print("requestBody ${jsonEncode(requestBody)}");
         body: jsonEncode(requestBody),
       );
 
-      
-
       return jsonDecode(response.body);
     } catch (error) {
       // Handle exceptions
@@ -2363,8 +2363,6 @@ print("requestBody ${jsonEncode(requestBody)}");
         headers: headers,
         body: jsonEncode(requestBody),
       );
-
-    
 
       return jsonDecode((response.body));
     } catch (error) {
@@ -2398,7 +2396,6 @@ print("requestBody ${jsonEncode(requestBody)}");
         headers: headers,
         body: jsonEncode(requestBody),
       );
-    
 
       return jsonDecode((response.body));
     } catch (error) {

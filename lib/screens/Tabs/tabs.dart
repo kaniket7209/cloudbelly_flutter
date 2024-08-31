@@ -6,6 +6,7 @@ import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/cart.dart';
+import 'package:cloudbelly_app/screens/Tabs/belly_gpt.dart';
 import 'package:cloudbelly_app/screens/Tabs/coupon_screen.dart';
 import 'package:cloudbelly_app/screens/Tabs/order_page.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/create_feed.dart';
@@ -212,28 +213,28 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       SizedBox(height: 20),
                       Column(
                         children: [
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Expanded(
-                          //       child: _buildShortcutButton(
-                          //         context,
-                          //         'Add Menu',
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: _buildShortcutButton(
+                                  context,
+                                  'Belly GPT',
               
-                          //         _createNewCoupon,
-                          //       ),
-                          //     ),
-                          //     SizedBox(width: 30),
-                          //     Expanded(
-                          //       child: _buildShortcutButton(
-                          //         context,
-                          //         'Edit menu',
+                                  _bellyGpt,
+                                ),
+                              ),
+                              // SizedBox(width: 30),
+                              // Expanded(
+                              //   child: _buildShortcutButton(
+                              //     context,
+                              //     'Edit menu',
               
-                          //         _editMenu,
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
+                              //     _editMenu,
+                              //   ),
+                              // ),
+                            ],
+                          ),
               
                           SizedBox(height: 10),
               
@@ -436,6 +437,17 @@ void _createNewCoupon(BuildContext context) {
 
   void _editMenu() {
     // Handle editing the menu
+  }
+  void _bellyGpt(){
+    if (_isNavigating) return; // Prevents multiple navigations
+  
+  _isNavigating = true;
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => BellyGPTPage()),
+  ).then((_) {
+    _isNavigating = false; // Reset the flag after navigation completes
+  });
   }
 
   void _takeOrder() {
