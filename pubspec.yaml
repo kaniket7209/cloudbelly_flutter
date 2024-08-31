@@ -123,6 +123,7 @@ flutter:
     - assets/Animation - thanks.json
     - assets/Animation - welcome.json
     - assets/Animation - panda.json
+    - assets/Animation - panda_photo.json
     - assets/assigning.json
     - assets/images/Phone.png
     - assets/images/Heart.png

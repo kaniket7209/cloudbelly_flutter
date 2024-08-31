@@ -419,17 +419,35 @@ class _ImageGenerationState extends State<ImageGeneration> {
                             ],
                           )
                         else
-                          Center(
-                            child: Text(
-                              'No image generated yet.',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'Product Sans',
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff0A4C61),
-                              ),
-                            ),
-                          ),
+                        Container(
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,  // Centers the content vertically
+    children: [
+      Container(
+        // Optional: Uncomment and set constraints if needed
+        // constraints: BoxConstraints(maxWidth: 100.w),
+        child: Lottie.asset(
+          'assets/Animation - panda.json',
+          width: 50.w, // Responsive width using responsive_sizer
+        ),
+      ),
+      SizedBox(height: 16), // Optional: Add spacing between Lottie animation and text
+      Center(
+        child: Text(
+          'No image generated yet.',
+          style: TextStyle(
+            fontSize: 16,
+            fontFamily: 'Product Sans',
+            fontWeight: FontWeight.bold,
+            color: Color(0xff0A4C61),
+          ),
+        ),
+      ),
+     
+      
+    ],
+  ),
+)
                       ],
                     ),
                   ),
