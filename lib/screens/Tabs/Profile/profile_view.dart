@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
+import 'package:cloudbelly_app/widgets/modal_list_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloudbelly_app/models/model.dart';
 import 'package:cloudbelly_app/screens/Tabs/Cart/provider/view_cart_provider.dart';
@@ -417,61 +418,65 @@ class _ProfileViewState extends State<ProfileView> {
                                                         child: userList.first
                                                                     .profilePhoto !=
                                                                 null
-                                                            ? Container(
-                                                                height: 70,
-                                                                width: 70,
-                                                                decoration:
-                                                                    ShapeDecoration(
-                                                                  shadows: [
-                                                                    BoxShadow(
-                                                                      offset:
-                                                                          Offset(
-                                                                              1,
-                                                                              4),
-                                                                      color: userList.first.userType ==
-                                                                              UserType
-                                                                                  .Vendor.name
-                                                                          ? const Color
-                                                                              .fromRGBO(
-                                                                              165,
-                                                                              200,
-                                                                              199,
-                                                                              0.6)
-                                                                          : userList.first.userType == UserType.Supplier.name
-                                                                              ? const Color.fromRGBO(77, 191, 74, 0.6)
-                                                                              : const Color.fromRGBO(188, 115, 188, 0.6),
-                                                                      blurRadius:
-                                                                          20,
-                                                                    )
-                                                                  ],
-                                                                  shape:
-                                                                      SmoothRectangleBorder(),
-                                                                ),
-                                                                child:
-                                                                    ClipSmoothRect(
-                                                                  radius:
-                                                                      SmoothBorderRadius(
-                                                                    cornerRadius:
-                                                                        22,
-                                                                    cornerSmoothing:
-                                                                        1,
+                                                            ? GestureDetector(
+                                                             onTap: () => openFullScreen(context, userList.first
+                                                                              .profilePhoto ??''),
+                                                              child: Container(
+                                                                  height: 70,
+                                                                  width: 70,
+                                                                  decoration:
+                                                                      ShapeDecoration(
+                                                                    shadows: [
+                                                                      BoxShadow(
+                                                                        offset:
+                                                                            Offset(
+                                                                                1,
+                                                                                4),
+                                                                        color: userList.first.userType ==
+                                                                                UserType
+                                                                                    .Vendor.name
+                                                                            ? const Color
+                                                                                .fromRGBO(
+                                                                                165,
+                                                                                200,
+                                                                                199,
+                                                                                0.6)
+                                                                            : userList.first.userType == UserType.Supplier.name
+                                                                                ? const Color.fromRGBO(77, 191, 74, 0.6)
+                                                                                : const Color.fromRGBO(188, 115, 188, 0.6),
+                                                                        blurRadius:
+                                                                            20,
+                                                                      )
+                                                                    ],
+                                                                    shape:
+                                                                        SmoothRectangleBorder(),
                                                                   ),
-                                                                  child: Image
-                                                                      .network(
-                                                                    userList.first
-                                                                            .profilePhoto ??
-                                                                        "",
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    loadingBuilder:
-                                                                        GlobalVariables()
-                                                                            .loadingBuilderForImage,
-                                                                    errorBuilder:
-                                                                        GlobalVariables()
-                                                                            .ErrorBuilderForImage,
+                                                                  child:
+                                                                      ClipSmoothRect(
+                                                                    radius:
+                                                                        SmoothBorderRadius(
+                                                                      cornerRadius:
+                                                                          22,
+                                                                      cornerSmoothing:
+                                                                          1,
+                                                                    ),
+                                                                    child: Image
+                                                                        .network(
+                                                                      userList.first
+                                                                              .profilePhoto ??
+                                                                          "",
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      loadingBuilder:
+                                                                          GlobalVariables()
+                                                                              .loadingBuilderForImage,
+                                                                      errorBuilder:
+                                                                          GlobalVariables()
+                                                                              .ErrorBuilderForImage,
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                              )
+                                                            )
                                                             : Container(
                                                                 height: 70,
                                                                 width: 70,
