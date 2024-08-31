@@ -1,8 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:cloudbelly_app/api_service.dart'; // Assuming you have this file to handle API calls
+import 'package:cloudbelly_app/api_service.dart';
+import 'package:responsive_sizer/responsive_sizer.dart'; // Assuming you have this file to handle API calls
 
 class BellyGPTPage extends StatefulWidget {
   @override
@@ -40,7 +44,8 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
     }
 
     try {
-      final response = await Provider.of<Auth>(context, listen: false).askBellyGPT(prompt);
+      final response =
+          await Provider.of<Auth>(context, listen: false).askBellyGPT(prompt);
       print("Response received");
       setState(() {
         _formattedResponseWidgets = _formatResponse(response);
@@ -92,7 +97,9 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
         widgets.add(Text(
           "• ${line.replaceAll(RegExp(r'^\d+\.\s*|\*\s*'), '')}",
           style: TextStyle(
-              fontSize: 16, color: Color(0xff1B7997), fontFamily: 'Product Sans'),
+              fontSize: 16,
+              color: Color(0xff1B7997),
+              fontFamily: 'Product Sans'),
         ));
       } else {
         if (isListOpen) {
@@ -102,7 +109,9 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
         widgets.add(Text(
           line,
           style: TextStyle(
-              fontSize: 16, color: Color(0xff1B7997), fontFamily: 'Product Sans'),
+              fontSize: 16,
+              color: Color(0xff1B7997),
+              fontFamily: 'Product Sans'),
         ));
       }
     }
@@ -193,13 +202,24 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                       onTap: _isLoading
                           ? null
                           : () {
-                              SystemChannels.textInput
-                                  .invokeMethod('TextInput.hide');
+                              if (FocusScope.of(context).hasFocus) {
+                                // If the keyboard is open, close it first
+                                SystemChannels.textInput
+                                    .invokeMethod('TextInput.hide');
+                              }
+
+                              // Set loading state regardless of keyboard status
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              Navigator.of(context).pop();
+
                               _askBellyGPT();
-                            }, // Prevent multiple taps
+                            },
                       child: Center(
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
                           decoration: ShapeDecoration(
                             shadows: [
                               BoxShadow(
@@ -208,7 +228,9 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                                 blurRadius: 30,
                               ),
                             ],
-                            color: _isLoading ? Colors.grey : Color(0xffFA6E00), // Disable color if loading
+                            color: _isLoading
+                                ? Colors.grey
+                                : Color(0xffFA6E00), // Disable color if loading
                             shape: SmoothRectangleBorder(
                               borderRadius: SmoothBorderRadius(
                                 cornerRadius: 15,
@@ -218,7 +240,8 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                           ),
                           child: _isLoading
                               ? CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
                                 )
                               : Text(
                                   'Ask bellyGPT',
@@ -243,16 +266,17 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("_isLoading_isLoading  $_isLoading");
     return Scaffold(
       backgroundColor: Color(0xffEFF9FB),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: ListView(
+                padding: EdgeInsets.all(
+                    16.0), // Add padding to give some space around the container
                 children: [
                   Container(
                     padding: EdgeInsets.all(16.0),
@@ -260,15 +284,16 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                       color: Colors.white,
                       shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(
-                          cornerRadius: 20,
-                          cornerSmoothing: 1,
+                          cornerRadius: 30, // Adjust this value as needed
+                          cornerSmoothing:
+                              1, // Keep this value to ensure smooth squircle shape
                         ),
                       ),
                       shadows: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: Offset(0, 5),
+                          color: Color(0xffA5C8C7).withOpacity(0.4),
+                          blurRadius: 25,
+                          offset: Offset(0, 4),
                         ),
                       ],
                     ),
@@ -279,7 +304,7 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                           children: [
                             IconButton(
                               icon: Image.asset(
-                                                                'assets/images/back_double_arrow.png',
+                                'assets/images/back_double_arrow.png',
                                 color: Color(0xffFA6E00),
                                 width: 24,
                                 height: 24,
@@ -300,9 +325,32 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                           ],
                         ),
                         SizedBox(height: 8),
-                        if (_isLoading) 
+                        if (_isLoading)
                           Center(
-                            child: CircularProgressIndicator(), // Show a loading indicator
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(height: 30.h,),
+                               
+                                Container(
+                                  constraints: BoxConstraints(maxWidth: 100.w),
+                                  child: Lottie.asset(
+                                      'assets/Animation - panda.json',
+                                      width: 100.w,
+                                      ),
+                                ),
+                                 Text(
+                                  'Loading ...',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'Product Sans',
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1,
+                                    color: Color(0xff0A4C61),
+                                  ),
+                                ),
+                              ],
+                            ), // Show a loading indicator
                           )
                         else if (_formattedResponseWidgets.isNotEmpty)
                           ..._formattedResponseWidgets,

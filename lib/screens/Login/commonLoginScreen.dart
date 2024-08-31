@@ -1051,7 +1051,8 @@ Future<void> openThankYouScreen(BuildContext context) async {
               right: 10,
               top: 1,
             ),
-            child: Center(
+            child:
+             Center(
               child: Container(
                 constraints: BoxConstraints(maxWidth: 100.w),
                 child: Lottie.asset(
