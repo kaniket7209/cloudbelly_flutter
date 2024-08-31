@@ -2,7 +2,9 @@
 
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloudbelly_app/widgets/modal_list_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
@@ -552,32 +554,62 @@ class _ProfileState extends State<Profile> {
                                               "",
                                           txt: 'Rating',
                                         ),
-                                        ColumnWidgetHomeScreen(
-                                          data: Provider.of<Auth>(context,
-                                                          listen: false)
-                                                      .userData?['followers'] !=
-                                                  null
-                                              ? (Provider.of<Auth>(context,
-                                                          listen: false)
-                                                      .userData?['followers'])
-                                                  .length
-                                                  .toString()
-                                              : "",
-                                          txt: 'Followers',
+                                        GestureDetector(
+                                          onTap: () {
+                                            final List<dynamic>
+                                                dynamicFollowers =
+                                                Provider.of<Auth>(context,
+                                                                listen: false)
+                                                            .userData?[
+                                                        'followers'] ??
+                                                    [];
+
+                                            _showFollowers(
+                                                context, dynamicFollowers);
+                                          },
+                                          child: ColumnWidgetHomeScreen(
+                                            data: Provider.of<Auth>(context,
+                                                                listen: false)
+                                                            .userData?[
+                                                        'followers'] !=
+                                                    null
+                                                ? (Provider.of<Auth>(context,
+                                                            listen: false)
+                                                        .userData?['followers'])
+                                                    .length
+                                                    .toString()
+                                                : "",
+                                            txt: 'Followers',
+                                          ),
                                         ),
-                                        ColumnWidgetHomeScreen(
-                                          data: Provider.of<Auth>(context,
-                                                              listen: false)
-                                                          .userData?[
-                                                      'followings'] !=
-                                                  null
-                                              ? (Provider.of<Auth>(context,
-                                                          listen: false)
-                                                      .userData?['followings'])
-                                                  .length
-                                                  .toString()
-                                              : "",
-                                          txt: 'Following',
+                                        GestureDetector(
+                                          onTap: () {
+                                            final List<dynamic>
+                                                dynamicFollowings =
+                                                Provider.of<Auth>(context,
+                                                                listen: false)
+                                                            .userData?[
+                                                        'followings'] ??
+                                                    [];
+
+                                            _showFollowings(
+                                                context, dynamicFollowings);
+                                          },
+                                          child: ColumnWidgetHomeScreen(
+                                            data: Provider.of<Auth>(context,
+                                                                listen: false)
+                                                            .userData?[
+                                                        'followings'] !=
+                                                    null
+                                                ? (Provider.of<Auth>(context,
+                                                                listen: false)
+                                                            .userData?[
+                                                        'followings'])
+                                                    .length
+                                                    .toString()
+                                                : "",
+                                            txt: 'Following',
+                                          ),
                                         )
                                       ],
                                     ),
@@ -1374,6 +1406,66 @@ class _ProfileState extends State<Profile> {
   }
 }
 
+void _showFollowers(BuildContext context, List<dynamic> followers) {
+  // Convert the followers to a list of user IDs
+  List<String> userIds = [];
+
+  for (var item in followers) {
+    if (item is Map<String, dynamic> && item.containsKey('user_id')) {
+      final userId = item['user_id'];
+      if (userId != null) {
+        userIds.add(userId.toString()); // Ensure it's converted to String
+      }
+    }
+  }
+
+  if (userIds.isEmpty) {
+    print("No valid userIds found.");
+    return;
+  }
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => UserDetailsModal(
+      title: 'Followers',
+      userIds: userIds,
+      actionButtonText: 'Unfollow',
+      onActionButtonPressed: () {
+        // Define what should happen when the button is pressed
+      },
+    ),
+  );
+}
+
+void _showFollowings(BuildContext context, List<dynamic> followings) {
+  // Convert the followings to a list of user IDs
+  List<String> userIds = followings
+      .map((item) => item['user_id'] as String)
+      .where((id) => id != null)
+      .toList();
+
+  if (userIds.isEmpty) {
+    print("No valid userIds found.");
+    return;
+  }
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => UserDetailsModal(
+      title: 'Followings',
+      userIds: userIds,
+      actionButtonText: 'Unfollow',
+      onActionButtonPressed: () {
+        // Define what should happen when the button is pressed
+      },
+    ),
+  );
+}
+
 Future<void> _launchURL(String url) async {
   try {
     final Uri urlLink = Uri.parse(url);
@@ -2097,7 +2189,7 @@ class _MenuState extends State<Menu> {
   void fetchUserDetailsbyKey() async {
     final res = await getUserDetailsbyKey(widget.user, ['store_availability']);
     print(" ressdes ${json.encode(res)}");
-    if (res['store_availability'] && res['store_availability']  != null)
+    if (res['store_availability'] && res['store_availability'] != null)
       setState(() {
         storeAvailability = res['store_availability'] ?? false;
       });
@@ -2345,8 +2437,8 @@ class _MenuState extends State<Menu> {
                                             index < widget.menuList.length;
                                             index++)
                                           if (widget.menuList[index]['category']
-                                              .toString()
-                                              == _controller.text)
+                                                  .toString() ==
+                                              _controller.text)
                                             MenuItem(
                                                 storeAvailability:
                                                     storeAvailability,

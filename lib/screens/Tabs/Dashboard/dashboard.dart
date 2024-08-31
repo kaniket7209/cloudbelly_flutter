@@ -362,44 +362,47 @@ class StoreLogoWidget extends StatelessWidget {
       children: [
         const Space(15),
         userData?['profile_photo'] != ''
-            ? Container(
-                height: 70,
-                width: 70,
-                decoration: ShapeDecoration(
-                  shadows: [
-                    userData?['user_type'] == UserType.Vendor.name
-                        ?  BoxShadow(
-                            offset: Offset(0, 4),
-                            color: Color(0xff1F6F6D).withOpacity(0.4),
-                            blurRadius: 20,
-                          )
-                        : userData?['user_type'] == UserType.Supplier.name
-                            ?  BoxShadow(
-                                offset: Offset(0, 4),
-                                color: Color.fromRGBO(163, 220, 118, 0.6).withOpacity(0.4),
-                                blurRadius: 20,
-                              )
-                            :  BoxShadow(
-                                offset: Offset(0, 4),
-                                color: Color.fromRGBO(188, 115, 188, 0.6).withOpacity(0.4),
-                                blurRadius: 20,
-                              ),
-                  ],
-                  shape: SmoothRectangleBorder(),
-                ),
-                child: ClipSmoothRect(
-                  radius: SmoothBorderRadius(
-                    cornerRadius: 22,
-                    cornerSmoothing: 1,
+            ? GestureDetector(
+              onTap: () => (),
+              child: Container(
+                  height: 70,
+                  width: 70,
+                  decoration: ShapeDecoration(
+                    shadows: [
+                      userData?['user_type'] == UserType.Vendor.name
+                          ?  BoxShadow(
+                              offset: Offset(0, 4),
+                              color: Color(0xff1F6F6D).withOpacity(0.4),
+                              blurRadius: 20,
+                            )
+                          : userData?['user_type'] == UserType.Supplier.name
+                              ?  BoxShadow(
+                                  offset: Offset(0, 4),
+                                  color: Color.fromRGBO(163, 220, 118, 0.6).withOpacity(0.4),
+                                  blurRadius: 20,
+                                )
+                              :  BoxShadow(
+                                  offset: Offset(0, 4),
+                                  color: Color.fromRGBO(188, 115, 188, 0.6).withOpacity(0.4),
+                                  blurRadius: 20,
+                                ),
+                    ],
+                    shape: SmoothRectangleBorder(),
                   ),
-                  child: Image.network(
-                    userData?['profile_photo'],
-                    fit: BoxFit.cover,
-                    loadingBuilder: GlobalVariables().loadingBuilderForImage,
-                    errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                  child: ClipSmoothRect(
+                    radius: SmoothBorderRadius(
+                      cornerRadius: 22,
+                      cornerSmoothing: 1,
+                    ),
+                    child: Image.network(
+                      userData?['profile_photo'],
+                      fit: BoxFit.cover,
+                      loadingBuilder: GlobalVariables().loadingBuilderForImage,
+                      errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                    ),
                   ),
                 ),
-              )
+            )
             : Container(
                 height: 70,
                 width: 70,
