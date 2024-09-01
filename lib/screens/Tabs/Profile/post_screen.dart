@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:cloudbelly_app/api_service.dart';
@@ -38,7 +37,7 @@ class _PostsScreenState extends State<PostsScreen> {
       index = arguments['index'] as int;
       userId = arguments['userId'] as String;
       isSelfProfile = arguments['isSelfProfile'] as String;
-      if(arguments['type'] == "not self"){
+      if (arguments['type'] == "not self") {
         userModel = arguments['userModel'] as UserModel;
       }
       print("index:: $index");
@@ -69,37 +68,73 @@ class _PostsScreenState extends State<PostsScreen> {
   }
 
   Future<void> _refreshFeed() async {
-    final Data = await Provider.of<Auth>(context, listen: false).getFeed(userId) as List<dynamic>;
-print("dataref ${Data}");
-    Navigator.of(context).pushReplacementNamed(PostsScreen.routeName,
-        arguments: {'data': Data, 'index': 0, "userId" : userId , "userModel" : userModel , "type":type ,"isSelfProfile":isSelfProfile});
+    final Data = await Provider.of<Auth>(context, listen: false).getFeed(userId)
+        as List<dynamic>;
+    print("dataref ${Data}");
+    Navigator.of(context)
+        .pushReplacementNamed(PostsScreen.routeName, arguments: {
+      'data': Data,
+      'index': 0,
+      "userId": userId,
+      "userModel": userModel,
+      "type": type,
+      "isSelfProfile": isSelfProfile
+    });
   }
 
-  void _scrollToPost() {
-    double itemPosition =
-        _scrollController.position.viewportDimension * (index ?? 0);
-    print("itemPosition:: ${_scrollController.position.viewportDimension}");
-    _scrollController.animateTo(
-      55.h + 65.h * (index  ?? 0),
-      //360.0 * (index ?? 0),
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.ease,
-    );
+void _scrollToPost() {
+  // Get the total height of the viewport (screen height)
+  double viewportHeight = _scrollController.position.viewportDimension;
+ 
+
+  // Calculate the height of a single item (assuming each item has the same height)
+  double singleItemHeight = 70.h; // Adjust this based on the actual height of each item
+ 
+
+  // Calculate the target offset to center the clicked post and move it slightly down by 10 pixels
+  double targetOffset = (singleItemHeight * (index ?? 0)) -
+      (viewportHeight / 2) +
+      (singleItemHeight / 3.5) -
+      50.0; // Move 10 pixels down
+  
+
+  // Ensure the targetOffset is within valid bounds
+  double maxScrollExtent = _scrollController.position.maxScrollExtent;
+  
+
+  // Check if the targetOffset plus viewportHeight would exceed the maxScrollExtent
+  if (targetOffset + viewportHeight / 2 > maxScrollExtent) {
+    // If so, adjust the offset to scroll as close to the end as possible
+    targetOffset = maxScrollExtent;
+   
+  } else {
+    // Otherwise, clamp the offset to valid bounds
+    targetOffset = targetOffset.clamp(0.0, maxScrollExtent);
+   
   }
 
+  _scrollController.animateTo(
+    targetOffset,
+    duration: const Duration(milliseconds: 700),
+    curve: Curves.easeInOut,
+  );
+}
+  
   @override
   Widget build(BuildContext context) {
-     String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-     
+    String? userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+
     Color colorProfile;
     if (userType == 'Vendor') {
-      colorProfile = const Color(0xFFEAF5F7) ;
+      colorProfile = const Color(0xFFEAF5F7);
     } else if (userType == 'Customer') {
       colorProfile = const Color(0xFFD9D9D9);
     } else if (userType == 'Supplier') {
       colorProfile = Color(0xFFE4F4DA);
     } else {
-      colorProfile =const Color(0xFFEAF5F7); // Default color if user_type is none of the above
+      colorProfile = const Color(
+          0xFFEAF5F7); // Default color if user_type is none of the above
     }
     return Scaffold(
       backgroundColor: Color(0xffEAF5F7),
@@ -140,7 +175,6 @@ print("dataref ${Data}");
                   const Text(
                     'Posts',
                     style: TextStyle(
-                     
                       color: Color(0xFF094B60),
                       fontSize: 26,
                       fontFamily: 'Jost',

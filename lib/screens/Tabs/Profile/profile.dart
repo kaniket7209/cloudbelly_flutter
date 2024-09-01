@@ -2616,7 +2616,7 @@ class FeedWidget extends StatelessWidget {
 
     return TouchableOpacity(
       onTap: () async {
-        // print("fullData:: $fulldata");
+        print("post_screeenindexis :: $index");
         final Data = await Provider.of<Auth>(context, listen: false)
             .getFeed(userId) as List<dynamic>;
         // print("userId:: $userId");
@@ -2695,6 +2695,7 @@ class FeedWidget extends StatelessWidget {
       ),
     );
   }
+
 }
 
 class CommonButtonProfile extends StatelessWidget {
