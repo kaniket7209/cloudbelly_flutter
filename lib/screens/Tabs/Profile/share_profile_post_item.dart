@@ -740,11 +740,15 @@ class _ShareProfilePostItemState extends State<ShareProfilePostItem> {
                             horizontal: VisualDensity.minimumDensity),
                         padding: EdgeInsets.zero,
                         onPressed: () async {
+                          print("  ${widget.userId}  widgdtrs");
+                          print("  ${widget.data}  widgdtrs");
                           final DynamicLinkParameters parameters =
                               DynamicLinkParameters(
                             uriPrefix: 'https://app.cloudbelly.in',
+                            // link: Uri.parse(
+                            //     'https://app.cloudbelly.in/?postId=${widget.data['id']}'),
                             link: Uri.parse(
-                                'https://app.cloudbelly.in/?postId=${widget.data['id']}'),
+                                'https://app.cloudbelly.in/?postId=${widget.userId}'),
                             androidParameters: const AndroidParameters(
                               packageName: 'com.app.cloudbelly_app',
                             ),
@@ -759,6 +763,7 @@ class _ShareProfilePostItemState extends State<ShareProfilePostItem> {
                           height: 20,
                           width: 20,
                         ))
+                
                   ],
                 ),
                 Container(

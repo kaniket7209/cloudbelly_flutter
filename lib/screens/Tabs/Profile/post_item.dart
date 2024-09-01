@@ -1000,8 +1000,13 @@ class _PostItemState extends State<PostItem> {
                           final DynamicLinkParameters parameters =
                               DynamicLinkParameters(
                             uriPrefix: 'https://app.cloudbelly.in',
+                            // https://app.cloudbelly.in/profile?profileId=$userId
+                            // widget.userId
+                            // link: Uri.parse(
+                            //     'https://app.cloudbelly.in/?postId=${widget.data['id']}'),
+                            
                             link: Uri.parse(
-                                'https://app.cloudbelly.in/?postId=${widget.data['id']}'),
+                                'https://app.cloudbelly.in/profile?profileId=${widget.data['user_id'] ?? widget.userId}'),
                             androidParameters: const AndroidParameters(
                               packageName: 'com.app.cloudbelly_app',
                             ),
