@@ -330,16 +330,15 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(height: 30.h,),
-                               
+                                SizedBox(height: 30),
                                 Container(
-                                  constraints: BoxConstraints(maxWidth: 100.w),
                                   child: Lottie.asset(
-                                      'assets/Animation - panda.json',
-                                      width: 100.w,
-                                      ),
+                                    'assets/Animation - panda.json',
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.5,
+                                  ),
                                 ),
-                                 Text(
+                                Text(
                                   'Loading ...',
                                   style: TextStyle(
                                     fontSize: 16,
@@ -353,7 +352,34 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                             ), // Show a loading indicator
                           )
                         else if (_formattedResponseWidgets.isNotEmpty)
-                          ..._formattedResponseWidgets,
+                          ..._formattedResponseWidgets
+                        else
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  child: Lottie.asset(
+                                    'assets/Animation - panda.json',
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.5,
+                                  ),
+                                ),
+                                SizedBox(height: 16),
+                                Center(
+                                  child: Text(
+                                    'You have not asked anything yet!.',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff0A4C61),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                       ],
                     ),
                   ),
