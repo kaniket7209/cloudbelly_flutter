@@ -381,7 +381,13 @@ class _ImageGenerationState extends State<ImageGeneration> {
                               ElevatedButton.icon(
                                 onPressed: _downloadImage,
                                 icon: Icon(Icons.download_rounded),
-                                label: Text('Download Image',style: TextStyle(fontFamily: 'Product Sans',fontWeight: FontWeight.bold,letterSpacing: 1),),
+                                label: Text(
+                                  'Download Image',
+                                  style: TextStyle(
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1),
+                                ),
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
                                   backgroundColor: Color(0xffFA6E00),
@@ -401,7 +407,11 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                       _imageData); // Call the async function within a synchronous function
                                 },
                                 icon: Icon(Icons.share),
-                                label: Text('Share Image',style: TextStyle(fontFamily: 'Product Sans',fontWeight: FontWeight.bold,letterSpacing: 1)),
+                                label: Text('Share Image',
+                                    style: TextStyle(
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1)),
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
                                   backgroundColor: Color(0xff0A4C61),
@@ -415,39 +425,40 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                       horizontal: 20, vertical: 10),
                                 ),
                               ),
-                          
                             ],
                           )
                         else
-                        Container(
-  child: Column(
-    mainAxisAlignment: MainAxisAlignment.center,  // Centers the content vertically
-    children: [
-      Container(
-        // Optional: Uncomment and set constraints if needed
-        // constraints: BoxConstraints(maxWidth: 100.w),
-        child: Lottie.asset(
-          'assets/Animation - panda.json',
-          width: 50.w, // Responsive width using responsive_sizer
-        ),
-      ),
-      SizedBox(height: 16), // Optional: Add spacing between Lottie animation and text
-      Center(
-        child: Text(
-          'No image generated yet.',
-          style: TextStyle(
-            fontSize: 16,
-            fontFamily: 'Product Sans',
-            fontWeight: FontWeight.bold,
-            color: Color(0xff0A4C61),
-          ),
-        ),
-      ),
-     
-      
-    ],
-  ),
-)
+                          Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment
+                                  .center, // Centers the content vertically
+                              children: [
+                                Container(
+                                  // Optional: Uncomment and set constraints if needed
+                                  // constraints: BoxConstraints(maxWidth: 100.w),
+                                  child: Lottie.asset(
+                                    'assets/Animation - panda.json',
+                                    width: 50
+                                        .w, // Responsive width using responsive_sizer
+                                  ),
+                                ),
+                                SizedBox(
+                                    height:
+                                        16), // Optional: Add spacing between Lottie animation and text
+                                Center(
+                                  child: Text(
+                                    'No image generated yet.',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff0A4C61),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                       ],
                     ),
                   ),
@@ -505,7 +516,8 @@ Future<void> _shareImage(Uint8List? imageData) async {
     await imageFile.writeAsBytes(imageData);
 
     await Share.shareFiles([imageFile.path],
-        text: 'Check out this image I generated using Belly AI from Cloudbelly . !');
+        text:
+            'Check out this image I generated using Belly AI from Cloudbelly . !');
   } catch (e) {
     print('Error sharing image: $e');
     // ScaffoldMessenger.of(context).showSnackBar(
