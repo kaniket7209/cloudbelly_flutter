@@ -1,7 +1,9 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
+import 'package:http/http.dart' as http;
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/assets.dart';
@@ -26,6 +28,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:share_plus/share_plus.dart';
@@ -80,11 +83,11 @@ class _PostItemState extends State<PostItem> {
   void didUpdateWidget(PostItem oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.data != oldWidget.data) {
-
       _getLikeData();
       // setState(() {}); // Force rebuild when data changes
     }
   }
+
   List<String> getFittedText(String text) {
     if (text.length <= 50) {
       return [text, ''];
@@ -133,7 +136,6 @@ class _PostItemState extends State<PostItem> {
     List<dynamic> temp =
         await Provider.of<Auth>(context, listen: false).getUserInfo(likeIds);
 
-
     temp.forEach((element) {
       if (element is Map) {
         _likeData.add({
@@ -152,7 +154,6 @@ class _PostItemState extends State<PostItem> {
       _isLiked = (widget.data['likes'] ?? []).contains(
           Provider.of<Auth>(context, listen: false).userData?['user_id']);
     });
-
 
     // print("$_isLiked likedbyh");
   }
@@ -581,7 +582,7 @@ class _PostItemState extends State<PostItem> {
                             ),
                             child: GestureDetector(
                               onDoubleTap: () async {
-                            var  code=   widget.isProfilePost
+                                var code = widget.isProfilePost
                                     ? await Provider.of<Auth>(context,
                                             listen: false)
                                         .likePost(widget.data['id'],
@@ -591,42 +592,45 @@ class _PostItemState extends State<PostItem> {
                                         .likePost(widget.data['id'],
                                             widget.data['user_id']);
 
-                                             if (code == '200') {
-                          setState(() {
-                            _isLiked = !_isLiked;
-                            if (_isLiked) {
-                              setState(() {
-                                _likeData.add({
-                                  'id':
-                                      Provider.of<Auth>(context, listen: false)
-                                          .userData?['user_id'],
-                                  'profile_photo':
-                                      Provider.of<Auth>(context, listen: false)
-                                          .logo_url,
-                                  'name':
-                                      Provider.of<Auth>(context, listen: false)
-                                          .userData?['store_name'],
-                                });
-                              });
-                            } else {
-                              setState(() {
-                                _likeData.removeWhere(
-                                  (element) =>
-                                      element['id'] ==
-                                      Provider.of<Auth>(context, listen: false)
-                                          .userData?['user_id'],
-                                );
-                              });
-                            }
-                            if (_isLiked == true) _showLikeIcon = true;
-                          });
+                                if (code == '200') {
+                                  setState(() {
+                                    _isLiked = !_isLiked;
+                                    if (_isLiked) {
+                                      setState(() {
+                                        _likeData.add({
+                                          'id': Provider.of<Auth>(context,
+                                                  listen: false)
+                                              .userData?['user_id'],
+                                          'profile_photo': Provider.of<Auth>(
+                                                  context,
+                                                  listen: false)
+                                              .logo_url,
+                                          'name': Provider.of<Auth>(context,
+                                                  listen: false)
+                                              .userData?['store_name'],
+                                        });
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _likeData.removeWhere(
+                                          (element) =>
+                                              element['id'] ==
+                                              Provider.of<Auth>(context,
+                                                      listen: false)
+                                                  .userData?['user_id'],
+                                        );
+                                      });
+                                    }
+                                    if (_isLiked == true) _showLikeIcon = true;
+                                  });
 
-                          Future.delayed(const Duration(seconds: 2), () {
-                            setState(() {
-                              _showLikeIcon = false;
-                            });
-                          });
-                        } 
+                                  Future.delayed(const Duration(seconds: 2),
+                                      () {
+                                    setState(() {
+                                      _showLikeIcon = false;
+                                    });
+                                  });
+                                }
                                 // setState(() {
                                 //   _isLiked = !_isLiked;
                                 //   if (_isLiked) {
@@ -997,24 +1001,41 @@ class _PostItemState extends State<PostItem> {
                             horizontal: VisualDensity.minimumDensity),
                         padding: EdgeInsets.zero,
                         onPressed: () async {
-                          final DynamicLinkParameters parameters =
-                              DynamicLinkParameters(
-                            uriPrefix: 'https://app.cloudbelly.in',
-                            // https://app.cloudbelly.in/profile?profileId=$userId
-                            // widget.userId
-                            // link: Uri.parse(
-                            //     'https://app.cloudbelly.in/?postId=${widget.data['id']}'),
-                            
-                            link: Uri.parse(
-                                'https://app.cloudbelly.in/profile?profileId=${widget.data['user_id'] ?? widget.userId}'),
-                            androidParameters: const AndroidParameters(
-                              packageName: 'com.app.cloudbelly_app',
-                            ),
-                          );
+                          try {
+                            // 1. Generate the Dynamic Link
+                            final DynamicLinkParameters parameters =
+                                DynamicLinkParameters(
+                              uriPrefix: 'https://app.cloudbelly.in',
+                              link: Uri.parse(
+                                  'https://app.cloudbelly.in/profile?profileId=${widget.data['user_id'] ?? widget.userId}'),
+                              androidParameters: const AndroidParameters(
+                                packageName: 'com.app.cloudbelly_app',
+                              ),
+                            );
 
-                          final Uri shortUrl = parameters.link;
-                          // print(shortUrl);
-                          Share.share("${shortUrl}");
+                            final Uri shortUrl = parameters.link;
+
+                            // 2. Download the image
+                            final imageUrl = widget.data['file_path'];
+                            final response =
+                                await http.get(Uri.parse(imageUrl));
+
+                            if (response.statusCode == 200) {
+                              // 3. Save the image to the device's storage
+                              final tempDir = await getTemporaryDirectory();
+                              final filePath =
+                                  '${tempDir.path}/shared_image.png';
+                              final file = File(filePath);
+                              await file.writeAsBytes(response.bodyBytes);
+
+                              // 4. Share the image and dynamic link
+                              Share.shareFiles([filePath], text: "$shortUrl");
+                            } else {
+                              print('Failed to download image.');
+                            }
+                          } catch (e) {
+                            print('Error: $e');
+                          }
                         },
                         icon: SvgPicture.asset(
                           Assets.share,
@@ -1535,7 +1556,6 @@ class _FollowButtonInSHeetState extends State<FollowButtonInSHeet> {
                 .showErrorToast(context, response['body']['message']);
           }
         }
-       
       },
       child: Container(
           decoration: GlobalVariables().ContainerDecoration(
@@ -1696,7 +1716,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
   Widget build(BuildContext context) {
     // List<dynamic> userData = widget.userData;
     dynamic newData = widget.data;
-  
+
     return Container(
       child: SingleChildScrollView(
         child: Column(children: [

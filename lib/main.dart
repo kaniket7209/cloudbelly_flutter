@@ -43,7 +43,7 @@ void main() async {
   HttpOverrides.global = MyHttpOverrides();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-     apiKey: "AIzaSyB3UySbCaiXjC_bh2h9JAjTKvbeUVA1OmQ",
+      apiKey: "AIzaSyB3UySbCaiXjC_bh2h9JAjTKvbeUVA1OmQ",
       appId: "1:508708683425:android:fcfeda59f64fd186e9bae0",
       messagingSenderId: "508708683425",
       projectId: "cloudbelly-d97a9",
@@ -51,39 +51,22 @@ void main() async {
   );
 
   await requestNotificationPermission();
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
   await initializeNotification();
 
   FlutterLocalNotificationsPlugin().initialize(
     const InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
     ),
-    onDidReceiveNotificationResponse:
-        (NotificationResponse? notificationResponse) {
+    onDidReceiveNotificationResponse: (NotificationResponse? notificationResponse) {
       if (notificationResponse?.payload != null) {
         handleNotificationClick(notificationResponse!.payload!);
       }
     },
   );
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    showNotification(message);
-    // Add the new notification to the provider
-    Provider.of<NotificationProvider>(navigatorKey.currentContext!,
-            listen: false)
-        .addNotification({
-      'title': message.notification?.title,
-      'body': message.notification?.body,
-      'data': message.data,
-    });
-    print('Got a message whilst in the foreground!');
-    print('Message data: ${message.notification?.body}  ${message.notification}   ');
-    if (message.notification != null) {
-      print('Message also contained a notification: ${message.notification}');
-    }
-  });
+  // Initialize deep links
+  await initUniLinks();
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await UserPreferences.init();
@@ -103,6 +86,7 @@ void main() async {
     ),
   );
 }
+
 Future<void> requestNotificationPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   NotificationSettings settings = await messaging.requestPermission(
@@ -141,6 +125,7 @@ Future<void> requestNotificationPermission() async {
 // }
 
 void handleNotificationClick(String payload) {
+  print("payload   from nott  $payload");
   if (payload == 'order') {
     navigatorKey.currentState?.push(MaterialPageRoute(
       builder: (context) => NotificationScreen(),
