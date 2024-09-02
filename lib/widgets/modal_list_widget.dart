@@ -6,6 +6,7 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class UserDetailsModal extends StatefulWidget {
   final String title;
@@ -143,20 +144,20 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
 
                         return ListTile(
                           leading: GestureDetector(
-                             onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileView(
-                      userIdList: [
-                       user['_id']
-                      ], // Adjust this according to your ProfileView constructor
-                    ),
-                  ),
-                ).then((value) {
-                  // You can clear the userId or perform any other actions here if needed
-                });
-              },
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileView(
+                                    userIdList: [
+                                      user['_id']
+                                    ], // Adjust this according to your ProfileView constructor
+                                  ),
+                                ),
+                              ).then((value) {
+                                // You can clear the userId or perform any other actions here if needed
+                              });
+                            },
                             child: Container(
                               width: 50, // Set width for the avatar
                               height: 50, // Set height for the avatar
@@ -172,15 +173,18 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                                 ),
                                 shadows: [
                                   BoxShadow(
-                                    color: Color(0xffA5C8C7).withOpacity(0.4),
-                                    blurRadius: 10,
+                                    color: Color(0xff1F6F6D).withOpacity(0.4),
+                                    blurRadius: 20,
                                     offset: Offset(0, 4),
                                   ),
                                 ],
                               ),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                    15), // Ensure the image matches the squircle shape
+                                borderRadius: SmoothBorderRadius(
+                                    cornerRadius:
+                                        15, // Adjust this value for desired squircle effect
+                                    cornerSmoothing: 1,
+                                  ), // Ensure the image matches the squircle shape
                                 child: user['profile_photo'] != null
                                     ? Image.network(
                                         user['profile_photo'],
@@ -201,6 +205,7 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                             user['store_name'],
                             style: TextStyle(
                               fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w500,
                               fontSize: 16,
                               color: user['user_type'] == 'Customer'
                                   ? const Color(0xff2E0536)
@@ -215,22 +220,36 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                                   fontFamily: 'Product Sans',
                                   fontSize: 12,
                                   color: Color(0xffFA6E00))),
-                          trailing: ElevatedButton(
-                            onPressed: () => _toggleFollowStatus(user['_id']),
-                            style: ElevatedButton.styleFrom(
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 12,
-                                  cornerSmoothing: 1,
+                          trailing: GestureDetector(
+                            onTap: () => _toggleFollowStatus(user['_id']),
+                            child: Container(
+                              width: 22.w,
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              decoration: ShapeDecoration(
+                                shadows: [
+                                  BoxShadow(
+                                    color:  isFollowing
+                                    ? Color(0xff0A4C61).withOpacity(0.44)
+                                    : Color(0xffE88037).withOpacity(0.5),
+                                    blurRadius: 30,
+                                    offset: Offset(5, 6),
+                                    spreadRadius: 0,
+                                  ),
+                                ],
+                                color: isFollowing
+                                    ? Color(0xff0A4C61)
+                                    : Color(0xffFA6E00),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 13,
+                                    cornerSmoothing: 1,
+                                  ),
                                 ),
                               ),
-                              backgroundColor: isFollowing
-                                  ? Color(0xffF14343)
-                                  : Color(0xff0A4C61),
-                            ),
-                            child: Container(
                               child: Text(
-                                isFollowing ? 'Unfollow' : 'Follow',
+                                textAlign: TextAlign.center,
+                                // isFollowing ? 'Unfollow' : 'Follow',
+                                getButtonText(isFollowing,widget.title),
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: 'Product Sans',
@@ -251,7 +270,15 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
       },
     );
   }
+String getButtonText(bool isFollowing, String title) {
+  if (title == 'Followings') {
+    return 'Remove';
+  } else {
+    return isFollowing ? 'Unfollow' : 'Follow';
+  }
 }
+}
+
 
 Future<void> openFullScreen(
   BuildContext context,
