@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ImageGeneration extends StatefulWidget {
   @override
@@ -20,6 +21,41 @@ class _ImageGenerationState extends State<ImageGeneration> {
   final TextEditingController _promptController = TextEditingController();
   bool _isLoading = false;
   Uint8List? _imageData;
+  List<String> _recentPrompts = [];
+  @override
+  void initState() {
+    super.initState();
+    _loadRecentPrompts();
+  }
+
+  Future<void> _loadRecentPrompts() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the existing list of prompts from SharedPreferences
+    List<String>? recentPrompts = prefs.getStringList('bellyGPT_prompts');
+
+    if (recentPrompts != null) {
+      setState(() {
+        _recentPrompts = recentPrompts;
+      });
+    }
+  }
+
+  Future<void> savePrompt(String prompt) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Get the existing list of prompts from SharedPreferences
+    List<String> promptsList = prefs.getStringList('bellyGPT_prompts') ?? [];
+
+    // Check if the prompt already exists in the list
+    if (!promptsList.contains(prompt)) {
+      // Append the new prompt to the list only if it doesn't exist
+      promptsList.add(prompt);
+    }
+
+    // Save the updated list back to SharedPreferences
+    await prefs.setStringList('bellyGPT_prompts', promptsList);
+  }
 
   Future<void> _askBellyAI() async {
     print("Button clicked");
@@ -32,6 +68,41 @@ class _ImageGenerationState extends State<ImageGeneration> {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
 
     final prompt = _promptController.text.trim();
+    print("Prompt: $prompt");
+
+    if (prompt.isEmpty) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+    savePrompt(prompt);
+    try {
+      final response = await Provider.of<Auth>(context, listen: false)
+          .bellyAiTextToImage(prompt);
+
+      if (response != null) {
+        setState(() {
+          _imageData = response;
+        });
+      }
+    } catch (error) {
+      print('Error: $error');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _askBellyAIForRecent(prompt) async {
+    print("Button clicked");
+
+    setState(() {
+      _isLoading = true;
+      _imageData = null; // Clear previous image
+    });
+
     print("Prompt: $prompt");
 
     if (prompt.isEmpty) {
@@ -288,7 +359,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                   Text(
+                                  Text(
                                     'Cloudbelly’s text to image model',
                                     style: TextStyle(
                                       fontSize: 12,
@@ -337,18 +408,18 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                 height: 30,
                               ),
                               Container(
-                                constraints: BoxConstraints(maxWidth: 90.w),
+                                  constraints: BoxConstraints(maxWidth: 90.w),
                                   padding: EdgeInsets.symmetric(horizontal: 10),
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                   "“${_promptController.text.trim()}”",
+                                    "“${_promptController.text.trim()}”",
                                     style: TextStyle(
                                         fontFamily: 'Product Sans',
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xff0A4C61)),
                                   )),
-                                   SizedBox(
+                              SizedBox(
                                 height: 15,
                               ),
                               if (_imageData !=
@@ -376,9 +447,9 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                   ),
                                   child: ClipRRect(
                                     borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 40,
-                                        cornerSmoothing: 1,
-                                      ),
+                                      cornerRadius: 40,
+                                      cornerSmoothing: 1,
+                                    ),
                                     child: Image.memory(
                                       _imageData!,
                                       fit: BoxFit
@@ -424,7 +495,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                       horizontal: 20, vertical: 10),
                                 ),
                               ),
-                               SizedBox(height: 10),
+                              SizedBox(height: 10),
                               ElevatedButton.icon(
                                 onPressed: () {
                                   _shareImage(
@@ -452,38 +523,148 @@ class _ImageGenerationState extends State<ImageGeneration> {
                             ],
                           )
                         else
-                          Container(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment
-                                  .center, // Centers the content vertically
-                              children: [
-                                Container(
-                                  // Optional: Uncomment and set constraints if needed
-                                  // constraints: BoxConstraints(maxWidth: 100.w),
-                                  child: Lottie.asset(
-                                    'assets/Animation - panda.json',
-                                    width: 50
-                                        .w, // Responsive width using responsive_sizer
+                          Center(
+                            child: _recentPrompts.isNotEmpty
+                                ? Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start, // Aligns items to the start of the column
+                                    children: [
+                                      SizedBox(height: 10),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Recent',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontFamily:
+                                                    'Product Sans Black',
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xff0A4C61),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () async {
+                                                var prefs =
+                                                    await SharedPreferences
+                                                        .getInstance();
+
+                                                // Clear the list of prompts by saving an empty list
+                                                await prefs.setStringList(
+                                                    'bellyGPT_prompts', []);
+
+                                                // Update the state to reflect the cleared list
+                                                setState(() {
+                                                  _recentPrompts = [];
+                                                });
+                                              },
+                                              child: Text(
+                                                'Clear',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Product Sans',
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Color(0xff0A4C61),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          height:
+                                              10), // Add some space below the title
+                                      Container(
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            children: _recentPrompts.map((prompt) {
+                                              return Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 5.0, horizontal: 10),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    // Set loading state regardless of keyboard status
+                                                    setState(() {
+                                                      _isLoading = true;
+                                                    });
+                                          
+                                                    _askBellyAIForRecent(prompt);
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        width: 30,
+                                                        height: 30,
+                                                        decoration: BoxDecoration(
+                                                          color: Color(0xffD1EBEE),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),
+                                                        ),
+                                                        child: Icon(
+                                                          Icons
+                                                              .refresh, // Use any suitable icon
+                                                          color: Color(0xff0A4C61),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                          width:
+                                                              10), // Add space between the icon and text
+                                                      Expanded(
+                                                        child: Text(
+                                                          prompt,
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontFamily:
+                                                                'Product Sans',
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Color(0xff0A4C61),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        child: Lottie.asset(
+                                          'assets/Animation - panda.json',
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.5,
+                                        ),
+                                      ),
+                                      SizedBox(height: 16),
+                                      Center(
+                                        child: Text(
+                                          'You have not asked anything yet!.',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: 'Product Sans',
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff0A4C61),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                SizedBox(
-                                    height:
-                                        16), // Optional: Add spacing between Lottie animation and text
-                                Center(
-                                  child: Text(
-                                    'No image generated yet.',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff0A4C61),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
                           )
-                     
                       ],
                     ),
                   ),

@@ -22,21 +22,21 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
   bool _isLoading = false;
   List<String> _recentPrompts = [];
 
- Future<void> savePrompt(String prompt) async {
-  final prefs = await SharedPreferences.getInstance();
+  Future<void> savePrompt(String prompt) async {
+    final prefs = await SharedPreferences.getInstance();
 
-  // Get the existing list of prompts from SharedPreferences
-  List<String> promptsList = prefs.getStringList('bellyGPT_prompts') ?? [];
+    // Get the existing list of prompts from SharedPreferences
+    List<String> promptsList = prefs.getStringList('bellyGPT_prompts') ?? [];
 
-  // Check if the prompt already exists in the list
-  if (!promptsList.contains(prompt)) {
-    // Append the new prompt to the list only if it doesn't exist
-    promptsList.add(prompt);
+    // Check if the prompt already exists in the list
+    if (!promptsList.contains(prompt)) {
+      // Append the new prompt to the list only if it doesn't exist
+      promptsList.add(prompt);
+    }
+
+    // Save the updated list back to SharedPreferences
+    await prefs.setStringList('bellyGPT_prompts', promptsList);
   }
-
-  // Save the updated list back to SharedPreferences
-  await prefs.setStringList('bellyGPT_prompts', promptsList);
-}
 
   Future<void> _askBellyGPT() async {
     print("Button clicked");
@@ -341,17 +341,17 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
   }
 
   Future<void> _loadRecentPrompts() async {
-  final prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
 
-  // Get the existing list of prompts from SharedPreferences
-  List<String>? recentPrompts = prefs.getStringList('bellyGPT_prompts');
+    // Get the existing list of prompts from SharedPreferences
+    List<String>? recentPrompts = prefs.getStringList('bellyGPT_prompts');
 
-  if (recentPrompts != null) {
-    setState(() {
-      _recentPrompts = recentPrompts;
-    });
+    if (recentPrompts != null) {
+      setState(() {
+        _recentPrompts = recentPrompts;
+      });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -494,17 +494,20 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                                               ),
                                             ),
                                             GestureDetector(
-                                             onTap: () async {
-  var prefs = await SharedPreferences.getInstance();
+                                              onTap: () async {
+                                                var prefs =
+                                                    await SharedPreferences
+                                                        .getInstance();
 
-  // Clear the list of prompts by saving an empty list
-  await prefs.setStringList('bellyGPT_prompts', []);
+                                                // Clear the list of prompts by saving an empty list
+                                                await prefs.setStringList(
+                                                    'bellyGPT_prompts', []);
 
-  // Update the state to reflect the cleared list
-  setState(() {
-    _recentPrompts = [];
-  });
-},
+                                                // Update the state to reflect the cleared list
+                                                setState(() {
+                                                  _recentPrompts = [];
+                                                });
+                                              },
                                               child: Text(
                                                 'Clear',
                                                 style: TextStyle(
@@ -521,59 +524,73 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                                       SizedBox(
                                           height:
                                               10), // Add some space below the title
-                                      Column(
-                                        children: _recentPrompts.map((prompt) {
-                                          return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 5.0, horizontal: 10),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                // Set loading state regardless of keyboard status
-                                                setState(() {
-                                                  _isLoading = true;
-                                                });
+                                      Container(
+                                        constraints:
+                                            BoxConstraints(maxHeight: 90.h),
+                                        child: SingleChildScrollView(
+                                          
+                                          child: Column(
+                                            children:
+                                                _recentPrompts.map((prompt) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5.0,
+                                                        horizontal: 10),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    // Set loading state regardless of keyboard status
+                                                    setState(() {
+                                                      _isLoading = true;
+                                                    });
 
-                                                _askBellyGPTFoRecent(prompt);
-                                              },
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    width: 30,
-                                                    height: 30,
-                                                    decoration: BoxDecoration(
-                                                      color: Color(0xffD1EBEE),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                    ),
-                                                    child: Icon(
-                                                      Icons
-                                                          .refresh, // Use any suitable icon
-                                                      color: Color(0xff0A4C61),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                      width:
-                                                          10), // Add space between the icon and text
-                                                  Expanded(
-                                                    child: Text(
-                                                      prompt,
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontFamily:
-                                                            'Product Sans',
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xff0A4C61),
+                                                    _askBellyGPTFoRecent(
+                                                        prompt);
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        width: 30,
+                                                        height: 30,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xffD1EBEE),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                        child: Icon(
+                                                          Icons
+                                                              .refresh, // Use any suitable icon
+                                                          color:
+                                                              Color(0xff0A4C61),
+                                                        ),
                                                       ),
-                                                    ),
+                                                      SizedBox(
+                                                          width:
+                                                              10), // Add space between the icon and text
+                                                      Expanded(
+                                                        child: Text(
+                                                          prompt,
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontFamily:
+                                                                'Product Sans',
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Color(
+                                                                0xff0A4C61),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        }).toList(),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   )
