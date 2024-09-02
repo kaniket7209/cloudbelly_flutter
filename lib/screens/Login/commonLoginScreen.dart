@@ -899,7 +899,7 @@ Future<void> openEnterUserTypeBottomSheet(
                                 ),
                                 SizedBox(width: 10),
                                 const Text(
-                                  'Foody',
+                                  'Customer',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontFamily: 'Product Sans',
@@ -911,80 +911,81 @@ Future<void> openEnterUserTypeBottomSheet(
                           ),
                         ),
                         SizedBox(height: 20),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedUserType = 'Supplier';
-                            });
-                            Future.delayed(const Duration(milliseconds: 300),
-                                () {
-                              Navigator.pop(context, 'Supplier');
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 10),
-                            decoration: ShapeDecoration(
-                              shadows: [
-                                BoxShadow(
-                                  offset: const Offset(0, 4),
-                                  color: Color(0xFFA5C8C7).withOpacity(0.4),
-                                  blurRadius: 20,
-                                ),
-                              ],
-                              color: Color(0xFFFFFFFF),
-                              shape: SmoothRectangleBorder(
-                                borderRadius: SmoothBorderRadius(
-                                  cornerRadius: 15,
-                                  cornerSmoothing: 1,
-                                ),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: ShapeDecoration(
-                                    shadows: const [
-                                      BoxShadow(
-                                        offset: Offset(0, 4),
-                                        color: Color.fromRGBO(
-                                            165, 200, 199, 0.6),
-                                        blurRadius: 20,
-                                      ),
-                                    ],
-                                    color: selectedUserType == 'Supplier'
-                                        ? const Color(0xFFFA6E00)
-                                        : const Color(0xFFA5C8C799),
-                                    shape: const SmoothRectangleBorder(
-                                      borderRadius: SmoothBorderRadius.all(
-                                        SmoothRadius(
-                                            cornerRadius: 10,
-                                            cornerSmoothing: 1),
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: 15,
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                const Text(
-                                  'Supplier',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontFamily: 'Product Sans',
-                                      color: Color(0xff0A4C61),
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     setState(() {
+                        //       selectedUserType = 'Supplier';
+                        //     });
+                        //     Future.delayed(const Duration(milliseconds: 300),
+                        //         () {
+                        //       Navigator.pop(context, 'Supplier');
+                        //     });
+                        //   },
+                        //   child: Container(
+                        //     padding: EdgeInsets.symmetric(
+                        //         vertical: 10, horizontal: 10),
+                        //     decoration: ShapeDecoration(
+                        //       shadows: [
+                        //         BoxShadow(
+                        //           offset: const Offset(0, 4),
+                        //           color: Color(0xFFA5C8C7).withOpacity(0.4),
+                        //           blurRadius: 20,
+                        //         ),
+                        //       ],
+                        //       color: Color(0xFFFFFFFF),
+                        //       shape: SmoothRectangleBorder(
+                        //         borderRadius: SmoothBorderRadius(
+                        //           cornerRadius: 15,
+                        //           cornerSmoothing: 1,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     child: Row(
+                        //       children: [
+                        //         Container(
+                        //           height: 30,
+                        //           width: 30,
+                        //           decoration: ShapeDecoration(
+                        //             shadows: const [
+                        //               BoxShadow(
+                        //                 offset: Offset(0, 4),
+                        //                 color: Color.fromRGBO(
+                        //                     165, 200, 199, 0.6),
+                        //                 blurRadius: 20,
+                        //               ),
+                        //             ],
+                        //             color: selectedUserType == 'Supplier'
+                        //                 ? const Color(0xFFFA6E00)
+                        //                 : const Color(0xFFA5C8C799),
+                        //             shape: const SmoothRectangleBorder(
+                        //               borderRadius: SmoothBorderRadius.all(
+                        //                 SmoothRadius(
+                        //                     cornerRadius: 10,
+                        //                     cornerSmoothing: 1),
+                        //               ),
+                        //             ),
+                        //           ),
+                        //           child: const Icon(
+                        //             Icons.check,
+                        //             color: Colors.white,
+                        //             size: 15,
+                        //           ),
+                        //         ),
+                        //         SizedBox(width: 10),
+                        //         const Text(
+                        //           'Supplier',
+                        //           style: TextStyle(
+                        //               fontSize: 16,
+                        //               fontFamily: 'Product Sans',
+                        //               color: Color(0xff0A4C61),
+                        //               fontWeight: FontWeight.bold),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+                        // SizedBox(height: 20),
+                     
                       ],
                     ),
                   ),
