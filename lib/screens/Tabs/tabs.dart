@@ -389,9 +389,9 @@ Widget _buildShortcutButton(BuildContext context, String title,
         decoration: ShapeDecoration(
           shadows: [
             BoxShadow(
-              offset: const Offset(2, 3),
-              color: Color(0xff0A4C61).withOpacity(0.2),
-              blurRadius: 20,
+              offset: const Offset(3, 4),
+              color: Color(0xff0A4C61).withOpacity(0.4),
+              blurRadius: 15,
             ),
           ],
           color: Color(0xff0A4C61),

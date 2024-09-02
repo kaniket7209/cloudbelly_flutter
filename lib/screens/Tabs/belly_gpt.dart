@@ -201,7 +201,7 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             decoration: ShapeDecoration(
               color: Colors.white,
               shape: SmoothRectangleBorder(
@@ -228,16 +228,17 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                     Container(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Write your requirement here..',
+                        '  Write your requirement here..',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Color(0xff1B7997),
+                          color: Color(0xff0A4C61),
                           fontFamily: 'Product Sans',
                         ),
                       ),
                     ),
                     SizedBox(height: 10),
                     TextField(
+                      showCursor: true,
                       controller: _promptController,
                       style: TextStyle(
                         color: Color(0xff0A4C61),
@@ -253,7 +254,7 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                         hintStyle: TextStyle(
                           color: Color(0xff0A4C61).withOpacity(0.4),
                           height: 1.2,
-                          fontSize: 20,
+                          fontSize: 18,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.bold,
                         ),
@@ -264,7 +265,7 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                           borderSide: BorderSide.none,
                         ),
                         filled: true,
-                        fillColor: Colors.grey[200],
+                        fillColor: Color(0xffD3EEEE).withOpacity(0.8),
                       ),
                     ),
                     SizedBox(height: 20),
@@ -324,6 +325,7 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 20,)
                   ],
                 ),
               ],
@@ -359,308 +361,314 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
       backgroundColor: Color(0xffEFF9FB),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(
-                    16.0), // Add padding to give some space around the container
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(16.0),
-                    decoration: ShapeDecoration(
-                      color: Colors.white,
-                      shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius(
-                          cornerRadius: 30, // Adjust this value as needed
-                          cornerSmoothing:
-                              1, // Keep this value to ensure smooth squircle shape
+        child: Container(
+       
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.all(
+                      16.0), // Add padding to give some space around the container
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(16.0),
+                      decoration: ShapeDecoration(
+                        color: Colors.white,
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 30, // Adjust this value as needed
+                            cornerSmoothing:
+                                1, // Keep this value to ensure smooth squircle shape
+                          ),
                         ),
+                        shadows: [
+                          BoxShadow(
+                            color: Color(0xffA5C8C7).withOpacity(0.4),
+                            blurRadius: 25,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      shadows: [
-                        BoxShadow(
-                          color: Color(0xffA5C8C7).withOpacity(0.4),
-                          blurRadius: 25,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: Image.asset(
-                                'assets/images/back_double_arrow.png',
-                                color: Color(0xffFA6E00),
-                                width: 24,
-                                height: 24,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Image.asset(
+                                  'assets/images/back_double_arrow.png',
+                                  color: Color(0xffFA6E00),
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
                               ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            Column(
-                              children: [
-                                Text(
-                                  'BellyGPT',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontFamily: 'Product Sans',
-                                    color: Color(0xff0A4C61),
-                                    fontWeight: FontWeight.bold,
+                              Column(
+                                children: [
+                                  Text(
+                                    'BellyGPT',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontFamily: 'Product Sans',
+                                      color: Color(0xff0A4C61),
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 2,
-                                ),
-                                Container(
-                                  // margin: const EdgeInsets.only(top: 4.0, right: 16),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xffFA6E00),
-                                    borderRadius: BorderRadius.circular(5.0),
+                                  SizedBox(
+                                    height: 2,
                                   ),
-                                  height: 4.0,
-                                  child: IntrinsicWidth(
-                                    child: Text(
-                                      'BellyGPT',
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        fontFamily: 'Product Sans',
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.transparent,
+                                  Container(
+                                    // margin: const EdgeInsets.only(top: 4.0, right: 16),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xffFA6E00),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    height: 4.0,
+                                    child: IntrinsicWidth(
+                                      child: Text(
+                                        'BellyGPT',
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontFamily: 'Product Sans',
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.transparent,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        if (_isLoading)
-                          Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(height: 30),
-                                Container(
-                                  child: Lottie.asset(
-                                    'assets/Animation - panda.json',
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.5,
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          if (_isLoading)
+                            Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(height: 30),
+                                  Container(
+                                    child: Lottie.asset(
+                                      'assets/Animation - panda.json',
+                                      width:
+                                          MediaQuery.of(context).size.width * 0.5,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'Loading ...',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: 'Product Sans',
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1,
-                                    color: Color(0xff0A4C61),
+                                  Text(
+                                    'Loading ...',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: 'Product Sans',
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1,
+                                      color: Color(0xff0A4C61),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ), // Show a loading indicator
-                          )
-                        else if (_formattedResponseWidgets.isNotEmpty)
-                          ..._formattedResponseWidgets
-                        else
-                          Center(
-                            child: _recentPrompts.isNotEmpty
-                                ? Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start, // Aligns items to the start of the column
-                                    children: [
-                                      SizedBox(height: 10),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Recent',
+                                ],
+                              ), // Show a loading indicator
+                            )
+                          else if (_formattedResponseWidgets.isNotEmpty)
+                            ..._formattedResponseWidgets
+                          else
+                            Center(
+                              child: _recentPrompts.isNotEmpty
+                                  ? Column(
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .start, // Aligns items to the start of the column
+                                      children: [
+                                        SizedBox(height: 10),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Recent',
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontFamily:
+                                                      'Product Sans Black',
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xff0A4C61),
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  var prefs =
+                                                      await SharedPreferences
+                                                          .getInstance();
+          
+                                                  // Clear the list of prompts by saving an empty list
+                                                  await prefs.setStringList(
+                                                      'bellyGPT_prompts', []);
+          
+                                                  // Update the state to reflect the cleared list
+                                                  setState(() {
+                                                    _recentPrompts = [];
+                                                  });
+                                                },
+                                                child: Text(
+                                                  'Clear',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontFamily: 'Product Sans',
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xff0A4C61),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(
+                                            height:
+                                                10), // Add some space below the title
+                                        Container(
+                                          constraints:
+                                              BoxConstraints(maxHeight: 90.h),
+                                          child: SingleChildScrollView(
+                                            
+                                            child: Column(
+                                              children:
+                                                  _recentPrompts.map((prompt) {
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          vertical: 5.0,
+                                                          horizontal: 10),
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      // Set loading state regardless of keyboard status
+                                                      setState(() {
+                                                        _isLoading = true;
+                                                      });
+          
+                                                      _askBellyGPTFoRecent(
+                                                          prompt);
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        Container(
+                                                          width: 30,
+                                                          height: 30,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color:
+                                                                Color(0xffD1EBEE),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(8),
+                                                          ),
+                                                          child: Icon(
+                                                            Icons
+                                                                .refresh, // Use any suitable icon
+                                                            color:
+                                                                Color(0xff0A4C61),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            width:
+                                                                10), // Add space between the icon and text
+                                                        Expanded(
+                                                          child: Text(
+                                                            prompt,
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontFamily:
+                                                                  'Product Sans',
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                              color: Color(
+                                                                  0xff0A4C61),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(
+                                    constraints: BoxConstraints(minHeight: 60.h),
+                                    child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            child: Lottie.asset(
+                                              'assets/Animation - panda.json',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.5,
+                                            ),
+                                          ),
+                                          SizedBox(height: 16),
+                                          Center(
+                                            child: Text(
+                                              'You have not asked anything yet!.',
                                               style: TextStyle(
-                                                fontSize: 20,
-                                                fontFamily:
-                                                    'Product Sans Black',
+                                                fontSize: 16,
+                                                fontFamily: 'Product Sans',
                                                 fontWeight: FontWeight.bold,
                                                 color: Color(0xff0A4C61),
                                               ),
                                             ),
-                                            GestureDetector(
-                                              onTap: () async {
-                                                var prefs =
-                                                    await SharedPreferences
-                                                        .getInstance();
-
-                                                // Clear the list of prompts by saving an empty list
-                                                await prefs.setStringList(
-                                                    'bellyGPT_prompts', []);
-
-                                                // Update the state to reflect the cleared list
-                                                setState(() {
-                                                  _recentPrompts = [];
-                                                });
-                                              },
-                                              child: Text(
-                                                'Clear',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Color(0xff0A4C61),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          height:
-                                              10), // Add some space below the title
-                                      Container(
-                                        constraints:
-                                            BoxConstraints(maxHeight: 90.h),
-                                        child: SingleChildScrollView(
-                                          
-                                          child: Column(
-                                            children:
-                                                _recentPrompts.map((prompt) {
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 5.0,
-                                                        horizontal: 10),
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    // Set loading state regardless of keyboard status
-                                                    setState(() {
-                                                      _isLoading = true;
-                                                    });
-
-                                                    _askBellyGPTFoRecent(
-                                                        prompt);
-                                                  },
-                                                  child: Row(
-                                                    children: [
-                                                      Container(
-                                                        width: 30,
-                                                        height: 30,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color:
-                                                              Color(0xffD1EBEE),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        child: Icon(
-                                                          Icons
-                                                              .refresh, // Use any suitable icon
-                                                          color:
-                                                              Color(0xff0A4C61),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width:
-                                                              10), // Add space between the icon and text
-                                                      Expanded(
-                                                        child: Text(
-                                                          prompt,
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontFamily:
-                                                                'Product Sans',
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Color(
-                                                                0xff0A4C61),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                    ],
-                                  )
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        child: Lottie.asset(
-                                          'assets/Animation - panda.json',
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.5,
-                                        ),
-                                      ),
-                                      SizedBox(height: 16),
-                                      Center(
-                                        child: Text(
-                                          'You have not asked anything yet!.',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontFamily: 'Product Sans',
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xff0A4C61),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
                                   ),
-                          )
-                      ],
+                            )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            GestureDetector(
-              onTap: () => _showInputBottomSheet(context),
-              child: Center(
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  decoration: ShapeDecoration(
-                    shadows: [
-                      BoxShadow(
-                        offset: const Offset(5, 6),
-                        color: Color(0xffFA6E00).withOpacity(0.51),
-                        blurRadius: 30,
-                      ),
-                    ],
-                    color: Color(0xffFA6E00),
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                        cornerRadius: 15,
-                        cornerSmoothing: 1,
+              GestureDetector(
+                onTap: () => _showInputBottomSheet(context),
+                child: Center(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    decoration: ShapeDecoration(
+                      shadows: [
+                        BoxShadow(
+                          offset: const Offset(5, 6),
+                          color: Color(0xffFA6E00).withOpacity(0.51),
+                          blurRadius: 30,
+                        ),
+                      ],
+                      color: Color(0xffFA6E00),
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius(
+                          cornerRadius: 15,
+                          cornerSmoothing: 1,
+                        ),
                       ),
                     ),
-                  ),
-                  child: Text(
-                    'Ask bellyGPT',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    child: Text(
+                      'Ask bellyGPT',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

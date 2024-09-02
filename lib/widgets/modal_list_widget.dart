@@ -494,7 +494,7 @@ Future<void> openLikedBy(BuildContext context, List<dynamic> likedData) async {
                             style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'Product Sans',
-                              color: Color(0xff1B7997),
+                              color: Color(0xff0A4C61),
                               fontWeight: FontWeight.bold,
                             ),
                           ),

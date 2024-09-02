@@ -67,7 +67,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       if (_isNewVersionAvailable(currentVersion, newVersion)) {
         _showUpdateDialog(newVersion);
       } else {
-        _checkLoginStatus();
+        // _checkLoginStatus();
+         _showUpdateDialog(newVersion);
       }
     } catch (e) {
       print('Error checking for updates: $e');
@@ -135,65 +136,74 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _checkLoginStatus();
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.white,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 12,
-                    cornerSmoothing: 1,
+           
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _checkLoginStatus();
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    child: Text(
+                      'No Thanks',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFFFA6E00),
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                child: Text(
-                  'No Thanks',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFFFA6E00),
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Product Sans',
+                ElevatedButton(
+                  onPressed: () async {
+                    final url = Uri.parse(
+                        'https://play.google.com/store/apps/details?id=com.app.cloudbelly_app');
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url);
+                    } else {
+                      print('Could not launch $url');
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xffFA6E00),
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                  ),
+                  child: Container(
+                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    child: Text(
+                      'Update',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontFamily: 'Product Sans',
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () async {
-                final url = Uri.parse(
-                    'https://play.google.com/store/apps/details?id=com.app.cloudbelly_app');
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url);
-                } else {
-                  print('Could not launch $url');
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xffFA6E00),
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 12,
-                    cornerSmoothing: 1,
-                  ),
-                ),
-              ),
-              child: Container(
-                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: Text(
-                  'Update',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontFamily: 'Product Sans',
-                  ),
-                ),
-              ),
-            ),
+          
           ],
         );
       },

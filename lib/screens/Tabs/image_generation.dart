@@ -195,10 +195,10 @@ class _ImageGenerationState extends State<ImageGeneration> {
                     Container(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Write your requirement here..',
+                        '  Write your requirement here..',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Color(0xff1B7997),
+                          color: Color(0xff0A4C61),
                           fontFamily: 'Product Sans',
                         ),
                       ),
@@ -230,7 +230,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
                           borderSide: BorderSide.none,
                         ),
                         filled: true,
-                        fillColor: Colors.grey[200],
+                        fillColor: Color(0xffD3EEEE).withOpacity(0.8),
                       ),
                     ),
                     SizedBox(height: 20),
@@ -476,7 +476,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                 onPressed: _downloadImage,
                                 icon: Icon(Icons.download_rounded),
                                 label: Text(
-                                  'Download Image',
+                                  'Download',
                                   style: TextStyle(
                                       fontFamily: 'Product Sans',
                                       fontWeight: FontWeight.bold,
@@ -502,7 +502,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                       _imageData); // Call the async function within a synchronous function
                                 },
                                 icon: Icon(Icons.share),
-                                label: Text('Share Image',
+                                label: Text('Share',
                                     style: TextStyle(
                                         fontFamily: 'Product Sans',
                                         fontWeight: FontWeight.bold,
@@ -638,32 +638,35 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                       ),
                                     ],
                                   )
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        child: Lottie.asset(
-                                          'assets/Animation - panda.json',
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.5,
-                                        ),
-                                      ),
-                                      SizedBox(height: 16),
-                                      Center(
-                                        child: Text(
-                                          'You have not asked anything yet!.',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontFamily: 'Product Sans',
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xff0A4C61),
+                                : Container(
+                                   constraints: BoxConstraints(minHeight: 60.h),
+                                  child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          child: Lottie.asset(
+                                            'assets/Animation - panda.json',
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.5,
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
+                                        SizedBox(height: 16),
+                                        Center(
+                                          child: Text(
+                                            'You have not asked anything yet!.',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontFamily: 'Product Sans',
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xff0A4C61),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                ),
                           )
                       ],
                     ),

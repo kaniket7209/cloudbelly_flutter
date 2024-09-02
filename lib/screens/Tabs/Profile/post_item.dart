@@ -489,7 +489,7 @@ class _PostItemState extends State<PostItem> {
                                 : const Color(0xFFFA6E00),
                         shape: SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius(
-                          cornerRadius: 5,
+                          cornerRadius: 8,
                           cornerSmoothing: 1,
                         )),
                       ),

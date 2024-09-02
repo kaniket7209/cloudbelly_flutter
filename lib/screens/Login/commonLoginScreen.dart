@@ -78,7 +78,7 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 23, 30, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 23, 10, 0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -103,14 +103,15 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              SizedBox(
-                                height: 25,
-                              ),
+                              // SizedBox(
+                              //   height: 25,
+                              // ),
                               Container(
-                                padding: EdgeInsets.only(left: 30),
+                                
+                                // padding: EdgeInsets.only(left: 30),
                                 constraints: BoxConstraints(maxWidth: 30.w),
                                 child: Image.asset(
-                                  'assets/images/logo_small.png', // Adjust image asset path
+                                  'assets/images/cb_circle_logo.png', // Adjust image asset path
                                   fit: BoxFit.cover,
                                   width: 20.w,
                                 ),
@@ -150,51 +151,55 @@ class _CommonLoginScreenState extends State<CommonLoginScreen> {
                             ),
                           ),
                           Spacer(),
-                          Column(
-                            children: [
-                              SizedBox(
-                                height: 80,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  // openEnterUserTypeBottomSheet(context,'6206630515');
-                                  // openEnterOtpBottomSheet(context,'6206630515');
-                                  openEnterWhatsAppNumberBottomSheet(context);
-                                  // openThankYouScreen(context);
-                                },
-                                child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8.w, vertical: 1.h),
-                                    // margin: EdgeInsets.only(bottom: 2.h),
-                                    decoration: ShapeDecoration(
-                                      shadows: [
-                                        BoxShadow(
-                                          offset: const Offset(5, 6),
-                                          color: Color(0xffFA6E00)
-                                              .withOpacity(0.45),
-                                          blurRadius: 30,
-                                        ),
-                                      ],
-                                      color: Color(0xffFA6E00),
-                                      shape: SmoothRectangleBorder(
-                                          borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 13,
-                                        cornerSmoothing: 1,
-                                      )),
-                                    ),
-                                    child: const Text(
-                                      'Login',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontFamily: 'Product Sans',
-                                        fontWeight: FontWeight.bold,
-                                        // height: 0,
-                                        letterSpacing: 0.14,
+                          Padding(
+                            padding:  EdgeInsets.only(right: 3.w),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 80,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    // openEnterUserTypeBottomSheet(context,'6206630515');
+                                    // openEnterOtpBottomSheet(context,'6206630515');
+                                    openEnterWhatsAppNumberBottomSheet(context);
+                                    // openThankYouScreen(context);
+                                  },
+                                  child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8.w, vertical: 1.h),
+                                     
+                                      // margin: EdgeInsets.only(bottom: 2.h),
+                                      decoration: ShapeDecoration(
+                                        shadows: [
+                                          BoxShadow(
+                                            offset: const Offset(5, 6),
+                                            color: Color(0xffFA6E00)
+                                                .withOpacity(0.45),
+                                            blurRadius: 30,
+                                          ),
+                                        ],
+                                        color: Color(0xffFA6E00),
+                                        shape: SmoothRectangleBorder(
+                                            borderRadius: SmoothBorderRadius(
+                                          cornerRadius: 13,
+                                          cornerSmoothing: 1,
+                                        )),
                                       ),
-                                    )),
-                              ),
-                            ],
+                                      child: const Text(
+                                        'Login',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontFamily: 'Product Sans',
+                                          fontWeight: FontWeight.bold,
+                                          // height: 0,
+                                          letterSpacing: 0.14,
+                                        ),
+                                      )),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
