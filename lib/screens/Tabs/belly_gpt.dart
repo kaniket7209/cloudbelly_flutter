@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -6,7 +8,8 @@ import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:cloudbelly_app/api_service.dart';
-import 'package:responsive_sizer/responsive_sizer.dart'; // Assuming you have this file to handle API calls
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Assuming you have this file to handle API calls
 
 class BellyGPTPage extends StatefulWidget {
   @override
@@ -17,6 +20,23 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
   final TextEditingController _promptController = TextEditingController();
   List<Widget> _formattedResponseWidgets = [];
   bool _isLoading = false;
+  List<String> _recentPrompts = [];
+
+ Future<void> savePrompt(String prompt) async {
+  final prefs = await SharedPreferences.getInstance();
+
+  // Get the existing list of prompts from SharedPreferences
+  List<String> promptsList = prefs.getStringList('bellyGPT_prompts') ?? [];
+
+  // Check if the prompt already exists in the list
+  if (!promptsList.contains(prompt)) {
+    // Append the new prompt to the list only if it doesn't exist
+    promptsList.add(prompt);
+  }
+
+  // Save the updated list back to SharedPreferences
+  await prefs.setStringList('bellyGPT_prompts', promptsList);
+}
 
   Future<void> _askBellyGPT() async {
     print("Button clicked");
@@ -42,11 +62,61 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
       });
       return;
     }
+    savePrompt(prompt);
 
     try {
       final response =
           await Provider.of<Auth>(context, listen: false).askBellyGPT(prompt);
       print("Response received");
+
+      setState(() {
+        _formattedResponseWidgets = _formatResponse(response);
+      });
+    } catch (error) {
+      print('Error: $error');
+      setState(() {
+        _formattedResponseWidgets = [
+          Text(
+            'Error: $error',
+            style: TextStyle(color: Colors.red),
+          ),
+        ];
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _askBellyGPTFoRecent(prompt) async {
+    print("Button clicked");
+
+    setState(() {
+      _isLoading = true;
+      _formattedResponseWidgets = [
+        Center(
+          child: CircularProgressIndicator(),
+        ),
+      ];
+    });
+
+    print("Prompt: $prompt");
+
+    if (prompt.isEmpty) {
+      setState(() {
+        _isLoading = false;
+        _formattedResponseWidgets = [];
+      });
+      return;
+    }
+    // savePrompt(prompt);
+
+    try {
+      final response =
+          await Provider.of<Auth>(context, listen: false).askBellyGPT(prompt);
+      print("Response received");
+
       setState(() {
         _formattedResponseWidgets = _formatResponse(response);
       });
@@ -265,6 +335,25 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadRecentPrompts();
+  }
+
+  Future<void> _loadRecentPrompts() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  // Get the existing list of prompts from SharedPreferences
+  List<String>? recentPrompts = prefs.getStringList('bellyGPT_prompts');
+
+  if (recentPrompts != null) {
+    setState(() {
+      _recentPrompts = recentPrompts;
+    });
+  }
+}
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffEFF9FB),
@@ -313,14 +402,40 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                                 Navigator.of(context).pop();
                               },
                             ),
-                            Text(
-                              'BellyGPT',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontFamily: 'Product Sans',
-                                color: Color(0xff0A4C61),
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Column(
+                              children: [
+                                Text(
+                                  'BellyGPT',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontFamily: 'Product Sans',
+                                    color: Color(0xff0A4C61),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 2,
+                                ),
+                                Container(
+                                  // margin: const EdgeInsets.only(top: 4.0, right: 16),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xffFA6E00),
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  height: 4.0,
+                                  child: IntrinsicWidth(
+                                    child: Text(
+                                      'BellyGPT',
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontFamily: 'Product Sans',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.transparent,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -355,30 +470,139 @@ class _BellyGPTPageState extends State<BellyGPTPage> {
                           ..._formattedResponseWidgets
                         else
                           Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  child: Lottie.asset(
-                                    'assets/Animation - panda.json',
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.5,
+                            child: _recentPrompts.isNotEmpty
+                                ? Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start, // Aligns items to the start of the column
+                                    children: [
+                                      SizedBox(height: 10),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Recent',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontFamily:
+                                                    'Product Sans Black',
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xff0A4C61),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                             onTap: () async {
+  var prefs = await SharedPreferences.getInstance();
+
+  // Clear the list of prompts by saving an empty list
+  await prefs.setStringList('bellyGPT_prompts', []);
+
+  // Update the state to reflect the cleared list
+  setState(() {
+    _recentPrompts = [];
+  });
+},
+                                              child: Text(
+                                                'Clear',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Product Sans',
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Color(0xff0A4C61),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          height:
+                                              10), // Add some space below the title
+                                      Column(
+                                        children: _recentPrompts.map((prompt) {
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 5.0, horizontal: 10),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                // Set loading state regardless of keyboard status
+                                                setState(() {
+                                                  _isLoading = true;
+                                                });
+
+                                                _askBellyGPTFoRecent(prompt);
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    width: 30,
+                                                    height: 30,
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xffD1EBEE),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                    child: Icon(
+                                                      Icons
+                                                          .refresh, // Use any suitable icon
+                                                      color: Color(0xff0A4C61),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      width:
+                                                          10), // Add space between the icon and text
+                                                  Expanded(
+                                                    child: Text(
+                                                      prompt,
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontFamily:
+                                                            'Product Sans',
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            Color(0xff0A4C61),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ],
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        child: Lottie.asset(
+                                          'assets/Animation - panda.json',
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.5,
+                                        ),
+                                      ),
+                                      SizedBox(height: 16),
+                                      Center(
+                                        child: Text(
+                                          'You have not asked anything yet!.',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: 'Product Sans',
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff0A4C61),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                SizedBox(height: 16),
-                                Center(
-                                  child: Text(
-                                    'You have not asked anything yet!.',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontFamily: 'Product Sans',
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff0A4C61),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
                           )
                       ],
                     ),

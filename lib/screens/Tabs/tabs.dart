@@ -220,8 +220,8 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                               Expanded(
                                 child: _buildShortcutButton(
                                   context,
-                                  'Belly GPT',
-              
+                                  'BellyGPT',
+                                  'assets/images/BotIcon.png',
                                   _bellyGpt,
                                 ),
                               ),
@@ -229,23 +229,22 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                               Expanded(
                                 child: _buildShortcutButton(
                                   context,
-                                  'Image Generation',
-              
+                                  'BellyIMAGING',
+                                  'assets/images/imageFile.png',
                                   _imageGeneration,
                                 ),
                               ),
                             ],
                           ),
-              
                           SizedBox(height: 10),
-              
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Expanded(
                                 child: _buildShortcutButton(
                                   context,
-                                  'Add post',
+                                  'Create Post',
+                                  'assets/images/editImage.png',
                                   _addPost,
                                 ),
                               ),
@@ -254,7 +253,8 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                                 Expanded(
                                   child: _buildShortcutButton(
                                     context,
-                                    'Create new coupon',
+                                    'Create Coupon',
+                                     'assets/images/coupons.png',
                                     () => _createNewCoupon(
                                         context), // Correct way to pass context
                                   ),
@@ -380,8 +380,8 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildShortcutButton(
-      BuildContext context, String title, VoidCallback onTap) {
+Widget _buildShortcutButton(BuildContext context, String title,
+      String imagePath, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -405,15 +405,28 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 5.0),
           child: Center(
-            child: Text(
-              title,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontFamily: 'Product Sans',
-                letterSpacing: 1,
-                fontWeight: FontWeight.bold,
-              ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  imagePath,
+                  color: Colors.white,
+                  width: 24,
+                  height: 24,
+                ),
+                SizedBox(width: 8), // Add some spacing between icon and text
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontFamily: 'Product Sans',
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -422,42 +435,43 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   }
 
 // Sample method implementations for different actions
- bool _isNavigating = false;
+  bool _isNavigating = false;
 
-void _createNewCoupon(BuildContext context) {
-  if (_isNavigating) return; // Prevents multiple navigations
-  
-  _isNavigating = true;
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => NewCouponScreen()),
-  ).then((_) {
-    _isNavigating = false; // Reset the flag after navigation completes
-  });
-}
+  void _createNewCoupon(BuildContext context) {
+    if (_isNavigating) return; // Prevents multiple navigations
+
+    _isNavigating = true;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => NewCouponScreen()),
+    ).then((_) {
+      _isNavigating = false; // Reset the flag after navigation completes
+    });
+  }
 
   void _imageGeneration() {
     // Handle editing the menu
-      if (_isNavigating) return; // Prevents multiple navigations
-  
-  _isNavigating = true;
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => ImageGeneration()),
-  ).then((_) {
-    _isNavigating = false; // Reset the flag after navigation completes
-  });
-  }
-  void _bellyGpt(){
     if (_isNavigating) return; // Prevents multiple navigations
-  
-  _isNavigating = true;
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => BellyGPTPage()),
-  ).then((_) {
-    _isNavigating = false; // Reset the flag after navigation completes
-  });
+
+    _isNavigating = true;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ImageGeneration()),
+    ).then((_) {
+      _isNavigating = false; // Reset the flag after navigation completes
+    });
+  }
+
+  void _bellyGpt() {
+    if (_isNavigating) return; // Prevents multiple navigations
+
+    _isNavigating = true;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => BellyGPTPage()),
+    ).then((_) {
+      _isNavigating = false; // Reset the flag after navigation completes
+    });
   }
 
   void _takeOrder() {

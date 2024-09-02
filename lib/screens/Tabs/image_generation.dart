@@ -230,7 +230,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
     return Scaffold(
       backgroundColor: Color(0xffEFF9FB),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -239,7 +239,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
                 padding: EdgeInsets.all(16.0),
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                     decoration: ShapeDecoration(
                       color: Colors.white,
                       shape: SmoothRectangleBorder(
@@ -275,14 +275,30 @@ class _ImageGenerationState extends State<ImageGeneration> {
                             ),
                             Container(
                               alignment: Alignment.center,
-                              child: Text(
-                                'Belly AI \nText to Image Generation',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontFamily: 'Product Sans Black',
-                                  color: Color(0xff0A4C61),
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'BellyIMAGING',
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontFamily: 'Product Sans Black',
+                                      letterSpacing: 1,
+                                      color: Color(0xff0A4C61),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                   Text(
+                                    'Cloudbelly’s text to image model',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: 'Product Sans',
+                                      // letterSpacing: 1,
+                                      color: Color(0xff0A4C61),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -321,22 +337,26 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                 height: 30,
                               ),
                               Container(
+                                constraints: BoxConstraints(maxWidth: 90.w),
                                   padding: EdgeInsets.symmetric(horizontal: 10),
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    _promptController.text.trim(),
+                                   "“${_promptController.text.trim()}”",
                                     style: TextStyle(
                                         fontFamily: 'Product Sans',
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xff1B7997)),
+                                        color: Color(0xff0A4C61)),
                                   )),
+                                   SizedBox(
+                                height: 15,
+                              ),
                               if (_imageData !=
                                   null) // Ensure image data is not null
                                 Container(
                                   width: double.infinity,
-                                  height: MediaQuery.of(context).size.width *
-                                      1, // Fixed height based on screen width
+                                  // height: MediaQuery.of(context).size.width *
+                                  //     1, // Fixed height based on screen width
                                   decoration: ShapeDecoration(
                                     shadows: [
                                       BoxShadow(
@@ -349,13 +369,16 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                     color: Color(0xffFA6E00),
                                     shape: SmoothRectangleBorder(
                                       borderRadius: SmoothBorderRadius(
-                                        cornerRadius: 15,
+                                        cornerRadius: 40,
                                         cornerSmoothing: 1,
                                       ),
                                     ),
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: SmoothBorderRadius(
+                                        cornerRadius: 40,
+                                        cornerSmoothing: 1,
+                                      ),
                                     child: Image.memory(
                                       _imageData!,
                                       fit: BoxFit
@@ -377,7 +400,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                     ),
                                   ),
                                 ),
-                              SizedBox(height: 10),
+                              SizedBox(height: 20),
                               ElevatedButton.icon(
                                 onPressed: _downloadImage,
                                 icon: Icon(Icons.download_rounded),
@@ -401,6 +424,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
                                       horizontal: 20, vertical: 10),
                                 ),
                               ),
+                               SizedBox(height: 10),
                               ElevatedButton.icon(
                                 onPressed: () {
                                   _shareImage(

@@ -3115,7 +3115,8 @@ print("serviceAvailable es  $serviceAvailable");
           if (_selectedTabIndex == index)
             Align(
               alignment: Alignment.center,
-              child: Container(
+              child:
+               Container(
                 margin: const EdgeInsets.only(top: 4.0, right: 16),
                 decoration: BoxDecoration(
                   color: Color(0xffFA6E00),
