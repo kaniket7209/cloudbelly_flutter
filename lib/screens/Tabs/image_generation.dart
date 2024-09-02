@@ -32,7 +32,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
     final prefs = await SharedPreferences.getInstance();
 
     // Get the existing list of prompts from SharedPreferences
-    List<String>? recentPrompts = prefs.getStringList('bellyGPT_prompts');
+    List<String>? recentPrompts = prefs.getStringList('bellyIMAGING_prompts');
 
     if (recentPrompts != null) {
       setState(() {
@@ -45,7 +45,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
     final prefs = await SharedPreferences.getInstance();
 
     // Get the existing list of prompts from SharedPreferences
-    List<String> promptsList = prefs.getStringList('bellyGPT_prompts') ?? [];
+    List<String> promptsList = prefs.getStringList('bellyIMAGING_prompts') ?? [];
 
     // Check if the prompt already exists in the list
     if (!promptsList.contains(prompt)) {
@@ -54,7 +54,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
     }
 
     // Save the updated list back to SharedPreferences
-    await prefs.setStringList('bellyGPT_prompts', promptsList);
+    await prefs.setStringList('bellyIMAGING_prompts', promptsList);
   }
 
   Future<void> _askBellyAI() async {
@@ -555,7 +555,7 @@ class _ImageGenerationState extends State<ImageGeneration> {
 
                                                 // Clear the list of prompts by saving an empty list
                                                 await prefs.setStringList(
-                                                    'bellyGPT_prompts', []);
+                                                    'bellyIMAGING_prompts', []);
 
                                                 // Update the state to reflect the cleared list
                                                 setState(() {
