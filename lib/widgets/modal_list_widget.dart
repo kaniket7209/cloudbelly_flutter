@@ -173,8 +173,8 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                                 ),
                                 shadows: [
                                   BoxShadow(
-                                    color: Color(0xff1F6F6D).withOpacity(0.4),
-                                    blurRadius: 20,
+                                    color: Color(0xff1F6F6D).withOpacity(0.3),
+                                    blurRadius: 15,
                                     offset: Offset(0, 4),
                                   ),
                                 ],
@@ -205,7 +205,7 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                             user['store_name'],
                             style: TextStyle(
                               fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                               fontSize: 16,
                               color: user['user_type'] == 'Customer'
                                   ? const Color(0xff2E0536)
@@ -218,7 +218,7 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                               ),
                               style: TextStyle(
                                   fontFamily: 'Product Sans',
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   color: Color(0xffFA6E00))),
                           trailing: GestureDetector(
                             onTap: () => _toggleFollowStatus(user['_id']),
@@ -231,7 +231,7 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                                     color:  isFollowing
                                     ? Color(0xff0A4C61).withOpacity(0.44)
                                     : Color(0xffE88037).withOpacity(0.5),
-                                    blurRadius: 30,
+                                    blurRadius: 20,
                                     offset: Offset(5, 6),
                                     spreadRadius: 0,
                                   ),

@@ -236,7 +236,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                               ),
                             ],
                           ),
-                          SizedBox(height: 10),
+                          SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
