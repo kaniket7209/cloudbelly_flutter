@@ -377,3 +377,139 @@ Future<void> openFullScreen(
     },
   );
 }
+
+Future<void> openLikedBy(BuildContext context, List<dynamic> likedData) async {
+  if (likedData.isEmpty) {
+    // Handle the case where the list is empty
+    print("Liked data is empty");
+    return;
+  }
+
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return Container(
+            decoration: const ShapeDecoration(
+              shadows: [
+                BoxShadow(
+                  color: Color(0x7FB1D9D8),
+                  blurRadius: 6,
+                  offset: Offset(0, 4),
+                  spreadRadius: 0,
+                ),
+              ],
+              color: Colors.white,
+              shape: SmoothRectangleBorder(
+                borderRadius: SmoothBorderRadius.only(
+                  topLeft: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                  topRight: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
+                ),
+              ),
+            ),
+            height: MediaQuery.of(context).size.height * 0.58,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10,),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Center(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 10),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                      width: 50,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFA6E00).withOpacity(0.55),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10,),
+                Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Liked by",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'Product Sans',
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff0A4C61),
+                    ),
+                  ),
+                ),
+                if (likedData.isEmpty)
+                  Center(
+                    child: Text(
+                      'No one has liked this yet.',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Product Sans',
+                        color: Color(0xff1B7997),
+                      ),
+                    ),
+                  )
+                else
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      itemCount: likedData.length,
+                      itemBuilder: (context, index) {
+                        final user = likedData[index];
+                        return ListTile(
+                          leading: Container(
+                            width: 35,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0xff1F6F6D).withOpacity(0.4),
+                                  blurRadius: 20,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                              borderRadius: SmoothBorderRadius(
+                                    cornerRadius:
+                                        12, // Adjust this value for desired squircle effect
+                                    cornerSmoothing: 1,
+                                  ),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: Image.network(
+                              user['profile_photo'],
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          title: Text(
+                            user['name'],
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Product Sans',
+                              color: Color(0xff1B7997),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+
+
