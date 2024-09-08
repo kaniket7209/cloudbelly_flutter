@@ -3,7 +3,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import '../models/dish.dart';
 
 class DishCard extends StatelessWidget {
@@ -83,69 +85,85 @@ class DishCard extends StatelessWidget {
                     MainAxisAlignment.center, // Center vertically
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        child: Text(
-                          dish.name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Product Sans',
-                            fontSize: 16,
-                            color: Color(0xff2E0536),
-                          ),
-                        ),
-                      ),
-                      // SizedBox(width: 2),
-                      Container(
-                        width: 16,
-                        height: 16,
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: SmoothRectangleBorder(
-                            borderRadius: SmoothBorderRadius(
-                              cornerRadius: 7.0,
-                              cornerSmoothing: 1,
-                            ),
-                          ),
-                          shadows: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                          // side: BorderSide(
-                          //   color: Colors.black,
-                          //   width: 2.0,
-                          // ),
-                        ),
-                        child: Center(
-                          child: Container(
-                            width: 9,
-                            height: 9,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: dish.type == 'Veg'
-                                  ? Color(0xff6EFD6B)
-                                  : Color(0xffE23131),
+                  GestureDetector(
+                     onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileView(
+                      userIdList: [
+                        dish.user_id
+                      ], // Adjust this according to your ProfileView constructor
+                    ),
+                  ),
+                ).then((value) {
+                  // You can clear the userId or perform any other actions here if needed
+                });
+              },
+                    child: Row(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: Text(
+                            dish.name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Product Sans',
+                              fontSize: 16,
+                              color: Color(0xff2E0536),
                             ),
                           ),
                         ),
-                      ),
-                      Spacer(),
-                      Text(
-                        'Rs ${double.parse(dish.price).toStringAsFixed(0)}',
-                        style: TextStyle(
-                            fontSize: 14.0,
-                            fontFamily: 'Product Sans',
-                            color: Color(0xff9428A9),
-                            fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.right,
-                      ),
-                    ],
+                        // SizedBox(width: 2),
+                        Container(
+                          width: 16,
+                          height: 16,
+                          decoration: ShapeDecoration(
+                            color: Colors.white,
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 7.0,
+                                cornerSmoothing: 1,
+                              ),
+                            ),
+                            shadows: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 1,
+                                blurRadius: 7,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                            // side: BorderSide(
+                            //   color: Colors.black,
+                            //   width: 2.0,
+                            // ),
+                          ),
+                          child: Center(
+                            child: Container(
+                              width: 9,
+                              height: 9,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: dish.type == 'Veg'
+                                    ? Color(0xff6EFD6B)
+                                    : Color(0xffE23131),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Spacer(),
+                        Text(
+                          'Rs ${double.parse(dish.price).toStringAsFixed(0)}',
+                          style: TextStyle(
+                              fontSize: 14.0,
+                              fontFamily: 'Product Sans',
+                              color: Color(0xff9428A9),
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 5),
                   Row(

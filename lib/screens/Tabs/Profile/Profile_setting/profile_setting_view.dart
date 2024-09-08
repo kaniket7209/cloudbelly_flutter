@@ -1707,104 +1707,104 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               Space(
                 3.h,
               ),
-              if (userDetails?['user_type'] == UserType.Customer.name) ...[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: TextWidgetStoreSetup(label: 'Enter email'),
-                ),
-                Space(1.h),
-                Container(
-                  // rgba(165, 200, 199, 1),
-                  decoration: ShapeDecoration(
-                    shadows: [
-                      BoxShadow(
-                        offset: const Offset(0, 4),
-                        color: Provider.of<Auth>(context, listen: false)
-                                    .userData?['user_type'] ==
-                                UserType.Vendor.name
-                            ? const Color.fromRGBO(165, 200, 199, 0.6)
-                            : Provider.of<Auth>(context, listen: false)
-                                        .userData?['user_type'] ==
-                                    UserType.Supplier.name
-                                ? const Color.fromRGBO(77, 191, 74, 0.3)
-                                : const Color.fromRGBO(188, 115, 188, 0.2),
-                        blurRadius: 20,
-                      )
-                    ],
-                    color: Colors.white,
-                    shape: const SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius.all(
-                          SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
-                    ),
-                  ),
-                  //  height: 6.h,
-                  child: TextField(
-                    onChanged: (value) {
-                      emailController.text = value;
-                      setState(() {});
-                    },
-                    style: Provider.of<Auth>(context, listen: false)
-                                .userData?['user_type'] ==
-                            UserType.Vendor.name
-                        ? const TextStyle(
-                            color: Color(0xFF0A4C61),
-                          )
-                        : const TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'PT Sans',
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF2E0536)),
-                    controller: emailController,
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      suffixIcon: emailController.text.isEmpty
-                          ? Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Image.asset(
-                                Assets.editIcon,
-                                height: 15,
-                                width: 15,
-                              ),
-                            )
-                          : IconButton(
-                              onPressed: () {
-                                submitEmail();
-                              },
-                              icon: const Icon(Icons.done),
-                              color: const Color(0xFFFA6E00),
-                            ),
-                      hintText: "Enter your email here",
-                      contentPadding: const EdgeInsets.only(left: 14, top: 10),
-                      hintStyle: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF0A4C61),
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w400),
-                      border: InputBorder.none,
-                      // suffixIcon:
-                    ),
-                    /*decoration: const InputDecoration(
-                          fillColor: Colors.white,
-                          hintText: "Enter your  brand name here",
-                          contentPadding: EdgeInsets.only(left: 14),
-                          hintStyle: TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF0A4C61),
-                              fontFamily: 'Product Sans',
-                              fontWeight: FontWeight.w400),
-                          border: InputBorder.none,
-                          // suffixIcon:
-                        ),*/
-                    // onChanged: onChanged,
-                  ),
-                ),
-                Space(
-                  3.h,
-                ),
-              ],
+              // if (userDetails?['user_type'] == UserType.Customer.name) ...[
+              //   Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 10),
+              //     child: TextWidgetStoreSetup(label: 'Enter email'),
+              //   ),
+              //   Space(1.h),
+              //   Container(
+              //     // rgba(165, 200, 199, 1),
+              //     decoration: ShapeDecoration(
+              //       shadows: [
+              //         BoxShadow(
+              //           offset: const Offset(0, 4),
+              //           color: Provider.of<Auth>(context, listen: false)
+              //                       .userData?['user_type'] ==
+              //                   UserType.Vendor.name
+              //               ? const Color.fromRGBO(165, 200, 199, 0.6)
+              //               : Provider.of<Auth>(context, listen: false)
+              //                           .userData?['user_type'] ==
+              //                       UserType.Supplier.name
+              //                   ? const Color.fromRGBO(77, 191, 74, 0.3)
+              //                   : const Color.fromRGBO(188, 115, 188, 0.2),
+              //           blurRadius: 20,
+              //         )
+              //       ],
+              //       color: Colors.white,
+              //       shape: const SmoothRectangleBorder(
+              //         borderRadius: SmoothBorderRadius.all(
+              //             SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+              //       ),
+              //     ),
+              //     //  height: 6.h,
+              //     child: TextField(
+              //       onChanged: (value) {
+              //         emailController.text = value;
+              //         setState(() {});
+              //       },
+              //       style: Provider.of<Auth>(context, listen: false)
+              //                   .userData?['user_type'] ==
+              //               UserType.Vendor.name
+              //           ? const TextStyle(
+              //               color: Color(0xFF0A4C61),
+              //             )
+              //           : const TextStyle(
+              //               fontSize: 14,
+              //               fontFamily: 'PT Sans',
+              //               fontWeight: FontWeight.w400,
+              //               color: Color(0xFF2E0536)),
+              //       controller: emailController,
+              //       decoration: InputDecoration(
+              //         fillColor: Colors.white,
+              //         suffixIcon: emailController.text.isEmpty
+              //             ? Padding(
+              //                 padding: const EdgeInsets.all(15.0),
+              //                 child: Image.asset(
+              //                   Assets.editIcon,
+              //                   height: 15,
+              //                   width: 15,
+              //                 ),
+              //               )
+              //             : IconButton(
+              //                 onPressed: () {
+              //                   submitEmail();
+              //                 },
+              //                 icon: const Icon(Icons.done),
+              //                 color: const Color(0xFFFA6E00),
+              //               ),
+              //         hintText: "Enter your email here",
+              //         contentPadding: const EdgeInsets.only(left: 14, top: 10),
+              //         hintStyle: const TextStyle(
+              //             fontSize: 12,
+              //             color: Color(0xFF0A4C61),
+              //             fontFamily: 'Product Sans',
+              //             fontWeight: FontWeight.w400),
+              //         border: InputBorder.none,
+              //         // suffixIcon:
+              //       ),
+              //       /*decoration: const InputDecoration(
+              //             fillColor: Colors.white,
+              //             hintText: "Enter your  brand name here",
+              //             contentPadding: EdgeInsets.only(left: 14),
+              //             hintStyle: TextStyle(
+              //                 fontSize: 12,
+              //                 color: Color(0xFF0A4C61),
+              //                 fontFamily: 'Product Sans',
+              //                 fontWeight: FontWeight.w400),
+              //             border: InputBorder.none,
+              //             // suffixIcon:
+              //           ),*/
+              //       // onChanged: onChanged,
+              //     ),
+              //   ),
+              //   Space(
+              //     3.h,
+              //   ),
+              // ],
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextWidgetStoreSetup(label: 'Contact number'),
+                child: TextWidgetStoreSetup(label: 'Whatsapp number'),
               ),
               Space(1.h),
               Container(
@@ -1890,6 +1890,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               Space(
                 3.h,
               ),
+if (userDetails?['user_type'] != UserType.Customer.name)...[
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -2004,6 +2005,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   // onChanged: onChanged,
                 ),
               ),
+             
+],
               if (Provider.of<Auth>(context, listen: false)
                       .userData?['user_type'] !=
                   UserType.Customer.name) ...[
@@ -2466,7 +2469,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       ),
       bottomNavigationBar: (Provider.of<Auth>(context, listen: false)
                   .userData!['user_type'] !=
-              'Customer')
+              'Supplier')
           ? GestureDetector(
               onVerticalDragUpdate: (details) {
                 // Check if the vertical drag is significant enough and the bottom sheet isn't already open
@@ -3279,6 +3282,7 @@ class OrderItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+               
                 Text(
                   '${orderData['buyer_store_name'] ?? 'Unknown Store'}',
                   style: TextStyle(

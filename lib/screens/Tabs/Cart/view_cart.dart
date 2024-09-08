@@ -1931,7 +1931,26 @@ class _PriceWidgetState extends State<PriceWidget> {
                   //     fontWeight: FontWeight.w800,
                   //   ),
                   // ),
-                  Flexible(
+                  deliveryDistance == null
+                  ? errorMessage != null
+                      ? Text(
+                          errorMessage!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )
+                      : const SizedBox(
+                          width: 15,
+                          height: 15,
+                          child: CircularProgressIndicator(
+                            color: Color(0xff0A4C61),
+                            strokeWidth: 2,
+                          ),
+                        )
+                  :Flexible(
                     child: Consumer<CartProvider>(
                       builder: (context, cartProvider, child) {
                         // Calculate the 5% tax based on the totalAmount from the CartProvider

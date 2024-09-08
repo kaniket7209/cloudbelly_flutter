@@ -103,7 +103,7 @@ class _PostItemState extends State<PostItem> {
   void getProductDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
     // print("Full data");
-    print(widget.data);
+   
     List<dynamic> productIds = widget.data['menu_items'];
     productDetails = await Provider.of<Auth>(context, listen: false)
         .getProductDetails(productIds)
@@ -208,11 +208,12 @@ class _PostItemState extends State<PostItem> {
   @override
   Widget build(BuildContext context) {
     // print("who is user:: ${widget.isProfilePost}  ${widget.userId}");
-    // bool shouldShowIcon = widget.isProfilePost ||
-    //     (!widget.isProfilePost &&
-    //         Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
-    //             widget.data['user_id']);
-    bool shouldShowIcon = (widget.isProfilePost);
+
+    bool shouldShowIcon = widget.isProfilePost ||
+        (!widget.isProfilePost &&
+            Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
+                widget.data['user_id']);
+    // bool shouldShowIcon = (widget.isProfilePost);
     // bool shouldShowIcon = false;
     // bool _isFollowing = checkFollow();
     bool _isVendor =
@@ -395,28 +396,43 @@ class _PostItemState extends State<PostItem> {
                       ),
                 const Space(isHorizontal: true, 15),
 
-                SizedBox(
-                  width: 37.w,
-                  child: Text(
-                    widget.isSharePost == "No"
-                        ? widget.userModel?.storeName
-                        : widget.isProfilePost
-                            ? Provider.of<Auth>(context, listen: false)
-                                .userData!['store_name']
-                            : widget.data['store_name'],
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: _isVendor
-                          ? const Color(0xFF094B60)
-                          : const Color(0xFF2E0536),
-                      fontSize: 14,
-                      fontFamily: 'Product Sans',
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.42,
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      userId.add(widget.data['user_id']);
+                    });
+                    // print("userIdfrom post:: $userId");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfileView(
+                                  userIdList: userId,
+                                )));
+                  },
+                  child: SizedBox(
+                    width: 37.w,
+                    child: Text(
+                      widget.isSharePost == "No"
+                          ? widget.userModel?.storeName
+                          : widget.isProfilePost
+                              ? Provider.of<Auth>(context, listen: false)
+                                  .userData!['store_name']
+                              : widget.data['store_name'],
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: _isVendor
+                            ? const Color(0xFF094B60)
+                            : const Color(0xFF2E0536),
+                        fontSize: 14,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.42,
+                      ),
                     ),
                   ),
                 ),
+                
                 const Spacer(),
                 if (!widget.isProfilePost &&
                     !(Provider.of<Auth>(context, listen: false)
@@ -1062,8 +1078,8 @@ class _PostItemState extends State<PostItem> {
                         // Space(14),
                         GestureDetector(
                           onTap: () {
-                             if(_likeData.length != 0)
-                           openLikedBy(context,_likeData);
+                            if (_likeData.length != 0)
+                              openLikedBy(context, _likeData);
                           },
                           child: Row(
                             children: [
@@ -1470,8 +1486,6 @@ class _PostItemState extends State<PostItem> {
               ),
         widget.isProfilePost ? 15.h : 15.h);
   }
-
- 
 }
 
 class FollowButtonInSHeet extends StatefulWidget {

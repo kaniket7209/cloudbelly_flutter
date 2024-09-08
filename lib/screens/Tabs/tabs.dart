@@ -205,9 +205,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                             fontFamily: 'Product Sans',
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1,
-                            color: userType == 'Vendor'
-                                ? Color(0xff0A4C61)
-                                : colorProfile,
+                            color: Color(0xff0A4C61),
                           ),
                         ),
                       ),

@@ -97,12 +97,30 @@ class RestaurantCard extends StatelessWidget {
                     MainAxisAlignment.center, // Center vertically
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    restaurant.storeName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Color(0xff2E0536),
+                  InkWell(
+                    onTap: () {
+                         
+                          // print("userIdfrom post:: $userId");
+                           Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileView(
+                      userIdList: [
+                        restaurant.id
+                      ], // Adjust this according to your ProfileView constructor
+                    ),
+                  ),
+                ).then((value) {
+                  // You can clear the userId or perform any other actions here if needed
+                });
+                        },
+                    child: Text(
+                      restaurant.storeName,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Color(0xff2E0536),
+                      ),
                     ),
                   ),
                   SizedBox(height: 5),

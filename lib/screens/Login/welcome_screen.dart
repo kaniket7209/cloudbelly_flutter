@@ -67,8 +67,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       if (_isNewVersionAvailable(currentVersion, newVersion)) {
         _showUpdateDialog(newVersion);
       } else {
-        // _checkLoginStatus();
-         _showUpdateDialog(newVersion);
+        _checkLoginStatus();
+        
       }
     } catch (e) {
       print('Error checking for updates: $e');

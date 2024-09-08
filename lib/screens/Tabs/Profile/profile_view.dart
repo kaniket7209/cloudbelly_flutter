@@ -664,7 +664,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   .followers
                                                                   ?.length
                                                                   .toString() ??
-                                                              "",
+                                                              "0",
                                                           txt: 'Followers',
                                                           color:
                                                               sharedProfileColour(
@@ -676,7 +676,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   .followings
                                                                   ?.length
                                                                   .toString() ??
-                                                              "",
+                                                              "0",
                                                           txt: 'Following',
                                                           color:
                                                               sharedProfileColour(
