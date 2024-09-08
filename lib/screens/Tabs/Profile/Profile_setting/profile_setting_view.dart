@@ -1161,10 +1161,27 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
       backgroundColor: const Color(0xFFFFFFFF),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.h),
+          padding: EdgeInsets.fromLTRB(30,1.h,30,8.h),
           child: Column(
+            //back icon
+            
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+               Container(
+                alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: Image.asset(
+                        'assets/images/back_double_arrow.png', // Replace with your actual asset path
+                        color: Color(0xffFA6E00),
+                        width: 24,
+                        height: 24,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 3.h,),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1366,47 +1383,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                         ],
                                       ),
                                       Space(1.h),
-                                      // Row(
-                                      //   children: [
-                                      //     Container(
-                                      //       height: 25,
-                                      //       width: 25,
-                                      //       decoration: ShapeDecoration(
-                                      //         shadows: [
-                                      //           BoxShadow(
-                                      //             offset: Offset(0, 4),
-                                      //             color: boxShadowColor
-                                      //                 .withOpacity(0.3),
-                                      //             blurRadius: 20,
-                                      //           )
-                                      //         ],
-                                      //         color: Color(0xFFA5C8C799),
-                                      //         shape: SmoothRectangleBorder(
-                                      //           borderRadius:
-                                      //               SmoothBorderRadius.all(
-                                      //                   SmoothRadius(
-                                      //                       cornerRadius: 10,
-                                      //                       cornerSmoothing:
-                                      //                           1)),
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //     const Space(
-                                      //       16,
-                                      //       isHorizontal: true,
-                                      //     ),
-                                      //     Text(
-                                      //       "Add cover photo",
-                                      //       style: TextStyle(
-                                      //           fontSize: 14,
-                                      //           color: boxShadowColor,
-                                      //           fontFamily: 'Product Sans',
-                                      //           fontWeight: FontWeight.w700),
-                                      //     ),
-                                      //   ],
-                                      // ),
-
-                                      // Space(1.h),
+                                     
                                       Row(
                                         children: [
                                           Container(

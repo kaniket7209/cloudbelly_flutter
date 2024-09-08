@@ -12,19 +12,18 @@ class RestaurantCard extends StatelessWidget {
 
   RestaurantCard({required this.restaurant});
 
-   
- Future<void> _launchURL(String url) async {
-  try {
-    final Uri urlLink = Uri.parse(url);
+  Future<void> _launchURL(String url) async {
+    try {
+      final Uri urlLink = Uri.parse(url);
 
-    await launchUrl(
-      urlLink,
-      mode: LaunchMode.externalApplication,
-    );
-  } catch (e) {
-    print('Could not open the  link: $e');
+      await launchUrl(
+        urlLink,
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      print('Could not open the  link: $e');
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +75,7 @@ class RestaurantCard extends StatelessWidget {
                     cornerSmoothing: 1,
                   ),
                   child: restaurant.profilePhoto.isNotEmpty
-                      ?   CachedNetworkImage(
+                      ? CachedNetworkImage(
                           imageUrl: restaurant.profilePhoto,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => GlobalVariables()
@@ -99,21 +98,20 @@ class RestaurantCard extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                         
-                          // print("userIdfrom post:: $userId");
-                           Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileView(
-                      userIdList: [
-                        restaurant.id
-                      ], // Adjust this according to your ProfileView constructor
-                    ),
-                  ),
-                ).then((value) {
-                  // You can clear the userId or perform any other actions here if needed
-                });
-                        },
+                      // print("userIdfrom post:: $userId");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileView(
+                            userIdList: [
+                              restaurant.id
+                            ], // Adjust this according to your ProfileView constructor
+                          ),
+                        ),
+                      ).then((value) {
+                        // You can clear the userId or perform any other actions here if needed
+                      });
+                    },
                     child: Text(
                       restaurant.storeName,
                       style: TextStyle(
