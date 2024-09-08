@@ -78,16 +78,16 @@ class _PostItemState extends State<PostItem> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _getLikeData();
+    // _getLikeData();
   }
 
   @override
   void didUpdateWidget(PostItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.data != oldWidget.data) {
-      _getLikeData();
-      // setState(() {}); // Force rebuild when data changes
-    }
+    // if (widget.data != oldWidget.data) {
+    //   _getLikeData();
+    //   // setState(() {}); // Force rebuild when data changes
+    // }
   }
 
   List<String> getFittedText(String text) {
@@ -103,7 +103,7 @@ class _PostItemState extends State<PostItem> {
   void getProductDetails() async {
     AppWideLoadingBanner().loadingBanner(context);
     // print("Full data");
-   
+
     List<dynamic> productIds = widget.data['menu_items'];
     productDetails = await Provider.of<Auth>(context, listen: false)
         .getProductDetails(productIds)
@@ -432,7 +432,7 @@ class _PostItemState extends State<PostItem> {
                     ),
                   ),
                 ),
-                
+
                 const Spacer(),
                 if (!widget.isProfilePost &&
                     !(Provider.of<Auth>(context, listen: false)
@@ -615,18 +615,29 @@ class _PostItemState extends State<PostItem> {
                                     _isLiked = !_isLiked;
                                     if (_isLiked) {
                                       setState(() {
-                                        _likeData.add({
-                                          'id': Provider.of<Auth>(context,
-                                                  listen: false)
-                                              .userData?['user_id'],
-                                          'profile_photo': Provider.of<Auth>(
-                                                  context,
-                                                  listen: false)
-                                              .logo_url,
-                                          'name': Provider.of<Auth>(context,
-                                                  listen: false)
-                                              .userData?['store_name'],
-                                        });
+                                        // Get the current user ID
+                                        final userId = Provider.of<Auth>(
+                                                context,
+                                                listen: false)
+                                            .userData?['user_id'];
+
+                                        // Check if the user is already in the list
+                                        final isAlreadyLiked = _likeData.any(
+                                            (like) => like['id'] == userId);
+
+                                        // If not present, add the user to the list
+                                        if (!isAlreadyLiked) {
+                                          _likeData.add({
+                                            'id': userId,
+                                            'profile_photo': Provider.of<Auth>(
+                                                    context,
+                                                    listen: false)
+                                                .logo_url,
+                                            'name': Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .userData?['store_name'],
+                                          });
+                                        }
                                       });
                                     } else {
                                       setState(() {
@@ -897,17 +908,27 @@ class _PostItemState extends State<PostItem> {
                             _isLiked = !_isLiked;
                             if (_isLiked) {
                               setState(() {
-                                _likeData.add({
-                                  'id':
-                                      Provider.of<Auth>(context, listen: false)
-                                          .userData?['user_id'],
-                                  'profile_photo':
-                                      Provider.of<Auth>(context, listen: false)
-                                          .logo_url,
-                                  'name':
-                                      Provider.of<Auth>(context, listen: false)
-                                          .userData?['store_name'],
-                                });
+                                // Get the current user ID
+                                final userId =
+                                    Provider.of<Auth>(context, listen: false)
+                                        .userData?['user_id'];
+
+                                // Check if the user is already in the list
+                                final isAlreadyLiked = _likeData
+                                    .any((like) => like['id'] == userId);
+
+                                // If not present, add the user to the list
+                                if (!isAlreadyLiked) {
+                                  _likeData.add({
+                                    'id': userId,
+                                    'profile_photo': Provider.of<Auth>(context,
+                                            listen: false)
+                                        .logo_url,
+                                    'name': Provider.of<Auth>(context,
+                                            listen: false)
+                                        .userData?['store_name'],
+                                  });
+                                }
                               });
                             } else {
                               setState(() {

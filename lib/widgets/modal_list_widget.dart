@@ -181,10 +181,10 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                               ),
                               child: ClipRRect(
                                 borderRadius: SmoothBorderRadius(
-                                    cornerRadius:
-                                        15, // Adjust this value for desired squircle effect
-                                    cornerSmoothing: 1,
-                                  ), // Ensure the image matches the squircle shape
+                                  cornerRadius:
+                                      15, // Adjust this value for desired squircle effect
+                                  cornerSmoothing: 1,
+                                ), // Ensure the image matches the squircle shape
                                 child: user['profile_photo'] != null
                                     ? Image.network(
                                         user['profile_photo'],
@@ -228,9 +228,9 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                               decoration: ShapeDecoration(
                                 shadows: [
                                   BoxShadow(
-                                    color:  isFollowing
-                                    ? Color(0xff0A4C61).withOpacity(0.44)
-                                    : Color(0xffE88037).withOpacity(0.5),
+                                    color: isFollowing
+                                        ? Color(0xff0A4C61).withOpacity(0.44)
+                                        : Color(0xffE88037).withOpacity(0.5),
                                     blurRadius: 20,
                                     offset: Offset(5, 6),
                                     spreadRadius: 0,
@@ -249,7 +249,7 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
                               child: Text(
                                 textAlign: TextAlign.center,
                                 // isFollowing ? 'Unfollow' : 'Follow',
-                                getButtonText(isFollowing,widget.title),
+                                getButtonText(isFollowing, widget.title),
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: 'Product Sans',
@@ -270,15 +270,15 @@ class _UserDetailsModalState extends State<UserDetailsModal> {
       },
     );
   }
-String getButtonText(bool isFollowing, String title) {
-  if (title == 'Followings') {
-    return 'Remove';
-  } else {
-    return isFollowing ? 'Unfollow' : 'Follow';
+
+  String getButtonText(bool isFollowing, String title) {
+    if (title == 'Followings') {
+      return 'Remove';
+    } else {
+      return isFollowing ? 'Unfollow' : 'Follow';
+    }
   }
 }
-}
-
 
 Future<void> openFullScreen(
   BuildContext context,
@@ -379,6 +379,8 @@ Future<void> openFullScreen(
 }
 
 Future<void> openLikedBy(BuildContext context, List<dynamic> likedData) async {
+
+
   if (likedData.isEmpty) {
     // Handle the case where the list is empty
     print("Liked data is empty");
@@ -414,7 +416,9 @@ Future<void> openLikedBy(BuildContext context, List<dynamic> likedData) async {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context).pop();
@@ -433,7 +437,9 @@ Future<void> openLikedBy(BuildContext context, List<dynamic> likedData) async {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Container(
                   alignment: Alignment.center,
                   child: Text(
@@ -460,7 +466,8 @@ Future<void> openLikedBy(BuildContext context, List<dynamic> likedData) async {
                 else
                   Expanded(
                     child: ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       itemCount: likedData.length,
                       itemBuilder: (context, index) {
                         final user = likedData[index];
@@ -478,16 +485,26 @@ Future<void> openLikedBy(BuildContext context, List<dynamic> likedData) async {
                                 ),
                               ],
                               borderRadius: SmoothBorderRadius(
-                                    cornerRadius:
-                                        12, // Adjust this value for desired squircle effect
-                                    cornerSmoothing: 1,
-                                  ),
+                                cornerRadius:
+                                    12, // Adjust this value for desired squircle effect
+                                cornerSmoothing: 1,
+                              ),
                             ),
                             clipBehavior: Clip.antiAlias,
-                            child: Image.network(
-                              user['profile_photo'],
-                              fit: BoxFit.cover,
-                            ),
+                            child: user['profile_photo'] != null &&
+                                    user['profile_photo'] != ''
+                                ? Image.network(
+                                    user['profile_photo'],
+                                    fit: BoxFit.cover,
+                                  )
+                                : Center(
+                                    child: Text(
+                                      user['name'].substring(0, 1),
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
                           ),
                           title: Text(
                             user['name'],
@@ -510,6 +527,3 @@ Future<void> openLikedBy(BuildContext context, List<dynamic> likedData) async {
     },
   );
 }
-
-
-
