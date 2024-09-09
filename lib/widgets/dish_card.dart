@@ -62,9 +62,7 @@ class DishCard extends StatelessWidget {
                     cornerSmoothing: 1,
                   ),
                   child: dish.images.isNotEmpty
-                      ?
-                     
-                      CachedNetworkImage(
+                      ? CachedNetworkImage(
                           imageUrl: dish.images.first,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => GlobalVariables()
@@ -86,20 +84,20 @@ class DishCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
-                     onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileView(
-                      userIdList: [
-                        dish.user_id
-                      ], // Adjust this according to your ProfileView constructor
-                    ),
-                  ),
-                ).then((value) {
-                  // You can clear the userId or perform any other actions here if needed
-                });
-              },
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileView(
+                            userIdList: [
+                              dish.user_id
+                            ], // Adjust this according to your ProfileView constructor
+                          ),
+                        ),
+                      ).then((value) {
+                        // You can clear the userId or perform any other actions here if needed
+                      });
+                    },
                     child: Row(
                       children: [
                         Container(

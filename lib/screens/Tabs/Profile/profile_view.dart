@@ -56,6 +56,7 @@ class _ProfileViewState extends State<ProfileView> {
   String countFollowings = '';
   ScrollController t1 = new ScrollController();
   String kycStatus = 'not verified';
+  var locationDet = {};
 
   bool checkFollow() {
     String id = widget.userIdList.first;
@@ -115,6 +116,7 @@ class _ProfileViewState extends State<ProfileView> {
         await Provider.of<Auth>(context, listen: false).getUserInfo(userIds);
     if (fetchedUserDetails[0] != null) {
       kycStatus = fetchedUserDetails[0]!['kyc_status'];
+      locationDet = fetchedUserDetails[0]!['address'];
     }
 
     //Navigator.pop(context);
@@ -419,28 +421,25 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     .profilePhoto !=
                                                                 null
                                                             ? GestureDetector(
-                                                             onTap: () => openFullScreen(context, userList.first
-                                                                              .profilePhoto ??''),
-                                                              child: Container(
+                                                                onTap: () =>
+                                                                    openFullScreen(
+                                                                        context,
+                                                                        userList.first.profilePhoto ??
+                                                                            ''),
+                                                                child:
+                                                                    Container(
                                                                   height: 70,
                                                                   width: 70,
                                                                   decoration:
                                                                       ShapeDecoration(
                                                                     shadows: [
                                                                       BoxShadow(
-                                                                        offset:
-                                                                            Offset(
-                                                                                1,
-                                                                                4),
+                                                                        offset: Offset(
+                                                                            1,
+                                                                            4),
                                                                         color: userList.first.userType ==
-                                                                                UserType
-                                                                                    .Vendor.name
-                                                                            ? const Color
-                                                                                .fromRGBO(
-                                                                                165,
-                                                                                200,
-                                                                                199,
-                                                                                0.6)
+                                                                                UserType.Vendor.name
+                                                                            ? const Color.fromRGBO(165, 200, 199, 0.6)
                                                                             : userList.first.userType == UserType.Supplier.name
                                                                                 ? const Color.fromRGBO(77, 191, 74, 0.6)
                                                                                 : const Color.fromRGBO(188, 115, 188, 0.6),
@@ -476,7 +475,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     ),
                                                                   ),
                                                                 ),
-                                                            )
+                                                              )
                                                             : Container(
                                                                 height: 70,
                                                                 width: 70,
@@ -1057,15 +1056,15 @@ class _ProfileViewState extends State<ProfileView> {
                                                                     setState(
                                                                         () {
                                                                       _activeButtonIndex =
-                                                                          3;
+                                                                          4;
                                                                     });
                                                                   },
                                                                   child: CommonButtonProfile(
                                                                       isActive:
                                                                           _activeButtonIndex ==
-                                                                              3,
+                                                                              4,
                                                                       txt:
-                                                                          'Reviews',
+                                                                          'About',
                                                                       width: 52,
                                                                       color: sharedProfileColour(userList
                                                                           .first
@@ -1243,35 +1242,173 @@ class _ProfileViewState extends State<ProfileView> {
                                                 Container(
                                                   constraints: BoxConstraints(
                                                     minHeight:
-                                                        300, // Set your minimum height here
+                                                        400, // Set your minimum height here
                                                   ),
-                                                  child: Center(
+                                                  child: Container(
+                                                      width: double.infinity,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 5.w),
                                                       child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        'No data',
-                                                        style: TextStyle(
-                                                            color: boxShadowColor
-                                                                .withOpacity(
-                                                                    0.2),
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 35,
-                                                            fontFamily:
-                                                                'Product Sans'),
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 200,
-                                                      )
-                                                    ],
-                                                  )),
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            'Store Info',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    boxShadowColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w800,
+                                                                fontSize: 22,
+                                                                letterSpacing:
+                                                                    1,
+                                                                fontFamily:
+                                                                    'Product Sans Black'),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  if (locationDet[
+                                                                              'longitude'] !=
+                                                                          null &&
+                                                                      locationDet[
+                                                                              'latitude'] !=
+                                                                          null) {
+                                                                    final String
+                                                                        googleMapsUrl =
+                                                                        'https://www.google.com/maps/search/?api=1&query=${locationDet['latitude']},${locationDet['longitude']}';
+                                                                    print(
+                                                                        "googleMapsUrl  $googleMapsUrl");
+                                                                    _launchURL(
+                                                                        googleMapsUrl);
+                                                                  }
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  width: 25,
+                                                                  height: 25,
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              4),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                    boxShadow: [
+                                                                      BoxShadow(
+                                                                        color: boxShadowColor
+                                                                            .withOpacity(0.2), // Color with 35% opacity
+                                                                        blurRadius:
+                                                                            10, // Blur amount
+                                                                        offset: Offset(
+                                                                            0,
+                                                                            4), // X and Y offset
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  child: Image
+                                                                      .asset(
+                                                                    'assets/images/Location.png',
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 2.w,
+                                                              ),
+                                                              Text(
+                                                                (locationDet !=
+                                                                        {})
+                                                                    ? "${locationDet['hno']} ${locationDet['location']} ${locationDet['landmark']}"
+                                                                    : 'No location found',
+                                                                style: TextStyle(
+                                                                    color: Color(
+                                                                        0xff1B7997),
+                                                                    fontSize:
+                                                                        13,
+                                                                    fontFamily:
+                                                                        'Product Sans'),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              SizedBox(
+                                                                  width: 1.w),
+                                                              GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  final phoneNumber =
+                                                                      userList
+                                                                          .first
+                                                                          .phone;
+                                                                  final url =
+                                                                      'tel:$phoneNumber';
+
+                                                                  try {
+                                                                    await _launchURL(
+                                                                        url);
+                                                                  } catch (e) {
+                                                                    ScaffoldMessenger.of(
+                                                                            context)
+                                                                        .showSnackBar(
+                                                                      SnackBar(
+                                                                          content:
+                                                                              Text('Could not launch phone call $e')),
+                                                                    );
+                                                                  }
+                                                                },
+                                                                child:
+                                                                    CircleAvatar(
+                                                                  radius: 9,
+                                                                  backgroundColor:
+                                                                      const Color(
+                                                                          0xFFFA6E00),
+                                                                  child: Image
+                                                                      .asset(
+                                                                          'assets/images/Phone.png'),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 3.w),
+                                                              Text(
+                                                                "${userList.first.phone}",
+                                                                style: TextStyle(
+                                                                    color: Color(
+                                                                        0xff1B7997),
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontFamily:
+                                                                        'Product Sans'),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                         
+                                                          const SizedBox(
+                                                            height: 200,
+                                                          )
+                                                        ],
+                                                      )),
                                                 )
+                                          
+                                          
                                             ]),
                                       ),
                                     ),

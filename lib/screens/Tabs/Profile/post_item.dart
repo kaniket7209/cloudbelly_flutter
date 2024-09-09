@@ -1839,7 +1839,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                                       });
                                     } else {
                                       TOastNotification().showErrorToast(
-                                          context, 'Error!1111');
+                                          context, 'Error!');
                                     }
                                   },
                                 ),
@@ -1873,7 +1873,8 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
             child: Row(
               children: [
                 const Space(isHorizontal: true, 10),
-                Provider.of<Auth>(context, listen: false).logo_url == ''
+                Provider.of<Auth>(context, listen: true)
+                                .userData!['proifle_photo'] == ''
                     ? Container(
                         height: 30,
                         width: 30,
@@ -1919,7 +1920,8 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                             cornerSmoothing: 1,
                           ),
                           child: Image.network(
-                            Provider.of<Auth>(context, listen: false).logo_url,
+                            Provider.of<Auth>(context, listen: true)
+                                .userData!['profile_photo'],
                             fit: BoxFit.cover,
                           ),
                         ),

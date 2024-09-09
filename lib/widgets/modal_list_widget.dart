@@ -379,8 +379,6 @@ Future<void> openFullScreen(
 }
 
 Future<void> openLikedBy(BuildContext context, List<dynamic> likedData) async {
-
-
   if (likedData.isEmpty) {
     // Handle the case where the list is empty
     print("Liked data is empty");
@@ -472,47 +470,66 @@ Future<void> openLikedBy(BuildContext context, List<dynamic> likedData) async {
                       itemBuilder: (context, index) {
                         final user = likedData[index];
                         return ListTile(
-                          leading: Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0xff1F6F6D).withOpacity(0.4),
-                                  blurRadius: 20,
-                                  offset: Offset(0, 4),
-                                ),
-                              ],
-                              borderRadius: SmoothBorderRadius(
-                                cornerRadius:
-                                    12, // Adjust this value for desired squircle effect
-                                cornerSmoothing: 1,
-                              ),
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: user['profile_photo'] != null &&
-                                    user['profile_photo'] != ''
-                                ? Image.network(
-                                    user['profile_photo'],
-                                    fit: BoxFit.cover,
-                                  )
-                                : Center(
-                                    child: Text(
-                                      user['name'].substring(0, 1),
-                                      style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                          leading: GestureDetector(
+                            onTap: () => openFullScreen(context,user['profile_photo']),
+                            child: Container(
+                              width: 35,
+                              height: 35,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xff1F6F6D).withOpacity(0.4),
+                                    blurRadius: 20,
+                                    offset: Offset(0, 4),
                                   ),
+                                ],
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius:
+                                      12, // Adjust this value for desired squircle effect
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: user['profile_photo'] != null &&
+                                      user['profile_photo'] != ''
+                                  ? Image.network(
+                                      user['profile_photo'],
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Center(
+                                      child: Text(
+                                        user['name'].substring(0, 1),
+                                        style: TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                            ),
                           ),
-                          title: Text(
-                            user['name'],
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: 'Product Sans',
-                              color: Color(0xff0A4C61),
-                              fontWeight: FontWeight.bold,
+                          title: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileView(
+                                    userIdList: [
+                                      user['id']
+                                    ], // Adjust this according to your ProfileView constructor
+                                  ),
+                                ),
+                              ).then((value) {
+                                // You can clear the userId or perform any other actions here if needed
+                              });
+                            },
+                            child: Text(
+                              user['name'],
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'Product Sans',
+                                color: Color(0xff0A4C61),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         );

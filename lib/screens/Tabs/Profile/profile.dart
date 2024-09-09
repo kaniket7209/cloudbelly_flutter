@@ -1298,63 +1298,180 @@ class _ProfileState extends State<Profile> {
 
                                 if (_activeButtonIndex == 4)
                                   Container(
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          if (Provider.of<Auth>(context,
-                                                          listen: false)
-                                                      .userData?['fssai'] ==
-                                                  '' ||
-                                              Provider.of<Auth>(context,
-                                                          listen: false)
-                                                      .userData?['fssai'] ==
-                                                  null)
+                                    constraints: BoxConstraints(
+                                                    minHeight:
+                                                        400, // Set your minimum height here
+                                                  ),
+                                    child: Container(
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.symmetric(horizontal: 4.w),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
                                             Text(
-                                              'No data',
+                                              'Store Info',
                                               style: TextStyle(
-                                                color: boxShadowColor
-                                                    .withOpacity(0.2),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 35,
-                                                fontFamily: 'Product Sans',
-                                              ),
-                                            )
-                                          else
-                                            Container(
-                                              color: Colors.white,
-                                              child: ClipSmoothRect(
-                                                radius: SmoothBorderRadius(
-                                                  cornerRadius: 22,
-                                                  cornerSmoothing: 1,
-                                                ),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: Provider.of<Auth>(
-                                                          context,
-                                                          listen: false)
-                                                      .userData?['fssai'],
-                                                  fit: BoxFit.cover,
-                                                  placeholder: (context, url) =>
-                                                      Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      color: Color.fromARGB(
-                                                          255, 33, 229, 243),
+                                                  color: boxShadowColor,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 22,
+                                                  letterSpacing: 1,
+                                                  fontFamily:
+                                                      'Product Sans Black'),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Row(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    final locationDet =
+                                                        Provider.of<Auth>(context,
+                                                                listen: false)
+                                                            .userData!['address'];
+                                                    if (Provider.of<Auth>(context,
+                                                                        listen: false)
+                                                                    .userData![
+                                                                'longitude'] !=
+                                                            null &&
+                                                        locationDet['latitude'] !=
+                                                            null) {
+                                                      final String googleMapsUrl =
+                                                          'https://www.google.com/maps/search/?api=1&query=${locationDet['latitude']},${locationDet['longitude']}';
+                                                      print(
+                                                          "googleMapsUrl  $googleMapsUrl");
+                                                      _launchURL(googleMapsUrl);
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    width: 25,
+                                                    height: 25,
+                                                    padding: EdgeInsets.all(4),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: boxShadowColor
+                                                              .withOpacity(
+                                                                  0.2), // Color with 35% opacity
+                                                          blurRadius:
+                                                              10, // Blur amount
+                                                          offset: Offset(0,
+                                                              4), // X and Y offset
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Image.asset(
+                                                      'assets/images/Location.png',
                                                     ),
                                                   ),
-                                                  errorWidget:
-                                                      (context, url, error) =>
-                                                          Icon(Icons.error),
                                                 ),
-                                              ),
+                                                SizedBox(
+                                                  width: 2.w,
+                                                ),
+                                                Container(
+                                                  constraints: BoxConstraints(maxWidth: 60.w),
+                                                  child: Text(
+                                                    (Provider.of<Auth>(context,
+                                                                        listen: false)
+                                                                    .userData![
+                                                                'address'] !=
+                                                            null)
+                                                        ? "${Provider.of<Auth>(context, listen: false).userData!['address']['hno']} ${Provider.of<Auth>(context, listen: false).userData!['address']['location']} ${Provider.of<Auth>(context, listen: false).userData!['address']['landmark']}"
+                                                        : 'No location found',
+                                                    style: TextStyle(
+                                                        color: Color(0xff1B7997),
+                                                        fontSize: 13,
+                                                        fontFamily: 'Product Sans'),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          const SizedBox(
-                                            height: 100,
-                                          ),
-                                        ],
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Row(
+                                              children: [
+                                                SizedBox(width: 1.w),
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    final phoneNumber =
+                                                        Provider.of<Auth>(context,
+                                                                listen: false)
+                                                            .userData!['phone'];
+                                                    final url =
+                                                        'tel:$phoneNumber';
+                                    
+                                                    try {
+                                                      await _launchURL(url);
+                                                    } catch (e) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                            content: Text(
+                                                                'Could not launch phone call $e')),
+                                                      );
+                                                    }
+                                                  },
+                                                  child: CircleAvatar(
+                                                    radius: 9,
+                                                    backgroundColor:
+                                                        const Color(0xFFFA6E00),
+                                                    child: Image.asset(
+                                                        'assets/images/Phone.png'),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 3.w),
+                                                Text(
+                                                  "${Provider.of<Auth>(context, listen: false).userData!['phone']}",
+                                                  style: TextStyle(
+                                                      color: Color(0xff1B7997),
+                                                      fontSize: 12,
+                                                      fontFamily: 'Product Sans'),
+                                                ),
+                                              ],
+                                            ),
+                                            // Container(
+                                            //   color: Colors.white,
+                                            //   child: ClipSmoothRect(
+                                            //     radius: SmoothBorderRadius(
+                                            //       cornerRadius: 22,
+                                            //       cornerSmoothing: 1,
+                                            //     ),
+                                            //     child: CachedNetworkImage(
+                                            //       imageUrl: Provider.of<Auth>(
+                                            //               context,
+                                            //               listen: false)
+                                            //           .userData?['fssai'],
+                                            //       fit: BoxFit.cover,
+                                            //       placeholder: (context, url) =>
+                                            //           Center(
+                                            //         child:
+                                            //             CircularProgressIndicator(
+                                            //           color: Color.fromARGB(
+                                            //               255, 33, 229, 243),
+                                            //         ),
+                                            //       ),
+                                            //       errorWidget:
+                                            //           (context, url, error) =>
+                                            //               Icon(Icons.error),
+                                            //     ),
+                                            //   ),
+                                            // ),
+                                           
+                                            const SizedBox(
+                                              height: 100,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -1404,47 +1521,47 @@ class _ProfileState extends State<Profile> {
           .showErrorToast(context, 'Your KYC status is incomplete');
     }
   }
-void _showFollowers(BuildContext context, List<dynamic> followers) {
-  List<String> userIds = followers.map((item) => item['user_id'] as String).toList();
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) => UserDetailsModal(
-      title: 'Followers',
-      userIds: userIds,
-      actionButtonText: 'Unfollow',
-      onReload: () {
-        // Your code to reload the parent widget's state
-        fetchUserDetailsbyKey();
-       
-      },
-    ),
-  );
+  void _showFollowers(BuildContext context, List<dynamic> followers) {
+    List<String> userIds =
+        followers.map((item) => item['user_id'] as String).toList();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => UserDetailsModal(
+        title: 'Followers',
+        userIds: userIds,
+        actionButtonText: 'Unfollow',
+        onReload: () {
+          // Your code to reload the parent widget's state
+          fetchUserDetailsbyKey();
+        },
+      ),
+    );
+  }
+
+  void _showFollowings(BuildContext context, List<dynamic> followings) {
+    List<String> userIds =
+        followings.map((item) => item['user_id'] as String).toList();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => UserDetailsModal(
+        title: 'Followings',
+        userIds: userIds,
+        actionButtonText: 'Unfollow',
+        onReload: () {
+          // Your code to reload the parent widget's state
+          fetchUserDetailsbyKey();
+        },
+      ),
+    );
+  }
 }
-void _showFollowings(BuildContext context, List<dynamic> followings) {
-  List<String> userIds = followings.map((item) => item['user_id'] as String).toList();
-
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) => UserDetailsModal(
-      title: 'Followings',
-      userIds: userIds,
-      actionButtonText: 'Unfollow',
-      onReload: () {
-        // Your code to reload the parent widget's state
-         fetchUserDetailsbyKey();
-       
-      },
-    ),
-  );
-}
-}
-
-
 
 Future<void> _launchURL(String url) async {
   try {
@@ -2695,7 +2812,6 @@ class FeedWidget extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class CommonButtonProfile extends StatelessWidget {
