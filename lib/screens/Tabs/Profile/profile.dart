@@ -1333,9 +1333,8 @@ class _ProfileState extends State<Profile> {
                                                         Provider.of<Auth>(context,
                                                                 listen: false)
                                                             .userData!['address'];
-                                                    if (Provider.of<Auth>(context,
-                                                                        listen: false)
-                                                                    .userData![
+                                                            print("locationDet  $locationDet");
+                                                    if (locationDet[
                                                                 'longitude'] !=
                                                             null &&
                                                         locationDet['latitude'] !=

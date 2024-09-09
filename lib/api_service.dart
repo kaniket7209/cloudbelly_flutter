@@ -1647,6 +1647,34 @@ class Auth with ChangeNotifier {
     }
   }
 
+  Future<String> updateSingleDescription(productName) async {
+    final String url =
+        'https://app.cloudbelly.in/product/update-single-description';
+
+    final Map<String, dynamic> requestBody = {
+      'user_id': userData?['user_id'] ?? "",
+      'product_name': productName
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
+      // print(response.statusCode);
+      print("single desc ${response.body}");
+     
+
+      return response.body;
+
+      // return response.statusCode.toString();
+    } catch (error) {
+      // Handle exceptions
+      return '';
+    }
+  }
+
   Future<String> createPost(List<String> list, List<String> tags,
       String caption, List<dynamic> selectedMenuList) async {
     final String url = 'https://app.cloudbelly.in/metadata/feed';
@@ -1842,36 +1870,38 @@ class Auth with ChangeNotifier {
       return '';
     }
   }
+
   Future<Uint8List?> bellyAiTextToImage(String prompt) async {
-  final String url = 'https://app.cloudbelly.in/text-to-image';
+    final String url = 'https://app.cloudbelly.in/text-to-image';
 
-  try {
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        // Add any other headers if necessary (e.g., Authorization)
-      },
-      body: {
-        'prompt': prompt,
-      },
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          // Add any other headers if necessary (e.g., Authorization)
+        },
+        body: {
+          'prompt': prompt,
+        },
+      );
 
-    if (response.statusCode == 200) {
-      // The response body contains the binary image data directly
-      return response.bodyBytes;
-    } else {
-      // Handle non-200 responses
-      print('Error: Server responded with status code ${response.statusCode}');
+      if (response.statusCode == 200) {
+        // The response body contains the binary image data directly
+        return response.bodyBytes;
+      } else {
+        // Handle non-200 responses
+        print(
+            'Error: Server responded with status code ${response.statusCode}');
+        return null;
+      }
+    } catch (error) {
+      // Handle exceptions
+      print('Error: $error');
       return null;
     }
-  } catch (error) {
-    // Handle exceptions
-    print('Error: $error');
-    return null;
   }
-}
-  
+
   Future<dynamic> unfollow(String id) async {
     final String url = 'https://app.cloudbelly.in/unfollow';
 
@@ -1996,7 +2026,7 @@ class Auth with ChangeNotifier {
         headers: headers,
         body: jsonEncode(requestBody),
       );
-
+      print("updatinggg $description  ${jsonDecode((response.body))}");
       return jsonDecode((response.body));
     } catch (error) {
       // Handle exceptions

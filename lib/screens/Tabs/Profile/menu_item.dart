@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/models/model.dart';
@@ -13,6 +12,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -22,10 +22,12 @@ class MenuItem extends StatefulWidget {
       {super.key,
       required this.data,
       required this.scroll,
-      required this.storeAvailability,required this.kycStatus});
+      required this.storeAvailability,
+      required this.kycStatus});
   var scroll;
   dynamic data;
   bool storeAvailability;
+
   String kycStatus;
   @override
   State<MenuItem> createState() => _MenuItemState();
@@ -34,6 +36,7 @@ class MenuItem extends StatefulWidget {
 
 class _MenuItemState extends State<MenuItem> {
   bool _stockSwitch = true;
+  bool refreshing = false;
   @override
   void initState() {
     super.initState();
@@ -149,58 +152,120 @@ class _MenuItemState extends State<MenuItem> {
                   ],
                 ),
                 if (widget.data['description'] == '') Space(1.h),
-                if (Provider.of<Auth>(context, listen: false)
-                        .userData?['user_id'] ==
-                    widget.data['user_id'])
-                  Container(
-                    width: 60.w,
-                    decoration: widget.data['description'] == ''
-                        ? ShapeDecoration(
-                            color: const Color.fromRGBO(239, 255, 254, 1),
-                            shape: SmoothRectangleBorder(
-                              borderRadius: SmoothBorderRadius(
-                                cornerRadius: 15,
-                                cornerSmoothing: 1,
-                              ),
-                            ),
-                          )
-                        : null,
-                    child: Center(
-                      child: TextField(
-                        maxLines: null,
-                        style: const TextStyle(
-                          color: Color(0xFF094B60),
-                          fontSize: 12,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w400,
-                        ),
-                        controller: _controller,
-                        decoration: InputDecoration(
-                          hintText: widget.data['description'] == ''
-                              ? '                         Add description'
-                              : '',
-                          hintStyle: const TextStyle(
-                            color: Color(0xFF094B60),
-                            fontSize: 12,
-                            fontFamily: 'Product Sans',
-                            fontWeight: FontWeight.w400,
-                          ),
-                          border: InputBorder.none,
-                        ),
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (newValue) async {
-                          // print(newValue);
-                          await Provider.of<Auth>(context, listen: false)
-                              .updateProductDetails(
-                                  widget.data['_id'], '', newValue);
-                          setState(() {
-                            widget.data['description'] = newValue;
-                          });
-                        },
+                if( refreshing)...[
+                   Container(
+                                            child: Text(
+                     'Please Wait...',
+                      style: const TextStyle(
+                        color: Color(0xff70BAD2),
+                        fontSize: 16,
+                        letterSpacing: 1.2,
+                        fontFamily: 'Product Sans',
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
+                                          ),
+                ],
+                if (Provider.of<Auth>(context, listen: false)
+                        .userData?['user_id'] ==
+                    widget.data['user_id']  && !refreshing) ...[
+                  Row(
+                    children: [
+                      Container(
+                        width: widget.data['description'] == '' ? 55.w : 60.w,
+                        decoration: widget.data['description'] == ''
+                            ? ShapeDecoration(
+                                color: const Color.fromRGBO(239, 255, 254, 1),
+                                shape: SmoothRectangleBorder(
+                                  borderRadius: SmoothBorderRadius(
+                                    cornerRadius: 15,
+                                    cornerSmoothing: 1,
+                                  ),
+                                ),
+                              )
+                            : null,
+                        child: Center(
+                          child: TextField(
+                            cursorColor: Color(0xFF094B60),
+                            textAlign: TextAlign.start,
+                            maxLines: null,
+                            style: const TextStyle(
+                              color: Color(0xFF094B60),
+                              fontSize: 12,
+                              fontFamily: 'Product Sans',
+                              fontWeight: FontWeight.w400,
+                            ),
+                            controller: _controller,
+                            decoration: InputDecoration(
+                              hintText: widget.data['description'] == ''
+                                  ? '    Write description'
+                                  : '',
+                              hintStyle: const TextStyle(
+                                color: Color(0xFF094B60),
+                                fontSize: 12,
+                                fontFamily: 'Product Sans',
+                                fontWeight: FontWeight.w400,
+                              ),
+                              border: InputBorder.none,
+                            ),
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (newValue) async {
+                              // print(newValue);
+                              await Provider.of<Auth>(context, listen: false)
+                                  .updateProductDetails(
+                                      widget.data['_id'], '', newValue);
+                              setState(() {
+                                widget.data['description'] = newValue;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      if (widget.data['description'] == '') ...[
+                        SizedBox(
+                          width: 1.w,
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            setState(() {
+                              refreshing = true;
+                            });
+
+                            var desc = await Provider.of<Auth>(context,
+                                    listen: false)
+                                .updateSingleDescription(widget.data['name']);
+                                print("updatingggdescrec  $desc");
+
+                            if(desc != '')
+                            await Provider.of<Auth>(context, listen: false)
+                                .updateProductDetails(
+                              widget.data['_id'],
+                              '',
+                              desc,
+                            );
+                            setState(() {
+                              widget.data['description'] = desc;
+                               refreshing = false;
+                            });
+
+                          },
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: Color(0xffD1EBEE),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.refresh, // Use any suitable icon
+                              color: Color(0xff0A4C61),
+                            ),
+                          ),
+                        ),
+                      ]
+                    ],
                   )
-                else
+                ] else
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.6,
                     child: Text(
@@ -301,7 +366,7 @@ class _MenuItemState extends State<MenuItem> {
                 ),
 
                 // vendor login - stock_status null || stock_status true //visited profile  -
-                if (widget.storeAvailability )
+                if (widget.storeAvailability)
                   if (widget.data['stock_status'] == null ||
                       widget.data['stock_status']) ...{
                     Positioned(
@@ -665,7 +730,7 @@ class _MenuItemState extends State<MenuItem> {
                   Expanded(
                     flex: 1,
                     child: Container(
-                      margin: const EdgeInsets.fromLTRB(20,13,20,20),
+                      margin: const EdgeInsets.fromLTRB(20, 13, 20, 20),
                       width: double.infinity,
                       decoration: ShapeDecoration(
                         shadows: [
@@ -776,5 +841,4 @@ class _MenuItemState extends State<MenuItem> {
       },
     );
   }
-
 }
