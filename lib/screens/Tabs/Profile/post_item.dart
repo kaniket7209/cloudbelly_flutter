@@ -207,7 +207,8 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
-    // print("who is user:: ${widget.isProfilePost}  ${widget.userId}");
+    print("who is user:: ${widget.isProfilePost}  ${widget.data['user_id']}  ${Provider.of<Auth>(context, listen: false).userData?['user_id'] !=
+                widget.data['user_id']}");
 
     bool shouldShowIcon = widget.isProfilePost ||
         (!widget.isProfilePost &&
@@ -524,10 +525,12 @@ class _PostItemState extends State<PostItem> {
                       ),
                     ),
                   ),
-                if (shouldShowIcon) ...{
+                if (shouldShowIcon || Provider.of<Auth>(context, listen: false).userData?['user_id'] ==
+                widget.userId) ...{
                   IconButton(
                       onPressed: () async {
                         {
+                          
                           return MoreSheetInPostItem(context).then((value) {
                             setState(() {});
                           });
@@ -1354,7 +1357,7 @@ class _PostItemState extends State<PostItem> {
   Future<void> MoreSheetInPostItem(BuildContext context) {
     return AppWideBottomSheet().showSheet(
         context,
-        widget.isProfilePost
+        widget.isProfilePost 
             ? Column(
                 children: [
                   // Space(4.h),

@@ -152,10 +152,10 @@ class _MenuItemState extends State<MenuItem> {
                   ],
                 ),
                 if (widget.data['description'] == '') Space(1.h),
-                if( refreshing)...[
-                   Container(
-                                            child: Text(
-                     'Please Wait...',
+                if (refreshing) ...[
+                  Container(
+                    child: Text(
+                      'Please Wait...',
                       style: const TextStyle(
                         color: Color(0xff70BAD2),
                         fontSize: 16,
@@ -164,11 +164,12 @@ class _MenuItemState extends State<MenuItem> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                                          ),
+                  ),
                 ],
                 if (Provider.of<Auth>(context, listen: false)
-                        .userData?['user_id'] ==
-                    widget.data['user_id']  && !refreshing) ...[
+                            .userData?['user_id'] ==
+                        widget.data['user_id'] &&
+                    !refreshing) ...[
                   Row(
                     children: [
                       Container(
@@ -234,20 +235,19 @@ class _MenuItemState extends State<MenuItem> {
                             var desc = await Provider.of<Auth>(context,
                                     listen: false)
                                 .updateSingleDescription(widget.data['name']);
-                                print("updatingggdescrec  $desc");
+                            print("updatingggdescrec  $desc");
 
-                            if(desc != '')
-                            await Provider.of<Auth>(context, listen: false)
-                                .updateProductDetails(
-                              widget.data['_id'],
-                              '',
-                              desc,
-                            );
+                            if (desc != '')
+                              await Provider.of<Auth>(context, listen: false)
+                                  .updateProductDetails(
+                                widget.data['_id'],
+                                '',
+                                desc,
+                              );
                             setState(() {
                               widget.data['description'] = desc;
-                               refreshing = false;
+                              refreshing = false;
                             });
-
                           },
                           child: Container(
                             width: 30,
