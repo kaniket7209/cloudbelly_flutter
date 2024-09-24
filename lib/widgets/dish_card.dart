@@ -2,6 +2,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
+import 'package:cloudbelly_app/widgets/modal_list_widget.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,29 +17,19 @@ class DishCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
+      margin: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(15.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileView(
-                      userIdList: [
-                        dish.user_id
-                      ], // Adjust this according to your ProfileView constructor
-                    ),
-                  ),
-                ).then((value) {
-                  // You can clear the userId or perform any other actions here if needed
-                });
+                openFullScreen(context,dish.images.first);
               },
               child: Container(
-                height: 90,
-                width: 90,
+                height: 155,
+                width: 130,
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: SmoothRectangleBorder(
@@ -75,7 +66,7 @@ class DishCard extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 20),
+            SizedBox(width: 25),
             Expanded(
               flex: 1,
               child: Column(
@@ -172,7 +163,7 @@ class DishCard extends StatelessWidget {
                           color: Color(0xff9428A9),
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: 14,
                         ),
                       ),
                       SizedBox(

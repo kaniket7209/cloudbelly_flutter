@@ -4,6 +4,7 @@ import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/restaurant.dart';
 
@@ -28,10 +29,12 @@ class RestaurantCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
+      margin: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 5.0),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(18.0),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GestureDetector(
               onTap: () {
@@ -49,8 +52,8 @@ class RestaurantCard extends StatelessWidget {
                 });
               },
               child: Container(
-                height: 90,
-                width: 90,
+                height: 160,
+                width: 130,
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: SmoothRectangleBorder(
@@ -88,12 +91,12 @@ class RestaurantCard extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 20),
+            SizedBox(width: 30),
             Expanded(
               flex: 1,
               child: Column(
                 mainAxisAlignment:
-                    MainAxisAlignment.center, // Center vertically
+                    MainAxisAlignment.start, // Center vertically
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   InkWell(
@@ -112,40 +115,43 @@ class RestaurantCard extends StatelessWidget {
                         // You can clear the userId or perform any other actions here if needed
                       });
                     },
-                    child: Text(
-                      restaurant.storeName,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Color(0xff2E0536),
+                    child: Container(
+                      constraints: BoxConstraints(maxWidth: 90.w),
+                      child: Text(
+                        restaurant.storeName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Color(0xff2E0536),
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(height: 5),
                   Row(
                     children: [
-                      Image.asset(
-                        'assets/images/Heart.png', // Ensure this asset file exists
-                        width: 20, // Set the width of the image
-                        height: 20, // Set the height of the image
-                      ),
-                      SizedBox(
-                          width:
-                              8.0), // Add some space between the image and the text
-                      Text(
-                        '--  --', // Add the rating text here
-                        style: TextStyle(
-                            fontSize: 14.0,
-                            color: Color(0xff9428A9),
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(width: 3.0),
+                      // Image.asset(
+                      //   'assets/images/Heart.png', // Ensure this asset file exists
+                      //   width: 20, // Set the width of the image
+                      //   height: 20, // Set the height of the image
+                      // ),
+                      // SizedBox(
+                      //     width:
+                      //         8.0), // Add some space between the image and the text
+                      // Text(
+                      //   '--  --', // Add the rating text here
+                      //   style: TextStyle(
+                      //       fontSize: 14.0,
+                      //       color: Color(0xff9428A9),
+                      //       fontWeight: FontWeight.bold),
+                      // ),
+                      // SizedBox(width: 3.0),
 
-                      Spacer(), // Pushes the text to the right
+                      // Spacer(), // Pushes the text to the right
                       Text(
                         '45-50 mins',
                         style: TextStyle(
-                            fontSize: 14.0,
+                            fontSize: 15.0,
                             color: Color(0xff9428A9),
                             fontWeight: FontWeight.bold),
                         textAlign: TextAlign.right,
@@ -161,15 +167,34 @@ class RestaurantCard extends StatelessWidget {
                           restaurant.location,
                           style: TextStyle(
                             color: Color(0xff9428A9),
-                            fontSize: 12,
+                            fontSize: 14,
                           ),
-                          overflow: TextOverflow
-                              .ellipsis, // This will add ellipsis (...) if text overflows
+                          // overflow: TextOverflow
+                          //     .ellipsis, // This will add ellipsis (...) if text overflows
                         ),
                       ),
                       // SizedBox(width: 8),
                       // Spacer(), // Add some spacing between the location and distance
-                      Text(
+                      // Text(
+                      //   '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km',
+                      //   style: TextStyle(
+                      //     fontSize: 14.0,
+                      //     color: Color(0xffFA6E00),
+                      //     fontWeight: FontWeight.bold,
+                      //   ),
+                      // ),
+                      //  Text(
+                      //   '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km',
+                      //   style: TextStyle(
+                      //     fontSize: 14.0,
+                      //     color: Color(0xffFA6E00),
+                      //     fontWeight: FontWeight.bold,
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                  SizedBox(height: 1.h,),
+                   Text(
                         '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km',
                         style: TextStyle(
                           fontSize: 14.0,
@@ -177,8 +202,6 @@ class RestaurantCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
-                  ),
                 ],
               ),
             ),
