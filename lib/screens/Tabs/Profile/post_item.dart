@@ -231,7 +231,7 @@ class _PostItemState extends State<PostItem> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 0),
             child: Row(
               children: [
                 const Space(
@@ -249,17 +249,14 @@ class _PostItemState extends State<PostItem> {
                         onTap: () {
                           if (!widget.isProfilePost) {
                             // print("data:: ${widget.data}");
-                            setState(() {
-                              userId.add(widget.data['user_id']);
-                            });
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ProfileView(
-                                          userIdList: userId,
-                                        ))).then((value) {
-                              userId.clear();
-                            });
+                            if(widget.data['profile_photo'] != '' && widget.data['profile_photo'] != null )
+                             openFullScreen(context, widget.isSharePost == "No"
+                                  ? widget.userModel?.profilePhoto ?? ''
+                                  : widget.isProfilePost
+                                      ? (Provider.of<Auth>(context,
+                                              listen: false)
+                                          .userData?['profile_photo'])
+                                      : widget.data['profile_photo']);
                           }
                         },
                         //for shared post logo
@@ -339,16 +336,13 @@ class _PostItemState extends State<PostItem> {
                       )
                     : InkWell(
                         onTap: () {
-                          setState(() {
-                            userId.add(widget.data['user_id']);
-                          });
-                          // print("userIdfrom post:: $userId");
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ProfileView(
-                                        userIdList: userId,
-                                      )));
+                          openFullScreen(context, widget.isSharePost == "No"
+                                  ? widget.userModel?.profilePhoto ?? ''
+                                  : widget.isProfilePost
+                                      ? (Provider.of<Auth>(context,
+                                              listen: false)
+                                          .userData?['profile_photo'])
+                                      : widget.data['profile_photo'],);
                         },
                         child: Container(
                           height: 35,
@@ -425,7 +419,7 @@ class _PostItemState extends State<PostItem> {
                         color: _isVendor
                             ? const Color(0xFF094B60)
                             : const Color(0xFF2E0536),
-                        fontSize: 14,
+                        fontSize: 16,
                         fontFamily: 'Product Sans',
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.42,
@@ -570,7 +564,7 @@ class _PostItemState extends State<PostItem> {
                           aspectRatio: 1,
                           child: Container(
                             margin: EdgeInsets.only(
-                                left: 5.w, bottom: 2.h, right: 5.w),
+                                left: 3.w, bottom: 2.h, right: 3.w),
                             width: double.infinity,
                             decoration: ShapeDecoration(
                               shadows: [
@@ -726,8 +720,9 @@ class _PostItemState extends State<PostItem> {
                           child: AspectRatio(
                             aspectRatio: 1,
                             child: Container(
-                              margin: EdgeInsets.only(left: 5.w, right: 5.w),
+                              margin: EdgeInsets.only(left: 3.w, right: 3.w),
                               width: double.infinity,
+                             
                               // Take up full width of the screen
                               decoration: ShapeDecoration(
                                 shadows: [
