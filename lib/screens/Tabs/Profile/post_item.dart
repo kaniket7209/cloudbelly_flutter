@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
+import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 import 'package:cloudbelly_app/widgets/modal_list_widget.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
@@ -103,6 +104,7 @@ class _PostItemState extends State<PostItem> {
     setState(() {
       darkMode = prefs.getString('dark_mode') == "true" ? true : false;
     });
+   
     return prefs.getString('dark_mode');
   }
 

@@ -24,6 +24,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Tabs extends StatefulWidget {
   static const routeName = '/tabs-screen';
@@ -38,9 +39,11 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   late List<IconData> iconList;
   late List<String> textList = [];
   late List<Widget> pages = [];
+  bool darkMode = true;
 
   @override
   void initState() {
+    getDarkModeStatusTabs();
     userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
     iconList = <IconData>[
       Icons.home,
@@ -82,11 +85,20 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     // TODO: implement initState
     super.initState();
   }
+ Future<String?> getDarkModeStatusTabs() async {
+    final prefs = await SharedPreferences.getInstance();
 
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+    return prefs.getString('dark_mode');
+  }
   @override
   void dispose() {
+    getDarkModeStatusTabs();
     _hideBottomBarAnimationController.dispose();
     super.dispose();
+
   }
 
   int _selectedIndex = 0;
@@ -123,9 +135,12 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       colorProfile = const Color.fromRGBO(
           77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
+    print("tabs  dark $darkMode");
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       backgroundColor:
+
+     
           Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
                   UserType.Vendor.name
               ? const Color.fromRGBO(234, 245, 247, 1)
@@ -286,6 +301,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           if (_selectedIndex == index) {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 5),
+              
               // margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10.w),
               margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
 
@@ -306,7 +322,8 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                   )
                 ],
                 //  color: Color.fromRGBO(84, 166, 193, 1),
-                color: Provider.of<Auth>(context, listen: false)
+                color: 
+                Provider.of<Auth>(context, listen: false)
                             .userData?['user_type'] ==
                         UserType.Vendor.name
                     ? const Color.fromRGBO(84, 166, 193, 1)
@@ -354,25 +371,25 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 ));
           }
         },
-        backgroundColor: Colors.white,
+        backgroundColor: darkMode?Color(0xff1D1D1D):Colors.white,
 // gapWidth: 0/,
         splashColor: Colors.blue,
         // notchAndCornersAnimation: borderRadiusAnimation,
         splashSpeedInMilliseconds: 300,
         notchSmoothness: NotchSmoothness.sharpEdge,
         gapLocation: GapLocation.center,
-        leftCornerRadius: 15,
-        rightCornerRadius: 15,
+        leftCornerRadius:darkMode?0: 15,
+        rightCornerRadius: darkMode?0:15,
         notchMargin: 5,
         // onTap: (index) => setState(() => _bottomNavIndex = index),
         hideAnimationController: _hideBottomBarAnimationController,
-        shadow: const BoxShadow(
+        shadow:  BoxShadow(
           offset: Offset(0, -4),
           blurRadius: 15,
           // spreadRadius: 0.5,
           // rgba
 
-          color: Color.fromRGBO(177, 217, 216, 0.69),
+          color:darkMode?Color(0xff191919).withOpacity(0.69): Color.fromRGBO(177, 217, 216, 0.69),
         ),
       ),
     );

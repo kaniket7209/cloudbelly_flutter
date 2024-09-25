@@ -6,6 +6,7 @@ import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
+import 'package:cloudbelly_app/screens/Tabs/tabs.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -75,6 +76,12 @@ class _FeedState extends State<Feed> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await prefs.setString('dark_mode', value == true ? "true" : "false");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Tabs()),
+    ).then((_) {
+      // Reset the flag after navigation completes
+    });
   }
 
   Future<String?> getDarkModeStatus() async {
@@ -159,9 +166,7 @@ class _FeedState extends State<Feed> {
         // primary: true, // Ensure vertical scroll works
         controller: _scrollController,
         child: Container(
-           color: _switchValue
-                            ? Color(0xff1D1D1D)
-                            : Colors.transparent,
+          color: _switchValue ? Color(0xff1D1D1D) : Colors.transparent,
           // color: Color.fromRGBO(255, 248, 255, 1),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

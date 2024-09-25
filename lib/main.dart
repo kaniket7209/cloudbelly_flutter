@@ -38,6 +38,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.notification!.body}");
 }
 
+ Future<bool> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+   
+     bool darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    
+    return darkMode;
+  }
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
