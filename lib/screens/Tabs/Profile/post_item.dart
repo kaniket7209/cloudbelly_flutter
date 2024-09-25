@@ -439,6 +439,7 @@ class _PostItemState extends State<PostItem> {
                                             .toUpperCase(),
                                 style: const TextStyle(
                                   fontSize: 20,
+                                  color: Colors.white
                                 ),
                               ),
                             )),
@@ -986,7 +987,7 @@ class _PostItemState extends State<PostItem> {
                 ),
             ],
           ),
-          Space(0.h),
+          
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0),
             child: Column(
@@ -997,7 +998,7 @@ class _PostItemState extends State<PostItem> {
                     const SizedBox(
                       width: 3,
                     ),
-
+          
                     //like button
                     IconButton(
                       visualDensity: const VisualDensity(
@@ -1005,7 +1006,7 @@ class _PostItemState extends State<PostItem> {
                       onPressed: () async {
                         // print("abcds:: ${widget.userId}");
                         String code = '';
-
+          
                         code = widget.isProfilePost
                             ? await Provider.of<Auth>(context, listen: false)
                                 .likePost(
@@ -1013,7 +1014,7 @@ class _PostItemState extends State<PostItem> {
                             : await Provider.of<Auth>(context, listen: false)
                                 .likePost(
                                     widget.data['id'], widget.data['user_id']);
-
+          
                         if (code == '200') {
                           setState(() {
                             _isLiked = !_isLiked;
@@ -1023,11 +1024,11 @@ class _PostItemState extends State<PostItem> {
                                 final userId =
                                     Provider.of<Auth>(context, listen: false)
                                         .userData?['user_id'];
-
+          
                                 // Check if the user is already in the list
                                 final isAlreadyLiked = _likeData
                                     .any((like) => like['id'] == userId);
-
+          
                                 // If not present, add the user to the list
                                 if (!isAlreadyLiked) {
                                   _likeData.add({
@@ -1053,7 +1054,7 @@ class _PostItemState extends State<PostItem> {
                             }
                             if (_isLiked == true) _showLikeIcon = true;
                           });
-
+          
                           Future.delayed(const Duration(seconds: 2), () {
                             setState(() {
                               _showLikeIcon = false;
@@ -1093,7 +1094,7 @@ class _PostItemState extends State<PostItem> {
                         // Change color when liked
                       ),
                     ),
-
+          
                     //comment button
                     IconButton(
                         visualDensity: const VisualDensity(
@@ -1162,14 +1163,14 @@ class _PostItemState extends State<PostItem> {
                                 packageName: 'com.app.cloudbelly_app',
                               ),
                             );
-
+          
                             final Uri shortUrl = parameters.link;
-
+          
                             // 2. Download the image
                             final imageUrl = widget.data['file_path'];
                             final response =
                                 await http.get(Uri.parse(imageUrl));
-
+          
                             if (response.statusCode == 200) {
                               // 3. Save the image to the device's storage
                               final tempDir = await getTemporaryDirectory();
@@ -1177,7 +1178,7 @@ class _PostItemState extends State<PostItem> {
                                   '${tempDir.path}/shared_image.png';
                               final file = File(filePath);
                               await file.writeAsBytes(response.bodyBytes);
-
+          
                               // 4. Share the image and dynamic link
                               Share.shareFiles([filePath], text: "$shortUrl");
                             } else {
@@ -1379,7 +1380,10 @@ class _PostItemState extends State<PostItem> {
                                 ),
                             ],
                           ),
-                        Space(0.2.h),
+                        // Space(0.3.h),
+                         if (widget.data['caption'] == null ||
+                            widget.data['caption'].isEmpty)
+                        Space(0.5.h),
                         TouchableOpacity(
                           onTap: () async {
                             AppWideLoadingBanner().loadingBanner(context);
@@ -1393,7 +1397,7 @@ class _PostItemState extends State<PostItem> {
                             final temp =
                                 await Provider.of<Auth>(context, listen: false)
                                     .getUserInfo(userIds);
-
+          
                             for (int i = 0;
                                 i < (widget.data['comments'] ?? []).length;
                                 i++) {
@@ -1403,7 +1407,7 @@ class _PostItemState extends State<PostItem> {
                                   temp[i]['profile_photo'];
                             }
                             Navigator.of(context).pop();
-
+          
                             AppWideBottomSheet()
                                 .showSheet(
                                     context,
@@ -1438,7 +1442,7 @@ class _PostItemState extends State<PostItem> {
                             ),
                           ),
                         ),
-                        // Space(0.2.h),
+                        Space(0.2.h),
                         Text(
                           '${formatTimeDifference(widget.data['created_at'])}',
                           style: TextStyle(
@@ -1452,13 +1456,13 @@ class _PostItemState extends State<PostItem> {
                             letterSpacing: 0.09,
                           ),
                         ),
-                        Space(1.h),
+                        
                       ]),
                 )
               ],
             ),
           ),
-          Space(0.5.h),
+          Space(3.h),
         ],
       ),
     );
