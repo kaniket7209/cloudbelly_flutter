@@ -1,7 +1,6 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:cloudbelly_app/api_service.dart';
 import 'package:cloudbelly_app/constants/enums.dart';
@@ -10,6 +9,7 @@ import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
 import 'package:cloudbelly_app/widgets/appwide_loading_bannner.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -29,6 +29,7 @@ class _FeedState extends State<Feed> {
   int index = 1;
   bool _isLoading = false;
   int _pageNumber = 1;
+  bool _switchValue = true;
 
   Future<void> _refreshFeed() async {
     final prefs = await SharedPreferences.getInstance();
@@ -57,9 +58,9 @@ class _FeedState extends State<Feed> {
   @override
   void initState() {
     super.initState();
+    getDarkModeStatus();
     _scrollController.addListener(_onScroll);
     _fetchFeed();
-    print("feedList:: ${FeedList}");
   }
 
   @override
@@ -67,6 +68,22 @@ class _FeedState extends State<Feed> {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> updateDarkModeState(value) async {
+    print("updating value darkStat  $value");
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('dark_mode', value == true ? "true" : "false");
+  }
+
+  Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    print("darkStat  ${prefs.getString('dark_mode')}");
+    setState(() {
+      _switchValue = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+    return prefs.getString('dark_mode');
   }
 
   void _onScroll() {
@@ -86,7 +103,7 @@ class _FeedState extends State<Feed> {
       setState(() {
         final extractedUserData =
             json.decode(prefs.getString('feedData')!) as Map<String, dynamic>;
-        print(extractedUserData);
+
         FeedList.addAll(extractedUserData['feed'] as List<dynamic>);
         _isLoading = false;
       });
@@ -129,9 +146,10 @@ class _FeedState extends State<Feed> {
   // int _pageNumber = 1;/
   @override
   Widget build(BuildContext context) {
-     bool _isVendor =
+    bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
+
     // FeedList = FeedList.reversed.toList();
     return RefreshIndicator(
       onRefresh: _refreshFeed,
@@ -141,32 +159,64 @@ class _FeedState extends State<Feed> {
         // primary: true, // Ensure vertical scroll works
         controller: _scrollController,
         child: Container(
+           color: _switchValue
+                            ? Color(0xff1D1D1D)
+                            : Colors.transparent,
           // color: Color.fromRGBO(255, 248, 255, 1),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Space(10.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child:  Text(
-                  'Cloudbelly',
-                  style: TextStyle(
-                     color: _isVendor
-                                      ? const Color(0xFF094B60)
-                                      : Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .userData?['user_type'] ==
-                                              UserType.Supplier.name
-                                          ? Color.fromARGB(255, 26, 48, 10)
-                                          : const Color(0xFF2E0536),
-                    fontSize: 24,
-                    fontFamily: 'Jost',
-                    fontWeight: FontWeight.bold,
-                    height: 0.04,
+              Space(7.h),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: Text(
+                      'Cloudbelly',
+                      style: TextStyle(
+                        color: _switchValue
+                            ? Color(0xffFFFFFF)
+                            : _isVendor
+                                ? const Color(0xFF094B60)
+                                : Provider.of<Auth>(context, listen: false)
+                                            .userData?['user_type'] ==
+                                        UserType.Supplier.name
+                                    ? Color.fromARGB(255, 26, 48, 10)
+                                    : const Color(0xFF2E0536),
+                        fontSize: 24,
+                        fontFamily: 'Jost',
+                        fontWeight: FontWeight.bold,
+                        height: 0.04,
+                      ),
+                    ),
                   ),
-                ),
+                  Spacer(),
+                  Container(
+                    height: 10, // Adjust the height as needed
+                    child: CupertinoSwitch(
+                      thumbColor: _switchValue
+                          ? Color.fromARGB(255, 2, 2, 2)
+                          : Color.fromARGB(255, 255, 255, 255),
+                      activeColor: _switchValue
+                          ? Color.fromARGB(255, 255, 255, 255)
+                          : Color.fromARGB(255, 0, 0, 0),
+                      trackColor: Color.fromARGB(255, 5, 5, 5).withOpacity(0.5),
+                      value: _switchValue,
+                      onChanged: (value) async {
+                        setState(() {
+                          _switchValue = value;
+                        });
+
+                        updateDarkModeState(_switchValue);
+                        // Call the submit function after the state update
+                      },
+                    ),
+                  )
+                ],
               ),
+
               Space(3.h),
+
               // SingleChildScrollView(
               //   scrollDirection: Axis.horizontal,
               //   child: Padding(
@@ -189,6 +239,7 @@ class _FeedState extends State<Feed> {
               //     ),
               //   ),
               // ),
+
               _isLoading == true
                   ? Center(
                       child: AppWideLoadingBanner().LoadingCircle(context),
@@ -197,22 +248,21 @@ class _FeedState extends State<Feed> {
                       children: FeedList == []
                           ? []
                           : FeedList.map<Widget>((item) {
-                              // if (item['user_id'] ==
-                              //     Provider.of<Auth>(context).user_id) print(item);
                               bool _isMultiple =
                                   item['multiple_files'] != null &&
                                       item['multiple_files'].length != 0;
-                             
+
                               return PostItem(
                                 isSharePost: "Yes",
                                 isProfilePost: false,
                                 isMultiple: _isMultiple,
                                 data: item,
+                                // darkMode:_switchValue,
                               );
                               // return SizedBox.shrink();
                             }).toList(),
                     ),
-             
+
               _isLoadingMore == true
                   ? Padding(
                       padding: EdgeInsets.only(bottom: 2.h),
@@ -301,7 +351,6 @@ class StoryItemWidget extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    
                     name[0].toUpperCase(),
                     style: TextStyle(fontSize: 40),
                   ),

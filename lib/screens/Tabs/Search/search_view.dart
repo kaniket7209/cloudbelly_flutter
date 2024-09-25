@@ -208,6 +208,7 @@ Future<void> _getCurrentLocation(context) async {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff7B358D),
+   
         toolbarHeight: 120.0, // Set a specific height for the AppBar
         automaticallyImplyLeading:
             false, // Add this line to ensure no default back button
@@ -340,6 +341,7 @@ Future<void> _getCurrentLocation(context) async {
           Container(
             decoration: BoxDecoration(
               color: Color(0xff7B358D),
+             
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),

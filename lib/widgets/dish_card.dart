@@ -7,6 +7,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../models/dish.dart';
 
 class DishCard extends StatelessWidget {
@@ -17,12 +18,14 @@ class DishCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+    
       margin: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+           
             GestureDetector(
               onTap: () {
                 openFullScreen(context,dish.images.first);
@@ -74,6 +77,7 @@ class DishCard extends StatelessWidget {
                     MainAxisAlignment.center, // Center vertically
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                   SizedBox(height: 1.h,),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(

@@ -2,6 +2,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
+import 'package:cloudbelly_app/widgets/modal_list_widget.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -38,18 +39,7 @@ class RestaurantCard extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileView(
-                      userIdList: [
-                        restaurant.id
-                      ], // Adjust this according to your ProfileView constructor
-                    ),
-                  ),
-                ).then((value) {
-                  // You can clear the userId or perform any other actions here if needed
-                });
+                openFullScreen(context,restaurant.profilePhoto);
               },
               child: Container(
                 height: 160,
