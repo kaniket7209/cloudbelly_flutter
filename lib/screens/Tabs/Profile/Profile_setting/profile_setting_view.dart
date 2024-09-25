@@ -1545,7 +1545,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
-                                  fontFamily: 'PT Sans',
+                                  fontFamily: 'Product Sans',
                                   fontWeight: FontWeight.w800,
                                   // height: 0,
                                   letterSpacing: 0.26,
@@ -1633,13 +1633,13 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           UserType.Vendor.name
                       ? const TextStyle(
                           fontSize: 14,
-                          fontFamily: 'PT Sans',
+                          fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF0A4C61),
                         )
                       : const TextStyle(
                           fontSize: 14,
-                          fontFamily: 'PT Sans',
+                          fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF2E0536)),
                   controller: nameController,
@@ -1728,7 +1728,7 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               //             )
               //           : const TextStyle(
               //               fontSize: 14,
-              //               fontFamily: 'PT Sans',
+              //               fontFamily: 'Product Sans',
               //               fontWeight: FontWeight.w400,
               //               color: Color(0xFF2E0536)),
               //       controller: emailController,
@@ -1820,12 +1820,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                       ? const TextStyle(
                           color: Color(0xFF0A4C61),
                           fontSize: 14,
-                          fontFamily: 'PT Sans',
+                          fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                         )
                       : const TextStyle(
                           fontSize: 14,
-                          fontFamily: 'PT Sans',
+                          fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF2E0536)),
                   keyboardType: TextInputType.number,
@@ -1924,13 +1924,13 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                           UserType.Vendor.name
                       ? const TextStyle(
                           fontSize: 16,
-                          fontFamily: 'PT Sans',
+                          fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF0A4C61),
                         )
                       : const TextStyle(
                           fontSize: 17,
-                          fontFamily: 'PT Sans',
+                          fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF2E0536)),
                   decoration: InputDecoration(
@@ -2052,7 +2052,7 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                                               UserType.Vendor.name
                                           ? const Color(0xFF0A4C61)
                                           : const Color(0xFF2E0536),
-                                  fontFamily: 'PT Sans',
+                                  fontFamily: 'Product Sans',
                                   fontWeight: FontWeight.w400),
                             ),
                           ),
@@ -2129,7 +2129,7 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                                               UserType.Vendor.name
                                           ? const Color(0xFF0A4C61)
                                           : const Color(0xFF2E0536),
-                                  fontFamily: 'PT Sans',
+                                  fontFamily: 'Product Sans',
                                   fontWeight: FontWeight.w400),
                             ),
                           ),
@@ -2353,7 +2353,7 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                         style: TextStyle(
                           color: Color(0xFF0A4C61),
                           fontSize: 14,
-                          fontFamily: 'PT Sans',
+                          fontFamily: 'Product Sans',
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -2362,7 +2362,7 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                         style: TextStyle(
                           color: Color(0xFF0A4C61),
                           fontSize: 14,
-                          fontFamily: 'PT Sans',
+                          fontFamily: 'Product Sans',
                           fontWeight: FontWeight.bold,
                         ),
                       ),

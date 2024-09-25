@@ -79,7 +79,7 @@ class AppwideTextField extends StatelessWidget {
             color:  Color(0xFF0A4C61) ,
           ) : const TextStyle(
               fontSize: 14,
-              fontFamily: 'PT Sans',
+              fontFamily: 'Product Sans',
               fontWeight: FontWeight.w400,
               color: Color(0xFF0A4C61)
           ),

@@ -4,31 +4,28 @@ import 'package:cloudbelly_app/constants/globalVaribales.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/profile_view.dart';
 import 'package:cloudbelly_app/widgets/modal_list_widget.dart';
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import '../models/dish.dart';
 
 class DishCard extends StatelessWidget {
   final Dish dish;
+  final bool darkMode;
 
-  DishCard({required this.dish});
+  DishCard({required this.dish, required this.darkMode});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-    
       margin: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-           
             GestureDetector(
               onTap: () {
-                openFullScreen(context,dish.images.first);
+                openFullScreen(context, dish.images.first);
               },
               child: Container(
                 height: 155,
@@ -43,9 +40,9 @@ class DishCard extends StatelessWidget {
                   ),
                   shadows: [
                     BoxShadow(
-                      color: Color(0xff9E749E).withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 10,
+                      color: darkMode?Color(0xff000000).withOpacity(0.47): Color(0xff9E749E).withOpacity(0.5),
+                      spreadRadius: 0,
+                      blurRadius: 20,
                       offset: Offset(3, 6),
                     ),
                   ],
@@ -65,7 +62,18 @@ class DishCard extends StatelessWidget {
                               GlobalVariables().imageErrorBuilderForImage(
                                   context, error, null),
                         )
-                      : Image.network('https://via.placeholder.com/150'),
+                      : 
+                      Container(
+                        alignment: Alignment.center,
+                        color: Colors.white,
+                        child: Center(
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              dish.name.toUpperCase(),
+                              style: TextStyle(fontSize: 20, color: Color(0xff2E0536),fontFamily: 'Ubuntu',fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                      ),
                 ),
               ),
             ),
@@ -77,7 +85,9 @@ class DishCard extends StatelessWidget {
                     MainAxisAlignment.center, // Center vertically
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   SizedBox(height: 1.h,),
+                  SizedBox(
+                    height: 1.h,
+                  ),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -99,11 +109,11 @@ class DishCard extends StatelessWidget {
                           width: MediaQuery.of(context).size.width * 0.3,
                           child: Text(
                             dish.name,
-                            style: const TextStyle(
+                            style:  TextStyle(
                               fontWeight: FontWeight.bold,
                               fontFamily: 'Product Sans',
-                              fontSize: 16,
-                              color: Color(0xff2E0536),
+                              fontSize: 17,
+                              color:darkMode?Colors.white: Color(0xff2E0536),
                             ),
                           ),
                         ),
@@ -149,9 +159,9 @@ class DishCard extends StatelessWidget {
                         Text(
                           'Rs ${double.parse(dish.price).toStringAsFixed(0)}',
                           style: TextStyle(
-                              fontSize: 14.0,
-                              fontFamily: 'Product Sans',
-                              color: Color(0xff9428A9),
+                              fontSize: 18.0,
+                              fontFamily: 'Ubuntu',
+                              color:darkMode?Color(0xffFA6E00): Color(0xff9428A9),
                               fontWeight: FontWeight.bold),
                           textAlign: TextAlign.right,
                         ),
@@ -164,21 +174,19 @@ class DishCard extends StatelessWidget {
                       Text(
                         dish.store_name,
                         style: TextStyle(
-                          color: Color(0xff9428A9),
+                          color:darkMode?Color(0xffB1F0EF): Color(0xff9428A9),
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
                       ),
-                      SizedBox(
-                        width: 10,
-                      ),
+                      Spacer(),
                       Text(
                         '${double.parse(dish.distance_km).toStringAsFixed(2)} km',
                         style: TextStyle(
-                          color: Color(0xffFA6E00),
+                          color:darkMode? Color(0xff54A6C1):Color(0xffFA6E00),
                           fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.bold,
+                          // fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
                       ),
@@ -188,7 +196,7 @@ class DishCard extends StatelessWidget {
                   Text(
                     dish.description,
                     style: TextStyle(
-                      color: Color(0xff9428A9),
+                      color:darkMode?Color(0xffB1F0EF): Color(0xff9428A9),
                       fontFamily: 'Product Sans',
                       fontSize: 12,
                     ),

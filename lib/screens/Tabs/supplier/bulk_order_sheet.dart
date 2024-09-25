@@ -599,7 +599,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
             style: const TextStyle(
               color: Color(0xFF094B60),
               fontSize: 25,
-              fontFamily: 'PT Sans',
+              fontFamily: 'Product Sans',
               fontWeight: FontWeight.w700,
               // height: 0.06,
               letterSpacing: 0.54,
@@ -611,7 +611,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
             style: TextStyle(
               color: Color(0xFF094B60),
               fontSize: 12,
-              fontFamily: 'PT Sans',
+              fontFamily: 'Product Sans',
               fontWeight: FontWeight.w400,
               // height: 0.06,
               letterSpacing: 0.54,
@@ -624,7 +624,7 @@ class _BulkOrderSheetState extends State<BulkOrderSheet> {
               style: TextStyle(
                 color: Color.fromRGBO(250, 110, 0, 1),
                 fontSize: 12,
-                fontFamily: 'PT Sans',
+                fontFamily: 'Product Sans',
                 fontWeight: FontWeight.w700,
                 // height: 0.06,
                 letterSpacing: 0.54,

@@ -253,7 +253,7 @@ class _PostItemState extends State<PostItem> {
   }
 
   double getClosestAspectRatio(double aspectRatio) {
-    print("closest $aspectRatio");
+
 
     // Define the aspect ratios for comparison
     const double aspect16_9 = 16 / 9; // 1.777... (approximately 1.78)
@@ -276,8 +276,8 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "who is user:: $darkMode ${widget.isProfilePost}  ${widget.data['user_id']}  ${Provider.of<Auth>(context, listen: false).userData?['user_id'] != widget.data['user_id']}");
+    // print(
+    //     "who is user:: $darkMode ${widget.isProfilePost}  ${widget.data['user_id']}  ${Provider.of<Auth>(context, listen: false).userData?['user_id'] != widget.data['user_id']}");
 
     bool shouldShowIcon = widget.isProfilePost ||
         (!widget.isProfilePost &&
@@ -297,9 +297,11 @@ class _PostItemState extends State<PostItem> {
         shadows: [
           BoxShadow(
             offset: const Offset(0, 10), // Position the shadow down
-            color: darkMode
+            color:
+             darkMode
                 ? Color(0xff000000).withOpacity(0.35)
-                : _isVendor
+                :
+                 _isVendor
                     ? Color(0xffB1D9D8).withOpacity(0.35)
                     : Provider.of<Auth>(context, listen: false)
                                 .userData?['user_type'] ==
@@ -312,9 +314,11 @@ class _PostItemState extends State<PostItem> {
             spreadRadius: 0, // Optional: Adjusts the size of the shadow
           ),
         ],
-        color: darkMode
+        color: 
+        darkMode
             ? Color(0xff313030)
-            : _isVendor
+            :
+            _isVendor
                 ? Color.fromARGB(102, 243, 255, 255).withOpacity(1)
                 : Provider.of<Auth>(context, listen: false)
                             .userData?['user_type'] ==

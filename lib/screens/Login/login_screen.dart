@@ -258,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   style: TextStyle(
                                                       color: Color(0xFF0A4C61),
                                                       fontSize: 14,
-                                                      fontFamily: 'PT Sans'),
+                                                      fontFamily: 'Product Sans'),
                                                   obscureText:
                                                       !_isPasswordVisible,
                                                   decoration:
@@ -271,7 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     hintStyle: TextStyle(
                                                       fontSize: 12,
                                                       color: Color(0xFF0A4C61),
-                                                      fontFamily: 'PT Sans',
+                                                      fontFamily: 'Product Sans',
                                                       fontWeight:
                                                           FontWeight.w400,
                                                     ),

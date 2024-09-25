@@ -453,7 +453,7 @@ class TextWidgetStoreSetup extends StatelessWidget {
       ) : TextStyle(
         color: color ?? const Color(0xFF494949),
         fontSize: 16,
-        fontFamily: 'PT Sans',
+        fontFamily: 'Product Sans',
         fontWeight: FontWeight.w700,
         height: 0,
         letterSpacing: 0.14,

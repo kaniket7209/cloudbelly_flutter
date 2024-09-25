@@ -344,10 +344,7 @@ class _ProfileState extends State<Profile> {
                                       text: '',
                                       ic: Icons.qr_code,
                                       onTap: () {
-                                        print(" profilepic" +
-                                            Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .userData?['profile_photo']);
+                                       
                                         context
                                             .read<TransitionEffect>()
                                             .setBlurSigma(5.0);

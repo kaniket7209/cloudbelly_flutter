@@ -357,12 +357,12 @@ class StoreLogoWidget extends StatelessWidget {
     } else {
       colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
     }
-    print("profilepic ${userData?['profile_photo']}");
+  
 
     return Column(
       children: [
         const Space(15),
-        userData?['profile_photo'] != ''
+        userData?['profile_photo'] != '' && userData?['profile_photo'] !=null
             ? GestureDetector(
               onTap: () => openFullScreen(context,userData?['profile_photo']),
               child: Container(
@@ -425,7 +425,7 @@ class StoreLogoWidget extends StatelessWidget {
                 child: Center(
                   child: Text(
                     userData?['store_name'][0].toUpperCase(),
-                    style: TextStyle(fontSize: 40,color: colorProfile),
+                    style: TextStyle(fontSize: 40,color: Colors.white),
                   ),
                 )),
       ],

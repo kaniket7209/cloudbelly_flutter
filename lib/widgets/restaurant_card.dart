@@ -11,8 +11,9 @@ import '../models/restaurant.dart';
 
 class RestaurantCard extends StatelessWidget {
   final Restaurant restaurant;
+  final bool darkMode;
 
-  RestaurantCard({required this.restaurant});
+  RestaurantCard({required this.restaurant, required this.darkMode});
 
   Future<void> _launchURL(String url) async {
     try {
@@ -54,7 +55,7 @@ class RestaurantCard extends StatelessWidget {
                   ),
                   shadows: [
                     BoxShadow(
-                      color: const Color.fromRGBO(130, 47, 130, 1)
+                      color:darkMode?Color(0xff000000).withOpacity(0.47): const Color.fromRGBO(130, 47, 130, 1)
                           .withOpacity(0.3),
                       spreadRadius: 1,
                       blurRadius: 25,
@@ -77,7 +78,17 @@ class RestaurantCard extends StatelessWidget {
                               GlobalVariables().imageErrorBuilderForImage(
                                   context, error, null),
                         )
-                      : Image.network('https://via.placeholder.com/150'),
+                      : Container(
+                        alignment: Alignment.center,
+                        color: Colors.white,
+                        child: Center(
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              restaurant.storeName.toUpperCase(),
+                              style: TextStyle(fontSize: 20, color: Color(0xff2E0536),fontFamily: 'Ubuntu',fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                      ),
                 ),
               ),
             ),
@@ -85,10 +96,12 @@ class RestaurantCard extends StatelessWidget {
             Expanded(
               flex: 1,
               child: Column(
+                
                 mainAxisAlignment:
                     MainAxisAlignment.start, // Center vertically
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(height: 1.h,),
                   InkWell(
                     onTap: () {
                       // print("userIdfrom post:: $userId");
@@ -112,7 +125,7 @@ class RestaurantCard extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
-                          color: Color(0xff2E0536),
+                          color:darkMode?Colors.white: Color(0xff2E0536),
                         ),
                       ),
                     ),
@@ -142,7 +155,7 @@ class RestaurantCard extends StatelessWidget {
                         '45-50 mins',
                         style: TextStyle(
                             fontSize: 15.0,
-                            color: Color(0xff9428A9),
+                            color:darkMode?Color(0xffB1F0EF): Color(0xff9428A9),
                             fontWeight: FontWeight.bold),
                         textAlign: TextAlign.right,
                       ),
@@ -156,7 +169,7 @@ class RestaurantCard extends StatelessWidget {
                         child: Text(
                           restaurant.location,
                           style: TextStyle(
-                            color: Color(0xff9428A9),
+                            color:darkMode?Color(0xffB1F0EF): Color(0xff9428A9),
                             fontSize: 14,
                           ),
                           // overflow: TextOverflow
@@ -188,7 +201,7 @@ class RestaurantCard extends StatelessWidget {
                         '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km',
                         style: TextStyle(
                           fontSize: 14.0,
-                          color: Color(0xffFA6E00),
+                          color: darkMode? Color(0xff54A6C1):Color(0xffFA6E00),
                           fontWeight: FontWeight.bold,
                         ),
                       ),

@@ -15,6 +15,8 @@ import 'dart:convert';
 
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchView extends StatefulWidget {
   @override
@@ -28,7 +30,6 @@ class _SearchViewState extends State<SearchView> {
   bool isDishesSelected = true;
   int page = 1;
   int limit = 10;
-  Position? _currentPosition;
   String? area;
   String? address;
   bool isLoading = false;
@@ -36,6 +37,7 @@ class _SearchViewState extends State<SearchView> {
   String currentAddress = 'Fetching location...';
   PageController _pageController = PageController();
   bool _locationFetched = false;
+  bool darkMode = true;
 
   Map<String, String> headers = {
     'Content-Type': 'application/json; charset=UTF-8'
@@ -44,31 +46,43 @@ class _SearchViewState extends State<SearchView> {
   @override
   void initState() {
     super.initState();
+    getDarkModeStatus();
     _initializeData();
-    currentAddress=Provider.of<Auth>(context, listen: false).userData?['current_location']['area'];
+    currentAddress = Provider.of<Auth>(context, listen: false)
+        .userData?['current_location']['area'];
     _searchController.addListener(_onSearchChanged);
   }
 
+  Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+
+    return prefs.getString('dark_mode');
+  }
+
   Future<void> _initializeData() async {
-     setState(() {
+    setState(() {
       isLoading = true;
     });
     if (!_locationFetched) {
       // await _checkLocationPermission();
     }
     _fetchData();
-     setState(() {
+    setState(() {
       isLoading = false;
     });
   }
 
-Future<void> _getCurrentLocation(context) async {
-  setState(() {
+  Future<void> _getCurrentLocation(context) async {
+    setState(() {
       isLoading = true;
     });
-  var _currentPosition;
-  var address;
-  var area;
+    var _currentPosition;
+    var address;
+    var area;
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
@@ -83,17 +97,13 @@ Future<void> _getCurrentLocation(context) async {
         address =
             '${placemark.street}, ${placemark.subLocality},${placemark.subAdministrativeArea}, ${placemark.locality}, ${placemark.administrativeArea},${placemark.country}, ${placemark.postalCode}';
         area = '${placemark.administrativeArea}';
-
-        
       } else {
         address = 'Address not found';
       }
 
-      
       await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
           _currentPosition?.latitude, _currentPosition?.longitude, area);
-          print("locLogmain.dart $_currentPosition  $area");
-
+      print("locLogmain.dart $_currentPosition  $area");
     } catch (e) {
       print('Error: $e');
     }
@@ -102,57 +112,61 @@ Future<void> _getCurrentLocation(context) async {
     });
   }
 
+Future<void> _fetchData() async {
+  if (!hasMoreData) return; // Stop if there's no more data to fetch
 
+  setState(() {
+    isLoading = true;
+  });
 
-  Future<void> _fetchData() async {
-    if(Provider.of<Auth>(context, listen: false).userData?['current_location'] == null){
-   await   _getCurrentLocation(context);
-    }
-    print("locLogFetchData() .... ${Provider.of<Auth>(context, listen: false).userData?['current_location']}");
-    if (!hasMoreData) return;
-    currentAddress= Provider.of<Auth>(context, listen: false).userData?['current_location']['area'];
+  final currentLocation = Provider.of<Auth>(context, listen: false)
+      .userData?['current_location'];
 
-    setState(() {
-      isLoading = true;
-      currentAddress= currentAddress;
-    });
-
-    String function = isDishesSelected ? 'products' : 'vendors';
-    var response = await http.post(
-      Uri.parse('https://app.cloudbelly.in/search/$function'),
-      headers: headers,
-      body: jsonEncode(<String, dynamic>{
-        'page': page,
-        'limit': limit,
-        'latitude':  Provider.of<Auth>(context, listen: false).userData?['current_location']['latitude'],
-        'longitude': Provider.of<Auth>(context, listen: false).userData?['current_location']['longitude'],
-        'query': _searchController.text,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      setState(() {
-        if (isDishesSelected) {
-          dishItems.addAll(data.map((item) => Dish.fromJson(item)).toList());
-        } else {
-          restaurantItems
-              .addAll(data.map((item) => Restaurant.fromJson(item)).toList());
-        }
-        if (data.length < limit) {
-          hasMoreData = false;
-        } else {
-          page++;
-        }
-      });
-    } else {
-      print("Failed to load data");
-    }
-
-    setState(() {
-      isLoading = false;
-    });
+  if (currentLocation == null) {
+    await _getCurrentLocation(context); // Ensure location is fetched first
   }
+
+  String function = isDishesSelected ? 'products' : 'vendors';
+
+  var response = await http.post(
+    Uri.parse('https://app.cloudbelly.in/search/$function'),
+    headers: headers,
+    body: jsonEncode({
+      'page': page,
+      'limit': limit,
+      'latitude': currentLocation?['latitude'],
+      'longitude': currentLocation?['longitude'],
+      'query': _searchController.text,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    List<dynamic> data = json.decode(response.body);
+    
+    setState(() {
+      if (isDishesSelected) {
+        dishItems.addAll(data.map((item) => Dish.fromJson(item)).toList());
+      } else {
+        if(page ==1 ) {
+          restaurantItems.clear();
+        }
+        restaurantItems.addAll(data.map((item) => Restaurant.fromJson(item)).toList());
+      }
+
+      if (data.length < limit) {
+        hasMoreData = false; // End of data
+      } else {
+        page++; // Increment page if more data exists
+      }
+    });
+  } else {
+    print("Failed to load data");
+  }
+
+  setState(() {
+    isLoading = false;
+  });
+}
 
   void _onSearchChanged() {
     setState(() {
@@ -180,179 +194,189 @@ Future<void> _getCurrentLocation(context) async {
     });
   }
 
-  void _changeTab(bool dishesSelected) {
-    setState(() {
-      isDishesSelected = dishesSelected;
-      page = 1;
-      if (dishesSelected) {
-        dishItems.clear();
-      } else {
-        restaurantItems.clear();
-      }
-      hasMoreData = true;
-    });
-    _pageController.jumpToPage(dishesSelected ? 0 : 1);
-    _fetchData();
-  }
+ void _changeTab(bool dishesSelected) {
+  
+  setState(() {
+    isDishesSelected = dishesSelected;
+    page = 1;
+    hasMoreData = true;
+   
+   
+
+    // Clear the appropriate list based on the selected tab
+    if (isDishesSelected) {
+      dishItems.clear();
+      
+    } else {
+      restaurantItems.clear();
+    }
+  });
+
+  // Change the page in the PageView
+  _pageController.jumpToPage(dishesSelected ? 0 : 1);
+
+  // Fetch data for the newly selected tab
+  _fetchData();
+}
+
 
   @override
   void dispose() {
+    getDarkModeStatus();
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     _pageController.dispose();
     super.dispose();
   }
- 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff7B358D),
-   
-        toolbarHeight: 120.0, // Set a specific height for the AppBar
-        automaticallyImplyLeading:
-            false, // Add this line to ensure no default back button
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () async {
-                var selectedLocation = await showSearch(
-                  context: context,
-                  delegate: LocationSearchDelegate(),
-                );
-                if (selectedLocation != null) {
-                  setState(() {
-                    currentAddress = selectedLocation['description']!;
-                  });
-
-                  var location = selectedLocation['location']?.split(',');
-                  if (location != null && location.length == 2) {
-                    double latitude = double.parse(location[0]);
-                    double longitude = double.parse(location[1]);
-
-                    _currentPosition = Position(
-                      latitude: latitude,
-                      longitude: longitude,
-                      timestamp: DateTime.now(),
-                      accuracy: 0,
-                      altitude: 0,
-                      heading: 0,
-                      speed: 0,
-                      speedAccuracy: 0,
-                      altitudeAccuracy: 0,
-                      headingAccuracy: 0, // Added this parameter
+    return Container(
+      color: darkMode
+          ? Color(0xff313030)
+          : Colors.white, // Full background color
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 20.0), // Custom padding for the "AppBar"
+            decoration: BoxDecoration(
+              color: darkMode ? Color(0xff1D1D1D) : Color(0xff7B358D),
+              boxShadow: [
+                BoxShadow(
+                  color: darkMode
+                      ? Color(0xff151415).withOpacity(0.69)
+                      : Color(0xff7B358D).withOpacity(0.3),
+                  blurRadius: 20,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 3.h,
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    var selectedLocation = await showSearch(
+                      context: context,
+                      delegate: LocationSearchDelegate(),
                     );
+                    if (selectedLocation != null) {
+                      setState(() {
+                        currentAddress = selectedLocation['description']!;
+                      });
 
-                    await Provider.of<Auth>(context, listen: false)
-                        .updateCustomerLocation(
-                      latitude,
-                      longitude,
-                      currentAddress
-                    );
+                      var location = selectedLocation['location']?.split(',');
+                      if (location != null && location.length == 2) {
+                        double latitude = double.parse(location[0]);
+                        double longitude = double.parse(location[1]);
 
-                    setState(() {
-                      page = 1;
-                      dishItems.clear();
-                      restaurantItems.clear();
-                      hasMoreData = true;
-                    });
-                    await _fetchData();
-                  }
-                }
-              },
-              child: Row(
-                children: [
-                  Container(
-                    child: Icon(Icons.location_pin, color: Colors.white),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Row(
+                        await Provider.of<Auth>(context, listen: false)
+                            .updateCustomerLocation(
+                                latitude, longitude, currentAddress);
+
+                        setState(() {
+                          page = 1;
+                          dishItems.clear();
+                          restaurantItems.clear();
+                          hasMoreData = true;
+                        });
+                        await _fetchData();
+                      }
+                    }
+                  },
+                  child: Row(
                     children: [
-                      Container(
-                        child: Text(
-                          currentAddress,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Container(
-                        child: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Color(0xFFFA6E00),
+                      Icon(Icons.location_pin, color: Colors.white),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Text(
+                              currentAddress,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Color(0xFFFA6E00),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius(
+                        cornerRadius: 15.0,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0xff4F205B).withOpacity(0.4),
+                        spreadRadius: 0,
+                        blurRadius: 20,
+                        offset: Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    cursorColor: Color(0xff7B358D),
+                    style: const TextStyle(
+                      fontSize: 14,
+                    ),
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search for restaurants or dishes',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 14,
+                        horizontal: 20,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.search),
+                        onPressed: () => _searchItems(_searchController.text),
+                      ),
+                    ),
+                    textInputAction: TextInputAction.search,
+                    onSubmitted: (value) {
+                      _searchItems(value);
+                    },
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 10),
-            Container(
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: SmoothRectangleBorder(
-                  borderRadius: SmoothBorderRadius(
-                    cornerRadius: 15.0,
-                    cornerSmoothing: 1,
-                  ),
-                ),
-                shadows: [
-                  BoxShadow(
-                    color: Color(0xff4F205B).withOpacity(0.4),
-                    spreadRadius: 0,
-                    blurRadius: 20,
-                    offset: Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: TextField(
-                cursorColor: Color(0xff7B358D),
-                style: const TextStyle(
-                  fontSize: 14,
-                ),
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search for restaurants or dishes',
-                  border: InputBorder.none,
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () => _searchItems(_searchController.text),
-                  ),
-                ),
-                textInputAction: TextInputAction.search,
-                onSubmitted: (value) {
-                  _searchItems(value);
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: Column(
-        children: [
+          ),
+          // Segment for Tabs and PageView
           Container(
             decoration: BoxDecoration(
-              color: Color(0xff7B358D),
-             
+              color: darkMode ? Color(0xff1D1D1D) : Color(0xff7B358D),
+              boxShadow: [
+                BoxShadow(
+                  color: darkMode
+                      ? Color(0xff151415).withOpacity(0.69)
+                      : Color(0xff7B358D).withOpacity(0.3),
+                  blurRadius: 20,
+                  offset: Offset(0, 4),
+                ),
+              ],
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0xff7B358D).withOpacity(0.3),
-                  blurRadius: 6,
-                  offset: Offset(0, 6),
-                ),
-              ],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -365,30 +389,28 @@ Future<void> _getCurrentLocation(context) async {
                       Text(
                         'Dishes',
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.bold,
-                        ),
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1),
                       ),
                       if (isDishesSelected)
                         Align(
                           alignment: Alignment.center,
                           child: Container(
-                            margin: const EdgeInsets.only(top: 6.0, right: 0),
+                            margin: const EdgeInsets.only(top: 6.0),
                             decoration: BoxDecoration(
                               color: Color(0xffFA6E00),
                               borderRadius: BorderRadius.circular(2.0),
                             ),
                             height: 4.0,
-                            child: IntrinsicWidth(
-                              child: Text(
-                                'Dishes',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.transparent,
-                                ),
+                            child: Text(
+                              'Dishes',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.transparent,
                               ),
                             ),
                           ),
@@ -404,30 +426,28 @@ Future<void> _getCurrentLocation(context) async {
                       Text(
                         'Restaurants',
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.bold,
-                        ),
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1),
                       ),
                       if (!isDishesSelected)
                         Align(
                           alignment: Alignment.center,
                           child: Container(
-                            margin: const EdgeInsets.only(top: 6.0, right: 0),
+                            margin: const EdgeInsets.only(top: 6.0),
                             decoration: BoxDecoration(
                               color: Color(0xffFA6E00),
                               borderRadius: BorderRadius.circular(2.0),
                             ),
                             height: 4.0,
-                            child: IntrinsicWidth(
-                              child: Text(
-                                'Restaurants',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.transparent,
-                                ),
+                            child: Text(
+                              'Restaurants',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.transparent,
                               ),
                             ),
                           ),
@@ -438,7 +458,7 @@ Future<void> _getCurrentLocation(context) async {
               ],
             ),
           ),
-          SizedBox(height: 10),
+          // Content Body
           Expanded(
             child: PageView(
               controller: _pageController,
@@ -504,14 +524,16 @@ Future<void> _getCurrentLocation(context) async {
                   ],
                 ),
               )
-            : ListView.builder(
-                itemCount: dishItems.length + (hasMoreData ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == dishItems.length) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  return DishCard(dish: dishItems[index]);
-                },
+            : Container(
+                child: ListView.builder(
+                  itemCount: dishItems.length + (hasMoreData ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == dishItems.length) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    return DishCard(dish: dishItems[index],darkMode:darkMode);
+                  },
+                ),
               ),
       ),
     );
@@ -568,7 +590,7 @@ Future<void> _getCurrentLocation(context) async {
                   if (index == restaurantItems.length) {
                     return Center(child: CircularProgressIndicator());
                   }
-                  return RestaurantCard(restaurant: restaurantItems[index]);
+                  return RestaurantCard(restaurant: restaurantItems[index],darkMode:darkMode);
                 },
               ),
       ),
@@ -583,7 +605,7 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
     {'description': 'Siliguri, West Bengal', 'location': '26.7271, 88.3953'},
     {'description': 'Kolkata, West Bengal', 'location': '22.5726, 88.3639'},
     {'description': 'Mumbai, Maharashtra', 'location': '19.0760, 72.8777'},
-     {"description": "Bangalore, Karnataka", "location": "12.9716, 77.5946"},
+    {"description": "Bangalore, Karnataka", "location": "12.9716, 77.5946"},
     {"description": "Sikkim, India", "location": "27.5330, 88.5122"}
   ];
 
@@ -691,10 +713,10 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
   void _getCurrentLocation(BuildContext context) async {
     var _currentPosition;
     var area;
-   
+
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-         _currentPosition = position;
+    _currentPosition = position;
     List<Placemark> placemarks =
         await placemarkFromCoordinates(position.latitude, position.longitude);
     if (placemarks.isNotEmpty) {
@@ -709,8 +731,7 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
     }
 
     await Provider.of<Auth>(context, listen: false).updateCustomerLocation(
-          _currentPosition?.latitude, _currentPosition?.longitude, area);
-          print("locLogsearchView.dart $_currentPosition  $area");
-
+        _currentPosition?.latitude, _currentPosition?.longitude, area);
+    print("locLogsearchView.dart $_currentPosition  $area");
   }
 }

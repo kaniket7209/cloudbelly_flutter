@@ -135,12 +135,13 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       colorProfile = const Color.fromRGBO(
           77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
-    print("tabs  dark $darkMode");
+
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       backgroundColor:
 
-     
+      darkMode
+                ? Color(0xff000000).withOpacity(0.35):
           Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
                   UserType.Vendor.name
               ? const Color.fromRGBO(234, 245, 247, 1)
