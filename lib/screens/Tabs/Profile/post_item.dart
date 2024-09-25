@@ -855,6 +855,7 @@ class _PostItemState extends State<PostItem> {
                                     blurRadius: 25,
                                   )
                               ],
+                            
                               shape: const SmoothRectangleBorder(),
                             ),
                            
@@ -935,41 +936,51 @@ class _PostItemState extends State<PostItem> {
                           begin: Alignment(-1.0, 1),
                           end: Alignment(1, -1.0),
                           colors: [
-                            Color.fromRGBO(250, 110, 0, 1),
-                            Color.fromRGBO(254, 209, 112, 1)
+                            Color(0xffFFA500),
+                            Color(0xffFED170)
                           ],
                         ),
-                        shadows: [
-                          _isVendor
-                              ? BoxShadow(
-                                  offset: Offset(3, 6),
-                                  color: Color.fromRGBO(124, 193, 191, 1)
-                                      .withOpacity(0.3),
-                                  blurRadius: 35,
-                                )
-                              : Provider.of<Auth>(context, listen: false)
-                                          .userData?['user_type'] ==
-                                      UserType.Supplier.name
-                                  ? BoxShadow(
-                                      offset: Offset(1, 4),
-                                      color: Color.fromRGBO(77, 191, 74, 1)
-                                          .withOpacity(0.3),
-                                      blurRadius: 35,
-                                    )
-                                  : BoxShadow(
-                                      offset: Offset(3, 4),
-                                      color: Color.fromRGBO(158, 116, 158, 1)
-                                          .withOpacity(0.3),
-                                      blurRadius: 35,
-                                    )
-                        ],
+                       shadows: [
+                                if (darkMode) // Check for dark mode first
+                                  BoxShadow(
+                                    offset: Offset(3, 4),
+                                    color: Color(0xff030303).withOpacity(0.77),
+                                    blurRadius: 25,
+                                  )
+                                else if (_isVendor) // Check if it's a vendor
+                                  BoxShadow(
+                                    offset: Offset(3, 4),
+                                    color: Color.fromRGBO(124, 193, 191, 1)
+                                        .withOpacity(0.3),
+                                    blurRadius: 25,
+                                  )
+                                else if (Provider.of<Auth>(context,
+                                            listen: false)
+                                        .userData?['user_type'] ==
+                                    UserType
+                                        .Supplier.name) // Check for supplier
+                                  BoxShadow(
+                                    offset: Offset(3, 4),
+                                    color: Color.fromRGBO(77, 191, 74, 1)
+                                        .withOpacity(0.3),
+                                    blurRadius: 25,
+                                  )
+                                else // Default case for other user types
+                                  BoxShadow(
+                                    offset: Offset(3, 4),
+                                    color: Color.fromRGBO(158, 116, 158, 1)
+                                        .withOpacity(0.3),
+                                    blurRadius: 25,
+                                  )
+                              ],
+                            
                         shape: SmoothRectangleBorder(
                             borderRadius: SmoothBorderRadius(
                           cornerRadius: 15,
                           cornerSmoothing: 1,
                         )),
                       ),
-                      child: const Icon(Icons.search, size: 25),
+                      child:  Icon(Icons.search, size: 25),
                     ),
                   ),
                 ),
@@ -1070,7 +1081,7 @@ class _PostItemState extends State<PostItem> {
                                 /*_isLiked ?  Assets.favourite_svg :*/
                                 Assets.favourite_svg,
                                 // ignore: deprecated_member_use
-                                color: _isVendor
+                                color: darkMode?Colors.white: _isVendor
                                     ? const Color(0xFF094B60)
                                     : Provider.of<Auth>(context, listen: false)
                                                 .userData?['user_type'] ==
@@ -1123,7 +1134,7 @@ class _PostItemState extends State<PostItem> {
                         icon: SvgPicture.asset(
                           Assets.comment_svg,
                           // ignore: deprecated_member_use
-                          color: _isVendor
+                          color:darkMode?Colors.white:  _isVendor
                               ? const Color(0xFF094B60)
                               : Provider.of<Auth>(context, listen: false)
                                           .userData?['user_type'] ==
@@ -1179,7 +1190,7 @@ class _PostItemState extends State<PostItem> {
                         icon: SvgPicture.asset(
                           Assets.share,
                           // ignore: deprecated_member_use
-                          color: _isVendor
+                          color:darkMode?Colors.white:  _isVendor
                               ? const Color(0xFF094B60)
                               : Provider.of<Auth>(context, listen: false)
                                           .userData?['user_type'] ==
@@ -1269,7 +1280,7 @@ class _PostItemState extends State<PostItem> {
                               Text(
                                 'Liked by',
                                 style: TextStyle(
-                                  color: _isVendor
+                                  color:darkMode?Color(0xffB1F0EF): _isVendor
                                       ? const Color(0xFF519896)
                                       : Provider.of<Auth>(context,
                                                       listen: false)
@@ -1288,7 +1299,7 @@ class _PostItemState extends State<PostItem> {
                               Text(
                                 '${_likeData.length == 0 ? '0 people' : _likeData.length == 1 ? _likeData[0]['name'] : '${_likeData[0]['name']} and ${_likeData.length - 1} others'}',
                                 style: TextStyle(
-                                  color: _isVendor
+                                  color: darkMode?Colors.white: _isVendor
                                       ? const Color(0xFF094B60)
                                       : Provider.of<Auth>(context,
                                                       listen: false)
@@ -1321,8 +1332,8 @@ class _PostItemState extends State<PostItem> {
                                                 listen: false)
                                             .userData!['store_name']
                                         : widget.data['store_name'],
-                                    style: const TextStyle(
-                                      color: Color(0xFFFA6E00),
+                                    style:  TextStyle(
+                                      color: darkMode?Color(0xffB1F0EF): Color(0xFFFA6E00),
                                       fontSize: 13,
                                       fontFamily: 'Product Sans',
                                       fontWeight: FontWeight.w700,
@@ -1337,11 +1348,11 @@ class _PostItemState extends State<PostItem> {
                                         overflow: TextOverflow.clip,
                                         maxLines: 1,
                                         style: TextStyle(
-                                          color: _isVendor
+                                          color:darkMode?Colors.white: _isVendor
                                               ? const Color(0xFF0A4C61)
                                               : const Color(0xFF2E0536),
                                           fontSize: 13,
-                                          fontFamily: 'Product Sans Medium',
+                                          fontFamily: 'Product Sans',
                                           fontWeight: FontWeight.w500,
                                           letterSpacing: 0.12,
                                         ),
@@ -1356,7 +1367,7 @@ class _PostItemState extends State<PostItem> {
                                     widget.data['caption'].substring(50),
                                     maxLines: null,
                                     style: TextStyle(
-                                      color: _isVendor
+                                      color:darkMode?Color(0xffB1F0EF): _isVendor
                                           ? const Color(0xFF0A4C61)
                                           : const Color(0xFF2E0536),
                                       fontSize: 13,
@@ -1415,7 +1426,7 @@ class _PostItemState extends State<PostItem> {
                                   ? 'View ${(widget.data['comments'] ?? []).length} comments'
                                   : '${(widget.data['comments'] ?? []).length} comments',
                               style: TextStyle(
-                                color: _isVendor
+                                color:darkMode?Color(0xffB1F0EF): _isVendor
                                     ? const Color(0xFF519796)
                                     : const Color(0xFFB232CB),
                                 fontSize: 11,
@@ -1431,7 +1442,7 @@ class _PostItemState extends State<PostItem> {
                         Text(
                           '${formatTimeDifference(widget.data['created_at'])}',
                           style: TextStyle(
-                            color: _isVendor
+                            color:darkMode?Color(0xffB1F0EF): _isVendor
                                 ? const Color(0xFF519796)
                                 : const Color(0xFFB232CB),
                             fontSize: 9,
