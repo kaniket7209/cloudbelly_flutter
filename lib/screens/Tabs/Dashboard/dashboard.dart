@@ -16,6 +16,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DashBoard extends StatefulWidget {
@@ -74,7 +75,6 @@ class _DashBoardState extends State<DashBoard>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                             
                               CustomIconButton(
                                 text: 'notification',
                                 ic: Icons.notifications_outlined,
@@ -85,22 +85,20 @@ class _DashBoardState extends State<DashBoard>
                                   // Navigator.of(context).pushNamed('/map');
                                 },
                               ),
-                              
                               CustomIconButton(
                                 ic: Icons.settings,
                                 onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const ProfileSettingView()));
-                                      },
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ProfileSettingView()));
+                                },
                               ),
                             ],
                           ),
                         ),
                       ),
-                      
                       Center(
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 5.w),
@@ -108,9 +106,7 @@ class _DashBoardState extends State<DashBoard>
                             children: [
                               Space(3.h),
                               Center(
-                                child: 
-                                Container(
-                                 
+                                child: Container(
                                   decoration: ShapeDecoration(
                                     shadows: const [
                                       BoxShadow(
@@ -131,68 +127,68 @@ class _DashBoardState extends State<DashBoard>
                                   child: Column(
                                     children: [
                                       // Space(1.h),
-                                      
-                                       Container(
-                                        
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 15, 10, 0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(left: 10),
-                                            child: const StoreLogoWidget(),
-                                          ),
-                                          SizedBox(
-                                            width: 14,
-                                          ),
-                                          Container(
-                                            width: 50.w,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(
-                                                  height: 15,
-                                                ),
-                                                Text(
-                                                  Provider.of<Auth>(context,
-                                                          listen: true)
-                                                      .userData?['store_name'],
-                                                  style: TextStyle(
-                                                      color: boxShadowColor,
-                                                      fontFamily: 'Ubuntu',
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      letterSpacing: 1),
-                                                ),
-                                                Text(
-                                                  Provider.of<Auth>(context,
-                                                          listen: true)
-                                                      .userData?['user_type'],
-                                                  style: TextStyle(
-                                                      color: boxShadowColor,
-                                                      fontFamily:
-                                                          'Product Sans',
-                                                      fontSize: 12,
-                                                      letterSpacing: 1),
-                                                ),
-                                              ],
+
+                                      Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 15, 10, 0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              width: 10,
                                             ),
-                                          ),
-                                          
-                                        ],
+                                            Container(
+                                              padding:
+                                                  EdgeInsets.only(left: 10),
+                                              child: const StoreLogoWidget(),
+                                            ),
+                                            SizedBox(
+                                              width: 14,
+                                            ),
+                                            Container(
+                                              width: 50.w,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  Text(
+                                                    Provider.of<Auth>(context,
+                                                                listen: true)
+                                                            .userData?[
+                                                        'store_name'],
+                                                    style: TextStyle(
+                                                        color: boxShadowColor,
+                                                        fontFamily: 'Ubuntu',
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        letterSpacing: 1),
+                                                  ),
+                                                  Text(
+                                                    Provider.of<Auth>(context,
+                                                            listen: true)
+                                                        .userData?['user_type'],
+                                                    style: TextStyle(
+                                                        color: boxShadowColor,
+                                                        fontFamily:
+                                                            'Product Sans',
+                                                        fontSize: 12,
+                                                        letterSpacing: 1),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
 
                                       // Adjusted the width of buttons based on screen width
                                       _activeButtonIndex == 1
@@ -311,8 +307,8 @@ class _DashBoardState extends State<DashBoard>
                                             ),
                                           )
                                         ],
-                                      )
-                                  , Space(3.h)
+                                      ),
+                                      Space(3.h)
                                     ],
                                   ),
                                 ),
@@ -343,92 +339,119 @@ class StoreLogoWidget extends StatelessWidget {
     super.key,
   });
 
+  Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('dark_mode');
+  }
+
   @override
   Widget build(BuildContext context) {
     final userData = Provider.of<Auth>(context).userData;
-    String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-   Color colorProfile;
-    if (userType == 'Vendor') {
-      colorProfile = const Color(0xFF094B60) ;
-    } else if (userType == 'Customer') {
-      colorProfile = const Color(0xFF2E0536);
-    } else if (userType == 'Supplier') {
-      colorProfile = Color.fromARGB(255, 26, 48, 10);
-    } else {
-      colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
-    }
-  
+    String? userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
 
-    return Column(
-      children: [
-        const Space(15),
-        userData?['profile_photo'] != '' && userData?['profile_photo'] !=null
-            ? GestureDetector(
-              onTap: () => openFullScreen(context,userData?['profile_photo']),
-              child: Container(
-                  height: 70,
-                  width: 70,
-                  decoration: ShapeDecoration(
-                    shadows: [
-                      userData?['user_type'] == UserType.Vendor.name
-                          ?  BoxShadow(
-                              offset: Offset(0, 4),
-                              color: Color(0xff1F6F6D).withOpacity(0.4),
-                              blurRadius: 20,
-                            )
-                          : userData?['user_type'] == UserType.Supplier.name
-                              ?  BoxShadow(
+    return FutureBuilder<String?>(
+      future: getDarkModeStatus(),
+      builder: (context, snapshot) {
+        bool darkMode = snapshot.data == 'true' ? true : false;
+
+        Color colorProfile;
+        if (darkMode) {
+          colorProfile = Color(0xff000000).withOpacity(0.47); // Black color in dark mode
+        } else {
+          // Non-dark mode colors based on user type
+          if (userType == 'Vendor') {
+            colorProfile = const Color(0xFF094B60);
+          } else if (userType == 'Customer') {
+            colorProfile = const Color(0xFF2E0536);
+          } else if (userType == 'Supplier') {
+            colorProfile = Color.fromARGB(255, 26, 48, 10);
+          } else {
+            colorProfile = const Color.fromRGBO(77, 191, 74, 0.6); // Default color
+          }
+        }
+
+        // Check if loading
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // You can return a placeholder or loading indicator here
+        }
+
+        return Column(
+          children: [
+            const SizedBox(height: 15), // Used `SizedBox` instead of `Space` for clarity
+            userData?['profile_photo'] != '' && userData?['profile_photo'] != null
+                ? GestureDetector(
+                    onTap: () =>
+                        openFullScreen(context, userData?['profile_photo']),
+                    child: Container(
+                      height: 70,
+                      width: 70,
+                      decoration: ShapeDecoration(
+                        shadows: [
+                          userData?['user_type'] == UserType.Vendor.name
+                              ? BoxShadow(
                                   offset: Offset(0, 4),
-                                  color: Color.fromRGBO(163, 220, 118, 0.6).withOpacity(0.4),
+                                  color: Color(0xff1F6F6D).withOpacity(0.4),
                                   blurRadius: 20,
                                 )
-                              :  BoxShadow(
-                                  offset: Offset(0, 4),
-                                  color: Color.fromRGBO(188, 115, 188, 0.6).withOpacity(0.4),
-                                  blurRadius: 20,
-                                ),
-                    ],
-                    shape: SmoothRectangleBorder(),
-                  ),
-                  child: ClipSmoothRect(
-                    radius: SmoothBorderRadius(
-                      cornerRadius: 22,
-                      cornerSmoothing: 1,
+                              : userData?['user_type'] == UserType.Supplier.name
+                                  ? BoxShadow(
+                                      offset: Offset(0, 4),
+                                      color: Color.fromRGBO(163, 220, 118, 0.6)
+                                          .withOpacity(0.4),
+                                      blurRadius: 20,
+                                    )
+                                  : BoxShadow(
+                                      offset: Offset(0, 4),
+                                      color: Color.fromRGBO(188, 115, 188, 0.6)
+                                          .withOpacity(0.4),
+                                      blurRadius: 20,
+                                    ),
+                        ],
+                        shape: SmoothRectangleBorder(),
+                      ),
+                      child: ClipSmoothRect(
+                        radius: SmoothBorderRadius(
+                          cornerRadius: 22,
+                          cornerSmoothing: 1,
+                        ),
+                        child: Image.network(
+                          userData?['profile_photo'],
+                          fit: BoxFit.cover,
+                          loadingBuilder:
+                              GlobalVariables().loadingBuilderForImage,
+                          errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                        ),
+                      ),
                     ),
-                    child: Image.network(
-                      userData?['profile_photo'],
-                      fit: BoxFit.cover,
-                      loadingBuilder: GlobalVariables().loadingBuilderForImage,
-                      errorBuilder: GlobalVariables().ErrorBuilderForImage,
+                  )
+                : Container(
+                    height: 70,
+                    width: 70,
+                    decoration: ShapeDecoration(
+                      shadows: [
+                        BoxShadow(
+                          offset: Offset(0, 4),
+                          color: colorProfile.withOpacity(0.5),
+                          blurRadius: 20,
+                        ),
+                      ],
+                      color: colorProfile,
+                      shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                        cornerRadius: 15,
+                        cornerSmoothing: 1,
+                      )),
                     ),
-                  ),
-                ),
-            )
-            : Container(
-                height: 70,
-                width: 70,
-                decoration: ShapeDecoration(
-                  shadows:  [
-                    BoxShadow(
-                      offset: Offset(0, 4),
-                      color:colorProfile.withOpacity(0.5),
-                      blurRadius: 20,
-                    ),
-                  ],
-                  color:colorProfile,
-                  shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius(
-                    cornerRadius: 15,
-                    cornerSmoothing: 1,
-                  )),
-                ),
-                child: Center(
-                  child: Text(
-                    userData?['store_name'][0].toUpperCase(),
-                    style: TextStyle(fontSize: 40,color: Colors.white),
-                  ),
-                )),
-      ],
+                    child: Center(
+                      child: Text(
+                        userData?['store_name'][0].toUpperCase(),
+                        style: TextStyle(fontSize: 40, color: Colors.white),
+                      ),
+                    )),
+          ],
+        );
+      },
     );
   }
 }
@@ -443,16 +466,18 @@ class StoreNameWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-   Color colorProfile;
+    String? userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+    Color colorProfile;
     if (userType == 'Vendor') {
-      colorProfile = const Color(0xFF094B60) ;
+      colorProfile = const Color(0xFF094B60);
     } else if (userType == 'Customer') {
       colorProfile = const Color(0xFF2E0536);
     } else if (userType == 'Supplier') {
       colorProfile = Color.fromARGB(255, 26, 48, 10);
     } else {
-      colorProfile = const Color.fromRGBO(77,191, 74, 0.6); // Default color if user_type is none of the above
+      colorProfile = const Color.fromRGBO(
+          77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
     return Container(
       child: Column(
@@ -480,7 +505,7 @@ class StoreNameWidget extends StatelessWidget {
                     maxLines: 2,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
-                    style:  TextStyle(
+                    style: TextStyle(
                       color: colorProfile,
                       fontSize: 14,
                       fontFamily: 'Product Sans',
@@ -945,8 +970,9 @@ class ColumnWidgetHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? userType = Provider.of<Auth>(context, listen: false).userData?['user_type'];
-    
+    String? userType =
+        Provider.of<Auth>(context, listen: false).userData?['user_type'];
+
     // Determine the profile color based on the user type
     Color colorProfile;
     if (userType == 'Vendor') {
@@ -956,7 +982,8 @@ class ColumnWidgetHomeScreen extends StatelessWidget {
     } else if (userType == 'Supplier') {
       colorProfile = Color.fromARGB(255, 26, 48, 10);
     } else {
-      colorProfile = const Color.fromRGBO(77, 191, 74, 0.6); // Default color if user_type is none of the above
+      colorProfile = const Color.fromRGBO(
+          77, 191, 74, 0.6); // Default color if user_type is none of the above
     }
 
     // Use the provided color if it exists, otherwise fall back to colorProfile
@@ -990,6 +1017,7 @@ class ColumnWidgetHomeScreen extends StatelessWidget {
     );
   }
 }
+
 class ButtonWidgetHomeScreen extends StatelessWidget {
   final txt;
   bool isActive;
@@ -1035,7 +1063,6 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
           child: Text(
         txt,
         style: TextStyle(
-          
           color: isActive ? Colors.white : const Color(0xff0A4C61),
           fontSize: 14,
           fontFamily: 'Product Sans',

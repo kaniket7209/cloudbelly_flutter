@@ -60,6 +60,7 @@ class _ProfileState extends State<Profile> {
   List<dynamic> feedList = [];
   bool _switchValue = false;
   String kycStatus = 'not verified';
+  bool darkMode = true;
   // final RefreshController _refreshController =
   //     RefreshController(initialRefresh: false);
 
@@ -80,10 +81,21 @@ class _ProfileState extends State<Profile> {
     });
   }
 
+  Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+
+    return prefs.getString('dark_mode');
+  }
+
   @override
   void dispose() {
     t1.dispose();
     super.dispose();
+    getDarkModeStatus();
   }
 
   Future<void> _loading() async {
@@ -232,6 +244,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
+    getDarkModeStatus();
     Provider.of<Auth>(context, listen: false).userData =
         UserPreferences.getUser();
     // _switchValue = Provider.of<Auth>(context, listen: false)
@@ -250,17 +263,20 @@ class _ProfileState extends State<Profile> {
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
     Color boxShadowColor;
-
-    if (userType == 'Vendor') {
-      boxShadowColor = const Color(0xff0A4C61);
-    } else if (userType == 'Customer') {
-      boxShadowColor = const Color(0xff2E0536);
-    } else if (userType == 'Supplier') {
-      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    if (darkMode) {
+      boxShadowColor = Color(0xff313030);
     } else {
-      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+      if (userType == 'Vendor') {
+        boxShadowColor = const Color(0xff0A4C61);
+      } else if (userType == 'Customer') {
+        boxShadowColor = const Color(0xff2E0536);
+      } else if (userType == 'Supplier') {
+        boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+      } else {
+        boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+      }
     }
-
+ 
     return RefreshIndicator(
       onRefresh: _loading,
       // controller: _refreshController,
@@ -344,7 +360,6 @@ class _ProfileState extends State<Profile> {
                                       text: '',
                                       ic: Icons.qr_code,
                                       onTap: () {
-                                       
                                         context
                                             .read<TransitionEffect>()
                                             .setBlurSigma(5.0);
@@ -1296,13 +1311,14 @@ class _ProfileState extends State<Profile> {
                                 if (_activeButtonIndex == 4)
                                   Container(
                                     constraints: BoxConstraints(
-                                                    minHeight:
-                                                        400, // Set your minimum height here
-                                                  ),
+                                      minHeight:
+                                          400, // Set your minimum height here
+                                    ),
                                     child: Container(
                                       child: Container(
                                         width: double.infinity,
-                                        padding: EdgeInsets.symmetric(horizontal: 4.w),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 4.w),
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
@@ -1326,17 +1342,20 @@ class _ProfileState extends State<Profile> {
                                               children: [
                                                 GestureDetector(
                                                   onTap: () async {
-                                                    final locationDet =
-                                                        Provider.of<Auth>(context,
+                                                    final locationDet = Provider
+                                                            .of<Auth>(context,
                                                                 listen: false)
-                                                            .userData!['address'];
-                                                            print("locationDet  $locationDet");
+                                                        .userData!['address'];
+                                                    print(
+                                                        "locationDet  $locationDet");
                                                     if (locationDet[
                                                                 'longitude'] !=
                                                             null &&
-                                                        locationDet['latitude'] !=
+                                                        locationDet[
+                                                                'latitude'] !=
                                                             null) {
-                                                      final String googleMapsUrl =
+                                                      final String
+                                                          googleMapsUrl =
                                                           'https://www.google.com/maps/search/?api=1&query=${locationDet['latitude']},${locationDet['longitude']}';
                                                       print(
                                                           "googleMapsUrl  $googleMapsUrl");
@@ -1373,19 +1392,23 @@ class _ProfileState extends State<Profile> {
                                                   width: 2.w,
                                                 ),
                                                 Container(
-                                                  constraints: BoxConstraints(maxWidth: 60.w),
+                                                  constraints: BoxConstraints(
+                                                      maxWidth: 60.w),
                                                   child: Text(
                                                     (Provider.of<Auth>(context,
-                                                                        listen: false)
+                                                                        listen:
+                                                                            false)
                                                                     .userData![
                                                                 'address'] !=
                                                             null)
                                                         ? "${Provider.of<Auth>(context, listen: false).userData!['address']['hno']} ${Provider.of<Auth>(context, listen: false).userData!['address']['location']} ${Provider.of<Auth>(context, listen: false).userData!['address']['landmark']}"
                                                         : 'No location found',
                                                     style: TextStyle(
-                                                        color: Color(0xff1B7997),
+                                                        color:
+                                                            Color(0xff1B7997),
                                                         fontSize: 13,
-                                                        fontFamily: 'Product Sans'),
+                                                        fontFamily:
+                                                            'Product Sans'),
                                                   ),
                                                 ),
                                               ],
@@ -1399,12 +1422,13 @@ class _ProfileState extends State<Profile> {
                                                 GestureDetector(
                                                   onTap: () async {
                                                     final phoneNumber =
-                                                        Provider.of<Auth>(context,
+                                                        Provider.of<Auth>(
+                                                                context,
                                                                 listen: false)
                                                             .userData!['phone'];
                                                     final url =
                                                         'tel:$phoneNumber';
-                                    
+
                                                     try {
                                                       await _launchURL(url);
                                                     } catch (e) {
@@ -1431,7 +1455,8 @@ class _ProfileState extends State<Profile> {
                                                   style: TextStyle(
                                                       color: Color(0xff1B7997),
                                                       fontSize: 12,
-                                                      fontFamily: 'Product Sans'),
+                                                      fontFamily:
+                                                          'Product Sans'),
                                                 ),
                                               ],
                                             ),
@@ -1462,7 +1487,7 @@ class _ProfileState extends State<Profile> {
                                             //     ),
                                             //   ),
                                             // ),
-                                           
+
                                             const SizedBox(
                                               height: 100,
                                             ),
