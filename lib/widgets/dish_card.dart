@@ -30,7 +30,7 @@ class DishCard extends StatelessWidget {
               child: Container(
                 height: 155,
                 width: 130,
-                decoration: ShapeDecoration(
+                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(
@@ -40,9 +40,12 @@ class DishCard extends StatelessWidget {
                   ),
                   shadows: [
                     BoxShadow(
-                      color: darkMode?Color(0xff000000).withOpacity(0.47): Color(0xff9E749E).withOpacity(0.5),
-                      spreadRadius: 0,
-                      blurRadius: 20,
+                      color: darkMode
+                          ? Color(0xff000000).withOpacity(0.47)
+                          : const Color.fromRGBO(130, 47, 130, 1)
+                              .withOpacity(0.3),
+                      spreadRadius: 1,
+                      blurRadius: 25,
                       offset: Offset(3, 6),
                     ),
                   ],
@@ -62,18 +65,34 @@ class DishCard extends StatelessWidget {
                               GlobalVariables().imageErrorBuilderForImage(
                                   context, error, null),
                         )
-                      : 
-                      Container(
-                        alignment: Alignment.center,
-                        color: Colors.white,
-                        child: Center(
+                      : Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            gradient: LinearGradient(
+                              colors: [
+                                Color.fromRGBO(39, 39, 39, 1),
+                                Color.fromRGBO(74, 74, 74, 1),
+                              ],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                            ),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 2.w),
+                          alignment: Alignment.center,
+                          // color:darkMode? Color(0xfff313030):Colors.white,
+                          child: Center(
                             child: Text(
                               textAlign: TextAlign.center,
                               dish.name.toUpperCase(),
-                              style: TextStyle(fontSize: 20, color: Color(0xff2E0536),fontFamily: 'Ubuntu',fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: 
+                                      Colors.white.withOpacity(0.7),
+                                  fontFamily: 'Ubuntu',
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
-                      ),
+                        ),
                 ),
               ),
             ),
@@ -104,56 +123,66 @@ class DishCard extends StatelessWidget {
                       });
                     },
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
                           width: MediaQuery.of(context).size.width * 0.3,
                           child: Text(
                             dish.name,
-                            style:  TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontFamily: 'Product Sans',
                               fontSize: 17,
-                              color:darkMode?Colors.white: Color(0xff2E0536),
+                              color:
+                                  darkMode ? Colors.white : Color(0xff2E0536),
                             ),
                           ),
                         ),
                         // SizedBox(width: 2),
-                        Container(
-                          width: 16,
-                          height: 16,
-                          decoration: ShapeDecoration(
-                            color: Colors.white,
-                            shape: SmoothRectangleBorder(
-                              borderRadius: SmoothBorderRadius(
-                                cornerRadius: 7.0,
-                                cornerSmoothing: 1,
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 0.5.h,
+                            ),
+                            Container(
+                              width: 16,
+                              height: 16,
+
+                              // decoration:ShapeDecoration(
+                              //   color: Colors.white,
+                              //   shape: SmoothRectangleBorder(
+                              //     borderRadius: SmoothBorderRadius(
+                              //       cornerRadius: 7.0,
+                              //       cornerSmoothing: 1,
+                              //     ),
+                              //   ),
+                              //   shadows: [
+                              //     BoxShadow(
+                              //       color: Colors.grey.withOpacity(0.2),
+                              //       spreadRadius: 1,
+                              //       blurRadius: 7,
+                              //       offset: Offset(0, 3),
+                              //     ),
+                              //   ],
+                              //   // side: BorderSide(
+                              //   //   color: Colors.black,
+                              //   //   width: 2.0,
+                              //   // ),
+                              // ),
+                              child: Center(
+                                child: Container(
+                                  width: 9,
+                                  height: 9,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: dish.type == 'Veg'
+                                        ? Color(0xff6EFD6B)
+                                        : Color(0xffE23131),
+                                  ),
+                                ),
                               ),
                             ),
-                            shadows: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 1,
-                                blurRadius: 7,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                            // side: BorderSide(
-                            //   color: Colors.black,
-                            //   width: 2.0,
-                            // ),
-                          ),
-                          child: Center(
-                            child: Container(
-                              width: 9,
-                              height: 9,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: dish.type == 'Veg'
-                                    ? Color(0xff6EFD6B)
-                                    : Color(0xffE23131),
-                              ),
-                            ),
-                          ),
+                          ],
                         ),
                         Spacer(),
                         Text(
@@ -161,7 +190,9 @@ class DishCard extends StatelessWidget {
                           style: TextStyle(
                               fontSize: 18.0,
                               fontFamily: 'Ubuntu',
-                              color:darkMode?Color(0xffFA6E00): Color(0xff9428A9),
+                              color: darkMode
+                                  ? Color(0xffFA6E00)
+                                  : Color(0xff9428A9),
                               fontWeight: FontWeight.bold),
                           textAlign: TextAlign.right,
                         ),
@@ -174,7 +205,8 @@ class DishCard extends StatelessWidget {
                       Text(
                         dish.store_name,
                         style: TextStyle(
-                          color:darkMode?Color(0xffB1F0EF): Color(0xff9428A9),
+                          color:
+                              darkMode ? Color(0xffB1F0EF) : Color(0xff9428A9),
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -184,7 +216,8 @@ class DishCard extends StatelessWidget {
                       Text(
                         '${double.parse(dish.distance_km).toStringAsFixed(2)} km',
                         style: TextStyle(
-                          color:darkMode? Color(0xff54A6C1):Color(0xffFA6E00),
+                          color:
+                              darkMode ? Color(0xff54A6C1) : Color(0xffFA6E00),
                           fontFamily: 'Product Sans',
                           // fontWeight: FontWeight.bold,
                           fontSize: 12,
@@ -196,7 +229,7 @@ class DishCard extends StatelessWidget {
                   Text(
                     dish.description,
                     style: TextStyle(
-                      color:darkMode?Color(0xffB1F0EF): Color(0xff9428A9),
+                      color: darkMode ? Color(0xffB1F0EF) : Color(0xff9428A9),
                       fontFamily: 'Product Sans',
                       fontSize: 12,
                     ),

@@ -40,10 +40,10 @@ class RestaurantCard extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                openFullScreen(context,restaurant.profilePhoto);
+                openFullScreen(context, restaurant.profilePhoto);
               },
               child: Container(
-                height: 160,
+                height: 155,
                 width: 130,
                 decoration: ShapeDecoration(
                   color: Colors.white,
@@ -55,8 +55,10 @@ class RestaurantCard extends StatelessWidget {
                   ),
                   shadows: [
                     BoxShadow(
-                      color:darkMode?Color(0xff000000).withOpacity(0.47): const Color.fromRGBO(130, 47, 130, 1)
-                          .withOpacity(0.3),
+                      color: darkMode
+                          ? Color(0xff000000).withOpacity(0.47)
+                          : const Color.fromRGBO(130, 47, 130, 1)
+                              .withOpacity(0.3),
                       spreadRadius: 1,
                       blurRadius: 25,
                       offset: Offset(3, 6),
@@ -79,16 +81,30 @@ class RestaurantCard extends StatelessWidget {
                                   context, error, null),
                         )
                       : Container(
-                        alignment: Alignment.center,
-                        color: Colors.white,
-                        child: Center(
+                          alignment: Alignment.center,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            gradient: LinearGradient(
+                              colors: [
+                                Color.fromRGBO(39, 39, 39, 1),
+                                Color.fromRGBO(65, 65, 65, 1),
+                              ],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                            ),
+                          ),
+                          child: Center(
                             child: Text(
                               textAlign: TextAlign.center,
                               restaurant.storeName.toUpperCase(),
-                              style: TextStyle(fontSize: 20, color: Color(0xff2E0536),fontFamily: 'Ubuntu',fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white.withOpacity(0.7),
+                                  fontFamily: 'Ubuntu',
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
-                      ),
+                        ),
                 ),
               ),
             ),
@@ -96,12 +112,12 @@ class RestaurantCard extends StatelessWidget {
             Expanded(
               flex: 1,
               child: Column(
-                
-                mainAxisAlignment:
-                    MainAxisAlignment.start, // Center vertically
+                mainAxisAlignment: MainAxisAlignment.start, // Center vertically
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 1.h,),
+                  SizedBox(
+                    height: 1.h,
+                  ),
                   InkWell(
                     onTap: () {
                       // print("userIdfrom post:: $userId");
@@ -125,7 +141,7 @@ class RestaurantCard extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
-                          color:darkMode?Colors.white: Color(0xff2E0536),
+                          color: darkMode ? Colors.white : Color(0xff2E0536),
                         ),
                       ),
                     ),
@@ -155,7 +171,9 @@ class RestaurantCard extends StatelessWidget {
                         '45-50 mins',
                         style: TextStyle(
                             fontSize: 15.0,
-                            color:darkMode?Color(0xffB1F0EF): Color(0xff9428A9),
+                            color: darkMode
+                                ? Color(0xffB1F0EF)
+                                : Color(0xff9428A9),
                             fontWeight: FontWeight.bold),
                         textAlign: TextAlign.right,
                       ),
@@ -169,7 +187,9 @@ class RestaurantCard extends StatelessWidget {
                         child: Text(
                           restaurant.location,
                           style: TextStyle(
-                            color:darkMode?Color(0xffB1F0EF): Color(0xff9428A9),
+                            color: darkMode
+                                ? Color(0xffB1F0EF)
+                                : Color(0xff9428A9),
                             fontSize: 14,
                           ),
                           // overflow: TextOverflow
@@ -196,15 +216,17 @@ class RestaurantCard extends StatelessWidget {
                       // ),
                     ],
                   ),
-                  SizedBox(height: 1.h,),
-                   Text(
-                        '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km',
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: darkMode? Color(0xff54A6C1):Color(0xffFA6E00),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                  SizedBox(
+                    height: 1.h,
+                  ),
+                  Text(
+                    '${double.parse(restaurant.distance_km).toStringAsFixed(2)} km',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: darkMode ? Color(0xff54A6C1) : Color(0xffFA6E00),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
             ),
