@@ -1341,7 +1341,7 @@ class _ProfileState extends State<Profile> {
                                             Text(
                                               'Store Info',
                                               style: TextStyle(
-                                                  color: boxShadowColor,
+                                                  color:darkMode?Colors.white: boxShadowColor,
                                                   fontWeight: FontWeight.w800,
                                                   fontSize: 22,
                                                   letterSpacing: 1,
@@ -1418,7 +1418,7 @@ class _ProfileState extends State<Profile> {
                                                         : 'No location found',
                                                     style: TextStyle(
                                                         color:
-                                                            Color(0xff1B7997),
+                                                          darkMode?Colors.white:  Color(0xff1B7997),
                                                         fontSize: 13,
                                                         fontFamily:
                                                             'Product Sans'),
@@ -1466,7 +1466,7 @@ class _ProfileState extends State<Profile> {
                                                 Text(
                                                   "${Provider.of<Auth>(context, listen: false).userData!['phone']}",
                                                   style: TextStyle(
-                                                      color: Color(0xff1B7997),
+                                                      color:darkMode?Colors.white: Color(0xff1B7997),
                                                       fontSize: 12,
                                                       fontFamily:
                                                           'Product Sans'),
@@ -2351,7 +2351,6 @@ class _MenuState extends State<Menu> {
 
     String userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
-    print("widget.menuList  ${widget.menuList}");
     Color boxShadowColor;
     Color categorySelected = Color(0xff70BAD2);
     if (userType == 'Vendor') {

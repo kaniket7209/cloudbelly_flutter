@@ -1027,6 +1027,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
   double height;
   double width;
   double radius;
+  bool darkMode;
 
   ButtonWidgetHomeScreen({
     super.key,
@@ -1035,6 +1036,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
     this.height = 1,
     this.width = 1,
     this.radius = 1,
+    this.darkMode = true
   });
 
   @override
@@ -1048,7 +1050,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
                 BoxShadow(
                     offset: Offset(5, 6),
                     spreadRadius: 0,
-                    color: Color(0xffE88037).withOpacity(0.5),
+                    color:darkMode?Colors.black.withOpacity(0.47): Color(0xffE88037).withOpacity(0.5),
                     blurRadius: 30)
               ]
             : [],

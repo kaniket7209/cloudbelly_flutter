@@ -57,6 +57,7 @@ class _ProfileViewState extends State<ProfileView> {
   ScrollController t1 = new ScrollController();
   String kycStatus = 'not verified';
   var locationDet = {};
+  bool darkMode = true;
 
   bool checkFollow() {
     String id = widget.userIdList.first;
@@ -100,6 +101,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   void dispose() {
+    getDarkModeStatus();
     t1.dispose();
     super.dispose();
   }
@@ -121,7 +123,15 @@ class _ProfileViewState extends State<ProfileView> {
 
     //Navigator.pop(context);
   }
+Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
 
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+
+    return prefs.getString('dark_mode');
+  }
   Future<void> _loading() async {
     getUserInfo(widget.userIdList);
     final prefs = await SharedPreferences.getInstance();
@@ -208,6 +218,7 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void initState() {
     super.initState();
+    getDarkModeStatus();
     Future.delayed(Duration.zero, () {
       final userId = ModalRoute.of(context)?.settings.arguments as String?;
       if (userId != null) {
@@ -262,6 +273,8 @@ class _ProfileViewState extends State<ProfileView> {
             'Vendor';
     return Scaffold(
       backgroundColor:
+      darkMode
+                ? Color(0xff000000).withOpacity(0.35):
           Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
                   UserType.Vendor.name
               ? const Color.fromRGBO(234, 245, 247, 1)
@@ -297,7 +310,7 @@ class _ProfileViewState extends State<ProfileView> {
                                       width: 100.w,
                                       height: 23.3.h,
                                       decoration: ShapeDecoration(
-                                        color: userList.first.userType ==
+                                        color: darkMode?Color(0xff1D1D1D):userList.first.userType ==
                                                 UserType.Vendor.name
                                             ? const Color.fromRGBO(
                                                 165, 200, 199, 0.6)
@@ -345,7 +358,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                   onTap: () {
                                                     Navigator.pop(context);
                                                   },
-                                                  color: sharedProfileColour(
+                                                  color:darkMode?Colors.black.withOpacity(0.45): sharedProfileColour(
                                                           userList
                                                               .first.userType)
                                                       .withOpacity(0.4)),
@@ -371,7 +384,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                 shadows: [
                                                   BoxShadow(
                                                     offset: const Offset(0, 4),
-                                                    color: userList.first
+                                                    color: darkMode?Color(0xff030303): userList.first
                                                                 .userType ==
                                                             UserType.Vendor.name
                                                         ? const Color.fromRGBO(
@@ -390,7 +403,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                     blurRadius: 25,
                                                   )
                                                 ],
-                                                color: Colors.white,
+                                                color:darkMode?Color(0xff313030): Colors.white,
                                                 shape: SmoothRectangleBorder(
                                                   borderRadius:
                                                       SmoothBorderRadius(
@@ -437,7 +450,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                         offset: Offset(
                                                                             1,
                                                                             4),
-                                                                        color: userList.first.userType ==
+                                                                        color:darkMode?Color(0xff000000).withOpacity(0.47): userList.first.userType ==
                                                                                 UserType.Vendor.name
                                                                             ? const Color.fromRGBO(165, 200, 199, 0.6)
                                                                             : userList.first.userType == UserType.Supplier.name
@@ -565,7 +578,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                       .storeName ??
                                                                   'Unknown', // Provide a default value
                                                               style: TextStyle(
-                                                                  color: sharedProfileColour(
+                                                                  color:darkMode?Colors.white: sharedProfileColour(
                                                                       userList
                                                                           .first
                                                                           .userType),
@@ -584,7 +597,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                       .userType ??
                                                                   'Unknown', // Provide a default value
                                                               style: TextStyle(
-                                                                color: sharedProfileColour(
+                                                                color:darkMode?Color(0xffB1F0EF): sharedProfileColour(
                                                                     userList
                                                                         .first
                                                                         .userType),
@@ -636,7 +649,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   0, 7, 12, 2),
                                                           child: Image.asset(
                                                               'assets/images/WhatsApp.png',
-                                                              width: 27),
+                                                              width: 27,color: darkMode?Colors.white:Colors.transparent,),
                                                         ),
                                                       ),
                                                     ],
@@ -652,7 +665,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                 listen: false)
                                                             .userData?['rating'],
                                                         txt: 'Rating',
-                                                        color:
+                                                        color:darkMode?Color(0xffB1F0EF):
                                                             sharedProfileColour(
                                                                 userList.first
                                                                     .userType),
@@ -666,7 +679,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                               "0",
                                                           txt: 'Followers',
                                                           color:
-                                                              sharedProfileColour(
+                                                             darkMode?Color(0xffB1F0EF): sharedProfileColour(
                                                                   userList.first
                                                                       .userType)),
                                                       ColumnWidgetHomeScreen(
@@ -678,7 +691,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                               "0",
                                                           txt: 'Following',
                                                           color:
-                                                              sharedProfileColour(
+                                                            darkMode?Color(0xffB1F0EF):  sharedProfileColour(
                                                                   userList.first
                                                                       .userType))
                                                     ],
@@ -819,7 +832,7 @@ class _ProfileViewState extends State<ProfileView> {
                                           shadows: [
                                             BoxShadow(
                                               offset: const Offset(0, 4),
-                                              color: userList.first.userType ==
+                                              color: darkMode?Color(0xff000000).withOpacity(0.47):userList.first.userType ==
                                                       UserType.Vendor.name
                                                   ? const Color.fromRGBO(
                                                       165, 200, 199, 0.6)
@@ -832,7 +845,7 @@ class _ProfileViewState extends State<ProfileView> {
                                               blurRadius: 30,
                                             )
                                           ],
-                                          color: Colors.white,
+                                          color:darkMode? Color(0xff313030): Colors.white,
                                           shape: SmoothRectangleBorder(
                                             borderRadius: SmoothBorderRadius(
                                               cornerRadius: 30,
@@ -887,7 +900,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   txt:
                                                                       'Content',
                                                                   width: 52,
-                                                                  color: sharedProfileColour(
+                                                                  color:darkMode?Colors.white: sharedProfileColour(
                                                                       userList
                                                                           .first
                                                                           .userType)),
@@ -909,7 +922,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                           2,
                                                                   txt: 'Menu',
                                                                   width: 52,
-                                                                  color: sharedProfileColour(
+                                                                  color:darkMode?Colors.white:sharedProfileColour(
                                                                       userList
                                                                           .first
                                                                           .userType)),
@@ -927,7 +940,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                           3,
                                                                   txt: 'About',
                                                                   width: 52,
-                                                                  color: sharedProfileColour(
+                                                                  color:darkMode?Colors.white: sharedProfileColour(
                                                                       userList
                                                                           .first
                                                                           .userType)),
@@ -946,7 +959,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                   txt:
                                                                       'Reviews',
                                                                   width: 52,
-                                                                  color: sharedProfileColour(
+                                                                  color:darkMode?Colors.white: sharedProfileColour(
                                                                       userList
                                                                           .first
                                                                           .userType)),
@@ -977,7 +990,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                       txt:
                                                                           'Content',
                                                                       width: 52,
-                                                                      color: sharedProfileColour(userList
+                                                                      color:darkMode?Colors.white: sharedProfileColour(userList
                                                                           .first
                                                                           .userType)),
                                                                 ),
@@ -996,7 +1009,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                       txt:
                                                                           'Reviews',
                                                                       width: 52,
-                                                                      color: sharedProfileColour(userList
+                                                                      color:darkMode?Colors.white: sharedProfileColour(userList
                                                                           .first
                                                                           .userType)),
                                                                 ),
@@ -1024,7 +1037,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                       txt:
                                                                           'Content',
                                                                       width: 52,
-                                                                      color: sharedProfileColour(userList
+                                                                      color:darkMode?Colors.white: sharedProfileColour(userList
                                                                           .first
                                                                           .userType)),
                                                                 ),
@@ -1047,7 +1060,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                       txt:
                                                                           'Menu',
                                                                       width: 40,
-                                                                      color: sharedProfileColour(userList
+                                                                      color:darkMode?Colors.white: sharedProfileColour(userList
                                                                           .first
                                                                           .userType)),
                                                                 ),
@@ -1066,7 +1079,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                                       txt:
                                                                           'About',
                                                                       width: 52,
-                                                                      color: sharedProfileColour(userList
+                                                                      color:darkMode?Colors.white: sharedProfileColour(userList
                                                                           .first
                                                                           .userType)),
                                                                 ),

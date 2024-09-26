@@ -282,8 +282,8 @@ class _MenuItemState extends State<MenuItem> {
                     width: MediaQuery.of(context).size.width * 0.6,
                     child: Text(
                       widget.data['description'] ?? '',
-                      style: const TextStyle(
-                        color: Color(0xFF094B60),
+                      style:  TextStyle(
+                        color:darkMode?Colors.white: Color(0xFF094B60),
                         fontSize: 12,
                         fontFamily: 'Product Sans',
                         fontWeight: FontWeight.w400,
@@ -427,6 +427,7 @@ class _MenuItemState extends State<MenuItem> {
                                   isActive: true,
                                   height: 2.5.h,
                                   width: 15.w,
+                                  darkMode: darkMode,
                                   txt: 'ADD'),
                             )
                           : Container(
