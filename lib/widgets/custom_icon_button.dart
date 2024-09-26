@@ -1,5 +1,4 @@
 import 'package:cloudbelly_app/api_service.dart';
-import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +6,7 @@ import 'package:provider/provider.dart';
 // ignore: must_be_immutable
 class CustomIconButton extends StatelessWidget {
   final IconData ic;
-  final Color? color;
+   Color? color;
   final Color boxColor;
   final String text;
   final Function? onTap;
@@ -50,7 +49,9 @@ class CustomIconButton extends StatelessWidget {
 
     // If color is provided, use it for the box shadow color
     boxShadowColor = color ?? boxShadowColor;
-
+    if(color == Colors.transparent){
+      color= boxShadowColor;
+    }
     return GestureDetector(
       onTap: onTap as void Function()?,
       child: Container(

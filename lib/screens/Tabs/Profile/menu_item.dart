@@ -16,6 +16,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuItem extends StatefulWidget {
   MenuItem(
@@ -37,14 +38,25 @@ class MenuItem extends StatefulWidget {
 class _MenuItemState extends State<MenuItem> {
   bool _stockSwitch = true;
   bool refreshing = false;
+  bool darkMode = true;
   @override
   void initState() {
     super.initState();
+    getDarkModeStatus();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<Auth>(context, listen: false).clearAllItems();
     });
     // print("stock_statuss${widget.data['stock_status']}");
     _stockSwitch = widget.data['stock_status'] ?? true;
+  }
+  Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+
+    return prefs.getString('dark_mode');
   }
 
   @override
@@ -75,7 +87,7 @@ class _MenuItemState extends State<MenuItem> {
                       child: Text(
                         widget.data['name'],
                         style: TextStyle(
-                          color: Color(0xFF094B60),
+                          color:darkMode?Colors.white: Color(0xFF094B60),
                           fontSize: 16,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w700,
@@ -94,9 +106,9 @@ class _MenuItemState extends State<MenuItem> {
                               ? Color(0xFF4CF910)
                               : Colors.red,
                           shape: OvalBorder(),
-                          shadows: const [
+                          shadows:  [
                             BoxShadow(
-                              color: Color(0x7FB1D9D8),
+                              color:darkMode?Color(0xff000000).withOpacity(0.47): Color(0x7FB1D9D8),
                               blurRadius: 6,
                               offset: Offset(-2, 4),
                               spreadRadius: 0,
@@ -156,8 +168,8 @@ class _MenuItemState extends State<MenuItem> {
                   Container(
                     child: Text(
                       'Please Wait...',
-                      style: const TextStyle(
-                        color: Color(0xff70BAD2),
+                      style:  TextStyle(
+                        color:darkMode?Colors.white: Color(0xff70BAD2),
                         fontSize: 16,
                         letterSpacing: 1.2,
                         fontFamily: 'Product Sans',
@@ -190,8 +202,8 @@ class _MenuItemState extends State<MenuItem> {
                             cursorColor: Color(0xFF094B60),
                             textAlign: TextAlign.start,
                             maxLines: null,
-                            style: const TextStyle(
-                              color: Color(0xFF094B60),
+                            style:  TextStyle(
+                              color:darkMode?Colors.white: Color(0xFF094B60),
                               fontSize: 12,
                               fontFamily: 'Product Sans',
                               fontWeight: FontWeight.w400,
@@ -201,8 +213,8 @@ class _MenuItemState extends State<MenuItem> {
                               hintText: widget.data['description'] == ''
                                   ? '    Write description'
                                   : '',
-                              hintStyle: const TextStyle(
-                                color: Color(0xFF094B60),
+                              hintStyle:  TextStyle(
+                                color:darkMode?Colors.white: Color(0xFF094B60),
                                 fontSize: 12,
                                 fontFamily: 'Product Sans',
                                 fontWeight: FontWeight.w400,
@@ -298,15 +310,15 @@ class _MenuItemState extends State<MenuItem> {
                     height: 11.h,
                     width: 24.w,
                     decoration: ShapeDecoration(
-                      shadows: const [
+                      shadows:  [
                         BoxShadow(
-                          color: Color(0x7FB1D9D8),
+                          color:darkMode?Color(0xff000000).withOpacity(0.45): Color(0x7FB1D9D8),
                           blurRadius: 6,
                           offset: Offset(0, 4),
                           spreadRadius: 0,
                         ),
                       ],
-                      color: const Color.fromRGBO(239, 255, 254, 1),
+                      color: darkMode?Color(0xff000000).withOpacity(0.45) :const Color.fromRGBO(239, 255, 254, 1),
                       shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(
                           cornerRadius: 24,

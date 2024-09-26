@@ -988,6 +988,9 @@ class ColumnWidgetHomeScreen extends StatelessWidget {
 
     // Use the provided color if it exists, otherwise fall back to colorProfile
     Color finalColor = color ?? colorProfile;
+    if(color == Colors.transparent){
+      finalColor = colorProfile;
+    }
 
     return Column(
       children: [

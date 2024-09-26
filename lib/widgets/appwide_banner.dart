@@ -5,6 +5,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class AppwideBanner extends StatefulWidget {
@@ -19,6 +20,24 @@ class AppwideBanner extends StatefulWidget {
 
 class _AppwideBannerState extends State<AppwideBanner>
     with SingleTickerProviderStateMixin {
+       @override
+  void initState() {
+    super.initState();
+    getDarkModeStatus();
+   
+  }
+
+      bool darkMode= true;
+      Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+
+    return prefs.getString('dark_mode');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -36,7 +55,7 @@ class _AppwideBannerState extends State<AppwideBanner>
                 width: 100.w,
                 height: widget.height == 300 ? 23.3.h : widget.height,
                 decoration: ShapeDecoration(
-                  color: Provider.of<Auth>(context, listen: false)
+                  color: darkMode?Color(0xff1D1D1D):Provider.of<Auth>(context, listen: false)
                               .userData?['user_type'] ==
                           UserType.Vendor.name
                       ? const Color(0xFFB1D9D8)
@@ -56,8 +75,8 @@ class _AppwideBannerState extends State<AppwideBanner>
             : Container(
                 width: 100.w,
                 height: widget.height == 300 ? 23.3.h : widget.height,
-                decoration: const ShapeDecoration(
-                  color: Color(0xFFB1D9D8),
+                decoration:  ShapeDecoration(
+                  color:darkMode?Color(0xff1D1D1D): Color(0xFFB1D9D8),
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.only(
                         bottomLeft:

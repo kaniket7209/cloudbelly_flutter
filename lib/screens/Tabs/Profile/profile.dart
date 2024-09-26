@@ -276,7 +276,7 @@ class _ProfileState extends State<Profile> {
         boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
       }
     }
- 
+
     return RefreshIndicator(
       onRefresh: _loading,
       // controller: _refreshController,
@@ -344,7 +344,7 @@ class _ProfileState extends State<Profile> {
                                       Text(
                                         'Store Status',
                                         style: TextStyle(
-                                          color:
+                                          color:darkMode?Colors.white:
                                               boxShadowColor, // Replace with the desired color
                                           fontFamily: 'Product Sans',
                                           fontSize: 18.0,
@@ -359,6 +359,7 @@ class _ProfileState extends State<Profile> {
                                     CustomIconButton(
                                       text: '',
                                       ic: Icons.qr_code,
+                                      color: darkMode?Color(0xff030303).withOpacity(0.77): Colors.transparent,
                                       onTap: () {
                                         context
                                             .read<TransitionEffect>()
@@ -390,7 +391,7 @@ class _ProfileState extends State<Profile> {
                                           shadows: [
                                             BoxShadow(
                                               offset: Offset(0, 4),
-                                              color: _isVendor
+                                              color:darkMode?Color(0xff030303).withOpacity(0.77): _isVendor
                                                   ? Color.fromRGBO(
                                                       31, 111, 109, 0.5)
                                                   : Color(0xBC73BC)
@@ -436,7 +437,7 @@ class _ProfileState extends State<Profile> {
                                   shadows: [
                                     BoxShadow(
                                       offset: Offset(0, 4),
-                                      color: Provider.of<Auth>(context,
+                                      color:darkMode?Color(0xff030303): Provider.of<Auth>(context,
                                                       listen: false)
                                                   .userData?['user_type'] ==
                                               UserType.Vendor.name
@@ -453,7 +454,7 @@ class _ProfileState extends State<Profile> {
                                       blurRadius: 25,
                                     )
                                   ],
-                                  color: Colors.white,
+                                  color:darkMode?Color(0xff313030): Colors.white,
                                   shape: SmoothRectangleBorder(
                                     borderRadius: SmoothBorderRadius(
                                       cornerRadius: 53,
@@ -499,7 +500,7 @@ class _ProfileState extends State<Profile> {
                                                           listen: true)
                                                       .userData?['store_name'],
                                                   style: TextStyle(
-                                                      color: boxShadowColor,
+                                                      color:darkMode?Colors.white: boxShadowColor,
                                                       fontFamily: 'Ubuntu',
                                                       fontSize: 20,
                                                       fontWeight:
@@ -511,7 +512,7 @@ class _ProfileState extends State<Profile> {
                                                           listen: true)
                                                       .userData?['user_type'],
                                                   style: TextStyle(
-                                                      color: boxShadowColor,
+                                                      color: darkMode?Color(0xffB1F0EF):boxShadowColor,
                                                       fontFamily:
                                                           'Product Sans',
                                                       fontSize: 12,
@@ -548,7 +549,7 @@ class _ProfileState extends State<Profile> {
                                                       0, 7, 12, 2),
                                               child: Image.asset(
                                                   'assets/images/WhatsApp.png',
-                                                  width: 27),
+                                                  width: 27,color: darkMode?Colors.white:Colors.transparent,),
                                             ),
                                           )
                                         ],
@@ -565,6 +566,7 @@ class _ProfileState extends State<Profile> {
                                                   .userData?['rating'] ??
                                               "",
                                           txt: 'Rating',
+                                          color: darkMode?Color(0xffB1F0EF):Colors.transparent,
                                         ),
                                         GestureDetector(
                                           onTap: () {
@@ -592,6 +594,7 @@ class _ProfileState extends State<Profile> {
                                                     .toString()
                                                 : "",
                                             txt: 'Followers',
+                                             color: darkMode?Color(0xffB1F0EF):Colors.transparent,
                                           ),
                                         ),
                                         GestureDetector(
@@ -621,6 +624,7 @@ class _ProfileState extends State<Profile> {
                                                     .toString()
                                                 : "",
                                             txt: 'Following',
+                                             color: darkMode?Color(0xffB1F0EF):Colors.transparent,
                                           ),
                                         )
                                       ],
@@ -898,7 +902,7 @@ class _ProfileState extends State<Profile> {
                             shadows: [
                               BoxShadow(
                                 offset: const Offset(0, 4),
-                                color: Provider.of<Auth>(context, listen: false)
+                                color:darkMode?Color(0xff000000).withOpacity(0.47): Provider.of<Auth>(context, listen: false)
                                             .userData?['user_type'] ==
                                         UserType.Vendor.name
                                     ? const Color.fromRGBO(165, 200, 199, 0.6)
@@ -911,7 +915,7 @@ class _ProfileState extends State<Profile> {
                                 blurRadius: 30,
                               )
                             ],
-                            color: Colors.white,
+                            color:darkMode? Color(0xff313030): Colors.white,
                             shape: SmoothRectangleBorder(
                               borderRadius: SmoothBorderRadius(
                                 cornerRadius: 30,
@@ -965,6 +969,7 @@ class _ProfileState extends State<Profile> {
                                                         _activeButtonIndex == 1,
                                                     txt: 'Content',
                                                     width: 52,
+                                                    color: darkMode?Colors.white:boxShadowColor,
                                                   ),
                                                 ),
                                               ),
@@ -988,6 +993,7 @@ class _ProfileState extends State<Profile> {
                                                         _activeButtonIndex == 2,
                                                     txt: 'Menu ',
                                                     width: 52,
+                                                    color: darkMode?Colors.white:boxShadowColor,
                                                   ),
                                                 ),
                                               ),
@@ -1007,6 +1013,7 @@ class _ProfileState extends State<Profile> {
                                                         _activeButtonIndex == 3,
                                                     txt: 'About',
                                                     width: 52,
+                                                    color: darkMode?Colors.white:boxShadowColor,
                                                   ),
                                                 ),
                                               ),
@@ -1026,6 +1033,7 @@ class _ProfileState extends State<Profile> {
                                                         _activeButtonIndex == 4,
                                                     txt: 'Reviews',
                                                     width: 52,
+                                                    color: darkMode?Colors.white:boxShadowColor,
                                                   ),
                                                 ),
                                               ),
@@ -1059,6 +1067,7 @@ class _ProfileState extends State<Profile> {
                                                                 1,
                                                         txt: 'Content',
                                                         width: 52,
+                                                        color: darkMode?Colors.white:boxShadowColor,
                                                       ),
                                                     ),
                                                   ),
@@ -1082,6 +1091,7 @@ class _ProfileState extends State<Profile> {
                                                                 3,
                                                         txt: 'Reviews',
                                                         width: 52,
+                                                        color: darkMode?Colors.white:boxShadowColor,
                                                       ),
                                                     ),
                                                   ),
@@ -1121,6 +1131,7 @@ class _ProfileState extends State<Profile> {
                                                                       1,
                                                               txt: 'Content',
                                                               width: 52,
+                                                              color: darkMode?Colors.white:boxShadowColor,
                                                             ),
                                                     ),
                                                   ),
@@ -1152,6 +1163,7 @@ class _ProfileState extends State<Profile> {
                                                                 2,
                                                         txt: 'Menu ',
                                                         width: 40,
+                                                        color: darkMode?Colors.white:boxShadowColor,
                                                       ),
                                                     ),
                                                   ),
@@ -1175,6 +1187,7 @@ class _ProfileState extends State<Profile> {
                                                                 4,
                                                         txt: 'About',
                                                         width: 52,
+                                                        color: darkMode?Colors.white:boxShadowColor,
                                                       ),
                                                     ),
                                                   ),
@@ -2294,6 +2307,7 @@ class _MenuState extends State<Menu> {
   TextEditingController _controller = TextEditingController();
   bool _iscategorySearch = false;
   bool _searchOn = false;
+  bool darkMode = true;
 
   bool storeAvailability = true;
   @override
@@ -2307,9 +2321,14 @@ class _MenuState extends State<Menu> {
   void fetchUserDetailsbyKey() async {
     final res = await getUserDetailsbyKey(widget.user, ['store_availability']);
     print(" ressdes ${json.encode(res)}");
+    final prefs = await SharedPreferences.getInstance();
+
+   
+
     if (res['store_availability'] && res['store_availability'] != null)
       setState(() {
         storeAvailability = res['store_availability'] ?? false;
+        darkMode = prefs.getString('dark_mode') == "true" ? true : false;
       });
   }
 
@@ -2369,7 +2388,7 @@ class _MenuState extends State<Menu> {
                               Text(
                                 'No items  ',
                                 style: TextStyle(
-                                    color: boxShadowColor.withOpacity(0.2),
+                                    color:darkMode?Colors.white: boxShadowColor.withOpacity(0.2),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 35,
                                     fontFamily: 'Product Sans'),
@@ -2377,7 +2396,7 @@ class _MenuState extends State<Menu> {
                               Text(
                                 'in menu  ',
                                 style: TextStyle(
-                                    color: boxShadowColor.withOpacity(0.2),
+                                    color:darkMode?Colors.white: boxShadowColor.withOpacity(0.2),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 35,
                                     fontFamily: 'Product Sans'),
@@ -2894,7 +2913,7 @@ class CommonButtonProfile extends StatelessWidget {
                   //  padding: EdgeInsets.only(top: 7),
                   height: 4,
                   decoration: ShapeDecoration(
-                    color: !isActive ? Colors.white : const Color(0xFFFA6E00),
+                    color: !isActive ?  color : const Color(0xFFFA6E00),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6)),
                   ),
