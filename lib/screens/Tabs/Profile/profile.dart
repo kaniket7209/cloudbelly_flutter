@@ -258,7 +258,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    print("check user login user ${userType}");
+   
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
@@ -512,7 +512,7 @@ class _ProfileState extends State<Profile> {
                                                           listen: true)
                                                       .userData?['user_type'],
                                                   style: TextStyle(
-                                                      color: darkMode?Color(0xffB1F0EF):boxShadowColor,
+                                                      color: darkMode?Colors.white:boxShadowColor,
                                                       fontFamily:
                                                           'Product Sans',
                                                       fontSize: 12,
@@ -566,7 +566,7 @@ class _ProfileState extends State<Profile> {
                                                   .userData?['rating'] ??
                                               "",
                                           txt: 'Rating',
-                                          color: darkMode?Color(0xffB1F0EF):Colors.transparent,
+                                          color: darkMode?Colors.white:Colors.transparent,
                                         ),
                                         GestureDetector(
                                           onTap: () {
@@ -594,7 +594,7 @@ class _ProfileState extends State<Profile> {
                                                     .toString()
                                                 : "",
                                             txt: 'Followers',
-                                             color: darkMode?Color(0xffB1F0EF):Colors.transparent,
+                                             color: darkMode?Colors.white:Colors.transparent,
                                           ),
                                         ),
                                         GestureDetector(
@@ -624,7 +624,7 @@ class _ProfileState extends State<Profile> {
                                                     .toString()
                                                 : "",
                                             txt: 'Following',
-                                             color: darkMode?Color(0xffB1F0EF):Colors.transparent,
+                                             color: darkMode?Colors.white:Colors.transparent,
                                           ),
                                         )
                                       ],
@@ -2320,7 +2320,7 @@ class _MenuState extends State<Menu> {
 
   void fetchUserDetailsbyKey() async {
     final res = await getUserDetailsbyKey(widget.user, ['store_availability']);
-    print(" ressdes ${json.encode(res)}");
+
     final prefs = await SharedPreferences.getInstance();
 
    
@@ -2362,9 +2362,7 @@ class _MenuState extends State<Menu> {
     } else {
       boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
     }
-    print("Category Search is ON");
-    print("Search Text: ${_controller.text}");
-    print("Total Menu Items: ${widget.menuList.length}");
+
     return Container(
       width: 90.w,
       height: 90.h,
@@ -2912,7 +2910,7 @@ class CommonButtonProfile extends StatelessWidget {
                   //  padding: EdgeInsets.only(top: 7),
                   height: 4,
                   decoration: ShapeDecoration(
-                    color: !isActive ?  color : const Color(0xFFFA6E00),
+                    color: !isActive ?  Colors.transparent : const Color(0xFFFA6E00),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6)),
                   ),

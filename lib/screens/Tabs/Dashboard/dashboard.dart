@@ -29,6 +29,24 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard>
     with SingleTickerProviderStateMixin {
   int _activeButtonIndex = 1;
+  bool darkMode = true;
+   Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+    return prefs.getString('dark_mode');
+  }
+ @override
+  void dispose() {
+    super.dispose();
+  }
+  @override
+  void initState() {
+    super.initState();
+    getDarkModeStatus();
+  }
 
   Future<void> _refreshFeed() async {
     setState(() {});
@@ -108,15 +126,15 @@ class _DashBoardState extends State<DashBoard>
                               Center(
                                 child: Container(
                                   decoration: ShapeDecoration(
-                                    shadows: const [
+                                    shadows:  [
                                       BoxShadow(
                                         offset: Offset(0, 4),
-                                        color:
+                                        color:darkMode?Color(0xff030303): 
                                             Color.fromRGBO(165, 200, 199, 0.6),
                                         blurRadius: 25,
                                       )
                                     ],
-                                    color: Colors.white,
+                                    color: darkMode?Color(0xff313030):Colors.white,
                                     shape: SmoothRectangleBorder(
                                       borderRadius: SmoothBorderRadius(
                                         cornerRadius: 53,
@@ -165,7 +183,7 @@ class _DashBoardState extends State<DashBoard>
                                                             .userData?[
                                                         'store_name'],
                                                     style: TextStyle(
-                                                        color: boxShadowColor,
+                                                        color:darkMode?Colors.white: boxShadowColor,
                                                         fontFamily: 'Ubuntu',
                                                         fontSize: 20,
                                                         fontWeight:
@@ -177,7 +195,7 @@ class _DashBoardState extends State<DashBoard>
                                                             listen: true)
                                                         .userData?['user_type'],
                                                     style: TextStyle(
-                                                        color: boxShadowColor,
+                                                        color: darkMode?Color(0xffB1F0EF): boxShadowColor,
                                                         fontFamily:
                                                             'Product Sans',
                                                         fontSize: 12,
@@ -202,6 +220,8 @@ class _DashBoardState extends State<DashBoard>
                                                           listen: false)
                                                       .userData?['rating'],
                                                   txt: 'Rating',
+                                                   color: darkMode?Color(0xffB1F0EF):Colors.transparent,
+                                                  
                                                 ),
                                                 ColumnWidgetHomeScreen(
                                                   data: (Provider.of<Auth>(
@@ -212,6 +232,7 @@ class _DashBoardState extends State<DashBoard>
                                                       .length
                                                       .toString(),
                                                   txt: 'Followers',
+                                                   color: darkMode?Color(0xffB1F0EF):Colors.transparent,
                                                 ),
                                                 ColumnWidgetHomeScreen(
                                                   data: (Provider.of<Auth>(
@@ -222,6 +243,7 @@ class _DashBoardState extends State<DashBoard>
                                                       .length
                                                       .toString(),
                                                   txt: 'Following',
+                                                   color: darkMode?Color(0xffB1F0EF):Colors.transparent,
                                                 )
                                               ],
                                             )
@@ -234,14 +256,17 @@ class _DashBoardState extends State<DashBoard>
                                                     ColumnWidgetHomeScreen(
                                                       data: '-',
                                                       txt: 'Stock health',
+                                                       color: darkMode?Color(0xffB1F0EF):Colors.transparent,
                                                     ),
                                                     ColumnWidgetHomeScreen(
                                                       data: '-',
                                                       txt: 'Waste %age',
+                                                       color: darkMode?Color(0xffB1F0EF):Colors.transparent,
                                                     ),
                                                     ColumnWidgetHomeScreen(
                                                       data: '-',
                                                       txt: 'Avg turnaround',
+                                                       color: darkMode?Color(0xffB1F0EF):Colors.transparent,
                                                     )
                                                   ],
                                                 )
@@ -253,14 +278,17 @@ class _DashBoardState extends State<DashBoard>
                                                     ColumnWidgetHomeScreen(
                                                       data: '-',
                                                       txt: 'Total Customers',
+                                                       color: darkMode?Color(0xffB1F0EF):Colors.transparent,
                                                     ),
                                                     ColumnWidgetHomeScreen(
                                                       data: '-',
                                                       txt: 'Total orders',
+                                                       color: darkMode?Color(0xffB1F0EF):Colors.transparent,
                                                     ),
                                                     ColumnWidgetHomeScreen(
                                                       data: '-',
                                                       txt: 'Repeat Customers',
+                                                       color: darkMode?Color(0xffB1F0EF):Colors.transparent,
                                                     )
                                                   ],
                                                 ),
@@ -388,7 +416,11 @@ class StoreLogoWidget extends StatelessWidget {
                       width: 70,
                       decoration: ShapeDecoration(
                         shadows: [
-                          userData?['user_type'] == UserType.Vendor.name
+                         darkMode? BoxShadow(
+                                  offset: Offset(0, 4),
+                                  color: Color(0xff000000).withOpacity(0.47),
+                                  blurRadius: 20,
+                                ) : userData?['user_type'] == UserType.Vendor.name
                               ? BoxShadow(
                                   offset: Offset(0, 4),
                                   color: Color(0xff1F6F6D).withOpacity(0.4),
@@ -458,10 +490,12 @@ class StoreLogoWidget extends StatelessWidget {
 
 class StoreNameWidget extends StatelessWidget {
   String? name;
+  bool darkMode ;
 
   StoreNameWidget({
     super.key,
     this.name,
+   this.darkMode = false
   });
 
   @override
@@ -506,7 +540,7 @@ class StoreNameWidget extends StatelessWidget {
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: colorProfile,
+                      color:darkMode?Colors.white: colorProfile,
                       fontSize: 14,
                       fontFamily: 'Product Sans',
                       fontWeight: FontWeight.w700,
@@ -877,18 +911,20 @@ class ReciepeTextWidgetHomeScreen extends StatelessWidget {
 
 class BoldTextWidgetHomeScreen extends StatelessWidget {
   final txt;
+  final bool darkMode;
 
-  const BoldTextWidgetHomeScreen({
+   const BoldTextWidgetHomeScreen({
     super.key,
     this.txt,
+    this.darkMode=false
   });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       txt,
-      style: const TextStyle(
-        color: Color(0xFF094B60),
+      style:  TextStyle(
+        color:darkMode?Colors.white: Color(0xFF094B60),
         fontSize: 18,
         fontFamily: 'Jost',
         fontWeight: FontWeight.w600,
@@ -1068,7 +1104,7 @@ class ButtonWidgetHomeScreen extends StatelessWidget {
           child: Text(
         txt,
         style: TextStyle(
-          color: isActive ? Colors.white : const Color(0xff0A4C61),
+          color:darkMode?Colors.white: isActive ? Colors.white : const Color(0xff0A4C61),
           fontSize: 14,
           fontFamily: 'Product Sans',
           fontWeight: FontWeight.w700,

@@ -132,6 +132,7 @@ Future<String?> getDarkModeStatus() async {
 
     return prefs.getString('dark_mode');
   }
+ 
   Future<void> _loading() async {
     getUserInfo(widget.userIdList);
     final prefs = await SharedPreferences.getInstance();
@@ -274,7 +275,7 @@ Future<String?> getDarkModeStatus() async {
     return Scaffold(
       backgroundColor:
       darkMode
-                ? Color(0xff000000).withOpacity(0.35):
+                ? Color(0xff000000).withOpacity(0.45):
           Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
                   UserType.Vendor.name
               ? const Color.fromRGBO(234, 245, 247, 1)
@@ -597,7 +598,7 @@ Future<String?> getDarkModeStatus() async {
                                                                       .userType ??
                                                                   'Unknown', // Provide a default value
                                                               style: TextStyle(
-                                                                color:darkMode?Color(0xffB1F0EF): sharedProfileColour(
+                                                                color:darkMode?Colors.white: sharedProfileColour(
                                                                     userList
                                                                         .first
                                                                         .userType),
@@ -665,7 +666,7 @@ Future<String?> getDarkModeStatus() async {
                                                                 listen: false)
                                                             .userData?['rating'],
                                                         txt: 'Rating',
-                                                        color:darkMode?Color(0xffB1F0EF):
+                                                        color:darkMode?Colors.white:
                                                             sharedProfileColour(
                                                                 userList.first
                                                                     .userType),
@@ -679,7 +680,7 @@ Future<String?> getDarkModeStatus() async {
                                                               "0",
                                                           txt: 'Followers',
                                                           color:
-                                                             darkMode?Color(0xffB1F0EF): sharedProfileColour(
+                                                             darkMode?Colors.white: sharedProfileColour(
                                                                   userList.first
                                                                       .userType)),
                                                       ColumnWidgetHomeScreen(
@@ -691,7 +692,7 @@ Future<String?> getDarkModeStatus() async {
                                                               "0",
                                                           txt: 'Following',
                                                           color:
-                                                            darkMode?Color(0xffB1F0EF):  sharedProfileColour(
+                                                            darkMode?Colors.white:  sharedProfileColour(
                                                                   userList.first
                                                                       .userType))
                                                     ],
@@ -857,11 +858,10 @@ Future<String?> getDarkModeStatus() async {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              if (_isVendor)
+                                              // if (_isVendor)
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 1.h,
-                                                      horizontal: 3.w),
+                                                  margin: EdgeInsets.fromLTRB(
+                                                   3.w,0,0,0),
                                                   width: 30,
                                                   height: 6,
                                                   decoration: ShapeDecoration(

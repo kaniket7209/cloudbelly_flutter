@@ -312,7 +312,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 shadows: [
                   BoxShadow(
                     offset: Offset(0, 8),
-                    color: Provider.of<Auth>(context, listen: false)
+                    color:darkMode?Colors.black.withOpacity(0.47): Provider.of<Auth>(context, listen: false)
                                 .userData?['user_type'] ==
                             UserType.Vendor.name
                         ? Color.fromRGBO(84, 166, 193, 1).withOpacity(0.5)
@@ -323,7 +323,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                   )
                 ],
                 //  color: Color.fromRGBO(84, 166, 193, 1),
-                color: 
+                color: darkMode?Color(0xff313030):
                 Provider.of<Auth>(context, listen: false)
                             .userData?['user_type'] ==
                         UserType.Vendor.name
@@ -351,7 +351,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 8,
+                          fontSize: 9,
                           fontFamily: 'Product Sans',
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.10,
@@ -374,19 +374,20 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         },
         backgroundColor: darkMode?Color(0xff1D1D1D):Colors.white,
 // gapWidth: 0/,
-        splashColor: Colors.blue,
+        splashColor:darkMode?Colors.black.withOpacity(0.47) :Colors.blue,
         // notchAndCornersAnimation: borderRadiusAnimation,
         splashSpeedInMilliseconds: 300,
         notchSmoothness: NotchSmoothness.sharpEdge,
         gapLocation: GapLocation.center,
-        leftCornerRadius:darkMode?0: 15,
-        rightCornerRadius: darkMode?0:15,
+        leftCornerRadius:15,
+        rightCornerRadius: 15,
         notchMargin: 5,
         // onTap: (index) => setState(() => _bottomNavIndex = index),
         hideAnimationController: _hideBottomBarAnimationController,
         shadow:  BoxShadow(
           offset: Offset(0, -4),
           blurRadius: 15,
+          
           // spreadRadius: 0.5,
           // rgba
 

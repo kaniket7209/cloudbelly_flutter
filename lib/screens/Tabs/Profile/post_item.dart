@@ -246,7 +246,7 @@ class _PostItemState extends State<PostItem> {
     if (!widget._isMultiple) filePath = widget.data['file_path'];
 
     final aspectRatio = await getImageAspectRatio(filePath);
-    print("$_aspectRatio  _aspectRatio  $filePath");
+
     setState(() {
       _aspectRatio = aspectRatio ?? 1; // Default to 1.0 if null
     });
@@ -736,7 +736,7 @@ class _PostItemState extends State<PostItem> {
                            
                             child: GestureDetector(
                               onDoubleTap: () async {
-                                print("_aspectRatio_aspectRatio $_aspectRatio");
+                              
                                 var code = widget.isProfilePost
                                     ? await Provider.of<Auth>(context,
                                             listen: false)

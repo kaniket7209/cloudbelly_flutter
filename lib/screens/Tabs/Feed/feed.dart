@@ -168,6 +168,7 @@ class _FeedState extends State<Feed> {
         child: Container(
           color: _switchValue ? Color(0xff1D1D1D) : Colors.transparent,
           // color: Color.fromRGBO(255, 248, 255, 1),
+          
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

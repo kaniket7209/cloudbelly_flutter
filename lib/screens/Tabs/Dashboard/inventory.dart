@@ -26,6 +26,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class Inventory extends StatefulWidget {
@@ -45,7 +46,7 @@ class _InventoryState extends State<Inventory> {
   List<dynamic> stocksYouMayNeed = [];
   bool _isUpdateLoading = false;
   bool _somethingmissing = false;
-
+bool darkMode= true;
   String iframeUrl = "";
   var _iframeController;
 
@@ -55,12 +56,23 @@ class _InventoryState extends State<Inventory> {
     nearExpiryItems = [];
     // _setWebviewController(temp);
     // TODO: implement initState
+    getDarkModeStatus();
     super.initState();
   }
+Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
 
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+
+    return prefs.getString('dark_mode');
+  }
+ 
   @override
   void didChangeDependencies() {
     nearExpiryItems = [];
+    getDarkModeStatus();
 
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
@@ -286,11 +298,11 @@ class _InventoryState extends State<Inventory> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Center(
+         Center(
           child: Text(
             "Manage your inventory",
             style: TextStyle(
-              color: Color.fromRGBO(10, 76, 97, 1),
+              color: darkMode?Colors.white: Color.fromRGBO(10, 76, 97, 1),
               fontSize: 20,
               fontFamily: 'Jost',
               fontWeight: FontWeight.w600,
@@ -377,8 +389,9 @@ class _InventoryState extends State<Inventory> {
         Space(3.h),
         Row(
           children: [
-            const BoldTextWidgetHomeScreen(
+             BoldTextWidgetHomeScreen(
               txt: 'Stocks you may need',
+              darkMode: darkMode,
             ),
             const Spacer(),
             TouchableOpacity(
@@ -417,6 +430,7 @@ class _InventoryState extends State<Inventory> {
                       StocksMayBeNeedWidget(
                         txt: stocksYouMayNeed[index]['itemName'],
                         url: stocksYouMayNeed[index]['image_url'] ?? '',
+                        darkMode: darkMode,
                       ),
                   ],
                 ),
@@ -425,8 +439,9 @@ class _InventoryState extends State<Inventory> {
         Space(3.h),
         Row(
           children: [
-            const BoldTextWidgetHomeScreen(
+             BoldTextWidgetHomeScreen(
               txt: 'Low stocks',
+              darkMode: darkMode,
             ),
             const Spacer(),
             TouchableOpacity(
@@ -489,8 +504,9 @@ class _InventoryState extends State<Inventory> {
         Space(2.h),
         Row(
           children: [
-            const BoldTextWidgetHomeScreen(
+             BoldTextWidgetHomeScreen(
               txt: 'Stocks near expiry',
+              darkMode: darkMode,
             ),
             const Spacer(),
             TouchableOpacity(
@@ -730,7 +746,7 @@ class _InventoryState extends State<Inventory> {
             Map<int, TextEditingController> volumeEditControllers = {};
             Map<int, TextEditingController> unitTypeEditControllers = {};
 
-            print("stocksYouMayNeed  $stocksYouMayNeed");
+           
 
             void addItem() {
               String name = productController.text;
@@ -1593,9 +1609,10 @@ class StocksMayBeNeedWidget extends StatelessWidget {
   String url;
   String txt;
   String icon;
+  bool darkMode;
 
   StocksMayBeNeedWidget(
-      {super.key, this.txt = 'chicken', this.url = '', this.icon = ''});
+      {super.key, this.txt = 'chicken', this.url = '', this.icon = '',this.darkMode = false});
 
   @override
   Widget build(BuildContext context) {
@@ -1621,7 +1638,7 @@ class StocksMayBeNeedWidget extends StatelessWidget {
                   blurRadius: 20,
                 )
               ],
-              color: const Color.fromRGBO(200, 233, 233, 1),
+              color:darkMode?Colors.white: const Color.fromRGBO(200, 233, 233, 1),
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius(
                   cornerRadius: 10,
@@ -1683,8 +1700,8 @@ class StocksMayBeNeedWidget extends StatelessWidget {
           Space(1.h),
           Text(
             txt,
-            style: const TextStyle(
-              color: Color(0xFF0A4C61),
+            style:  TextStyle(
+              color:darkMode?Colors.white: Color(0xFF0A4C61),
               fontSize: 11,
               fontFamily: 'Product Sans',
               fontWeight: FontWeight.w400,
@@ -1710,7 +1727,7 @@ class SeeAllWidget extends StatelessWidget {
         const Text(
           'See all',
           style: TextStyle(
-            color: Color(0xFF094B60),
+            color: Color(0xff54A6C1),
             fontSize: 12,
             fontFamily: 'Product Sans',
             fontWeight: FontWeight.w700,
