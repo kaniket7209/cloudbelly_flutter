@@ -507,7 +507,7 @@ Future<void> _fetchData() async {
                     Text(
                       'No dishes in   ',
                       style: TextStyle(
-                        color: Color(0xff9E749E).withOpacity(0.4),
+                        color:darkMode?Colors.white: Color(0xff9E749E).withOpacity(0.4),
                         fontWeight: FontWeight.bold,
                         fontSize: 35,
                         fontFamily: 'Product Sans',
@@ -516,7 +516,7 @@ Future<void> _fetchData() async {
                     Text(
                       'this region  ',
                       style: TextStyle(
-                        color: Color(0xff9E749E).withOpacity(0.4),
+                        color:darkMode?Colors.white: Color(0xff9E749E).withOpacity(0.4),
                         fontWeight: FontWeight.bold,
                         fontSize: 35,
                         fontFamily: 'Product Sans',
@@ -567,7 +567,7 @@ Future<void> _fetchData() async {
                     Text(
                       'No restaurants in   ',
                       style: TextStyle(
-                        color: Color(0xff9E749E).withOpacity(0.4),
+                        color:darkMode?Colors.white: Color(0xff9E749E).withOpacity(0.4),
                         fontWeight: FontWeight.bold,
                         fontSize: 35,
                         fontFamily: 'Product Sans',
@@ -576,7 +576,7 @@ Future<void> _fetchData() async {
                     Text(
                       'this region  ',
                       style: TextStyle(
-                        color: Color(0xff9E749E).withOpacity(0.4),
+                        color:darkMode?Colors.white: Color(0xff9E749E).withOpacity(0.4),
                         fontWeight: FontWeight.bold,
                         fontSize: 35,
                         fontFamily: 'Product Sans',

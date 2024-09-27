@@ -368,7 +368,7 @@ class _TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 height: 20,
                 child: Icon(
                   iconList[index],
-                  color: colorProfile,
+                  color:darkMode?Color(0xff54A6C1): colorProfile,
                 ));
           }
         },

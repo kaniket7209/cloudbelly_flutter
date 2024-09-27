@@ -847,7 +847,8 @@ Future<String?> getDarkModeStatus() async {
                           GestureDetector(
                             onTap: addItem,
                             child: Center(
-                              child: Container(
+                              child: 
+                              Container(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 8.w, vertical: 1.h),
                                   // margin: EdgeInsets.only(bottom: 2.h),
@@ -875,6 +876,7 @@ Future<String?> getDarkModeStatus() async {
                                         color: Colors.white,
                                         fontSize: 16),
                                   )),
+                           
                             ),
                           ),
                           SizedBox(height: 25.0),

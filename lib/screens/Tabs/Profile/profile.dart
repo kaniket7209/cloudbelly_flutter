@@ -258,7 +258,6 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-   
     bool _isVendor =
         Provider.of<Auth>(context, listen: false).userData?['user_type'] ==
             'Vendor';
@@ -344,8 +343,9 @@ class _ProfileState extends State<Profile> {
                                       Text(
                                         'Store Status',
                                         style: TextStyle(
-                                          color:darkMode?Colors.white:
-                                              boxShadowColor, // Replace with the desired color
+                                          color: darkMode
+                                              ? Colors.white
+                                              : boxShadowColor, // Replace with the desired color
                                           fontFamily: 'Product Sans',
                                           fontSize: 18.0,
                                           fontWeight: FontWeight.bold,
@@ -359,7 +359,9 @@ class _ProfileState extends State<Profile> {
                                     CustomIconButton(
                                       text: '',
                                       ic: Icons.qr_code,
-                                      color: darkMode?Color(0xff030303).withOpacity(0.77): Colors.transparent,
+                                      color: darkMode
+                                          ? Color(0xff030303).withOpacity(0.77)
+                                          : Colors.transparent,
                                       onTap: () {
                                         context
                                             .read<TransitionEffect>()
@@ -391,11 +393,14 @@ class _ProfileState extends State<Profile> {
                                           shadows: [
                                             BoxShadow(
                                               offset: Offset(0, 4),
-                                              color:darkMode?Color(0xff030303).withOpacity(0.77): _isVendor
-                                                  ? Color.fromRGBO(
-                                                      31, 111, 109, 0.5)
-                                                  : Color(0xBC73BC)
-                                                      .withOpacity(0.6),
+                                              color: darkMode
+                                                  ? Color(0xff030303)
+                                                      .withOpacity(0.77)
+                                                  : _isVendor
+                                                      ? Color.fromRGBO(
+                                                          31, 111, 109, 0.5)
+                                                      : Color(0xBC73BC)
+                                                          .withOpacity(0.6),
                                               blurRadius: 20,
                                             )
                                           ],
@@ -437,24 +442,29 @@ class _ProfileState extends State<Profile> {
                                   shadows: [
                                     BoxShadow(
                                       offset: Offset(0, 4),
-                                      color:darkMode?Color(0xff030303): Provider.of<Auth>(context,
-                                                      listen: false)
-                                                  .userData?['user_type'] ==
-                                              UserType.Vendor.name
-                                          ? const Color.fromRGBO(
-                                              165, 200, 199, 0.6)
+                                      color: darkMode
+                                          ? Color(0xff030303)
                                           : Provider.of<Auth>(context,
                                                           listen: false)
                                                       .userData?['user_type'] ==
-                                                  UserType.Supplier.name
+                                                  UserType.Vendor.name
                                               ? const Color.fromRGBO(
-                                                  77, 191, 74, 0.6)
-                                              : const Color.fromRGBO(
-                                                  188, 115, 188, 0.6),
+                                                  165, 200, 199, 0.6)
+                                              : Provider.of<Auth>(context,
+                                                                  listen: false)
+                                                              .userData?[
+                                                          'user_type'] ==
+                                                      UserType.Supplier.name
+                                                  ? const Color.fromRGBO(
+                                                      77, 191, 74, 0.6)
+                                                  : const Color.fromRGBO(
+                                                      188, 115, 188, 0.6),
                                       blurRadius: 25,
                                     )
                                   ],
-                                  color:darkMode?Color(0xff313030): Colors.white,
+                                  color: darkMode
+                                      ? Color(0xff313030)
+                                      : Colors.white,
                                   shape: SmoothRectangleBorder(
                                     borderRadius: SmoothBorderRadius(
                                       cornerRadius: 53,
@@ -500,7 +510,9 @@ class _ProfileState extends State<Profile> {
                                                           listen: true)
                                                       .userData?['store_name'],
                                                   style: TextStyle(
-                                                      color:darkMode?Colors.white: boxShadowColor,
+                                                      color: darkMode
+                                                          ? Colors.white
+                                                          : boxShadowColor,
                                                       fontFamily: 'Ubuntu',
                                                       fontSize: 20,
                                                       fontWeight:
@@ -512,7 +524,9 @@ class _ProfileState extends State<Profile> {
                                                           listen: true)
                                                       .userData?['user_type'],
                                                   style: TextStyle(
-                                                      color: darkMode?Colors.white:boxShadowColor,
+                                                      color: darkMode
+                                                          ? Colors.white
+                                                          : boxShadowColor,
                                                       fontFamily:
                                                           'Product Sans',
                                                       fontSize: 12,
@@ -548,8 +562,12 @@ class _ProfileState extends State<Profile> {
                                                   const EdgeInsets.fromLTRB(
                                                       0, 7, 12, 2),
                                               child: Image.asset(
-                                                  'assets/images/WhatsApp.png',
-                                                  width: 27,color: darkMode?Colors.white:Colors.transparent,),
+                                                'assets/images/WhatsApp.png',
+                                                width: 27,
+                                                color: darkMode
+                                                    ? Colors.white
+                                                    : Colors.transparent,
+                                              ),
                                             ),
                                           )
                                         ],
@@ -566,7 +584,9 @@ class _ProfileState extends State<Profile> {
                                                   .userData?['rating'] ??
                                               "",
                                           txt: 'Rating',
-                                          color: darkMode?Colors.white:Colors.transparent,
+                                          color: darkMode
+                                              ? Colors.white
+                                              : Colors.transparent,
                                         ),
                                         GestureDetector(
                                           onTap: () {
@@ -594,7 +614,9 @@ class _ProfileState extends State<Profile> {
                                                     .toString()
                                                 : "",
                                             txt: 'Followers',
-                                             color: darkMode?Colors.white:Colors.transparent,
+                                            color: darkMode
+                                                ? Colors.white
+                                                : Colors.transparent,
                                           ),
                                         ),
                                         GestureDetector(
@@ -624,7 +646,9 @@ class _ProfileState extends State<Profile> {
                                                     .toString()
                                                 : "",
                                             txt: 'Following',
-                                             color: darkMode?Colors.white:Colors.transparent,
+                                            color: darkMode
+                                                ? Colors.white
+                                                : Colors.transparent,
                                           ),
                                         )
                                       ],
@@ -670,6 +694,7 @@ class _ProfileState extends State<Profile> {
                                                 .userData?['user_type'] !=
                                             UserType.Customer.name)
                                           Make_Profile_ListWidget(
+                                            darkMode: darkMode,
                                             color:
                                                 Color.fromRGBO(250, 110, 0, 1),
                                             onTap: () async {
@@ -704,6 +729,7 @@ class _ProfileState extends State<Profile> {
                                                 .userData?['user_type'] !=
                                             UserType.Customer.name)
                                           Make_Profile_ListWidget(
+                                            darkMode: darkMode,
                                             color:
                                                 Color.fromRGBO(10, 76, 97, 1),
                                             onTap: () {
@@ -868,6 +894,65 @@ class _ProfileState extends State<Profile> {
                                                               ],
                                                             ),
                                                           ),
+                                                        ),
+                                                        TouchableOpacity(
+                                                          onTap: () async {
+                                                            showModalBottomSheet(
+                                                              context: context,
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .vertical(
+                                                                            top:
+                                                                                Radius.circular(25.0)),
+                                                              ),
+                                                              backgroundColor:
+                                                                  Colors.white,
+                                                              isScrollControlled:
+                                                                  true, // If you need the modal to be scrollable
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return ManualAddModal(
+                                                                    darkMode:
+                                                                        darkMode); // Call the class we just created
+                                                              },
+                                                            );
+                                                          },
+                                                          child: const Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    8.0),
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(Icons.add),
+                                                                Space(
+                                                                    isHorizontal:
+                                                                        true,
+                                                                    15),
+                                                                Text(
+                                                                  'Add manually',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Color(
+                                                                        0xFF0A4C61),
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontFamily:
+                                                                        'Product Sans',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    height:
+                                                                        0.10,
+                                                                    letterSpacing:
+                                                                        0.36,
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
                                                         )
                                                       ],
                                                     ),
@@ -902,20 +987,25 @@ class _ProfileState extends State<Profile> {
                             shadows: [
                               BoxShadow(
                                 offset: const Offset(0, 4),
-                                color:darkMode?Color(0xff000000).withOpacity(0.47): Provider.of<Auth>(context, listen: false)
-                                            .userData?['user_type'] ==
-                                        UserType.Vendor.name
-                                    ? const Color.fromRGBO(165, 200, 199, 0.6)
+                                color: darkMode
+                                    ? Color(0xff000000).withOpacity(0.47)
                                     : Provider.of<Auth>(context, listen: false)
                                                 .userData?['user_type'] ==
-                                            UserType.Supplier.name
-                                        ? const Color.fromRGBO(77, 191, 74, 0.6)
-                                        : const Color.fromRGBO(
-                                            188, 115, 188, 0.6),
+                                            UserType.Vendor.name
+                                        ? const Color.fromRGBO(
+                                            165, 200, 199, 0.6)
+                                        : Provider.of<Auth>(context,
+                                                        listen: false)
+                                                    .userData?['user_type'] ==
+                                                UserType.Supplier.name
+                                            ? const Color.fromRGBO(
+                                                77, 191, 74, 0.6)
+                                            : const Color.fromRGBO(
+                                                188, 115, 188, 0.6),
                                 blurRadius: 30,
                               )
                             ],
-                            color:darkMode? Color(0xff313030): Colors.white,
+                            color: darkMode ? Color(0xff313030) : Colors.white,
                             shape: SmoothRectangleBorder(
                               borderRadius: SmoothBorderRadius(
                                 cornerRadius: 30,
@@ -969,7 +1059,9 @@ class _ProfileState extends State<Profile> {
                                                         _activeButtonIndex == 1,
                                                     txt: 'Content',
                                                     width: 52,
-                                                    color: darkMode?Colors.white:boxShadowColor,
+                                                    color: darkMode
+                                                        ? Colors.white
+                                                        : boxShadowColor,
                                                   ),
                                                 ),
                                               ),
@@ -993,7 +1085,9 @@ class _ProfileState extends State<Profile> {
                                                         _activeButtonIndex == 2,
                                                     txt: 'Menu ',
                                                     width: 52,
-                                                    color: darkMode?Colors.white:boxShadowColor,
+                                                    color: darkMode
+                                                        ? Colors.white
+                                                        : boxShadowColor,
                                                   ),
                                                 ),
                                               ),
@@ -1013,7 +1107,9 @@ class _ProfileState extends State<Profile> {
                                                         _activeButtonIndex == 3,
                                                     txt: 'About',
                                                     width: 52,
-                                                    color: darkMode?Colors.white:boxShadowColor,
+                                                    color: darkMode
+                                                        ? Colors.white
+                                                        : boxShadowColor,
                                                   ),
                                                 ),
                                               ),
@@ -1033,7 +1129,9 @@ class _ProfileState extends State<Profile> {
                                                         _activeButtonIndex == 4,
                                                     txt: 'Reviews',
                                                     width: 52,
-                                                    color: darkMode?Colors.white:boxShadowColor,
+                                                    color: darkMode
+                                                        ? Colors.white
+                                                        : boxShadowColor,
                                                   ),
                                                 ),
                                               ),
@@ -1067,7 +1165,9 @@ class _ProfileState extends State<Profile> {
                                                                 1,
                                                         txt: 'Content',
                                                         width: 52,
-                                                        color: darkMode?Colors.white:boxShadowColor,
+                                                        color: darkMode
+                                                            ? Colors.white
+                                                            : boxShadowColor,
                                                       ),
                                                     ),
                                                   ),
@@ -1091,7 +1191,9 @@ class _ProfileState extends State<Profile> {
                                                                 3,
                                                         txt: 'Reviews',
                                                         width: 52,
-                                                        color: darkMode?Colors.white:boxShadowColor,
+                                                        color: darkMode
+                                                            ? Colors.white
+                                                            : boxShadowColor,
                                                       ),
                                                     ),
                                                   ),
@@ -1131,7 +1233,9 @@ class _ProfileState extends State<Profile> {
                                                                       1,
                                                               txt: 'Content',
                                                               width: 52,
-                                                              color: darkMode?Colors.white:boxShadowColor,
+                                                              color: darkMode
+                                                                  ? Colors.white
+                                                                  : boxShadowColor,
                                                             ),
                                                     ),
                                                   ),
@@ -1163,7 +1267,9 @@ class _ProfileState extends State<Profile> {
                                                                 2,
                                                         txt: 'Menu ',
                                                         width: 40,
-                                                        color: darkMode?Colors.white:boxShadowColor,
+                                                        color: darkMode
+                                                            ? Colors.white
+                                                            : boxShadowColor,
                                                       ),
                                                     ),
                                                   ),
@@ -1187,7 +1293,9 @@ class _ProfileState extends State<Profile> {
                                                                 4,
                                                         txt: 'About',
                                                         width: 52,
-                                                        color: darkMode?Colors.white:boxShadowColor,
+                                                        color: darkMode
+                                                            ? Colors.white
+                                                            : boxShadowColor,
                                                       ),
                                                     ),
                                                   ),
@@ -1341,7 +1449,9 @@ class _ProfileState extends State<Profile> {
                                             Text(
                                               'Store Info',
                                               style: TextStyle(
-                                                  color:darkMode?Colors.white: boxShadowColor,
+                                                  color: darkMode
+                                                      ? Colors.white
+                                                      : boxShadowColor,
                                                   fontWeight: FontWeight.w800,
                                                   fontSize: 22,
                                                   letterSpacing: 1,
@@ -1417,8 +1527,9 @@ class _ProfileState extends State<Profile> {
                                                         ? "${Provider.of<Auth>(context, listen: false).userData!['address']['hno']} ${Provider.of<Auth>(context, listen: false).userData!['address']['location']} ${Provider.of<Auth>(context, listen: false).userData!['address']['landmark']}"
                                                         : 'No location found',
                                                     style: TextStyle(
-                                                        color:
-                                                          darkMode?Colors.white:  Color(0xff1B7997),
+                                                        color: darkMode
+                                                            ? Colors.white
+                                                            : Color(0xff1B7997),
                                                         fontSize: 13,
                                                         fontFamily:
                                                             'Product Sans'),
@@ -1466,7 +1577,9 @@ class _ProfileState extends State<Profile> {
                                                 Text(
                                                   "${Provider.of<Auth>(context, listen: false).userData!['phone']}",
                                                   style: TextStyle(
-                                                      color:darkMode?Colors.white: Color(0xff1B7997),
+                                                      color: darkMode
+                                                          ? Colors.white
+                                                          : Color(0xff1B7997),
                                                       fontSize: 12,
                                                       fontFamily:
                                                           'Product Sans'),
@@ -1597,6 +1710,338 @@ class _ProfileState extends State<Profile> {
   }
 }
 
+class ManualAddModal extends StatefulWidget {
+  final bool darkMode; // Declare darkMode as a final variable
+
+  const ManualAddModal({Key? key, this.darkMode = false}) : super(key: key);
+
+  @override
+  _ManualAddModalState createState() => _ManualAddModalState();
+}
+
+class _ManualAddModalState extends State<ManualAddModal> {
+  late TextEditingController nameController;
+  late TextEditingController priceController;
+  late TextEditingController categoryController;
+  late TextEditingController descriptionController;
+  String selectedType = 'Veg'; // Default to Veg
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+    priceController = TextEditingController();
+    categoryController = TextEditingController();
+    descriptionController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    priceController.dispose();
+    categoryController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> saveProduct() async {
+    String name = nameController.text;
+    String price = priceController.text;
+    String category = categoryController.text;
+
+    // Call the API to update the product
+    await Provider.of<Auth>(context, listen: false).AddProductsForMenu([
+      {
+        "price": price,
+        "name": name,
+        "type": selectedType,
+        "category": category,
+      }
+    ]);
+
+    Navigator.pop(context); // Close the modal after saving
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: ShapeDecoration(
+        shape: SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.only(
+            topLeft: SmoothRadius(cornerRadius: 15, cornerSmoothing: 1),
+            topRight: SmoothRadius(cornerRadius: 15, cornerSmoothing: 1),
+          ),
+        ),
+        color: widget.darkMode ? Color(0xff313030) : Colors.white,
+      ),
+      height: MediaQuery.of(context).viewInsets.bottom > 0
+          ? MediaQuery.of(context).size.height * 1
+          : MediaQuery.of(context).size.height * 0.7, // Dynamically adjust height
+
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  height: 4,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFF6E01),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Center(
+                child: Text(
+                  'Add new product',
+                  style: TextStyle(
+                    fontFamily: 'Product Sans',
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: widget.darkMode ? Colors.white : Color(0xFF0A4C61),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Product Name Input
+              buildInputField(
+                label: 'Product Name',
+                hintText: 'Type product name here..',
+                controller: nameController,
+                darkMode: widget.darkMode,
+              ),
+              const SizedBox(height: 20),
+              // Product Price Input
+              buildInputField(
+                label: 'Product Price',
+                hintText: 'Type product price here..',
+                controller: priceController,
+                darkMode: widget.darkMode,
+              ),
+              const SizedBox(height: 20),
+              // Product Category Input
+              buildInputField(
+                label: 'Write Category name',
+                hintText: 'Type your category..',
+                controller: categoryController,
+                darkMode: widget.darkMode,
+              ),
+              const SizedBox(height: 20),
+              // Veg/Non-Veg Toggle
+              Text(
+                'Veg/Non-veg',
+                style: TextStyle(
+                  fontFamily: 'Product Sans',
+                  color: widget.darkMode ? Colors.white : Color(0xFF0A4C61),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 12),
+              StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedType = 'Veg'; // Select Veg
+                            });
+                          },
+                          child: Container(
+                            decoration: ShapeDecoration(
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 15,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                              color: selectedType == 'Veg'
+                                  ? Color.fromARGB(255, 22, 196, 129)
+                                      .withOpacity(0.4)
+                                  : Colors.transparent,
+                            ),
+                            padding: EdgeInsets.all(12),
+                            child: Center(
+                              child: Text(
+                                'Veg',
+                                style: TextStyle(
+                                  fontFamily: 'Product Sans',
+                                  color: selectedType == 'Veg'
+                                      ? Colors.white
+                                      : Colors.white54,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedType = 'Non-Veg'; // Select Non-Veg
+                            });
+                          },
+                          child: Container(
+                            decoration: ShapeDecoration(
+                              shape: SmoothRectangleBorder(
+                                borderRadius: SmoothBorderRadius(
+                                  cornerRadius: 15,
+                                  cornerSmoothing: 1,
+                                ),
+                              ),
+                              color: selectedType == 'Non-Veg'
+                                  ? Color(0xffFF473B).withOpacity(0.4)
+                                  : Colors.transparent,
+                            ),
+                            padding: EdgeInsets.all(12),
+                            child: Center(
+                              child: Text(
+                                'Non-Veg',
+                                style: TextStyle(
+                                  fontFamily: 'Product Sans',
+                                  color: selectedType == 'Non-Veg'
+                                      ? Colors.white
+                                      : Colors.white54,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              // Add Description Section
+              buildInputField(
+                label: 'Add description',
+                hintText: 'Type here..',
+                controller: descriptionController,
+                darkMode: widget.darkMode,
+              ),
+              const SizedBox(height: 24),
+              // Save and Add Another Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      // Optionally reset the form fields to allow adding another product
+                      nameController.clear();
+                      priceController.clear();
+                      categoryController.clear();
+                      descriptionController.clear();
+                    },
+                    child: Container(
+                      decoration: ShapeDecoration(
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 13,
+                            cornerSmoothing: 1,
+                          ),
+                        ),
+                        color: Color(0xff519896),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                      child: Center(
+                        child: Text(
+                          'Add another',
+                          style: TextStyle(
+                            color: widget.darkMode
+                                ? Colors.white
+                                : Color(0xFF0A4C61),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: saveProduct, // Call the save function
+                    child: Container(
+                      decoration: ShapeDecoration(
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 13,
+                            cornerSmoothing: 1,
+                          ),
+                        ),
+                        color: Color(0xFF0A4C61),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                      child: Center(
+                        child: Text(
+                          'Save',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Helper method to create text fields
+  Widget buildInputField({
+    required String label,
+    required String hintText,
+    required TextEditingController controller,
+    required bool darkMode,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'Product Sans',
+            letterSpacing: 1,
+            color: darkMode ? Colors.white : Color(0xFF0A4C61),
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+          ),
+        ),
+               TextField(
+          controller: controller,
+          style: TextStyle(
+            color: darkMode ? Colors.white : Color(0xFF0A4C61),
+          ),
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(
+              color: darkMode
+                  ? Color(0xffB1F0EF).withOpacity(0.5)
+                  : Color(0xFF0A4C61).withOpacity(0.5),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFFF6E01)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+         
+
 Future<void> _launchURL(String url) async {
   try {
     final Uri urlLink = Uri.parse(url);
@@ -1614,13 +2059,14 @@ class Make_Profile_ListWidget extends StatelessWidget {
   String txt;
   final Function? onTap;
   Color? color;
+  bool darkMode;
 
-  Make_Profile_ListWidget({
-    super.key,
-    required this.txt,
-    required this.onTap,
-    this.color,
-  });
+  Make_Profile_ListWidget(
+      {super.key,
+      required this.txt,
+      required this.onTap,
+      this.color,
+      this.darkMode = false});
 
   @override
   Widget build(BuildContext context) {
@@ -1631,17 +2077,23 @@ class Make_Profile_ListWidget extends StatelessWidget {
           width: 135,
           decoration: ShapeDecoration(
             shadows: [
-              txt == 'Add products'
+              darkMode
                   ? BoxShadow(
                       offset: Offset(5, 6),
                       spreadRadius: 0,
-                      color: Color(0xff126B87).withOpacity(0.42),
+                      color: Color(0xff000000).withOpacity(0.45),
                       blurRadius: 30)
-                  : BoxShadow(
-                      offset: Offset(5, 6),
-                      spreadRadius: 0,
-                      color: Color(0xffE88037).withOpacity(0.5),
-                      blurRadius: 30)
+                  : txt == 'Add products'
+                      ? BoxShadow(
+                          offset: Offset(5, 6),
+                          spreadRadius: 0,
+                          color: Color(0xff126B87).withOpacity(0.42),
+                          blurRadius: 30)
+                      : BoxShadow(
+                          offset: Offset(5, 6),
+                          spreadRadius: 0,
+                          color: Color(0xffE88037).withOpacity(0.5),
+                          blurRadius: 30)
             ],
             color: color ?? const Color.fromRGBO(84, 166, 193, 1),
             shape: SmoothRectangleBorder(
@@ -2323,8 +2775,6 @@ class _MenuState extends State<Menu> {
 
     final prefs = await SharedPreferences.getInstance();
 
-   
-
     if (res['store_availability'] && res['store_availability'] != null)
       setState(() {
         storeAvailability = res['store_availability'] ?? false;
@@ -2385,7 +2835,9 @@ class _MenuState extends State<Menu> {
                               Text(
                                 'No items  ',
                                 style: TextStyle(
-                                    color:darkMode?Colors.white: boxShadowColor.withOpacity(0.2),
+                                    color: darkMode
+                                        ? Colors.white
+                                        : boxShadowColor.withOpacity(0.2),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 35,
                                     fontFamily: 'Product Sans'),
@@ -2393,7 +2845,9 @@ class _MenuState extends State<Menu> {
                               Text(
                                 'in menu  ',
                                 style: TextStyle(
-                                    color:darkMode?Colors.white: boxShadowColor.withOpacity(0.2),
+                                    color: darkMode
+                                        ? Colors.white
+                                        : boxShadowColor.withOpacity(0.2),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 35,
                                     fontFamily: 'Product Sans'),
@@ -2910,7 +3364,9 @@ class CommonButtonProfile extends StatelessWidget {
                   //  padding: EdgeInsets.only(top: 7),
                   height: 4,
                   decoration: ShapeDecoration(
-                    color: !isActive ?  Colors.transparent : const Color(0xFFFA6E00),
+                    color: !isActive
+                        ? Colors.transparent
+                        : const Color(0xFFFA6E00),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6)),
                   ),
