@@ -1748,17 +1748,25 @@ class _ManualAddModalState extends State<ManualAddModal> {
     String name = nameController.text;
     String price = priceController.text;
     String category = categoryController.text;
-
+    String description = descriptionController.text;
+    if (name == '' || price == '' || category == '') {
+      TOastNotification().showErrorToast(context, 'Name price and category are mandatory');
+    }
     // Call the API to update the product
-    await Provider.of<Auth>(context, listen: false).AddProductsForMenu([
-      {
-        "price": price,
-        "name": name,
-        "type": selectedType,
-        "category": category,
-      }
-    ]);
+    else {
+      await Provider.of<Auth>(context, listen: false).AddProductsForMenu([
+        {
+          "price": price,
+          "name": name,
+          "type": selectedType,
+          "category": category,
+          "description":description
+        }
+      ]);
 
+      
+      TOastNotification().showSuccesToast(context, 'Products Added');
+    }
     Navigator.pop(context); // Close the modal after saving
   }
 
@@ -1776,7 +1784,8 @@ class _ManualAddModalState extends State<ManualAddModal> {
       ),
       height: MediaQuery.of(context).viewInsets.bottom > 0
           ? MediaQuery.of(context).size.height * 1
-          : MediaQuery.of(context).size.height * 0.7, // Dynamically adjust height
+          : MediaQuery.of(context).size.height *
+              0.7, // Dynamically adjust height
 
       child: SingleChildScrollView(
         child: Padding(
@@ -2018,7 +2027,7 @@ class _ManualAddModalState extends State<ManualAddModal> {
             fontSize: 15,
           ),
         ),
-               TextField(
+        TextField(
           controller: controller,
           style: TextStyle(
             color: darkMode ? Colors.white : Color(0xFF0A4C61),
@@ -2039,8 +2048,6 @@ class _ManualAddModalState extends State<ManualAddModal> {
     );
   }
 }
-
-         
 
 Future<void> _launchURL(String url) async {
   try {
