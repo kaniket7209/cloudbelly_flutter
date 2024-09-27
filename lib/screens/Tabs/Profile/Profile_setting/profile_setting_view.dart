@@ -27,6 +27,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -53,61 +54,23 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
   String? tillTiming;
   Map<String, dynamic> workingHours = {};
   Map<String, dynamic>? userDetails;
+  bool darkMode = false;
 
   @override
   void initState() {
     super.initState();
     fetchUserDataFromAPI();
-    // userDetails = UserPreferences.getUser();
+    getDarkModeStatus();
+  }
 
-    /* if (userData?['user_type'] == UserType.Customer.name) {
-      if (userData?['user_name'] != null) {
-        nameController.text = userData?['user_name'];
-      }
-    } else {*/
-    // if (Provider.of<Auth>(context, listen: false).userData?['store_name'] !=
-    //     null) {
-    //   nameController.text =
-    //       Provider.of<Auth>(context, listen: false).userData?['store_name'];
-    // }
-    // if (Provider.of<Auth>(context, listen: false).userData?['email'] != null) {
-    //   emailController.text =
-    //       Provider.of<Auth>(context, listen: false).userData?['email'];
-    // }
-    // if (Provider.of<Auth>(context, listen: false).userData?['phone'] != null) {
-    //   numberController.text =
-    //       Provider.of<Auth>(context, listen: false).userData?['phone'];
-    // }
-    // if (Provider.of<Auth>(context, listen: false).userData?['working_hours'] !=
-    //     null) {
-    //   if (Provider.of<Auth>(context, listen: false).userData?['working_hours']
-    //           ['start_time'] !=
-    //       null) {
-    //     fromTiming = Provider.of<Auth>(context, listen: false)
-    //         .userData?['working_hours']['start_time'];
-    //     setState(() {});
-    //   }
-    //   if (Provider.of<Auth>(context, listen: false).userData?['working_hours']
-    //           ['end_time'] !=
-    //       null) {
-    //     tillTiming = Provider.of<Auth>(context, listen: false)
-    //         .userData?['working_hours']['end_time'];
+  Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
 
-    //     setState(() {});
-    //   }
-    // }
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
 
-    // if (Provider.of<Auth>(context, listen: false).userData?['address'] !=
-    //     null) {
-    //   addressController.text = Provider.of<Auth>(context, listen: false)
-    //       .userData?['address']['location'];
-    // }
-    // if (Provider.of<Auth>(context, listen: false)
-    //         .userData?['store_availability'] !=
-    //     null) {
-    //   _switchValue = Provider.of<Auth>(context, listen: false)
-    //       .userData?['store_availability'];
-    // }
+    return prefs.getString('dark_mode');
   }
 
   Future<void> submitStoreName() async {
@@ -712,13 +675,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
     Navigator.of(context).pushReplacementNamed(CommonLoginScreen.routeName);
   }
 
-  // Future<void> deleteAccount(String url) async {
-  //   if (await canLaunchUrl(Uri.parse(url))) {
-  //     await launchUrl(Uri.parse(url));
-  //   } else {
-  //     throw 'Could not launch $url';
-  //   }
-  // }
   Future<void> openDeleteAccountBottomSheet(
       BuildContext context, String mobile_no) async {
     await showModalBottomSheet(
@@ -924,7 +880,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
             return SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.only(
-                 
                   bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
                 child: Container(
@@ -949,8 +904,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     ),
                   ),
                   padding: EdgeInsets.symmetric(
-                  horizontal: 40,vertical: 20,
-                ),
+                    horizontal: 40,
+                    vertical: 20,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -1140,48 +1096,51 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
 
   @override
   Widget build(BuildContext context) {
-
-    print("756 $kycVerified kyc  $kycSetup  kyset  $paymentSetup pay");
     String userType =
         Provider.of<Auth>(context, listen: false).userData?['user_type'];
     Color boxShadowColor;
     bool _isBottomSheetOpen = false;
-
-    if (userType == 'Vendor') {
-      boxShadowColor = const Color(0xff0A4C61);
-    } else if (userType == 'Customer') {
-      boxShadowColor = const Color(0xff2E0536);
-    } else if (userType == 'Supplier') {
-      boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+    if (darkMode) {
+      boxShadowColor = Colors.white;
     } else {
-      boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+      if (userType == 'Vendor') {
+        boxShadowColor = const Color(0xff0A4C61);
+      } else if (userType == 'Customer') {
+        boxShadowColor = const Color(0xff2E0536);
+      } else if (userType == 'Supplier') {
+        boxShadowColor = Color.fromARGB(0, 115, 188, 150);
+      } else {
+        boxShadowColor = const Color.fromRGBO(77, 191, 74, 0.6);
+      }
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: darkMode ? Color(0xff1D1D1D) : const Color(0xFFFFFFFF),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(30,1.h,30,8.h),
+          padding: EdgeInsets.fromLTRB(30, 1.h, 30, 8.h),
           child: Column(
             //back icon
-            
+
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-               Container(
+              Container(
                 alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: Image.asset(
-                        'assets/images/back_double_arrow.png', // Replace with your actual asset path
-                        color: Color(0xffFA6E00),
-                        width: 24,
-                        height: 24,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
+                child: IconButton(
+                  icon: Image.asset(
+                    'assets/images/back_double_arrow.png', // Replace with your actual asset path
+                    color: Color(0xffFA6E00),
+                    width: 24,
+                    height: 24,
                   ),
-                  SizedBox(height: 3.h,),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 3.h,
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1201,20 +1160,23 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                 shadows: [
                                   BoxShadow(
                                     offset: const Offset(0, 4),
-                                    color: Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .userData?['user_type'] ==
-                                            UserType.Vendor.name
-                                        ? const Color.fromRGBO(
-                                            31, 111, 109, 0.4)
+                                    color: darkMode
+                                        ? Colors.black.withOpacity(0.47)
                                         : Provider.of<Auth>(context,
                                                         listen: false)
                                                     .userData?['user_type'] ==
-                                                UserType.Supplier.name
+                                                UserType.Vendor.name
                                             ? const Color.fromRGBO(
-                                                198, 239, 161, 0.6)
-                                            : const Color.fromRGBO(
-                                                130, 47, 130, 0.4),
+                                                31, 111, 109, 0.4)
+                                            : Provider.of<Auth>(context,
+                                                                listen: false)
+                                                            .userData?[
+                                                        'user_type'] ==
+                                                    UserType.Supplier.name
+                                                ? const Color.fromRGBO(
+                                                    198, 239, 161, 0.6)
+                                                : const Color.fromRGBO(
+                                                    130, 47, 130, 0.4),
                                     blurRadius: 20,
                                   ),
                                 ],
@@ -1230,7 +1192,8 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                   Provider.of<Auth>(context, listen: true)
                                       .userData!['store_name'][0]
                                       .toUpperCase(),
-                                  style: const TextStyle(fontSize: 20),
+                                  style: const TextStyle(
+                                      fontSize: 30, color: Colors.white),
                                 ),
                               ))
                           : Container(
@@ -1240,20 +1203,23 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                 shadows: [
                                   BoxShadow(
                                     offset: const Offset(0, 3),
-                                    color: Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .userData?['user_type'] ==
-                                            UserType.Vendor.name
-                                        ? const Color.fromRGBO(
-                                            31, 111, 109, 0.4)
+                                    color: darkMode
+                                        ? Colors.black.withOpacity(0.47)
                                         : Provider.of<Auth>(context,
                                                         listen: false)
                                                     .userData?['user_type'] ==
-                                                UserType.Supplier.name
+                                                UserType.Vendor.name
                                             ? const Color.fromRGBO(
-                                                77, 191, 74, 0.4)
-                                            : const Color.fromRGBO(
-                                                130, 47, 130, 0.4),
+                                                31, 111, 109, 0.4)
+                                            : Provider.of<Auth>(context,
+                                                                listen: false)
+                                                            .userData?[
+                                                        'user_type'] ==
+                                                    UserType.Supplier.name
+                                                ? const Color.fromRGBO(
+                                                    77, 191, 74, 0.4)
+                                                : const Color.fromRGBO(
+                                                    130, 47, 130, 0.4),
                                     blurRadius: 15,
                                   )
                                 ],
@@ -1285,195 +1251,206 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                           showModalBottomSheet(
                             context: context,
                             builder: (BuildContext context) {
-                              return PopScope(
-                                canPop: true,
-                                onPopInvoked: (_) {
-                                  context
-                                      .read<TransitionEffect>()
-                                      .setBlurSigma(0);
-                                },
-                                child: Container(
-                                  decoration: ShapeDecoration(
-                                    color: Colors.white,
-                                    shape: SmoothRectangleBorder(
-                                        borderRadius: SmoothBorderRadius(
-                                      cornerRadius: 40,
-                                      cornerSmoothing: 1,
-                                    )),
+                              return Container(
+                                decoration: ShapeDecoration(
+                                  shape: SmoothRectangleBorder(
+                                    borderRadius: SmoothBorderRadius.only(
+                                      topLeft: SmoothRadius(
+                                          cornerRadius: 20, cornerSmoothing: 1),
+                                      topRight: SmoothRadius(
+                                          cornerRadius: 20, cornerSmoothing: 1),
+                                    ),
                                   ),
-
-                                  // height: 35.h,
-                                  width: double.infinity,
-                                  padding: EdgeInsets.only(
-                                      left: 10.w,
-                                      right: 5.w,
-                                      top: 1.h,
-                                      bottom: 2.h),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      TouchableOpacity(
-                                        onTap: () {
-                                          return Navigator.of(context).pop();
-                                        },
-                                        child: Center(
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 1.h, horizontal: 3.w),
-                                            width: 55,
-                                            height: 9,
-                                            decoration: ShapeDecoration(
-                                              color: const Color(0xFFFA6E00),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6)),
+                                  color: darkMode
+                                      ? Color(0xff313030)
+                                      : Colors.white,
+                                ),
+                                child: PopScope(
+                                  canPop: true,
+                                  onPopInvoked: (_) {
+                                    context
+                                        .read<TransitionEffect>()
+                                        .setBlurSigma(0);
+                                  },
+                                  child: Container(
+                                    // height: 35.h,
+                                    width: double.infinity,
+                                    padding: EdgeInsets.only(
+                                        left: 10.w,
+                                        right: 5.w,
+                                        top: 1.h,
+                                        bottom: 2.h),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        TouchableOpacity(
+                                          onTap: () {
+                                            return Navigator.of(context).pop();
+                                          },
+                                          child: Center(
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 1.h,
+                                                  horizontal: 3.w),
+                                              width: 55,
+                                              height: 9,
+                                              decoration: ShapeDecoration(
+                                                color: const Color(0xFFFA6E00),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6)),
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Space(3.h),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            height: 25,
-                                            width: 25,
-                                            decoration: ShapeDecoration(
-                                              shadows: [
-                                                BoxShadow(
-                                                  offset: Offset(0, 4),
-                                                  color: Color(0xffD3EEEE)
-                                                      .withOpacity(0.5),
-                                                  blurRadius: 20,
-                                                )
-                                              ],
-                                              color: Color(0xffD3EEEE),
-                                              shape: SmoothRectangleBorder(
-                                                borderRadius:
-                                                    SmoothBorderRadius.all(
-                                                        SmoothRadius(
-                                                            cornerRadius: 10,
-                                                            cornerSmoothing:
-                                                                1)),
+                                        Space(3.h),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              height: 25,
+                                              width: 25,
+                                              decoration: ShapeDecoration(
+                                                shadows: [
+                                                  BoxShadow(
+                                                    offset: Offset(0, 4),
+                                                    color: Color(0xffD3EEEE)
+                                                        .withOpacity(0.5),
+                                                    blurRadius: 20,
+                                                  )
+                                                ],
+                                                color: Color(0xffD3EEEE),
+                                                shape: SmoothRectangleBorder(
+                                                  borderRadius:
+                                                      SmoothBorderRadius.all(
+                                                          SmoothRadius(
+                                                              cornerRadius: 10,
+                                                              cornerSmoothing:
+                                                                  1)),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          const Space(
-                                            16,
-                                            isHorizontal: true,
-                                          ),
-                                          InkWell(
-                                            onTap: () async {
-                                              var profileImage = await Provider
-                                                      .of<Auth>(context,
-                                                          listen: false)
-                                                  .pickImageAndUpoad(context);
-                                              submitUserImage(profileImage);
-                                            },
-                                            child: Text(
-                                              "Add logo",
+                                            const Space(
+                                              16,
+                                              isHorizontal: true,
+                                            ),
+                                            InkWell(
+                                              onTap: () async {
+                                                var profileImage =
+                                                    await Provider.of<Auth>(
+                                                            context,
+                                                            listen: false)
+                                                        .pickImageAndUpoad(
+                                                            context);
+                                                submitUserImage(profileImage);
+                                              },
+                                              child: Text(
+                                                "Add logo",
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: boxShadowColor,
+                                                    fontFamily: 'Product Sans',
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Space(1.h),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              height: 25,
+                                              width: 25,
+                                              decoration: ShapeDecoration(
+                                                shadows: [
+                                                  BoxShadow(
+                                                    offset: Offset(0, 4),
+                                                    color: Color(0xffD3EEEE)
+                                                        .withOpacity(0.5),
+                                                    blurRadius: 20,
+                                                  )
+                                                ],
+                                                color: Color(0xffD3EEEE),
+                                                shape: SmoothRectangleBorder(
+                                                  borderRadius:
+                                                      SmoothBorderRadius.all(
+                                                          SmoothRadius(
+                                                              cornerRadius: 10,
+                                                              cornerSmoothing:
+                                                                  1)),
+                                                ),
+                                              ),
+                                            ),
+                                            const Space(
+                                              16,
+                                              isHorizontal: true,
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                Provider.of<Auth>(context,
+                                                            listen: false)
+                                                        .userData?[
+                                                    'profile_photo'] = "";
+                                                submitUserImage("");
+                                                setState(() {});
+                                              },
+                                              child: Text(
+                                                "Remove logo",
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: boxShadowColor,
+                                                    fontFamily: 'Product Sans',
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Space(1.h),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              height: 25,
+                                              width: 25,
+                                              decoration: ShapeDecoration(
+                                                shadows: [
+                                                  BoxShadow(
+                                                    offset: Offset(0, 4),
+                                                    color: Color(0xffD3EEEE)
+                                                        .withOpacity(0.5),
+                                                    blurRadius: 20,
+                                                  )
+                                                ],
+                                                color: Color(0xffD3EEEE),
+                                                shape: SmoothRectangleBorder(
+                                                  borderRadius:
+                                                      SmoothBorderRadius.all(
+                                                          SmoothRadius(
+                                                              cornerRadius: 10,
+                                                              cornerSmoothing:
+                                                                  1)),
+                                                ),
+                                              ),
+                                            ),
+                                            const Space(
+                                              16,
+                                              isHorizontal: true,
+                                            ),
+                                            Text(
+                                              "Remove cover image",
                                               style: TextStyle(
                                                   fontSize: 14,
                                                   color: boxShadowColor,
                                                   fontFamily: 'Product Sans',
                                                   fontWeight: FontWeight.w700),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Space(1.h),
-                                     
-                                      Row(
-                                        children: [
-                                          Container(
-                                            height: 25,
-                                            width: 25,
-                                            decoration: ShapeDecoration(
-                                              shadows: [
-                                                BoxShadow(
-                                                  offset: Offset(0, 4),
-                                                  color: Color(0xffD3EEEE)
-                                                      .withOpacity(0.5),
-                                                  blurRadius: 20,
-                                                )
-                                              ],
-                                              color: Color(0xffD3EEEE),
-                                              shape: SmoothRectangleBorder(
-                                                borderRadius:
-                                                    SmoothBorderRadius.all(
-                                                        SmoothRadius(
-                                                            cornerRadius: 10,
-                                                            cornerSmoothing:
-                                                                1)),
-                                              ),
-                                            ),
-                                          ),
-                                          const Space(
-                                            16,
-                                            isHorizontal: true,
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                              Provider.of<Auth>(context,
-                                                          listen: false)
-                                                      .userData?[
-                                                  'profile_photo'] = "";
-                                              submitUserImage("");
-                                              setState(() {});
-                                            },
-                                            child: Text(
-                                              "Remove logo",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: boxShadowColor,
-                                                  fontFamily: 'Product Sans',
-                                                  fontWeight: FontWeight.w700),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Space(1.h),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            height: 25,
-                                            width: 25,
-                                            decoration: ShapeDecoration(
-                                              shadows: [
-                                                BoxShadow(
-                                                  offset: Offset(0, 4),
-                                                  color: Color(0xffD3EEEE)
-                                                      .withOpacity(0.5),
-                                                  blurRadius: 20,
-                                                )
-                                              ],
-                                              color: Color(0xffD3EEEE),
-                                              shape: SmoothRectangleBorder(
-                                                borderRadius:
-                                                    SmoothBorderRadius.all(
-                                                        SmoothRadius(
-                                                            cornerRadius: 10,
-                                                            cornerSmoothing:
-                                                                1)),
-                                              ),
-                                            ),
-                                          ),
-                                          const Space(
-                                            16,
-                                            isHorizontal: true,
-                                          ),
-                                          Text(
-                                            "Remove cover image",
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: boxShadowColor,
-                                                fontFamily: 'Product Sans',
-                                                fontWeight: FontWeight.w700),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
@@ -1529,7 +1506,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                                 shadows: [
                                   BoxShadow(
                                     offset: const Offset(0, 4),
-                                    color: Color.fromRGBO(232, 128, 55, 0.5),
+                                    color: darkMode
+                                        ? Colors.black.withOpacity(0.47)
+                                        : Color.fromRGBO(232, 128, 55, 0.5),
                                     blurRadius: 20,
                                   ),
                                 ],
@@ -1573,7 +1552,6 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                     },
                     child: Container(
                       height: 4.h,
-                      
                       child: Text(
                         "Delete Account ",
                         style: TextStyle(
@@ -1592,6 +1570,9 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: TextWidgetStoreSetup(
+                    color: darkMode
+                        ? Color.fromARGB(255, 229, 227, 227)
+                        : boxShadowColor,
                     label: userDetails?['user_type'] == UserType.Customer.name
                         ? 'Enter user name'
                         : 'Enter brand name'),
@@ -1604,15 +1585,17 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   shadows: [
                     BoxShadow(
                       offset: const Offset(0, 4),
-                      color: Provider.of<Auth>(context, listen: false)
-                                  .userData?['user_type'] ==
-                              UserType.Vendor.name
-                          ? const Color.fromRGBO(165, 200, 199, 0.3)
+                      color: darkMode
+                          ? Colors.black.withOpacity(0.47)
                           : Provider.of<Auth>(context, listen: false)
                                       .userData?['user_type'] ==
-                                  UserType.Supplier.name
-                              ? const Color.fromRGBO(77, 191, 74, 0.2)
-                              : const Color.fromRGBO(188, 115, 188, 0.2),
+                                  UserType.Vendor.name
+                              ? const Color.fromRGBO(165, 200, 199, 0.3)
+                              : Provider.of<Auth>(context, listen: false)
+                                          .userData?['user_type'] ==
+                                      UserType.Supplier.name
+                                  ? const Color.fromRGBO(77, 191, 74, 0.2)
+                                  : const Color.fromRGBO(188, 115, 188, 0.2),
                       blurRadius: 20,
                     )
                   ],
@@ -1781,7 +1764,12 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               // ],
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextWidgetStoreSetup(label: 'Whatsapp number'),
+                child: TextWidgetStoreSetup(
+                  label: 'Whatsapp number',
+                  color: darkMode
+                      ? Color.fromARGB(255, 229, 227, 227)
+                      : boxShadowColor,
+                ),
               ),
               Space(1.h),
               Container(
@@ -1790,15 +1778,17 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
                   shadows: [
                     BoxShadow(
                       offset: const Offset(0, 4),
-                      color: Provider.of<Auth>(context, listen: false)
-                                  .userData?['user_type'] ==
-                              UserType.Vendor.name
-                          ? const Color.fromRGBO(165, 200, 199, 0.3)
+                      color: darkMode
+                          ? Colors.black.withOpacity(0.47)
                           : Provider.of<Auth>(context, listen: false)
                                       .userData?['user_type'] ==
-                                  UserType.Supplier.name
-                              ? const Color.fromRGBO(77, 191, 74, 0.3)
-                              : const Color.fromRGBO(188, 115, 188, 0.3),
+                                  UserType.Vendor.name
+                              ? const Color.fromRGBO(165, 200, 199, 0.3)
+                              : Provider.of<Auth>(context, listen: false)
+                                          .userData?['user_type'] ==
+                                      UserType.Supplier.name
+                                  ? const Color.fromRGBO(77, 191, 74, 0.3)
+                                  : const Color.fromRGBO(188, 115, 188, 0.3),
                       blurRadius: 20,
                     ),
                   ],
@@ -1867,106 +1857,110 @@ class _ProfileSettingViewState extends State<ProfileSettingView> {
               Space(
                 3.h,
               ),
-if (userDetails?['user_type'] != UserType.Customer.name)...[
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextWidgetStoreSetup(
-                    label: Provider.of<Auth>(context, listen: false)
-                                .userData?['user_type'] !=
-                            UserType.Customer.name
-                        ? 'Business address'
-                        : 'Add Location'),
-              ),
-              Space(1.h),
-              Container(
-                // rgba(165, 200, 199, 1),
-                decoration: ShapeDecoration(
-                  shadows: [
-                    BoxShadow(
-                      offset: const Offset(0, 4),
-                      color: Provider.of<Auth>(context, listen: false)
-                                  .userData?['user_type'] ==
-                              UserType.Vendor.name
-                          ? const Color.fromRGBO(165, 200, 199, 0.3)
-                          : Provider.of<Auth>(context, listen: false)
-                                      .userData?['user_type'] ==
-                                  UserType.Supplier.name
-                              ? const Color.fromRGBO(77, 191, 74, 0.3)
-                              : const Color.fromRGBO(188, 115, 188, 0.3),
-                      blurRadius: 20,
-                    )
-                  ],
-                  color: Colors.white,
-                  shape: const SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.all(
-                        SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
-                  ),
+              if (userDetails?['user_type'] != UserType.Customer.name) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextWidgetStoreSetup(
+                      color: darkMode
+                          ? Color.fromARGB(255, 229, 227, 227)
+                          : boxShadowColor,
+                      label: Provider.of<Auth>(context, listen: false)
+                                  .userData?['user_type'] !=
+                              UserType.Customer.name
+                          ? 'Business address'
+                          : 'Add Location'),
                 ),
-                child: TextField(
-                  readOnly: true,
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const GoogleMapScreen(
-                                  type: "profile",
-                                )));
-                  },
-                  onChanged: (value) {
-                    addressController.text = value;
-                    setState(() {});
-                  },
-                  onSubmitted: (newvalue) async {},
-                  controller: addressController,
-                  style: Provider.of<Auth>(context, listen: false)
-                              .userData?['user_type'] ==
-                          UserType.Vendor.name
-                      ? const TextStyle(
-                          fontSize: 16,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF0A4C61),
-                        )
-                      : const TextStyle(
-                          fontSize: 17,
-                          fontFamily: 'Product Sans',
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF2E0536)),
-                  decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    suffixIcon: addressController.text.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Image.asset(
-                              Assets.editIcon,
-                              height: 15,
-                              width: 15,
-                            ),
-                          )
-                        : IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const GoogleMapScreen(
-                                              type: "profile")));
-                            },
-                            icon: const Icon(Icons.done),
-                            color: const Color(0xFFFA6E00),
-                          ),
-                    hintText: "Enter your address here",
-                    contentPadding: const EdgeInsets.only(left: 14, top: 10),
-                    hintStyle: TextStyle(
-                        fontSize: 12,
-                        color: boxShadowColor,
-                        fontFamily: 'Product Sans',
-                        fontWeight: FontWeight.w400),
-                    border: InputBorder.none,
-                    // suffixIcon:
+                Space(1.h),
+                Container(
+                  // rgba(165, 200, 199, 1),
+                  decoration: ShapeDecoration(
+                    shadows: [
+                      BoxShadow(
+                        offset: const Offset(0, 4),
+                        color: darkMode
+                            ? Colors.black.withOpacity(0.47)
+                            : Provider.of<Auth>(context, listen: false)
+                                        .userData?['user_type'] ==
+                                    UserType.Vendor.name
+                                ? const Color.fromRGBO(165, 200, 199, 0.3)
+                                : Provider.of<Auth>(context, listen: false)
+                                            .userData?['user_type'] ==
+                                        UserType.Supplier.name
+                                    ? const Color.fromRGBO(77, 191, 74, 0.3)
+                                    : const Color.fromRGBO(188, 115, 188, 0.3),
+                        blurRadius: 20,
+                      )
+                    ],
+                    color: Colors.white,
+                    shape: const SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.all(
+                          SmoothRadius(cornerRadius: 10, cornerSmoothing: 1)),
+                    ),
                   ),
-                  /*    decoration: const InputDecoration(
+                  child: TextField(
+                    readOnly: true,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const GoogleMapScreen(
+                                    type: "profile",
+                                  )));
+                    },
+                    onChanged: (value) {
+                      addressController.text = value;
+                      setState(() {});
+                    },
+                    onSubmitted: (newvalue) async {},
+                    controller: addressController,
+                    style: Provider.of<Auth>(context, listen: false)
+                                .userData?['user_type'] ==
+                            UserType.Vendor.name
+                        ? const TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFF0A4C61),
+                          )
+                        : const TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'Product Sans',
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFF2E0536)),
+                    decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      suffixIcon: addressController.text.isEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Image.asset(
+                                Assets.editIcon,
+                                height: 15,
+                                width: 15,
+                              ),
+                            )
+                          : IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const GoogleMapScreen(
+                                                type: "profile")));
+                              },
+                              icon: const Icon(Icons.done),
+                              color: const Color(0xFFFA6E00),
+                            ),
+                      hintText: "Enter your address here",
+                      contentPadding: const EdgeInsets.only(left: 14, top: 10),
+                      hintStyle: TextStyle(
+                          fontSize: 12,
+                          color: boxShadowColor,
+                          fontFamily: 'Product Sans',
+                          fontWeight: FontWeight.w400),
+                      border: InputBorder.none,
+                      // suffixIcon:
+                    ),
+                    /*    decoration: const InputDecoration(
                     fillColor: Colors.white,
                     hintText: "Choose from map",
                     contentPadding: EdgeInsets.only(left: 14),
@@ -1979,11 +1973,10 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                     border: InputBorder.none,
                     // suffixIcon:
                   ),*/
-                  // onChanged: onChanged,
+                    // onChanged: onChanged,
+                  ),
                 ),
-              ),
-             
-],
+              ],
               if (Provider.of<Auth>(context, listen: false)
                       .userData?['user_type'] !=
                   UserType.Customer.name) ...[
@@ -1992,8 +1985,12 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child:
-                      TextWidgetStoreSetup(label: 'Choose your working hours'),
+                  child: TextWidgetStoreSetup(
+                    label: 'Choose your working hours',
+                    color: darkMode
+                        ? Color.fromARGB(255, 229, 227, 227)
+                        : boxShadowColor,
+                  ),
                 ),
                 Space(1.h),
                 Row(
@@ -2018,16 +2015,21 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                             shadows: [
                               BoxShadow(
                                 offset: const Offset(0, 4),
-                                color: Provider.of<Auth>(context, listen: false)
-                                            .userData?['user_type'] ==
-                                        UserType.Vendor.name
-                                    ? const Color.fromRGBO(165, 200, 199, 0.3)
+                                color: darkMode
+                                    ? Colors.black.withOpacity(0.47)
                                     : Provider.of<Auth>(context, listen: false)
                                                 .userData?['user_type'] ==
-                                            UserType.Supplier.name
-                                        ? const Color.fromRGBO(77, 191, 74, 0.3)
-                                        : const Color.fromRGBO(
-                                            130, 47, 130, 0.3),
+                                            UserType.Vendor.name
+                                        ? const Color.fromRGBO(
+                                            165, 200, 199, 0.3)
+                                        : Provider.of<Auth>(context,
+                                                        listen: false)
+                                                    .userData?['user_type'] ==
+                                                UserType.Supplier.name
+                                            ? const Color.fromRGBO(
+                                                77, 191, 74, 0.3)
+                                            : const Color.fromRGBO(
+                                                130, 47, 130, 0.3),
                                 blurRadius: 20,
                               )
                             ],
@@ -2096,16 +2098,21 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                             shadows: [
                               BoxShadow(
                                 offset: const Offset(0, 4),
-                                color: Provider.of<Auth>(context, listen: false)
-                                            .userData?['user_type'] ==
-                                        UserType.Vendor.name
-                                    ? const Color.fromRGBO(165, 200, 199, 0.3)
+                                color: darkMode
+                                    ? Colors.black.withOpacity(0.47)
                                     : Provider.of<Auth>(context, listen: false)
                                                 .userData?['user_type'] ==
-                                            UserType.Supplier.name
-                                        ? const Color.fromRGBO(77, 191, 74, 0.3)
-                                        : const Color.fromRGBO(
-                                            130, 47, 130, 0.3),
+                                            UserType.Vendor.name
+                                        ? const Color.fromRGBO(
+                                            165, 200, 199, 0.3)
+                                        : Provider.of<Auth>(context,
+                                                        listen: false)
+                                                    .userData?['user_type'] ==
+                                                UserType.Supplier.name
+                                            ? const Color.fromRGBO(
+                                                77, 191, 74, 0.3)
+                                            : const Color.fromRGBO(
+                                                130, 47, 130, 0.3),
                                 blurRadius: 20,
                               )
                             ],
@@ -2144,7 +2151,12 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextWidgetStoreSetup(label: 'Store availability'),
+                    TextWidgetStoreSetup(
+                      label: 'Store availability',
+                      color: darkMode
+                          ? Color.fromARGB(255, 229, 227, 227)
+                          : boxShadowColor,
+                    ),
                     Container(
                       height: 25, // Adjust the height as needed
                       child: CupertinoSwitch(
@@ -2174,7 +2186,6 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                         },
                       ),
                     )
-                
                   ],
                 ),
                 Space(
@@ -2227,11 +2238,13 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                         "Payment setup",
                         style: TextStyle(
                             fontSize: 14,
-                            color: Provider.of<Auth>(context)
-                                        .userData?['user_type'] ==
-                                    UserType.Vendor.name
-                                ? const Color(0xFF0A4C61)
-                                : const Color(0xFF2E0536),
+                            color: darkMode
+                                ? Colors.white
+                                : Provider.of<Auth>(context)
+                                            .userData?['user_type'] ==
+                                        UserType.Vendor.name
+                                    ? const Color(0xFF0A4C61)
+                                    : const Color(0xFF2E0536),
                             fontFamily: 'Product Sans',
                             fontWeight: FontWeight.w700),
                       ),
@@ -2298,11 +2311,13 @@ if (userDetails?['user_type'] != UserType.Customer.name)...[
                         "KYC & documents",
                         style: TextStyle(
                             fontSize: 14,
-                            color: Provider.of<Auth>(context)
-                                        .userData?['user_type'] ==
-                                    UserType.Vendor.name
-                                ? const Color(0xFF0A4C61)
-                                : const Color(0xFF2E0536),
+                            color: darkMode
+                                ? Colors.white
+                                : Provider.of<Auth>(context)
+                                            .userData?['user_type'] ==
+                                        UserType.Vendor.name
+                                    ? const Color(0xFF0A4C61)
+                                    : const Color(0xFF2E0536),
                             fontFamily: 'Product Sans',
                             fontWeight: FontWeight.w700),
                       ),
@@ -3260,7 +3275,6 @@ class OrderItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-               
                 Text(
                   '${orderData['buyer_store_name'] ?? 'Unknown Store'}',
                   style: TextStyle(

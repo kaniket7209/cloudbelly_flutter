@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Performance extends StatefulWidget {
   const Performance({super.key});
@@ -30,6 +31,32 @@ class Performance extends StatefulWidget {
 
 class _PerformanceState extends State<Performance> {
   List<Map<String, dynamic>> coupons = []; // State to hold the list of coupons
+  bool darkMode = false;
+ @override
+  void dispose() {
+    // bool _isLoading = false;
+    // TODO: implement dispose
+    super.dispose();
+    getDarkModeStatus();
+  }
+
+  @override
+  void initState() {
+    // print('counter: $counter ');
+    // TODO: implement initState
+    super.initState();
+    getDarkModeStatus();
+  }
+
+  Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+
+    return prefs.getString('dark_mode');
+  }
 
   Future<void> _fetchAndShowCoupons() async {
     // Fetch the coupons
@@ -53,11 +80,11 @@ class _PerformanceState extends State<Performance> {
     return Container(
       child: Column(
         children: [
-          const Center(
+           Center(
           child: Text(
             "Manage your coupons",
             style: TextStyle(
-              color: Color.fromRGBO(10, 76, 97, 1),
+              color:darkMode?Colors.white:Color.fromRGBO(10, 76, 97, 1),
               fontSize: 20,
               fontFamily: 'Jost',
               fontWeight: FontWeight.w600,
@@ -158,10 +185,10 @@ class _PerformanceState extends State<Performance> {
             ],
           ),
           Space(3.h),
-          const Text(
+           Text(
             'Sample data',
             style: TextStyle(
-              color: Color(0xFF094B60),
+              color:darkMode?Colors.white: Color(0xFF094B60),
               fontSize: 20,
               fontFamily: 'Jost',
               fontWeight: FontWeight.w600,
@@ -174,8 +201,9 @@ class _PerformanceState extends State<Performance> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const BoldTextWidgetHomeScreen(
+               BoldTextWidgetHomeScreen(
                 txt: 'Top selling items',
+                darkMode: darkMode,
               ),
               SeeAllWidget(),
             ],
@@ -200,8 +228,9 @@ class _PerformanceState extends State<Performance> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const BoldTextWidgetHomeScreen(
+               BoldTextWidgetHomeScreen(
                 txt: 'Your favourite customers',
+darkMode: darkMode,
               ),
               SeeAllWidget(),
             ],
@@ -226,8 +255,9 @@ class _PerformanceState extends State<Performance> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const BoldTextWidgetHomeScreen(
+               BoldTextWidgetHomeScreen(
                 txt: 'Highest rated items',
+                darkMode: darkMode,
               ),
               SeeAllWidget(),
             ],

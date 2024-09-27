@@ -19,7 +19,7 @@ class DishCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
       child: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(12.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -31,7 +31,7 @@ class DishCard extends StatelessWidget {
                 height: 155,
                 width: 130,
                  decoration: ShapeDecoration(
-                  color: Colors.white,
+                  color:darkMode?Color(0xff000000).withOpacity(0.47): Colors.white,
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(
                       cornerRadius: 22.0,
@@ -96,7 +96,7 @@ class DishCard extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 25),
+            SizedBox(width: 20),
             Expanded(
               flex: 1,
               child: Column(

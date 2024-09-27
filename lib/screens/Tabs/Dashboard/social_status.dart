@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SocialStatusContent extends StatefulWidget {
   const SocialStatusContent({
@@ -39,6 +40,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
     // bool _isLoading = false;
     // TODO: implement dispose
     super.dispose();
+    getDarkModeStatus();
   }
 
   @override
@@ -46,6 +48,17 @@ class _SocialStatusContentState extends State<SocialStatusContent>
     // print('counter: $counter ');
     // TODO: implement initState
     super.initState();
+    getDarkModeStatus();
+  }
+
+  Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+
+    return prefs.getString('dark_mode');
   }
 
   PageController _pageController = PageController(initialPage: 0);
@@ -65,6 +78,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
     // Color(0xFFFA6E00),
   ];
   List<String> bottomBarName = ["Mon", "Tue", "Wed", "Thu", "Sat", "Sun"];
+  bool darkMode = false;
   @override
   Widget build(BuildContext context) {
     final counter = Provider.of<Auth>(context, listen: true)
@@ -83,11 +97,11 @@ class _SocialStatusContentState extends State<SocialStatusContent>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Space(2.h),
-          const Center(
+          Center(
             child: Text(
               'Create post',
               style: TextStyle(
-                color: Color(0xFF094B60),
+                color: darkMode ? Colors.white : Color(0xFF094B60),
                 fontSize: 20,
                 fontFamily: 'Jost',
                 fontWeight: FontWeight.w600,
@@ -163,11 +177,11 @@ class _SocialStatusContentState extends State<SocialStatusContent>
             ],
           ),
           Space(4.h),
-          const Center(
+          Center(
             child: Text(
               'Sample data',
               style: TextStyle(
-                color: Color(0xFF094B60),
+                color: darkMode ? Colors.white : Color(0xFF094B60),
                 fontSize: 20,
                 fontFamily: 'Jost',
                 fontWeight: FontWeight.w600,
@@ -178,13 +192,13 @@ class _SocialStatusContentState extends State<SocialStatusContent>
           ),
           Space(3.h),
           Container(
-        
             child: Column(
               children: [
                 Row(
                   children: [
-                    const BoldTextWidgetHomeScreen(
+                    BoldTextWidgetHomeScreen(
                       txt: 'Customer visits',
+                      darkMode: darkMode,
                     ),
                     Spacer(),
                     IconButton(
@@ -208,7 +222,7 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                         child: Text(
                           _dailyList[_dailyIndex],
                           style: TextStyle(
-                            color: Color(0xFF094B60),
+                            color: darkMode ? Colors.white : Color(0xFF094B60),
                             fontSize: 12,
                             fontFamily: 'Product Sans',
                             fontWeight: FontWeight.w700,
@@ -304,8 +318,9 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                   ),
                 ),
                 Space(4.h),
-                const BoldTextWidgetHomeScreen(
+                BoldTextWidgetHomeScreen(
                   txt: 'Top 3 performing posts',
+                  darkMode: darkMode,
                 ),
                 Space(1.h),
                 Row(
@@ -320,8 +335,9 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const BoldTextWidgetHomeScreen(
+                     BoldTextWidgetHomeScreen(
                       txt: 'Customer’s review',
+darkMode: darkMode,
                     ),
                     SeeAllWidget(),
                   ],
@@ -331,8 +347,9 @@ class _SocialStatusContentState extends State<SocialStatusContent>
                 CustomerReviewWidget(),
                 CustomerReviewWidget(),
                 Space(2.h),
-                const BoldTextWidgetHomeScreen(
+                BoldTextWidgetHomeScreen(
                   txt: 'Most activities on store (views)',
+                  darkMode: darkMode,
                 ),
                 Space(1.h),
                 Container(
@@ -420,7 +437,6 @@ class _SocialStatusContentState extends State<SocialStatusContent>
               ],
             ),
           ),
-          
         ],
       ),
     );
@@ -793,8 +809,6 @@ class AddCoverImageOrLogoSheetContent extends StatelessWidget {
             ),
           ),
         ),
-
-        
         TouchableOpacity(
           onTap: () async {
             AppWideLoadingBanner().loadingBanner(context);

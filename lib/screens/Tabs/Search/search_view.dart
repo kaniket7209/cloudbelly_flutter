@@ -145,6 +145,7 @@ Future<void> _fetchData() async {
     
     setState(() {
       if (isDishesSelected) {
+        print("datadata  $data");
         dishItems.addAll(data.map((item) => Dish.fromJson(item)).toList());
       } else {
         if(page ==1 ) {
@@ -631,8 +632,8 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
   @override
   ThemeData appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(
-      appBarTheme: const AppBarTheme(
-        color: Color(0xff7B358D), // Your app bar color
+      appBarTheme:  AppBarTheme(
+        color: Color(0xff1D1D1D), // Your app bar color1D1D1D
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
         toolbarTextStyle: TextStyle(
@@ -692,21 +693,24 @@ class LocationSearchDelegate extends SearchDelegate<Map<String, String>> {
             loc['description']!.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
-    return ListView.builder(
-      itemCount: suggestions.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(suggestions[index]['description']!),
-          onTap: () {
-            if (suggestions[index]['description'] == 'Current Location') {
-              // Handle current location selection
-              _getCurrentLocation(context);
-            } else {
-              close(context, suggestions[index]);
-            }
-          },
-        );
-      },
+    return Container(
+      color: Color(0xff313030),
+      child: ListView.builder(
+        itemCount: suggestions.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(suggestions[index]['description']!,style: TextStyle(color: Colors.white),),
+            onTap: () {
+              if (suggestions[index]['description'] == 'Current Location') {
+                // Handle current location selection
+                _getCurrentLocation(context);
+              } else {
+                close(context, suggestions[index]);
+              }
+            },
+          );
+        },
+      ),
     );
   }
 

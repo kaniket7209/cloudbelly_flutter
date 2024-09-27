@@ -46,7 +46,7 @@ class RestaurantCard extends StatelessWidget {
                 height: 155,
                 width: 130,
                 decoration: ShapeDecoration(
-                  color: Colors.white,
+                  color:darkMode?Color(0xff000000).withOpacity(0.47): Colors.white,
                   shape: SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius(
                       cornerRadius: 22.0,
@@ -108,7 +108,7 @@ class RestaurantCard extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 30),
+            SizedBox(width: 25),
             Expanded(
               flex: 1,
               child: Column(

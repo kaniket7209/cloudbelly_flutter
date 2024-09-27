@@ -307,6 +307,7 @@ class _DashBoardState extends State<DashBoard>
                                             child: ButtonWidgetHomeScreen(
                                               width: 27.w,
                                               txt: 'Social Status',
+                                              darkMode: darkMode,
                                               isActive: _activeButtonIndex == 1,
                                             ),
                                           ),
@@ -319,6 +320,7 @@ class _DashBoardState extends State<DashBoard>
                                             child: ButtonWidgetHomeScreen(
                                               width: 27.w,
                                               txt: 'Inventory',
+                                              darkMode: darkMode,
                                               isActive: _activeButtonIndex == 2,
                                             ),
                                           ),
@@ -331,6 +333,7 @@ class _DashBoardState extends State<DashBoard>
                                             child: ButtonWidgetHomeScreen(
                                               width: 28.w,
                                               txt: 'Performance',
+                                              darkMode: darkMode,
                                               isActive: _activeButtonIndex == 3,
                                             ),
                                           )

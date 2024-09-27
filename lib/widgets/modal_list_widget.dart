@@ -292,16 +292,16 @@ Future<void> openFullScreen(
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
           return Container(
-            decoration: const ShapeDecoration(
+            decoration:  ShapeDecoration(
               shadows: [
                 BoxShadow(
-                  color: Color(0x7FB1D9D8),
+                  color: Colors.black.withOpacity(0.47),
                   blurRadius: 6,
                   offset: Offset(0, 4),
                   spreadRadius: 0,
                 ),
               ],
-              color: Colors.white,
+              color: Color(0xff1D1D1D),
               shape: SmoothRectangleBorder(
                 borderRadius: SmoothBorderRadius.only(
                   topLeft: SmoothRadius(cornerRadius: 40, cornerSmoothing: 1),
@@ -339,13 +339,13 @@ Future<void> openFullScreen(
                     decoration: ShapeDecoration(
                       shadows: [
                         BoxShadow(
-                          color: Color(0xff0F3A47).withOpacity(0.45),
+                           color: Colors.black.withOpacity(0.47),
                           blurRadius: 25,
                           offset: Offset(3, 4),
                           spreadRadius: 0,
                         ),
                       ],
-                      color: const Color.fromRGBO(239, 255, 254, 1),
+                      color: Color(0xff1D1D1D),
                       shape: SmoothRectangleBorder(
                         borderRadius: SmoothBorderRadius(
                           cornerRadius: 30,

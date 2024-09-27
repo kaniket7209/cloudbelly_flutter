@@ -34,7 +34,7 @@ class Dish {
       description: json['description'] ?? '',
       images: List<String>.from(json['images'] ?? []),
       macros: json['macros'] ?? {},
-      price: json['price'] ?? '',
+      price: json['price'] != null ? json['price'].toString() : '0',
       type: json['type'] ?? '',
       user_id: json['user_id'] ?? '',
       store_name: json['store_name'] ?? '',
