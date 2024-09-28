@@ -8,6 +8,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:cloudbelly_app/screens/Tabs/Profile/post_item.dart';
 import 'package:cloudbelly_app/widgets/space.dart';
 import 'package:cloudbelly_app/widgets/touchableOpacity.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PostsScreen extends StatefulWidget {
   static const routeName = '/home/your-posts-screen';
@@ -26,9 +27,11 @@ class _PostsScreenState extends State<PostsScreen> {
   String? type;
   String? isSelfProfile;
   UserModel? userModel;
+  bool darkMode = false;
 
   @override
   void didChangeDependencies() {
+    getDarkModeStatus();
     if (_didChanged) {
       final Map<String, dynamic> arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
@@ -55,8 +58,8 @@ class _PostsScreenState extends State<PostsScreen> {
   @override
   void initState() {
     super.initState();
-    print("math:: ${55.h + 65.0.h * (index ?? 0)}");
-    print("abcduserIds:::: ${userId}");
+    getDarkModeStatus();
+   
 
     /*WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.animateTo(
@@ -65,6 +68,15 @@ class _PostsScreenState extends State<PostsScreen> {
         curve: Curves.ease,
       );
     });*/
+  }
+Future<String?> getDarkModeStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      darkMode = prefs.getString('dark_mode') == "true" ? true : false;
+    });
+
+    return prefs.getString('dark_mode');
   }
 
   Future<void> _refreshFeed() async {
@@ -137,7 +149,7 @@ void _scrollToPost() {
           0xFFEAF5F7); // Default color if user_type is none of the above
     }
     return Scaffold(
-      backgroundColor: Color(0xffEAF5F7),
+      backgroundColor:darkMode?Color(0xff1D1D1D): Color(0xffEAF5F7),
       body: RefreshIndicator(
         onRefresh: _refreshFeed,
         child: SingleChildScrollView(
@@ -172,10 +184,10 @@ void _scrollToPost() {
                       ),
                     ),
                   ),
-                  const Text(
+                   Text(
                     'Posts',
                     style: TextStyle(
-                      color: Color(0xFF094B60),
+                      color:darkMode?Colors.white: Color(0xFF094B60),
                       fontSize: 26,
                       fontFamily: 'Jost',
                       fontWeight: FontWeight.w600,

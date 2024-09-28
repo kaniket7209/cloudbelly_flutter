@@ -1115,7 +1115,7 @@ Future<String?> getDarkModeStatus() async {
                                                                     Text(
                                                                       'No items  ',
                                                                       style: TextStyle(
-                                                                          color: boxShadowColor.withOpacity(
+                                                                          color:darkMode?Colors.white54: boxShadowColor.withOpacity(
                                                                               0.2),
                                                                           fontWeight: FontWeight
                                                                               .bold,
@@ -1127,7 +1127,7 @@ Future<String?> getDarkModeStatus() async {
                                                                     Text(
                                                                       'in content  ',
                                                                       style: TextStyle(
-                                                                          color: boxShadowColor.withOpacity(
+                                                                          color:darkMode?Colors.white54: boxShadowColor.withOpacity(
                                                                               0.2),
                                                                           fontWeight: FontWeight
                                                                               .bold,
@@ -1203,6 +1203,7 @@ Future<String?> getDarkModeStatus() async {
                                                                             .first,
                                                                         fulldata:
                                                                             feedList,
+                                                                            darkMode: darkMode,
                                                                         data: feedList[
                                                                             index]);
                                                                   },

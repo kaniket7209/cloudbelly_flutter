@@ -1392,6 +1392,7 @@ class _ProfileState extends State<Profile> {
                                                                 context,
                                                                 listen: false)
                                                             .userData?['user_id'],
+                                                            darkMode:darkMode,
                                                         data: feedList[index]);
                                                   },
                                                 )),
@@ -3187,11 +3188,13 @@ class FeedWidget extends StatelessWidget {
     required this.userId,
     required this.type,
     required this.isSelfProfile,
+    this.darkMode = false,
     this.userModel,
   });
 
   final int index;
   final UserModel? userModel;
+  final bool darkMode ;
   final dynamic data;
   final dynamic fulldata;
   final String userId;
@@ -3201,7 +3204,7 @@ class FeedWidget extends StatelessWidget {
 
   Color getBackgroundColor(
       String isSelfProfile, bool isVendor, String main_user_type) {
-    print("userModel ${userModel?.id}");
+
     var usertype = userModel?.userType;
     if (usertype == null) usertype = main_user_type;
     if (isSelfProfile == 'Yes' && isVendor && usertype == 'Vendor') {
@@ -3231,7 +3234,7 @@ class FeedWidget extends StatelessWidget {
 
     return TouchableOpacity(
       onTap: () async {
-        print("post_screeenindexis :: $index");
+        print("post_screeenindexis :: $index $darkMode");
         final Data = await Provider.of<Auth>(context, listen: false)
             .getFeed(userId) as List<dynamic>;
         // print("userId:: $userId");
@@ -3256,7 +3259,7 @@ class FeedWidget extends StatelessWidget {
                   BoxShadow(
                     offset: const Offset(1, 4),
                     // color: _isVendor ? const Color.fromRGBO(10, 76, 97, 0.31) :  const Color(0xBC73BC).withOpacity(0.6),
-                    color: getBackgroundColor(
+                    color: darkMode?Colors.black.withOpacity(0.47): getBackgroundColor(
                         isSelfProfile, _isVendor, main_user_type),
                     blurRadius: 12,
                   ),
